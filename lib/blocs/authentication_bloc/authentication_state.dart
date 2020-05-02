@@ -15,16 +15,16 @@ abstract class AuthenticationState extends Equatable {
 class Uninitialized extends AuthenticationState {}
 
 class Authenticated extends AuthenticationState {
-  final String displayName;
+  final User user;
 
-  const Authenticated(this.displayName);
+  const Authenticated(this.user);
 
   @override
-  List<Object> get props => [displayName];
+  List<Object> get props => [user];
 
   //used for printing to console
   @override
-  String toString() => 'Authenticated {displayName: $displayName}';
+  String toString() => 'Authenticated {user: $user}';
 }
 
 class Unauthenticated extends AuthenticationState {}

@@ -30,6 +30,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
+        // ignore: missing_return
         builder: (context, state) {
           if (state is Uninitialized) {
             return SplashScreen();
@@ -38,7 +39,7 @@ class App extends StatelessWidget {
             return LoginScreen(userRepository: _userRepository);
           }
           if (state is Authenticated) {
-            return HomeScreen(name: state.displayName);
+            return HomeScreen(name: state.user.displayName);
           }
         },
       ),

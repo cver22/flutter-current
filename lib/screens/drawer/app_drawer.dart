@@ -1,6 +1,6 @@
 import 'package:expenses/screens/account/account_page.dart';
+import 'package:expenses/screens/setting/settings_page.dart';
 import 'package:flutter/material.dart';
-
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -17,18 +17,34 @@ class AppDrawer extends StatelessWidget {
             ListView(
               shrinkWrap: true,
               children: <Widget>[
-                ListTile(
-                  onLongPress: () => Navigator.of(context).push(
-                    MaterialPageRoute<void>(builder: (context) => AccountPage()),
-                  ),
-                  trailing: Icon(Icons.chevron_right),
-                  title: Text('Account'),
-                )
+                DrawerListTile(page: SettingsPage(), name: 'Settings'),
+                DrawerListTile(page: AccountPage(), name: 'Account'),
               ],
             ),
           ],
         ),
       ],
     ));
+  }
+}
+
+class DrawerListTile extends StatelessWidget {
+  final Widget page;
+  final String name;
+
+  const DrawerListTile({
+    this.page,
+    this.name,
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () => Navigator.push(
+          context, MaterialPageRoute(builder: (context) => page)),
+      trailing: Icon(Icons.chevron_right),
+      title: Text(name),
+    );
   }
 }

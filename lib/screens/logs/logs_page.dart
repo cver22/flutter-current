@@ -1,4 +1,3 @@
-//TODO Start here and build logs pages
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/logs/add_edit_log_page.dart';
