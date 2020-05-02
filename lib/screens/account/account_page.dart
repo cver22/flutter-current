@@ -42,9 +42,9 @@ class AccountPage extends StatelessWidget {
                               : null),
                     ),
                     SizedBox(height: 20.0),
-                    Text(state.user.displayName),
+                    Text(state.user.displayName != null ? state.user.displayName : 'Name missing'),
                     SizedBox(height: 20.0),
-                    Text(state.user.email),
+                    Text(state.user.email != null ? state.user.email : 'Email missing'),
                   ],
                 );
               }

@@ -1,6 +1,3 @@
-
-//TODO also create a model to work with the entity
-
 import 'package:equatable/equatable.dart';
 
 class User extends Equatable {

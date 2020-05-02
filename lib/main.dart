@@ -39,7 +39,7 @@ class App extends StatelessWidget {
             return LoginScreen(userRepository: _userRepository);
           }
           if (state is Authenticated) {
-            return HomeScreen(name: state.user.displayName);
+            return HomeScreen(user: state.user);
           }
         },
       ),

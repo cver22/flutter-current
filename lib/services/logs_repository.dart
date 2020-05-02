@@ -2,6 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/log/log_entity.dart';
+import 'package:expenses/models/user/user.dart';
+import 'package:expenses/res/db_consts.dart';
 
 abstract class LogsRepository {
   Future<void> addNewLog(Log log);
@@ -14,6 +16,10 @@ abstract class LogsRepository {
 }
 
 class FirebaseLogsRepository implements LogsRepository {
+  final User user;
+
+  FirebaseLogsRepository({this.user});
+
   final logsCollection = Firestore.instance.collection('logs');
 
   @override
@@ -31,7 +37,7 @@ class FirebaseLogsRepository implements LogsRepository {
   //TODO need to filter by UID
   @override
   Stream<List<Log>> loadLogs() {
-    return logsCollection.snapshots().map((snapshot) {
+    return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
       return snapshot.documents
           .map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc)))
           .toList();
