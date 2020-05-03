@@ -11,11 +11,18 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized(); // allows code before runApp
   BlocSupervisor.delegate = SimpleBlocDelegate();
   final FirebaseUserRepository userRepository = FirebaseUserRepository();
-  runApp(BlocProvider<AuthenticationBloc>(
-    create: (context) =>
-        AuthenticationBloc(userRepository: userRepository)..add(AppStarted()),
-    child: App(userRepository: userRepository),
-  ));
+  runApp(
+    MultiBlocProvider(
+      providers: [
+        BlocProvider<AuthenticationBloc>(
+          create: (context) =>
+              AuthenticationBloc(userRepository: userRepository)
+                ..add(AppStarted()),
+        ),
+      ],
+      child: App(userRepository: userRepository),
+    ),
+  );
 }
 
 class App extends StatelessWidget {
@@ -45,5 +52,4 @@ class App extends StatelessWidget {
       ),
     );
   }
-
 }
