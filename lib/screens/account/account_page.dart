@@ -14,8 +14,9 @@ class AccountPage extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: <Widget>[
+            SizedBox(height: 30.0),
             BlocBuilder<AuthenticationBloc, AuthenticationState>(
                 // ignore: missing_return
                 builder: (context, state) {
@@ -42,9 +43,13 @@ class AccountPage extends StatelessWidget {
                               : null),
                     ),
                     SizedBox(height: 20.0),
-                    Text(state.user.displayName != null ? state.user.displayName : 'Name missing'),
+                    Text(state.user.displayName != null
+                        ? state.user.displayName
+                        : 'Name missing'),
                     SizedBox(height: 20.0),
-                    Text(state.user.email != null ? state.user.email : 'Email missing'),
+                    Text(state.user.email != null
+                        ? state.user.email
+                        : 'Email missing'),
                   ],
                 );
               }

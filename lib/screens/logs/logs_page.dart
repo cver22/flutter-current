@@ -1,6 +1,5 @@
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/log/log.dart';
-import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/logs/add_edit_log_page.dart';
 import 'package:expenses/screens/logs/log_list_tile.dart';
 import 'package:flutter/cupertino.dart';
@@ -22,15 +21,6 @@ class LogsPage extends StatelessWidget {
               Text('Loading your logs...'),
             ],
           ));
-        } else if (state is LogsLoaded && state.logs.isEmpty) {
-          //TODO refactor later to pass both cases to a column formatted to the page
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: <Widget>[
-              addLogButton(),
-            ],
-          );
         } else if (state is LogsLoaded) {
           //TODO upgrade to filtered logs so hide and reorganize can be utilized
           final logs = state.logs;
@@ -38,22 +28,26 @@ class LogsPage extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.start,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              ListView.builder(
-                  itemCount: logs.length,
-                  // ignore: missing_return
-                  itemBuilder: (BuildContext context, int index) {
-                    final Log log = logs[index];
-                    return LogListTile(
-                      log: log,
-                      //TODO implement onTap to log a entry/transaction
-                      onLongPress: () => Navigator.of(context).push(
-                        MaterialPageRoute(builder: (_) {
-                          return AddEditLogPage(); //TODO implement an AddEditScreen
-                        }),
-                      ),
-                    );
-                  }),
-              addLogButton()
+              state.logs.isEmpty
+                  ? Container()
+                  : ListView.builder(
+                      itemCount: logs.length,
+                      // ignore: missing_return
+                      itemBuilder: (BuildContext context, int index) {
+                        final Log log = logs[index];
+                        return LogListTile(
+                          log: log,
+                          //TODO implement onTap to log a entry/transaction
+                          onTap: () {},
+                          onLongPress: () => Navigator.of(context).push(
+                            MaterialPageRoute(builder: (context) {
+                              return AddEditLogPage(log: log); //TODO implement an AddEditScreen
+                            }),
+                          ),
+                        );
+                      }),
+              SizedBox(height: 20.0),
+              addLogButton(context)
             ],
           );
         } else if (state is LogsLoadFailure) {
@@ -69,14 +63,17 @@ class LogsPage extends StatelessWidget {
     );
   }
 
-  Widget addLogButton() {
+  Widget addLogButton(BuildContext context) {
     return RaisedButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
       ),
       child: Text('Add Log'),
       elevation: 2.0,
-      onPressed: () {},
-    );
+      onPressed: () => Navigator.of(context).push(
+      MaterialPageRoute(builder: (context) {
+        return AddEditLogPage();
+      }),
+    ),);
   }
 }

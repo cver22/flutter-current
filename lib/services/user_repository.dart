@@ -16,14 +16,6 @@ abstract class UserRepository {
 
   Future<bool> isSignedIn();
 
-  Future<String> getUserEmail();
-
-  Future<String> getUserId();
-
-  Future<String> getUserName();
-
-  Future<String> getUserPhoto();
-
   Future<User> getUser();
 }
 
@@ -70,26 +62,6 @@ class FirebaseUserRepository implements UserRepository {
   Future<bool> isSignedIn() async {
     final currentUser = await _firebaseAuth.currentUser();
     return currentUser != null;
-  }
-
-  @override
-  Future<String> getUserEmail() async {
-    return (await _firebaseAuth.currentUser()).email;
-  }
-
-  @override
-  Future<String> getUserId() async {
-    return (await _firebaseAuth.currentUser()).uid;
-  }
-
-  @override
-  Future<String> getUserName() async {
-    return (await _firebaseAuth.currentUser()).displayName;
-  }
-
-  @override
-  Future<String> getUserPhoto() async {
-    return (await _firebaseAuth.currentUser()).photoUrl;
   }
 
   @override

@@ -1,5 +1,3 @@
-import 'package:expenses/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:expenses/blocs/login_bloc/bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/user/user.dart';
 import 'package:expenses/screens/drawer/app_drawer.dart';

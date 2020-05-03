@@ -41,7 +41,8 @@ class Log extends Equatable {
   }
 
   @override
-  List<Object> get props => [uid, id, logName, currency, active, members];
+  List<Object> get props =>
+      [uid, id, logName, currency, active, members];
 
   @override
   String toString() {
