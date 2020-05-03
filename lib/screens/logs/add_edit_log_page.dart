@@ -1,7 +1,9 @@
 import 'package:currency_pickers/utils/utils.dart';
+import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddEditLogPage extends StatefulWidget {
   final Log log;
@@ -45,28 +47,32 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
   }
 
   Widget _buildContents(BuildContext context) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              children: <Widget>[
-                _buildForm(),
-                SizedBox(height: 16.0),
-                _currency == null
-                    ? MyCurrencyPicker(
-                        currency: _currency,
-                        returnCurrency: (currency) => _currency = currency)
-                    : Text(
-                        'Currency: ${CurrencyPickerUtils.getCountryByIsoCode(_currency).currencyCode}'),
-              ],
+    return BlocBuilder<LogsBloc, LogsState>(
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: Padding(
+              padding: EdgeInsets.all(16.0),
+              child: Card(
+                child: Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Column(
+                    children: <Widget>[
+                      _buildForm(),
+                      SizedBox(height: 16.0),
+                      _currency == null
+                          ? MyCurrencyPicker(
+                              currency: _currency,
+                              returnCurrency: (currency) =>
+                                  _currency = currency)
+                          : Text(
+                              'Currency: ${CurrencyPickerUtils.getCountryByIsoCode(_currency).currencyCode}'),
+                    ],
+                  ),
+                ),
+              ),
             ),
-          ),
-        ),
-      ),
-    );
+          );
+        });
   }
 
   Widget _buildForm() {
