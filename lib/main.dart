@@ -1,11 +1,15 @@
 import 'package:expenses/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expenses/blocs/logs_bloc/logs_bloc.dart';
 import 'package:expenses/screens/home_screen.dart';
 import 'package:expenses/screens/login/login_screen.dart';
 import 'package:expenses/screens/splash_screen.dart';
+import 'package:expenses/services/logs_repository.dart';
 import 'package:expenses/services/user_repository.dart';
 import 'package:expenses/utils/simple_bloc_delegate.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+import 'blocs/logs_bloc/bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); // allows code before runApp
@@ -46,7 +50,10 @@ class App extends StatelessWidget {
             return LoginScreen(userRepository: _userRepository);
           }
           if (state is Authenticated) {
-            return HomeScreen(user: state.user);
+            final FirebaseLogsRepository _logsRepository = FirebaseLogsRepository(user: state.user);
+            return BlocProvider<LogsBloc>(
+                create: (context) => LogsBloc(logsRepository: _logsRepository)..add(LoadLogs()),
+          child: HomeScreen(),);
           }
         },
       ),
