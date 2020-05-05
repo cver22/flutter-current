@@ -56,6 +56,7 @@ class LogEntity extends Equatable {
   Map<String, Object> toDocument() {
     return {
       UID: uid,
+      ID: id,
       LOG_NAME: logName,
       CURRENCY_NAME: currency,
       ACTIVE: active,

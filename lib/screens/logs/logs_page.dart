@@ -43,8 +43,10 @@ class LogsPage extends StatelessWidget {
                             onTap: () {},
                             onLongPress: () => Navigator.of(context).push(
                               MaterialPageRoute(builder: (_) {
-                                return AddEditLogPage(
-                                    log: log); //TODO implement an AddEditScreen
+                                return BlocProvider.value(
+                                  value: BlocProvider.of<LogsBloc>(context),
+                                  child: AddEditLogPage(log: log),
+                                );
                               }),
                             ),
                           );
@@ -68,7 +70,6 @@ class LogsPage extends StatelessWidget {
   }
 
   Widget addLogButton(BuildContext context) {
-    print('logs context: $context');
     return RaisedButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
@@ -77,7 +78,10 @@ class LogsPage extends StatelessWidget {
       elevation: 2.0,
       onPressed: () => Navigator.of(context).push(
         MaterialPageRoute(builder: (_) {
-          return AddEditLogPage();
+          return BlocProvider.value(
+            value: BlocProvider.of<LogsBloc>(context),
+            child: AddEditLogPage(),
+          );
         }),
       ),
     );

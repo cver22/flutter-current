@@ -17,16 +17,29 @@ class AddEditLogPage extends StatefulWidget {
 class _AddEditLogPageState extends State<AddEditLogPage> {
   Log _log;
   String _currency;
+  String _name;
 
   void _submit() {
-    //TODO create submit method
+    print('submit pressed');
+    _log = _log.copyWith(logName: _name, currency: _currency);
+
+    //TODO change logic to utilize the bloc more?
+
+    if (_log.uid != null) {
+      BlocProvider.of<LogsBloc>(context)..add(LogUpdated(log: _log));
+      //TODO START HERE - why can't I update Logs, I think I am having an issue passing the id
+    } else {
+      BlocProvider.of<LogsBloc>(context)..add(LogAdded(log: _log));
+    }
+
+    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    Log _log = widget.log;
-
-    //TODO upgrade to blocBuilder to handle events
+    _log = widget.log == null? Log() : widget.log;
+    _currency = _log?.currency ?? 'ca';
+    _name = _log?.logName ?? null;
 
     return Scaffold(
       appBar: AppBar(
@@ -37,8 +50,9 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
               Icons.check,
               color: Colors.white,
             ),
-            onPressed:
-                () {}, // ? null : _submit, TODO need to use state to take care of this with SavingLogState
+            onPressed: () {
+              _name == null ? null : _submit();
+            }, //TODO need to use state to take care of this with SavingLogState
           )
         ],
       ),
@@ -47,41 +61,40 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
   }
 
   Widget _buildContents(BuildContext context) {
-    return BlocBuilder<LogsBloc, LogsState>(
-        builder: (context, state) {
-          return SingleChildScrollView(
+    return BlocBuilder<LogsBloc, LogsState>(builder: (context, state) {
+      return SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsets.all(16.0),
+          child: Card(
             child: Padding(
               padding: EdgeInsets.all(16.0),
-              child: Card(
-                child: Padding(
-                  padding: EdgeInsets.all(16.0),
-                  child: Column(
-                    children: <Widget>[
-                      _buildForm(),
-                      SizedBox(height: 16.0),
-                      _currency == null
-                          ? MyCurrencyPicker(
-                              currency: _currency,
-                              returnCurrency: (currency) =>
-                                  _currency = currency)
-                          : Text(
-                              'Currency: ${CurrencyPickerUtils.getCountryByIsoCode(_currency).currencyCode}'),
-                    ],
-                  ),
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  _buildForm(),
+                  SizedBox(height: 16.0),
+                  _log.uid == null
+                      ? MyCurrencyPicker(
+                          currency: _currency,
+                          returnCurrency: (currency) => _currency = currency)
+                      : Text(
+                          'Currency: ${CurrencyPickerUtils.getCountryByIsoCode(_currency).currencyCode}'),
+                ],
               ),
             ),
-          );
-        });
+          ),
+        ),
+      );
+    });
   }
 
   Widget _buildForm() {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
-      //TODO get initial value from state
-      validator: (value) =>
-          value.isNotEmpty ? null : 'Expense log name can\'t be empty',
-      //TODO on saved
+      initialValue: _name,
+      onChanged: (value) => _name = value,
+      //TODO validate in the bloc, name cannot be empty
+      //TODO need controllers
     );
   }
 }

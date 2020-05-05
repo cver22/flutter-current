@@ -25,7 +25,7 @@ class FirebaseLogsRepository implements LogsRepository {
   @override
   Future<void> addNewLog(Log log) {
     //adds uid to new logs
-    //TODO move this to log bloc so it can also handle when members are added?
+    //TODO move this to logsBloc so it can also handle when members are added?
     return logsCollection.add(log.copyWith(uid: user.id).toEntity().toDocument());
   }
 
