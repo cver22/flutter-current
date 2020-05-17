@@ -45,8 +45,8 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     _logsRepository.updateLog(event.log);
   }
 
-  Stream<LogsState> _mapLogDeletedToState(LogDeleted event) {
-    _logsRepository.deleteLog(event.log.copyWith(active: false));
+  Stream<LogsState> _mapLogDeletedToState(LogDeleted event) async* {
+    _logsRepository.deleteLog(event.log);
   }
 
   Stream<LogsState> _mapLogsUpdatedToState(LogsUpdated event) async* {

@@ -9,12 +9,11 @@ class Log extends Equatable {
 
   Log(
       {@required this.uid,
-      String id,
+      this.id,
       @required this.logName,
       @required this.currency,
       this.active = true,
-      this.members})
-      : this.id = id ?? Uuid().v4();
+      this.members});
 
   final String uid;
   final String id;

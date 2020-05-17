@@ -2,11 +2,12 @@ import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/logs/add_edit_log_page.dart';
 import 'package:expenses/screens/logs/log_list_tile.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LogsPage extends StatelessWidget {
+
+
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LogsBloc, LogsState>(
@@ -37,19 +38,25 @@ class LogsPage extends StatelessWidget {
                         // ignore: missing_return
                         itemBuilder: (BuildContext context, int index) {
                           final Log log = logs[index];
-                          return LogListTile(
-                            log: log,
-                            //TODO implement onTap to log a entry/transaction
-                            onTap: () {},
-                            onLongPress: () => Navigator.of(context).push(
-                              MaterialPageRoute(builder: (_) {
-                                return BlocProvider.value(
-                                  value: BlocProvider.of<LogsBloc>(context),
-                                  child: AddEditLogPage(log: log),
-                                );
-                              }),
-                            ),
-                          );
+                          //Only shows logs that have not been "deleted"
+                          if(log.active == true){
+                            return LogListTile(
+                              log: log,
+                              //TODO implement onTap to log a entry/transaction
+                              onTap: () {},
+                              onLongPress: () => Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) {
+                                  return BlocProvider.value(
+                                    value: BlocProvider.of<LogsBloc>(context),
+                                    child: AddEditLogPage(log: log),
+                                  );
+                                }),
+                              ),
+                            );
+                          } else {
+                            return Container();
+                          }
+
                         }),
                 SizedBox(height: 20.0),
                 addLogButton(context)

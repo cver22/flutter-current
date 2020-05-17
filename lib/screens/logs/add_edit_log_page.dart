@@ -51,9 +51,20 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              _name == null ? null : _submit();
+              if(_name != null && _name != '') _submit();
             }, //TODO need to use state to take care of this with SavingLogState
-          )
+          ),
+          _log.uid == null ? Container() :PopupMenuButton<String>(
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Delete Log'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
+          ),
         ],
       ),
       body: _buildContents(context),
@@ -96,5 +107,16 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
       //TODO validate in the bloc, name cannot be empty
       //TODO need controllers
     );
+  }
+
+  void handleClick(String value) {
+    switch (value) {
+      case 'Delete Log':
+        _log = _log.copyWith(active: false);
+        BlocProvider.of<LogsBloc>(context)..add(LogDeleted(log: _log));
+        Navigator.pop(context);
+        //TODO need to handle not showing the logs that have been deleted, probably in the bloc
+        break;
+    }
   }
 }

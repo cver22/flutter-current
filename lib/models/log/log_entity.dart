@@ -45,7 +45,7 @@ class LogEntity extends Equatable {
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
     return LogEntity(
       uid: snap.data[UID],
-      id: snap.data[ID],
+      id: snap.documentID,
       logName: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
       active: snap.data[ACTIVE],
@@ -56,7 +56,6 @@ class LogEntity extends Equatable {
   Map<String, Object> toDocument() {
     return {
       UID: uid,
-      ID: id,
       LOG_NAME: logName,
       CURRENCY_NAME: currency,
       ACTIVE: active,
