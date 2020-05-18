@@ -1,41 +1,47 @@
 
-
+//Shared constants
 const String ID = 'id';
 const String UID = 'uid';
 const String ACTIVE = 'active'; //used to determine if a file is active or deleted
-
-const String LOGS_COLLECTION = 'logs';
-const String TRANSACTION_COLLECTION = 'transactions';
-const String LOG_NAME = 'logName';
 const String CURRENCY_NAME = 'currency';
+const String CATEGORY = 'category';
+const String SUBCATEGORY = 'subcategory';
+const String CATEGORIES = 'categories';
+const String SUBCATEGORIES = 'subcategories';
+
+//Log constants
+const String LOGS_COLLECTION = 'logs';
+const String ENTRIES = 'entries';
+const String LOG_NAME = 'logName';
 const String MEMBER_ROLES_MAP = 'rolesList';
 const String MEMBERS_DATA = 'membersData';
 const String OWNER_OR_WRITER = 'ownerOrWriter';
-const String MEMBER_NAME = 'memberName';
-const String PHOTO_URL = 'photoUrl';
-const String EMAIL = 'email';
 const String OWNER = 'owner';
 const String WRITER = 'write';
 
-
-const String TRANSACTION_ID = 'transactionId';
-const String TRANSACTION_MEMBERS = 'tranactionMembers';
-const String TRANSACTION_MEMBER = 'transactionMember';
+//Entry constants
+const String LOG_ID = 'logId';
+const String ENTRY_NAME = 'entryName';
+const String ENTRY_MEMBERS = 'entryMembers';
+const String ENTRY_MEMBER = 'entryMember';
 const String AMOUNT = 'amount';
-const String AMOUNT_IN_FOREIGN_CURRENCY = 'amountInForeignCurrency';
-const String CATEGORY = 'category';
-const String CATEGORIES = 'categories';
-const String SUBCATEGORY = 'subcategory';
-const String SUBCATEGORIES = 'subcategories';
-const String TAG = 'tag';
-const String TAGS = 'tags';
-const String TAG_FREQUENCY = 'tagFrequencyByCategoryAndSubcategory';
 const String COMMENT = 'comment';
 const String LOCATION = 'location';
 const String DATE_TIME = 'dateTime';
+
+//Entry members constants
+const String AMOUNT_MY_CURRENCY = 'amountInMyCurrency';
+
+
+//Tags constants
+const String TAGS = 'tags';
+const String TAG = 'tag';
+const String TAG_FREQUENCY = 'tagFrequencyByCategoryAndSubcategory';
 const String PAID = 'paid';
 const String SPENT = 'spent';
 
-
-
+//Account constants
+const String PHOTO_URL = 'photoUrl';
+const String EMAIL = 'email';
+const String MEMBER_NAME = 'memberName';
 

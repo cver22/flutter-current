@@ -46,6 +46,7 @@ class FirebaseLogsRepository implements LogsRepository {
     });
   }
 
+  //TODO should this use LogEntity instead of Log?
   @override
   Future<void> updateLog(Log update) {
     return logsCollection

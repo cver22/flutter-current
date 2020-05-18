@@ -18,28 +18,27 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
   Log _log;
   String _currency;
   String _name;
+  LogsBloc _logsBloc;
 
   void _submit() {
     print('submit pressed');
     _log = _log.copyWith(logName: _name, currency: _currency);
 
-    //TODO change logic to utilize the bloc more?
-
-    if (_log.uid != null) {
-      BlocProvider.of<LogsBloc>(context)..add(LogUpdated(log: _log));
-      //TODO START HERE - why can't I update Logs, I think I am having an issue passing the id
+    if (_log.id != null) {
+      _logsBloc..add(LogUpdated(log: _log));
     } else {
-      BlocProvider.of<LogsBloc>(context)..add(LogAdded(log: _log));
+      _logsBloc..add(LogAdded(log: _log));
     }
 
-    Navigator.of(context).pop();
+    Navigator.pop(context);
   }
 
   @override
   Widget build(BuildContext context) {
-    _log = widget.log == null? Log() : widget.log;
+    _log = widget.log == null ? Log() : widget.log;
     _currency = _log?.currency ?? 'ca';
     _name = _log?.logName ?? null;
+    _logsBloc = BlocProvider.of<LogsBloc>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -51,20 +50,22 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              if(_name != null && _name != '') _submit();
+              if (_name != null && _name != '') _submit();
             }, //TODO need to use state to take care of this with SavingLogState
           ),
-          _log.uid == null ? Container() :PopupMenuButton<String>(
-            onSelected: handleClick,
-            itemBuilder: (BuildContext context) {
-              return {'Delete Log'}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
+          _log.uid == null
+              ? Container()
+              : PopupMenuButton<String>(
+                  onSelected: handleClick,
+                  itemBuilder: (BuildContext context) {
+                    return {'Delete Log'}.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
+                      );
+                    }).toList();
+                  },
+                ),
         ],
       ),
       body: _buildContents(context),
@@ -112,10 +113,8 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Log':
-        _log = _log.copyWith(active: false);
-        BlocProvider.of<LogsBloc>(context)..add(LogDeleted(log: _log));
+        _logsBloc..add(LogDeleted(log: _log));
         Navigator.pop(context);
-        //TODO need to handle not showing the logs that have been deleted, probably in the bloc
         break;
     }
   }

@@ -1,18 +1,20 @@
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/log/log.dart';
+import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/logs/add_edit_log_page.dart';
 import 'package:expenses/screens/logs/log_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class LogsPage extends StatelessWidget {
-
+  //TODO LogsBloc _logsBloc; and how to dispose
 
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<LogsBloc, LogsState>(
       // ignore: missing_return
       builder: (context, state) {
+        //TODO _logsBloc = BlocProvider.of<LogsBloc>(context);
         if (state is LogsLoading) {
           return Center(
               child: Column(
@@ -24,31 +26,31 @@ class LogsPage extends StatelessWidget {
           ));
         } else if (state is LogsLoaded) {
           //TODO upgrade to filtered logs so hide and reorganize can be utilized
-          final logs = state.logs;
+          final _logs = state.logs;
           return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: <Widget>[
-                state.logs.isEmpty
-                    ? Container()
+                _logs.isEmpty
+                    ? EmptyContent() //TODO need to center this
                     : ListView.builder(
                         shrinkWrap: true,
-                        itemCount: logs.length,
+                        itemCount: _logs.length,
                         // ignore: missing_return
                         itemBuilder: (BuildContext context, int index) {
-                          final Log log = logs[index];
+                          final Log _log = _logs[index];
                           //Only shows logs that have not been "deleted"
-                          if(log.active == true){
+                          if (_log.active == true) {
                             return LogListTile(
-                              log: log,
+                              log: _log,
                               //TODO implement onTap to log a entry/transaction
                               onTap: () {},
                               onLongPress: () => Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_) {
                                   return BlocProvider.value(
                                     value: BlocProvider.of<LogsBloc>(context),
-                                    child: AddEditLogPage(log: log),
+                                    child: AddEditLogPage(log: _log),
                                   );
                                 }),
                               ),
@@ -56,7 +58,6 @@ class LogsPage extends StatelessWidget {
                           } else {
                             return Container();
                           }
-
                         }),
                 SizedBox(height: 20.0),
                 addLogButton(context)

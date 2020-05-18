@@ -1,10 +1,7 @@
-import 'package:expenses/blocs/logs_bloc/bloc.dart';
-import 'package:expenses/models/user/user.dart';
 import 'package:expenses/screens/drawer/app_drawer.dart';
+import 'package:expenses/screens/entries/entries_page.dart';
 import 'package:expenses/screens/logs/logs_page.dart';
-import 'package:expenses/services/logs_repository.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -36,7 +33,7 @@ class HomeScreen extends StatelessWidget {
                   ),
                 ],
               ),*/
-            Icon(Icons.assignment),
+            EntriesPage(),
             Icon(Icons.assessment),
           ],
         ),

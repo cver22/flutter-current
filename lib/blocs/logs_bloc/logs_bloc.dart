@@ -46,7 +46,8 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
   }
 
   Stream<LogsState> _mapLogDeletedToState(LogDeleted event) async* {
-    _logsRepository.deleteLog(event.log);
+    //logs are not deleted, set to inactive and not shown in UI
+    _logsRepository.deleteLog(event.log.copyWith(active: false));
   }
 
   Stream<LogsState> _mapLogsUpdatedToState(LogsUpdated event) async* {

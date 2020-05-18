@@ -1,8 +1,10 @@
 import 'package:expenses/blocs/authentication_bloc/authentication_bloc.dart';
+import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/logs_bloc/logs_bloc.dart';
 import 'package:expenses/screens/home_screen.dart';
 import 'package:expenses/screens/login/login_screen.dart';
 import 'package:expenses/screens/splash_screen.dart';
+import 'package:expenses/services/entries_repository.dart';
 import 'package:expenses/services/logs_repository.dart';
 import 'package:expenses/services/user_repository.dart';
 import 'package:expenses/utils/simple_bloc_delegate.dart';
@@ -51,7 +53,21 @@ class App extends StatelessWidget {
           }
           if (state is Authenticated) {
             final FirebaseLogsRepository _logsRepository = FirebaseLogsRepository(user: state.user);
-            return BlocProvider<LogsBloc>(
+            final FirebaseEntriesRepository _entriesRepository = FirebaseEntriesRepository(user: state.user);
+            return MultiBlocProvider(
+              providers: [
+                BlocProvider<LogsBloc>(
+                  create: (context) => LogsBloc(logsRepository: _logsRepository)..add(LoadLogs()),
+                ),
+                BlocProvider<EntriesBloc>(
+                  create: (context) => EntriesBloc(entriesRepository: _entriesRepository)..add(LoadEntries()),
+                ),
+
+              ],
+              child: HomeScreen(),
+            );
+
+              BlocProvider<LogsBloc>(
                 create: (context) => LogsBloc(logsRepository: _logsRepository)..add(LoadLogs()),
           child: HomeScreen(),);
           }

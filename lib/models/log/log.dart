@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/log/log_entity.dart';
 import 'package:flutter/foundation.dart';
-import 'package:uuid/uuid.dart';
 
 class Log extends Equatable {
   //TODO need tracking for user categories, subcategories and their frequencies

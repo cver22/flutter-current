@@ -12,7 +12,9 @@ class LogEntity extends Equatable {
 
   const LogEntity({this.uid, this.id, this.logName, this.currency, this.active, this.members});
 
-  Map<String, Object> toJson() {
+  //DEPRECATED
+  //for use in other database types
+  /*Map<String, Object> toJson() {
     return {
       UID: uid,
       ID: id,
@@ -21,7 +23,7 @@ class LogEntity extends Equatable {
       ACTIVE: active,
       MEMBER_ROLES_MAP: members,
     };
-  }
+  }*/
 
   @override
   List<Object> get props => [uid, id, logName, currency, active, members];
@@ -31,7 +33,9 @@ class LogEntity extends Equatable {
     return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, active: $active, members: $members}';
   }
 
-  static LogEntity fromJson(Map<String, Object> json) {
+  //DEPRECATED
+  //for use in other database types
+  /*static LogEntity fromJson(Map<String, Object> json) {
     return LogEntity(
       uid: json[UID] as String,
       id: json[ID] as String,
@@ -40,7 +44,7 @@ class LogEntity extends Equatable {
       active: json[ACTIVE] as bool,
       members: json[MEMBER_ROLES_MAP] as Map<String, dynamic>,
     );
-  }
+  }*/
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
     return LogEntity(
