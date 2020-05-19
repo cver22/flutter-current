@@ -12,9 +12,10 @@ class EntryListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      title: Text(entry.entryName),
+      leading: Icon(Icons.category),
+      title: Text(entry.comment),
       subtitle: Text('Category, subcategories, tags'),
-      trailing: Text(entry.amount.toString()),
+      trailing: Text('\$ ${entry.amount.toString()}'),
       onTap: onTap,
     );
   }

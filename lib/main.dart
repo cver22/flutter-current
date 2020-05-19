@@ -52,24 +52,24 @@ class App extends StatelessWidget {
             return LoginScreen(userRepository: _userRepository);
           }
           if (state is Authenticated) {
-            final FirebaseLogsRepository _logsRepository = FirebaseLogsRepository(user: state.user);
-            final FirebaseEntriesRepository _entriesRepository = FirebaseEntriesRepository(user: state.user);
+            final FirebaseLogsRepository _logsRepository =
+                FirebaseLogsRepository(user: state.user);
+            final FirebaseEntriesRepository _entriesRepository =
+                FirebaseEntriesRepository(user: state.user);
             return MultiBlocProvider(
               providers: [
                 BlocProvider<LogsBloc>(
-                  create: (context) => LogsBloc(logsRepository: _logsRepository)..add(LoadLogs()),
+                  create: (context) => LogsBloc(logsRepository: _logsRepository)
+                    ..add(LoadLogs()),
                 ),
                 BlocProvider<EntriesBloc>(
-                  create: (context) => EntriesBloc(entriesRepository: _entriesRepository)..add(LoadEntries()),
+                  create: (context) =>
+                      EntriesBloc(entriesRepository: _entriesRepository)
+                        ..add(LoadEntries()),
                 ),
-
               ],
               child: HomeScreen(),
             );
-
-              BlocProvider<LogsBloc>(
-                create: (context) => LogsBloc(logsRepository: _logsRepository)..add(LoadLogs()),
-          child: HomeScreen(),);
           }
         },
       ),

@@ -1,6 +1,8 @@
+import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
+import 'package:expenses/screens/entries/add_edit_entries_page.dart';
 import 'package:expenses/screens/logs/add_edit_log_page.dart';
 import 'package:expenses/screens/logs/log_list_tile.dart';
 import 'package:flutter/material.dart';
@@ -44,8 +46,18 @@ class LogsPage extends StatelessWidget {
                           if (_log.active == true) {
                             return LogListTile(
                               log: _log,
-                              //TODO implement onTap to log a entry/transaction
-                              onTap: () {},
+                              //TODO do I need to pas the logs bloc?
+                              onTap: () =>Navigator.of(context).push(
+                                MaterialPageRoute(builder: (_) {
+                                  return BlocProvider.value(
+                                    value: BlocProvider.of<EntriesBloc>(context),
+                                    child: BlocProvider.value(
+                                      value: BlocProvider.of<LogsBloc>(context),
+                                      child: AddEditEntriesPage(log: _log),
+                                    ),
+                                  );
+                                }),
+                              ),
                               onLongPress: () => Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_) {
                                   return BlocProvider.value(

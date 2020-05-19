@@ -42,7 +42,7 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Entry'),
+        title: Text('Log'),
         actions: <Widget>[
           IconButton(
             icon: Icon(
@@ -53,7 +53,7 @@ class _AddEditLogPageState extends State<AddEditLogPage> {
               if (_name != null && _name != '') _submit();
             }, //TODO need to use state to take care of this with SavingLogState
           ),
-          _log.uid == null
+          _log.id == null
               ? Container()
               : PopupMenuButton<String>(
                   onSelected: handleClick,

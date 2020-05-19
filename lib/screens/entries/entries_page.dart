@@ -1,10 +1,13 @@
 import 'package:expenses/blocs/entries_bloc/bloc.dart';
+import 'package:expenses/blocs/logs_bloc/logs_bloc.dart';
 import 'package:expenses/models/entry/entry.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/entries/add_edit_entries_page.dart';
 import 'package:expenses/screens/entries/entry_list_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
+//TODO show the entries
 
 class EntriesPage extends StatelessWidget {
   @override
@@ -16,7 +19,10 @@ class EntriesPage extends StatelessWidget {
           MaterialPageRoute(builder: (_) {
             return BlocProvider.value(
               value: BlocProvider.of<EntriesBloc>(context),
-              child: AddEditEntriesPage(),
+              child: BlocProvider.value(
+                value: BlocProvider.of<LogsBloc>(context),
+                child: AddEditEntriesPage(),
+              ),
             );
           }),
         ),
@@ -48,12 +54,11 @@ class EntriesPage extends StatelessWidget {
                         // ignore: missing_return
                         itemBuilder: (BuildContext context, int index) {
                           final Entry _entry = entries[index];
-                          if(_entry.active == true){
+                          if (_entry.active == true) {
                             return EntryListTile(
                               entry: _entry,
                               onTap: () {},
                             );
-
                           } else {
                             return Container();
                           }

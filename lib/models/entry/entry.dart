@@ -9,7 +9,6 @@ class Entry extends Equatable {
   Entry(
       {this.id,
       @required this.logId,
-      this.entryName,
       @required this.currency,
       this.active = true,
       this.category,
@@ -20,7 +19,6 @@ class Entry extends Equatable {
 
   final String id;
   final String logId;
-  final String entryName;
   final String currency;
   final bool active;
   final String category;
@@ -32,7 +30,6 @@ class Entry extends Equatable {
   Entry copyWith({
     String id,
     String logId,
-    String entryName,
     String currency,
     bool active,
     String category,
@@ -44,7 +41,6 @@ class Entry extends Equatable {
     return Entry(
       id: id ?? this.id,
       logId: logId ?? this.logId,
-      entryName: entryName ?? this.entryName,
       currency: currency ?? this.currency,
       active: active ?? this.active,
       category: category ?? this.category,
@@ -59,7 +55,6 @@ class Entry extends Equatable {
   List<Object> get props => [
         id,
         logId,
-        entryName,
         currency,
         active,
         category,
@@ -71,7 +66,7 @@ class Entry extends Equatable {
 
   @override
   String toString() {
-    return 'Log {id: $id, logId: $logId, entryName: $entryName, '
+    return 'Log {id: $id, logId: $logId, '
         'currency: $currency, active: $active, category: $category, '
         'subcategory: $subcategory, amount: $amount, comment: $comment'
         'dateTime: $dateTime}';
@@ -84,7 +79,6 @@ class Entry extends Equatable {
           runtimeType == other.runtimeType &&
           id == other.id &&
           logId == other.logId &&
-          entryName == other.entryName &&
           currency == other.currency &&
           active == other.active &&
           category == other.category &&
@@ -97,7 +91,6 @@ class Entry extends Equatable {
     return EntryEntity(
       id: id,
       logId: logId,
-      entryName: entryName,
       currency: currency,
       active: active,
       category: category,
@@ -112,7 +105,6 @@ class Entry extends Equatable {
     return Entry(
       id: entity.id,
       logId: entity.logId,
-      entryName: entity.entryName,
       currency: entity.currency,
       active: entity.active,
       category: entity.category,

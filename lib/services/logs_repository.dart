@@ -36,7 +36,7 @@ class FirebaseLogsRepository implements LogsRepository {
         .updateData(inActive.toEntity().toDocument());
   }
 
-  //TODO need to filter by UID
+  //TODO need to filter by UID for groups
   @override
   Stream<List<Log>> loadLogs() {
     return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
@@ -46,7 +46,6 @@ class FirebaseLogsRepository implements LogsRepository {
     });
   }
 
-  //TODO should this use LogEntity instead of Log?
   @override
   Future<void> updateLog(Log update) {
     return logsCollection
