@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
+import 'package:expenses/models/categories/categories.dart';
 import 'package:expenses/res/db_consts.dart';
 
 class LogEntity extends Equatable {
@@ -7,10 +8,11 @@ class LogEntity extends Equatable {
   final String id;
   final String logName;
   final String currency;
+  final Categories categories;
   final bool active;
   final Map<String, dynamic> members;
 
-  const LogEntity({this.uid, this.id, this.logName, this.currency, this.active, this.members});
+  const LogEntity({this.uid, this.id, this.logName, this.currency, this.categories, this.active, this.members});
 
   //DEPRECATED
   //for use in other database types
@@ -26,11 +28,11 @@ class LogEntity extends Equatable {
   }*/
 
   @override
-  List<Object> get props => [uid, id, logName, currency, active, members];
+  List<Object> get props => [uid, id, logName, currency, categories, active, members];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, active: $active, members: $members}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, active: $active, members: $members}';
   }
 
   //DEPRECATED
@@ -52,6 +54,7 @@ class LogEntity extends Equatable {
       id: snap.documentID,
       logName: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
+      categories: snap.data[CATEGORIES],
       active: snap.data[ACTIVE],
       members: snap.data[MEMBER_ROLES_MAP],
     );
@@ -62,6 +65,7 @@ class LogEntity extends Equatable {
       UID: uid,
       LOG_NAME: logName,
       CURRENCY_NAME: currency,
+      CATEGORIES: categories,
       ACTIVE: active,
       MEMBER_ROLES_MAP: members,
     };

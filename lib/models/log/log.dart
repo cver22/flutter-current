@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
+import 'package:expenses/models/categories/categories.dart';
 import 'package:expenses/models/log/log_entity.dart';
 import 'package:flutter/foundation.dart';
 
 class Log extends Equatable {
-  //TODO need tracking for user categories, subcategories and their frequencies
   //TODO log keeps track of who owes who how much "debt map"?
 
   Log(
@@ -11,13 +11,15 @@ class Log extends Equatable {
       this.id,
       @required this.logName,
       @required this.currency,
+      this.categories,
       this.active = true,
       this.members});
 
   final String uid;
   final String id;
-  final String currency;
   final String logName;
+  final String currency;
+  final Categories categories;
   final bool active;
   final Map<String, dynamic> members;
 
@@ -26,6 +28,7 @@ class Log extends Equatable {
       String id,
       String logName,
       String currency,
+      Categories categories,
       bool active,
       Map<String, dynamic> members}) {
     return Log(
@@ -33,6 +36,7 @@ class Log extends Equatable {
       id: id ?? this.id,
       logName: logName ?? this.logName,
       currency: currency ?? this.currency,
+      categories: categories ?? this.categories,
       active: active ?? this.active,
       members: members ?? this.members,
     );
@@ -40,11 +44,11 @@ class Log extends Equatable {
 
   @override
   List<Object> get props =>
-      [uid, id, logName, currency, active, members];
+      [uid, id, logName, currency, categories, active, members];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, active: $active, members: $members}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, active: $active, members: $members}';
   }
 
   @override
@@ -54,6 +58,7 @@ class Log extends Equatable {
           runtimeType == other.runtimeType &&
           logName == other.logName &&
           currency == other.currency &&
+          categories == other.categories &&
           members == other.members &&
           id == other.id &&
           uid == other.uid &&
@@ -65,6 +70,7 @@ class Log extends Equatable {
         id: id,
         logName: logName,
         currency: currency,
+        categories: categories,
         active: active,
         members: members);
   }
@@ -75,6 +81,7 @@ class Log extends Equatable {
       id: entity.id,
       logName: entity.logName,
       currency: entity.currency,
+      categories: entity.categories,
       active: entity.active,
       members: entity.members,
     );
