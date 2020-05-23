@@ -1,27 +1,32 @@
-import 'package:equatable/equatable.dart';
+import 'package:expenses/models/categories/subcategory.dart';
+import 'package:flutter/material.dart';
 
-class Category extends Equatable {
-  final String category;
-  final List<String> subcategories;
+class Category extends Subcategory {
+  final List<Subcategory> subcategories;
 
-  Category({this.category, this.subcategories});
+  Category({id, name, icon, this.subcategories})
+      : super(id: id, name: name, icon: icon);
 
   @override
-  List<Object> get props => [category, subcategories];
+  List<Object> get props => [id, name, icon, subcategories];
 
   Category copyWith({
-    String category,
-    List<String> subcategories,
+    String id,
+    String name,
+    Icon icon,
+    List<Subcategory> subcategories,
   }) {
     return Category(
-      category: category ?? this.category,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      icon: icon ?? this.icon,
       subcategories: subcategories ?? this.subcategories,
     );
   }
 
   @override
   String toString() {
-    return 'Category {category: $category, subcategories: $subcategories}';
+    return 'Category {id: $id, name: $name, icon: $icon, subcategories: $subcategories}';
   }
 
   @override
@@ -29,6 +34,8 @@ class Category extends Equatable {
       identical(this, other) ||
       other is Category &&
           runtimeType == other.runtimeType &&
-          category == other.category &&
+          id == other.id &&
+          name == other.name &&
+          icon == other.icon &&
           subcategories == other.subcategories;
 }
