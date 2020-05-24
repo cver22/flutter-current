@@ -1,7 +1,12 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
+import 'package:expenses/models/categories/categories.dart';
+import 'package:expenses/models/categories/category/category.dart';
+import 'package:expenses/models/categories/subcategory/subcategory.dart';
+import 'package:expenses/models/log/log.dart';
 import 'package:expenses/services/logs_repository.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '../../blocs/logs_bloc/bloc.dart';
 
 class LogsBloc extends Bloc<LogsEvent, LogsState> {
@@ -38,7 +43,33 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
   }
 
   Stream<LogsState> _mapLogAddedToState(LogAdded event) {
-    _logsRepository.addNewLog(event.log);
+    //builds initial categories/subcategories for the log from the person's preferences
+    //TODO move this initialization to firebase using a Json file in the app
+    Log _log = event.log;
+    List<Category> categories = [];
+    List<Subcategory> subcategories = [];
+    Category home = Category(name: 'Home', id: Uuid().v4());
+    Category transportation = Category(name: 'Transportation', id: Uuid().v4());
+    Subcategory rent =
+        Subcategory(name: 'Rent', id: Uuid().v4(), parentCategoryId: home.id);
+    Subcategory car = Subcategory(
+        name: 'Car', id: Uuid().v4(), parentCategoryId: transportation.id);
+    Subcategory bus = Subcategory(
+        name: 'Bus', id: Uuid().v4(), parentCategoryId: transportation.id);
+    Subcategory parking = Subcategory(
+        name: 'Parking', id: Uuid().v4(), parentCategoryId: transportation.id);
+    categories.add(home);
+    categories.add(transportation);
+    subcategories.add(rent);
+    subcategories.add(car);
+    subcategories.add(bus);
+    subcategories.add(parking);
+    Categories allCategories =
+        Categories(categories: categories, subcategories: subcategories);
+    //_log = _log.copyWith(categories: allCategories);
+    print('these are my categories ${_log.categories}');
+
+    _logsRepository.addNewLog(_log);
   }
 
   Stream<LogsState> _mapLogUpdatedToState(LogUpdated event) {
@@ -59,8 +90,4 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     _logsSubscription?.cancel();
     return super.close();
   }
-
-
-
-
 }

@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:expenses/models/categories/category/category_entity.dart';
 import 'package:flutter/material.dart';
 
 class Category extends Equatable {
@@ -6,7 +7,7 @@ class Category extends Equatable {
   final String name;
   final Icon icon;
 
-  Category({this.id, this.name, this.icon});
+  Category({@required this.id, @required this.name, this.icon});
 
   @override
   List<Object> get props => [id, name, icon];
@@ -36,4 +37,20 @@ class Category extends Equatable {
           name == other.id &&
           name == other.name &&
           icon == other.icon;
+
+  CategoryEntity toEntity() {
+    return CategoryEntity(
+      id: id,
+      name: name,
+      icon: icon,
+    );
+  }
+
+  static Category fromEntity(CategoryEntity entity) {
+    return Category(
+      id: entity.id,
+      name: entity.name,
+      icon: entity.icon,
+    );
+  }
 }

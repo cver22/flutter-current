@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/categories/category.dart';
-import 'package:expenses/models/categories/subcategory.dart';
+import 'package:expenses/models/categories/category/category.dart';
+import 'package:expenses/models/categories/subcategory/subcategory.dart';
 
 class Categories extends Equatable {
   final String logId;
@@ -17,8 +17,8 @@ class Categories extends Equatable {
   Categories copyWith({
     String logId,
     String uid,
-    List<String> categories,
-    List<String> subcategories,
+    List<Category> categories,
+    List<Subcategory> subcategories,
   }) {
     return Categories(
       logId: logId ?? this.logId,

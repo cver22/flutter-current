@@ -7,7 +7,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddEditLogPage extends StatefulWidget {
   final Log log;
-
   const AddEditLogPage({Key key, this.log}) : super(key: key);
 
   @override
@@ -15,6 +14,7 @@ class AddEditLogPage extends StatefulWidget {
 }
 
 class _AddEditLogPageState extends State<AddEditLogPage> {
+  //TODO text editing controllers and dispose
   Log _log;
   String _currency;
   String _name;

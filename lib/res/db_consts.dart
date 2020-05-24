@@ -8,6 +8,9 @@ const String CATEGORY = 'category';
 const String SUBCATEGORY = 'subcategory';
 const String CATEGORIES = 'categories';
 const String SUBCATEGORIES = 'subcategories';
+const String NAME = 'name';
+const String ICON = 'icon';
+const String PARENT_CATEGORY_ID = 'parentCategoryId';
 
 //Log constants
 const String LOGS_COLLECTION = 'logs';

@@ -1,10 +1,11 @@
-import 'package:expenses/models/categories/category.dart';
+import 'package:expenses/models/categories/category/category.dart';
+import 'package:expenses/models/categories/subcategory/subcategory_entity.dart';
 import 'package:flutter/material.dart';
 
 class Subcategory extends Category {
   final String parentCategoryId;
 
-  Subcategory({id, name, icon, this.parentCategoryId})
+  Subcategory({id, name, icon, @required this.parentCategoryId})
       : super(id: id, name: name, icon: icon);
 
   @override
@@ -38,4 +39,22 @@ class Subcategory extends Category {
           name == other.id &&
           name == other.name &&
           icon == other.icon;
+
+  SubcategoryEntity toEntity() {
+    return SubcategoryEntity(
+      parentCategoryId: parentCategoryId,
+      id: id,
+      name: name,
+      icon: icon,
+    );
+  }
+
+  static Subcategory fromEntity(SubcategoryEntity entity) {
+    return Subcategory(
+      parentCategoryId: entity.parentCategoryId,
+      id: entity.id,
+      name: entity.name,
+      icon: entity.icon,
+    );
+  }
 }

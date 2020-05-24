@@ -1,8 +1,8 @@
 import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
-import 'package:expenses/models/categories/category.dart';
-import 'package:expenses/models/categories/subcategory.dart';
+import 'package:expenses/models/categories/category/category.dart';
+import 'package:expenses/models/categories/subcategory/subcategory.dart';
 import 'package:expenses/models/entry/entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'package:flutter/material.dart';
 class CategoryPicker extends StatefulWidget {
   //TODO probably refactor for this to just access the blocs from context
   //TODO refactor the dropdown to follow the pattern I used in the log picker
+  //TODO error checking if no categories or subcategories are present
   const CategoryPicker(
       {Key key,
       @required this.logsBloc,
@@ -28,15 +29,15 @@ class CategoryPicker extends StatefulWidget {
 }
 
 class _CategoryPickerState extends State<CategoryPicker> {
-  LogsBloc
-      _logsBloc; //TODO refactor picker to allow editing of categories in the log
+  //TODO refactor picker to allow editing of categories in the log
+  LogsBloc _logsBloc;
   EntriesBloc _entriesBloc;
   Entry _entry;
   Log _log;
   List<Category> _categories = [];
   List<Subcategory> _subcategories = [];
-  Category _category; //TODO default to misc
-  Subcategory _subcategory; // TODO default to misc
+  Category _category; //TODO set editable default category
+  Subcategory _subcategory; //TODO set editable default category
 
   @override
   void initState() {
@@ -59,6 +60,12 @@ class _CategoryPickerState extends State<CategoryPicker> {
       _subcategory = _log.categories.subcategories
           .firstWhere((subcategory) => subcategory.id == subcategoryId);
     }
+  }
+
+  void _submit() {
+    _entry =
+        _entry.copyWith(category: _category.id, subcategory: _subcategory.id);
+    _entriesBloc..add(EntryUpdated(entry: _entry));
   }
 
   @override
@@ -90,10 +97,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
               _subcategories.add(_log.categories.subcategories[i]);
             }
           }
-
-          //TODO refactor to a submit method
-          _entry = _entry.copyWith(category: _category.id);
-          _entriesBloc..add(EntryUpdated(entry: _entry));
+          _submit();
         });
       },
       items: _categories.map((Category category) {
@@ -114,9 +118,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
       onChanged: (Subcategory value) {
         setState(() {
           _subcategory = value;
-          //TODO refactor to a submit method
-          _entry = _entry.copyWith(subcategory: _subcategory.id);
-          _entriesBloc..add(EntryUpdated(entry: _entry));
+          _submit();
         });
       },
       items: _subcategories.map((Subcategory subcategory) {

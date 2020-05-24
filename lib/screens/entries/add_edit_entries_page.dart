@@ -3,6 +3,7 @@ import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/entry/entry.dart';
 import 'package:expenses/models/log/log.dart';
+import 'package:expenses/screens/common_widgets/catergory_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -20,7 +21,6 @@ class AddEditEntriesPage extends StatefulWidget {
 class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   Entry _entry;
   String _currency;
-  String _logId;
   String _category;
   String _subcategory;
   double _amount;
@@ -35,8 +35,6 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
     super.initState();
     _entry = widget.entry == null ? Entry() : widget.entry;
     _currency = _entry?.currency ?? 'ca';
-    _logId = _entry?.logId ??
-        widget?.log?.id; //TODO pass logId by clicking on log or some other way
     _category = _entry?.category ?? null;
     _subcategory = _entry?.subcategory ?? null;
     _amount = _entry?.amount ?? null;
@@ -47,7 +45,6 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   }
 
   void _submit() {
-    print('submit entry pressed');
     _entry = _entry.copyWith(
         currency: _currency,
         logId: _log.id,
@@ -150,6 +147,8 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
             ),
           ],
         ),
+        //TODO pass logsbloc
+        //CategoryPicker(entry: _entry, entriesBloc: _entriesBloc, log: _log),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
           initialValue: _comment,
