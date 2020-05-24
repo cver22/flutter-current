@@ -1,3 +1,4 @@
+import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/categories/category.dart';
@@ -27,12 +28,13 @@ class CategoryPicker extends StatefulWidget {
 }
 
 class _CategoryPickerState extends State<CategoryPicker> {
-  LogsBloc _logsBloc;
+  LogsBloc
+      _logsBloc; //TODO refactor picker to allow editing of categories in the log
   EntriesBloc _entriesBloc;
   Entry _entry;
   Log _log;
-
-  //TODO set initial categories from an existing entry based on the id of the cat / subcat
+  List<Category> _categories = [];
+  List<Subcategory> _subcategories = [];
   Category _category; //TODO default to misc
   Subcategory _subcategory; // TODO default to misc
 
@@ -43,23 +45,55 @@ class _CategoryPickerState extends State<CategoryPicker> {
     _logsBloc = widget.logsBloc;
     _entry = widget.entry;
     _log = widget.log;
+
+    //initialize category from existing entry
+    if (widget.entry?.category != null) {
+      String categoryId = widget.entry.category;
+      _category = _log.categories.categories
+          .firstWhere((category) => category.id == categoryId);
+    }
+
+    //initialize subcategory from existing entry
+    if (widget.entry?.subcategory != null) {
+      String subcategoryId = widget.entry.subcategory;
+      _subcategory = _log.categories.subcategories
+          .firstWhere((subcategory) => subcategory.id == subcategoryId);
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    List<Category> _categories = [];
-    List<Subcategory> _subcategories = [];
+    return Column(
+      children: <Widget>[
+        _categoryDropDown(),
+        //only shows subcategories after selection of category
+        _subcategories.length > 0 ? _subcategoryDropDown() : Container(),
+      ],
+    );
+  }
 
+  Widget _categoryDropDown() {
     for (int i = 0; i < _log.categories.categories.length; i++) {
       _categories.add(_log.categories.categories[i]);
     }
-
     return DropdownButton<Category>(
       value: _category,
       onChanged: (Category value) {
         setState(() {
           _category = value;
-          //TODO get index of category and return subcategories list using for loop similar to above
+          String parentCategoryId = _category.id;
+
+          //populates subcategory dropdown based on category chosen
+          for (int i = 0; i < _log.categories.subcategories.length; i++) {
+            if (_log.categories.subcategories[i].parentCategoryId ==
+                parentCategoryId) {
+              _subcategories.add(_log.categories.subcategories[i]);
+            }
+          }
+
+          //TODO refactor to a submit method
+          _entry = _entry.copyWith(category: _category.id);
+          _entriesBloc..add(EntryUpdated(entry: _entry));
         });
       },
       items: _categories.map((Category category) {
@@ -67,6 +101,29 @@ class _CategoryPickerState extends State<CategoryPicker> {
           value: category,
           child: Text(
             category.name,
+            style: TextStyle(color: Colors.black),
+          ),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _subcategoryDropDown() {
+    return DropdownButton<Subcategory>(
+      value: _subcategory,
+      onChanged: (Subcategory value) {
+        setState(() {
+          _subcategory = value;
+          //TODO refactor to a submit method
+          _entry = _entry.copyWith(subcategory: _subcategory.id);
+          _entriesBloc..add(EntryUpdated(entry: _entry));
+        });
+      },
+      items: _subcategories.map((Subcategory subcategory) {
+        return DropdownMenuItem<Subcategory>(
+          value: subcategory,
+          child: Text(
+            subcategory.name,
             style: TextStyle(color: Colors.black),
           ),
         );
