@@ -5,29 +5,30 @@ import 'package:flutter/material.dart';
 class Subcategory extends Category {
   final String parentCategoryId;
 
-  Subcategory({id, name, icon, @required this.parentCategoryId})
-      : super(id: id, name: name, icon: icon);
+  Subcategory({id, name, iconData, @required this.parentCategoryId})
+      : super(id: id, name: name, iconData: iconData);
 
   @override
-  List<Object> get props => [parentCategoryId, id, name, icon];
+  List<Object> get props => [parentCategoryId, id, name, iconData];
 
+  @override
   Subcategory copyWith({
     String parentCategoryId,
     String id,
     String name,
-    Icon icon,
+    IconData iconData,
   }) {
     return Subcategory(
       parentCategoryId: parentCategoryId ?? this.parentCategoryId,
       id: id ?? this.id,
       name: name ?? this.name,
-      icon: icon ?? this.icon,
+      iconData: iconData ?? this.iconData,
     );
   }
 
   @override
   String toString() {
-    return 'Subcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, icon: $icon}';
+    return 'Subcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, iconData: $iconData}';
   }
 
   @override
@@ -38,23 +39,27 @@ class Subcategory extends Category {
           parentCategoryId == other.parentCategoryId &&
           name == other.id &&
           name == other.name &&
-          icon == other.icon;
+          iconData == other.iconData;
 
+  @override
   SubcategoryEntity toEntity() {
     return SubcategoryEntity(
       parentCategoryId: parentCategoryId,
       id: id,
       name: name,
-      icon: icon,
+      iconCodePoint: iconData.codePoint.toString(),
+      iconFontFamily: iconData.fontFamily,
     );
   }
 
+  @override
   static Subcategory fromEntity(SubcategoryEntity entity) {
     return Subcategory(
       parentCategoryId: entity.parentCategoryId,
       id: entity.id,
       name: entity.name,
-      icon: entity.icon,
+      iconData: IconData(int.parse(entity.iconCodePoint),
+          fontFamily: entity.iconFontFamily),
     );
   }
 }

@@ -1,36 +1,38 @@
 import 'package:expenses/models/categories/category/category_entity.dart';
 import 'package:expenses/res/db_consts.dart';
-import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'subcategory_entity.g.dart';
+
+@JsonSerializable()
 class SubcategoryEntity extends CategoryEntity {
   final String parentCategoryId;
 
-  const SubcategoryEntity({id, name, icon, this.parentCategoryId})
-      : super(icon: icon, name: name, id: id);
+  const SubcategoryEntity({
+    id,
+    name,
+    iconCodePoint,
+    iconFontFamily,
+    this.parentCategoryId,
+  }) : super(
+            iconCodePoint: iconCodePoint,
+            iconFontFamily: iconFontFamily,
+            name: name,
+            id: id);
 
   @override
-  List<Object> get props => [id, name, icon, parentCategoryId];
+  List<Object> get props =>
+      [id, name, iconCodePoint, iconFontFamily, parentCategoryId];
 
   @override
   String toString() {
-    return 'SubcategoryEntity {id: $id, name: $name, icon: $icon, parentCategoryId: $parentCategoryId}';
+    return 'SubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
   }
 
-  Map<String, Object> toJson() {
-    return {
-      ID: id,
-      NAME: name,
-      ICON: icon,
-      PARENT_CATEGORY_ID: parentCategoryId,
-    };
-  }
+  @override
+  factory SubcategoryEntity.fromJson(Map<String, dynamic> json) =>
+      _$SubcategoryEntityFromJson(json);
 
-  static SubcategoryEntity fromJson(Map<String, Object> json) {
-    return SubcategoryEntity(
-      id: json[ID] as String,
-      name: json[NAME] as String,
-      icon: json[ICON] as Icon,
-      parentCategoryId: json[PARENT_CATEGORY_ID] as String,
-    );
-  }
+  @override
+  Map<String, dynamic> toJson() => _$SubcategoryEntityToJson(this);
 }

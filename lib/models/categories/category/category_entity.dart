@@ -1,34 +1,29 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/res/db_consts.dart';
-import 'package:flutter/material.dart';
+import 'package:json_annotation/json_annotation.dart';
 
+part 'category_entity.g.dart';
+
+@JsonSerializable()
 class CategoryEntity extends Equatable {
   final String id;
   final String name;
-  final Icon icon;
+  final String iconCodePoint;
+  final String iconFontFamily;
 
-  const CategoryEntity({this.id, this.name, this.icon});
+  const CategoryEntity(
+      {this.id, this.name, this.iconCodePoint, this.iconFontFamily});
 
   @override
-  List<Object> get props => [id, name, icon];
+  List<Object> get props => [id, name, iconCodePoint, iconFontFamily];
 
   @override
   String toString() {
-    return 'CategoryEntity {id: $id, name: $name, icon: $icon}';
+    return 'CategoryEntity {id: $id, name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily }';
   }
 
-  Map<String, Object> toJson() {
-    return {
-      ID: id,
-      NAME: name,
-      ICON: icon,
-    };
-  }
+  factory CategoryEntity.fromJson(Map<String, dynamic> json) =>
+      _$CategoryEntityFromJson(json);
 
-  static CategoryEntity fromJson(Map<String, Object> json) {
-    return CategoryEntity(
-        id: json[ID] as String,
-        name: json[NAME] as String,
-        icon: json[ICON] as Icon);
-  }
+  Map<String, dynamic> toJson() => _$CategoryEntityToJson(this);
 }

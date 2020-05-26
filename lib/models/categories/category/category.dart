@@ -5,28 +5,28 @@ import 'package:flutter/material.dart';
 class Category extends Equatable {
   final String id;
   final String name;
-  final Icon icon;
+  final IconData iconData;
 
-  Category({@required this.id, @required this.name, this.icon});
+  Category({@required this.id, @required this.name, this.iconData});
 
   @override
-  List<Object> get props => [id, name, icon];
+  List<Object> get props => [id, name, iconData];
 
   Category copyWith({
     String id,
     String name,
-    Icon icon,
+    IconData iconData,
   }) {
     return Category(
       id: id ?? this.id,
       name: name ?? this.name,
-      icon: icon ?? this.icon,
+      iconData: iconData ?? this.iconData,
     );
   }
 
   @override
   String toString() {
-    return 'Category {id: $id, name: $name, icon: $icon}';
+    return 'Category {id: $id, name: $name, icon: $iconData}';
   }
 
   @override
@@ -36,13 +36,14 @@ class Category extends Equatable {
           runtimeType == other.runtimeType &&
           name == other.id &&
           name == other.name &&
-          icon == other.icon;
+          iconData == other.iconData;
 
   CategoryEntity toEntity() {
     return CategoryEntity(
       id: id,
       name: name,
-      icon: icon,
+      iconCodePoint: iconData.codePoint.toString(),
+      iconFontFamily: iconData.fontFamily,
     );
   }
 
@@ -50,7 +51,8 @@ class Category extends Equatable {
     return Category(
       id: entity.id,
       name: entity.name,
-      icon: entity.icon,
+      iconData: IconData(int.parse(entity.iconCodePoint),
+          fontFamily: entity.iconFontFamily),
     );
   }
 }

@@ -9,7 +9,8 @@ const String SUBCATEGORY = 'subcategory';
 const String CATEGORIES = 'categories';
 const String SUBCATEGORIES = 'subcategories';
 const String NAME = 'name';
-const String ICON = 'icon';
+const String ICON_CODE_POINT = 'iconCodePoint';
+const String ICON_FONT_FAMILY = 'iconFontFamily';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
 
 //Log constants
