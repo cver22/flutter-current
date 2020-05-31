@@ -1,23 +1,23 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/categories/category/category_entity.dart';
+import 'package:expenses/models/categories/my_category/category_entity.dart';
 import 'package:flutter/material.dart';
 
-class Category extends Equatable {
+class MyCategory extends Equatable {
   final String id;
   final String name;
   final IconData iconData;
 
-  Category({@required this.id, @required this.name, this.iconData});
+  MyCategory({@required this.id, @required this.name, this.iconData});
 
   @override
   List<Object> get props => [id, name, iconData];
 
-  Category copyWith({
+  MyCategory copyWith({
     String id,
     String name,
     IconData iconData,
   }) {
-    return Category(
+    return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       iconData: iconData ?? this.iconData,
@@ -26,20 +26,20 @@ class Category extends Equatable {
 
   @override
   String toString() {
-    return 'Category {id: $id, name: $name, icon: $iconData}';
+    return 'MyCategory {id: $id, name: $name, icon: $iconData}';
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Category &&
+      other is MyCategory &&
           runtimeType == other.runtimeType &&
-          name == other.id &&
+          id == other.id &&
           name == other.name &&
           iconData == other.iconData;
 
-  CategoryEntity toEntity() {
-    return CategoryEntity(
+  MyCategoryEntity toEntity() {
+    return MyCategoryEntity(
       id: id,
       name: name,
       iconCodePoint: iconData.codePoint.toString(),
@@ -47,8 +47,8 @@ class Category extends Equatable {
     );
   }
 
-  static Category fromEntity(CategoryEntity entity) {
-    return Category(
+  static MyCategory fromEntity(MyCategoryEntity entity) {
+    return MyCategory(
       id: entity.id,
       name: entity.name,
       iconData: IconData(int.parse(entity.iconCodePoint),

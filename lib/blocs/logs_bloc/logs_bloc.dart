@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:bloc/bloc.dart';
-import 'package:expenses/models/categories/categories.dart';
-import 'package:expenses/models/categories/category/category.dart';
-import 'package:expenses/models/categories/subcategory/subcategory.dart';
+import 'package:expenses/models/categories/master_categories.dart';
+import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/services/logs_repository.dart';
 import 'package:flutter/material.dart';
@@ -46,27 +46,27 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     //builds initial categories/subcategories for the log from the person's preferences
     //TODO move this initialization to firebase using a Json file in the app
     Log _log = event.log;
-    List<Category> categories = [];
-    List<Subcategory> subcategories = [];
-    Category home = Category(name: 'Home', id: Uuid().v4());
-    Category transportation = Category(name: 'Transportation', id: Uuid().v4());
-    Subcategory rent =
-        Subcategory(name: 'Rent', id: Uuid().v4(), parentCategoryId: home.id);
-    Subcategory car = Subcategory(
+    Map<String, MyCategory> categories;
+    Map<String, MySubcategory> subcategories;
+    MyCategory home = MyCategory(name: 'Home', id: Uuid().v4());
+    MyCategory transportation = MyCategory(name: 'Transportation', id: Uuid().v4());
+    MySubcategory rent =
+    MySubcategory(name: 'Rent', id: Uuid().v4(), parentCategoryId: home.id);
+    MySubcategory car = MySubcategory(
         name: 'Car', id: Uuid().v4(), parentCategoryId: transportation.id);
-    Subcategory bus = Subcategory(
+    MySubcategory bus = MySubcategory(
         name: 'Bus', id: Uuid().v4(), parentCategoryId: transportation.id);
-    Subcategory parking = Subcategory(
+    MySubcategory parking = MySubcategory(
         name: 'Parking', id: Uuid().v4(), parentCategoryId: transportation.id);
-    categories.add(home);
-    categories.add(transportation);
-    subcategories.add(rent);
-    subcategories.add(car);
-    subcategories.add(bus);
-    subcategories.add(parking);
-    Categories allCategories =
-        Categories(categories: categories, subcategories: subcategories);
-    //_log = _log.copyWith(categories: allCategories);
+    categories[home.id] = home;
+    categories[transportation.id] = transportation;
+    subcategories[rent.id] = rent;
+    subcategories[car.id] = car;
+    subcategories[bus.id] = bus;
+    subcategories[parking.id] = parking;
+
+    _log = _log.copyWith(categories: categories, subcategories: subcategories);
+
     print('these are my categories ${_log.categories}');
 
     _logsRepository.addNewLog(_log);

@@ -2,16 +2,16 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/res/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'category_entity.g.dart';
+part 'my_category_entity.g.dart';
 
 @JsonSerializable()
-class CategoryEntity extends Equatable {
+class MyCategoryEntity extends Equatable {
   final String id;
   final String name;
   final String iconCodePoint;
   final String iconFontFamily;
 
-  const CategoryEntity(
+  const MyCategoryEntity(
       {this.id, this.name, this.iconCodePoint, this.iconFontFamily});
 
   @override
@@ -19,11 +19,11 @@ class CategoryEntity extends Equatable {
 
   @override
   String toString() {
-    return 'CategoryEntity {id: $id, name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily }';
+    return 'MyCategoryEntity {id: $id, name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily }';
   }
 
-  factory CategoryEntity.fromJson(Map<String, dynamic> json) =>
-      _$CategoryEntityFromJson(json);
+  factory MyCategoryEntity.fromJson(Map<String, dynamic> json) =>
+      _$MyCategoryEntityFromJson(json);
 
-  Map<String, dynamic> toJson() => _$CategoryEntityToJson(this);
+  Map<String, dynamic> toJson() => _$MyCategoryEntityToJson(this);
 }

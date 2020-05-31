@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'subcategory_entity.dart';
+part of 'my_subcategory_entity.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-SubcategoryEntity _$SubcategoryEntityFromJson(Map<String, dynamic> json) {
-  return SubcategoryEntity(
+MySubcategoryEntity _$SubcategoryEntityFromJson(Map<String, dynamic> json) {
+  return MySubcategoryEntity(
     id: json['id'],
     name: json['name'],
     iconCodePoint: json['iconCodePoint'],
@@ -16,7 +16,7 @@ SubcategoryEntity _$SubcategoryEntityFromJson(Map<String, dynamic> json) {
   );
 }
 
-Map<String, dynamic> _$SubcategoryEntityToJson(SubcategoryEntity instance) =>
+Map<String, dynamic> _$SubcategoryEntityToJson(MySubcategoryEntity instance) =>
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,

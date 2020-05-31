@@ -1,24 +1,24 @@
-import 'package:expenses/models/categories/category/category.dart';
-import 'package:expenses/models/categories/subcategory/subcategory_entity.dart';
+import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/models/categories/my_subcategory/my_subcategory_entity.dart';
 import 'package:flutter/material.dart';
 
-class Subcategory extends Category {
+class MySubcategory extends MyCategory {
   final String parentCategoryId;
 
-  Subcategory({id, name, iconData, @required this.parentCategoryId})
+  MySubcategory({id, name, iconData, @required this.parentCategoryId})
       : super(id: id, name: name, iconData: iconData);
 
   @override
   List<Object> get props => [parentCategoryId, id, name, iconData];
 
   @override
-  Subcategory copyWith({
+  MySubcategory copyWith({
     String parentCategoryId,
     String id,
     String name,
     IconData iconData,
   }) {
-    return Subcategory(
+    return MySubcategory(
       parentCategoryId: parentCategoryId ?? this.parentCategoryId,
       id: id ?? this.id,
       name: name ?? this.name,
@@ -28,22 +28,22 @@ class Subcategory extends Category {
 
   @override
   String toString() {
-    return 'Subcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, iconData: $iconData}';
+    return 'MySubcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, iconData: $iconData}';
   }
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Subcategory &&
+      other is MySubcategory &&
           runtimeType == other.runtimeType &&
+          id == other.id &&
           parentCategoryId == other.parentCategoryId &&
-          name == other.id &&
           name == other.name &&
           iconData == other.iconData;
 
   @override
-  SubcategoryEntity toEntity() {
-    return SubcategoryEntity(
+  MySubcategoryEntity toEntity() {
+    return MySubcategoryEntity(
       parentCategoryId: parentCategoryId,
       id: id,
       name: name,
@@ -53,8 +53,8 @@ class Subcategory extends Category {
   }
 
   @override
-  static Subcategory fromEntity(SubcategoryEntity entity) {
-    return Subcategory(
+  static MySubcategory fromEntity(MySubcategoryEntity entity) {
+    return MySubcategory(
       parentCategoryId: entity.parentCategoryId,
       id: entity.id,
       name: entity.name,

@@ -1,14 +1,14 @@
-import 'package:expenses/models/categories/category/category_entity.dart';
+import 'package:expenses/models/categories/my_category/category_entity.dart';
 import 'package:expenses/res/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'subcategory_entity.g.dart';
+part 'my_subcategory_entity.g.dart';
 
 @JsonSerializable()
-class SubcategoryEntity extends CategoryEntity {
+class MySubcategoryEntity extends MyCategoryEntity {
   final String parentCategoryId;
 
-  const SubcategoryEntity({
+  const MySubcategoryEntity({
     id,
     name,
     iconCodePoint,
@@ -26,11 +26,11 @@ class SubcategoryEntity extends CategoryEntity {
 
   @override
   String toString() {
-    return 'SubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
+    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
   }
 
   @override
-  factory SubcategoryEntity.fromJson(Map<String, dynamic> json) =>
+  factory MySubcategoryEntity.fromJson(Map<String, dynamic> json) =>
       _$SubcategoryEntityFromJson(json);
 
   @override
