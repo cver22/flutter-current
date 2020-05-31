@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/categories/my_category/category_entity.dart';
+import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:flutter/material.dart';
 
 class MyCategory extends Equatable {

@@ -20,4 +20,6 @@ class MasterCategoriesEntity extends Equatable{
     return 'MasterCategoriesEntity {$UID: $uid, $CATEGORIES: $categories, $SUBCATEGORIES: $subcategories}';
   }
 
+  //TODO save to firebase master list or save to file?
+
 }

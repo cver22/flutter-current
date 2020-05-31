@@ -1,4 +1,4 @@
-import 'package:expenses/models/categories/my_category/category_entity.dart';
+import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:expenses/res/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 

@@ -67,7 +67,8 @@ class LogEntity extends Equatable {
       UID: uid,
       LOG_NAME: logName,
       CURRENCY_NAME: currency,
-      //TODO serialize categories and subcategories
+    //TODO serialize categories and subcategories
+      CATEGORIES: categories.map((key, value) => categories[key].toEntity().toJson()).toString(),
       ACTIVE: active,
       MEMBER_ROLES_MAP: members,
     };
