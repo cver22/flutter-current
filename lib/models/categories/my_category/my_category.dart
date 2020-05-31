@@ -55,4 +55,5 @@ class MyCategory extends Equatable {
           fontFamily: entity.iconFontFamily),
     );
   }
+  //new comment
 }
