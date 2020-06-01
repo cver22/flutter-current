@@ -42,8 +42,8 @@ class MyCategory extends Equatable {
     return MyCategoryEntity(
       id: id,
       name: name,
-      iconCodePoint: iconData.codePoint.toString(),
-      iconFontFamily: iconData.fontFamily,
+      iconCodePoint: iconData?.codePoint.toString(),
+      iconFontFamily: iconData?.fontFamily,
     );
   }
 

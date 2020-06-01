@@ -47,8 +47,8 @@ class MySubcategory extends MyCategory {
       parentCategoryId: parentCategoryId,
       id: id,
       name: name,
-      iconCodePoint: iconData.codePoint.toString(),
-      iconFontFamily: iconData.fontFamily,
+      iconCodePoint: iconData?.codePoint.toString(),
+      iconFontFamily: iconData?.fontFamily,
     );
   }
 

@@ -46,8 +46,8 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     //builds initial categories/subcategories for the log from the person's preferences
     //TODO move this initialization to firebase using a Json file in the app
     Log _log = event.log;
-    Map<String, MyCategory> categories;
-    Map<String, MySubcategory> subcategories;
+    Map<String, MyCategory> categories = Map();
+    Map<String, MySubcategory> subcategories = Map();
     MyCategory home = MyCategory(name: 'Home', id: Uuid().v4());
     MyCategory transportation = MyCategory(name: 'Transportation', id: Uuid().v4());
     MySubcategory rent =
@@ -58,12 +58,14 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
         name: 'Bus', id: Uuid().v4(), parentCategoryId: transportation.id);
     MySubcategory parking = MySubcategory(
         name: 'Parking', id: Uuid().v4(), parentCategoryId: transportation.id);
-    categories[home.id] = home;
-    categories[transportation.id] = transportation;
-    subcategories[rent.id] = rent;
-    subcategories[car.id] = car;
-    subcategories[bus.id] = bus;
-    subcategories[parking.id] = parking;
+
+    categories.putIfAbsent(home.id, () => home);
+    categories.putIfAbsent(transportation.id, () => transportation);
+
+    subcategories.putIfAbsent(rent.id, () => rent);
+    subcategories.putIfAbsent(car.id, () => car);
+    subcategories.putIfAbsent(bus.id, () => bus);
+    subcategories.putIfAbsent(parking.id, () => parking);
 
     _log = _log.copyWith(categories: categories, subcategories: subcategories);
 
