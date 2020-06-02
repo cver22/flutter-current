@@ -3,11 +3,11 @@ import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:flutter/material.dart';
 
 class MyCategory extends Equatable {
-  final String id;
+  final String id; //TODO id is likely depreciated, remove if not needed
   final String name;
   final IconData iconData;
 
-  MyCategory({@required this.id, @required this.name, this.iconData});
+  MyCategory({this.id, @required this.name, this.iconData});
 
   @override
   List<Object> get props => [id, name, iconData];
@@ -51,8 +51,8 @@ class MyCategory extends Equatable {
     return MyCategory(
       id: entity.id,
       name: entity.name,
-      iconData: IconData(int.parse(entity.iconCodePoint),
-          fontFamily: entity.iconFontFamily),
+      iconData: entity?.iconCodePoint != null && entity?.iconFontFamily !=null ? IconData(int.parse(entity.iconCodePoint),
+          fontFamily: entity.iconFontFamily) : null,
     );
   }
 }

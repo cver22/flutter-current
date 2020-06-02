@@ -148,7 +148,7 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
           ],
         ),
         //TODO pass logsbloc
-        //CategoryPicker(entry: _entry, entriesBloc: _entriesBloc, log: _log),
+        CategoryPicker(entry: _entry, entriesBloc: _entriesBloc, log: _log),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
           initialValue: _comment,

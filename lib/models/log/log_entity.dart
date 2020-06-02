@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
+import 'package:expenses/models/categories/my_subcategory/my_subcategory_entity.dart';
 import 'package:expenses/res/db_consts.dart';
 
 class LogEntity extends Equatable {
@@ -14,7 +16,15 @@ class LogEntity extends Equatable {
   final Map<String, MySubcategory> subcategories;
   final Map<String, dynamic> members;
 
-  const LogEntity({this.uid, this.id, this.logName, this.currency, this.categories, this.subcategories, this.active, this.members});
+  const LogEntity(
+      {this.uid,
+      this.id,
+      this.logName,
+      this.currency,
+      this.categories,
+      this.subcategories,
+      this.active,
+      this.members});
 
   //DEPRECATED
   //for use in other database types
@@ -30,7 +40,8 @@ class LogEntity extends Equatable {
   }*/
 
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, active, members];
+  List<Object> get props =>
+      [uid, id, logName, currency, categories, subcategories, active, members];
 
   @override
   String toString() {
@@ -51,12 +62,19 @@ class LogEntity extends Equatable {
   }*/
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
+
     return LogEntity(
       uid: snap.data[UID],
       id: snap.documentID,
       logName: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
-      //TODO de-serialize categories and subcategories
+      //TODO subcategories
+      categories: (snap.data[CATEGORIES] as Map<String, dynamic>).map(
+          (key, value) => MapEntry(
+              key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
+      subcategories: (snap.data[SUBCATEGORIES] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(
+              key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       active: snap.data[ACTIVE],
       members: snap.data[MEMBER_ROLES_MAP],
     );
@@ -67,9 +85,10 @@ class LogEntity extends Equatable {
       UID: uid,
       LOG_NAME: logName,
       CURRENCY_NAME: currency,
-    //TODO serialize categories and subcategories
-      CATEGORIES: categories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
-      SUBCATEGORIES: subcategories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      CATEGORIES: categories
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      SUBCATEGORIES: subcategories
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       ACTIVE: active,
       MEMBER_ROLES_MAP: members,
     };

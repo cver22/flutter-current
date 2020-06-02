@@ -58,8 +58,8 @@ class MySubcategory extends MyCategory {
       parentCategoryId: entity.parentCategoryId,
       id: entity.id,
       name: entity.name,
-      iconData: IconData(int.parse(entity.iconCodePoint),
-          fontFamily: entity.iconFontFamily),
+      iconData: entity?.iconCodePoint != null && entity?.iconFontFamily !=null ?IconData(int.parse(entity.iconCodePoint),
+          fontFamily: entity.iconFontFamily) : null,
     );
   }
 }

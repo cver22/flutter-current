@@ -48,24 +48,36 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     Log _log = event.log;
     Map<String, MyCategory> categories = Map();
     Map<String, MySubcategory> subcategories = Map();
-    MyCategory home = MyCategory(name: 'Home', id: Uuid().v4());
-    MyCategory transportation = MyCategory(name: 'Transportation', id: Uuid().v4());
-    MySubcategory rent =
-    MySubcategory(name: 'Rent', id: Uuid().v4(), parentCategoryId: home.id);
+    MyCategory home = MyCategory(name: 'Home');
+    MyCategory transportation = MyCategory(name: 'Transportation');
+
+    categories.putIfAbsent(Uuid().v4(), () => home);
+    categories.putIfAbsent(Uuid().v4(), () => transportation);
+
+    MySubcategory rent = MySubcategory(
+        name: 'Rent',
+        parentCategoryId: categories.keys
+            .firstWhere((k) => categories[k] == home, orElse: () => null));
     MySubcategory car = MySubcategory(
-        name: 'Car', id: Uuid().v4(), parentCategoryId: transportation.id);
+        name: 'Car',
+        parentCategoryId: categories.keys.firstWhere(
+            (k) => categories[k] == transportation,
+            orElse: () => null));
     MySubcategory bus = MySubcategory(
-        name: 'Bus', id: Uuid().v4(), parentCategoryId: transportation.id);
+        name: 'Bus',
+        parentCategoryId: categories.keys.firstWhere(
+            (k) => categories[k] == transportation,
+            orElse: () => null));
     MySubcategory parking = MySubcategory(
-        name: 'Parking', id: Uuid().v4(), parentCategoryId: transportation.id);
+        name: 'Parking',
+        parentCategoryId: categories.keys.firstWhere(
+            (k) => categories[k] == transportation,
+            orElse: () => null));
 
-    categories.putIfAbsent(home.id, () => home);
-    categories.putIfAbsent(transportation.id, () => transportation);
-
-    subcategories.putIfAbsent(rent.id, () => rent);
-    subcategories.putIfAbsent(car.id, () => car);
-    subcategories.putIfAbsent(bus.id, () => bus);
-    subcategories.putIfAbsent(parking.id, () => parking);
+    subcategories.putIfAbsent(Uuid().v4(), () => rent);
+    subcategories.putIfAbsent(Uuid().v4(), () => car);
+    subcategories.putIfAbsent(Uuid().v4(), () => bus);
+    subcategories.putIfAbsent(Uuid().v4(), () => parking);
 
     _log = _log.copyWith(categories: categories, subcategories: subcategories);
 
