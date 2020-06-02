@@ -3,22 +3,19 @@ import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:flutter/material.dart';
 
 class MyCategory extends Equatable {
-  final String id; //TODO id is likely depreciated, remove if not needed
   final String name;
   final IconData iconData;
 
-  MyCategory({this.id, @required this.name, this.iconData});
+  MyCategory({@required this.name, this.iconData});
 
   @override
-  List<Object> get props => [id, name, iconData];
+  List<Object> get props => [name, iconData];
 
   MyCategory copyWith({
-    String id,
     String name,
     IconData iconData,
   }) {
     return MyCategory(
-      id: id ?? this.id,
       name: name ?? this.name,
       iconData: iconData ?? this.iconData,
     );
@@ -26,7 +23,7 @@ class MyCategory extends Equatable {
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, icon: $iconData}';
+    return 'MyCategory {name: $name, icon: $iconData}';
   }
 
   @override
@@ -34,13 +31,11 @@ class MyCategory extends Equatable {
       identical(this, other) ||
       other is MyCategory &&
           runtimeType == other.runtimeType &&
-          id == other.id &&
           name == other.name &&
           iconData == other.iconData;
 
   MyCategoryEntity toEntity() {
     return MyCategoryEntity(
-      id: id,
       name: name,
       iconCodePoint: iconData?.codePoint.toString(),
       iconFontFamily: iconData?.fontFamily,
@@ -49,7 +44,6 @@ class MyCategory extends Equatable {
 
   static MyCategory fromEntity(MyCategoryEntity entity) {
     return MyCategory(
-      id: entity.id,
       name: entity.name,
       iconData: entity?.iconCodePoint != null && entity?.iconFontFamily !=null ? IconData(int.parse(entity.iconCodePoint),
           fontFamily: entity.iconFontFamily) : null,

@@ -6,20 +6,19 @@ part 'my_category_entity.g.dart';
 
 @JsonSerializable()
 class MyCategoryEntity extends Equatable {
-  final String id;
   final String name;
   final String iconCodePoint;
   final String iconFontFamily;
 
   const MyCategoryEntity(
-      {this.id, this.name, this.iconCodePoint, this.iconFontFamily});
+      {this.name, this.iconCodePoint, this.iconFontFamily});
 
   @override
-  List<Object> get props => [id, name, iconCodePoint, iconFontFamily];
+  List<Object> get props => [name, iconCodePoint, iconFontFamily];
 
   @override
   String toString() {
-    return 'MyCategoryEntity {id: $id, name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily }';
+    return 'MyCategoryEntity {name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily }';
   }
 
   factory MyCategoryEntity.fromJson(Map<String, dynamic> json) =>

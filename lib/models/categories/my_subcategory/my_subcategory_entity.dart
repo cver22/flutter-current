@@ -9,7 +9,7 @@ class MySubcategoryEntity extends MyCategoryEntity {
   final String parentCategoryId;
 
   const MySubcategoryEntity({
-    id,
+
     name,
     iconCodePoint,
     iconFontFamily,
@@ -18,21 +18,21 @@ class MySubcategoryEntity extends MyCategoryEntity {
             iconCodePoint: iconCodePoint,
             iconFontFamily: iconFontFamily,
             name: name,
-            id: id);
+           );
 
   @override
   List<Object> get props =>
-      [id, name, iconCodePoint, iconFontFamily, parentCategoryId];
+      [name, iconCodePoint, iconFontFamily, parentCategoryId];
 
   @override
   String toString() {
-    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
+    return 'MySubcategoryEntity {$NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
   }
 
   @override
   factory MySubcategoryEntity.fromJson(Map<String, dynamic> json) =>
-      _$SubcategoryEntityFromJson(json);
+      _$MySubcategoryEntityFromJson(json);
 
   @override
-  Map<String, dynamic> toJson() => _$SubcategoryEntityToJson(this);
+  Map<String, dynamic> toJson() => _$MySubcategoryEntityToJson(this);
 }

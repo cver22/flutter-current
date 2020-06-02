@@ -11,15 +11,14 @@ class CategoryPicker extends StatefulWidget {
   //TODO probably refactor for this to just access the blocs from context
   //TODO refactor the dropdown to follow the pattern I used in the log picker
   //TODO error checking if no categories or subcategories are present
-  const CategoryPicker({Key key,
-    @required this.logsBloc,
-    @required this.entriesBloc,
-    @required this.entry,
-    @required this.log})
+  const CategoryPicker(
+      {Key key,
+      @required this.logsBloc,
+      @required this.entry,
+      @required this.log})
       : super(key: key);
 
   final LogsBloc logsBloc;
-  final EntriesBloc entriesBloc;
   final Entry entry;
   final Log log;
 
@@ -30,7 +29,6 @@ class CategoryPicker extends StatefulWidget {
 class _CategoryPickerState extends State<CategoryPicker> {
   //TODO refactor picker to allow editing of categories in the log
   LogsBloc _logsBloc;
-  EntriesBloc _entriesBloc;
   Entry _entry;
   Log _log;
   Map<String, MyCategory> _categories;
@@ -41,7 +39,6 @@ class _CategoryPickerState extends State<CategoryPicker> {
   @override
   void initState() {
     super.initState();
-    _entriesBloc = widget.entriesBloc;
     _logsBloc = widget.logsBloc;
     _entry = widget.entry;
     _log = widget.log;
@@ -57,12 +54,20 @@ class _CategoryPickerState extends State<CategoryPicker> {
       String subcategoryId = widget.entry.subcategory;
       _subcategory = _log.subcategories[subcategoryId];
     }
+
+    if(widget.log?.categories != null){
+      _categories = widget.log.categories;
+    }
+
   }
 
-  void _submit() {
-    _entry =
-        _entry.copyWith(category: _category.id, subcategory: _subcategory.id);
-    _entriesBloc..add(EntryUpdated(entry: _entry));
+  void _updateEntry() {
+    _entry = _entry.copyWith(
+        category: _categories.keys
+            .firstWhere((k) => _categories[k] == _category, orElse: () => null),
+        subcategory: _subcategories.keys.firstWhere(
+            (k) => _subcategories[k] == _subcategory,
+            orElse: () => null));
   }
 
   @override
@@ -71,7 +76,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
       children: <Widget>[
         _categoryDropDown(),
         //only shows subcategories after selection of category
-        _subcategories.length > 0 ? _subcategoryDropDown() : Container(),
+        _subcategories != null ? _subcategoryDropDown() : Container(),
       ],
     );
   }
@@ -82,24 +87,31 @@ class _CategoryPickerState extends State<CategoryPicker> {
       onChanged: (MyCategory value) {
         setState(() {
           _category = value;
-          String parentCategoryId = _category.id;
+          String parentCategoryId = _categories.keys
+              .firstWhere((k) => _categories[k] == _category, orElse: () => null);
 
           //populates subcategory dropdown based on category chosen
-          _log.subcategories.forEach((key, subcategory) =>
-          subcategory.parentCategoryId == parentCategoryId ?
-          _subcategories[key] = subcategory : null);
-          _submit();
+          _subcategories = Map();
+          //TODO populate subcategory menu, need to pass partial map of log.subcategories
+
+
+          _updateEntry();
         });
       },
-      items: _categories.map((id, category) {
-        return MapEntry(id, DropdownMenuItem<MyCategory>(
-        value: category,
-        child: Text(
-        category.name,
-        style: TextStyle(color: Colors.black),)
-        ,
-        ));
-      }).values.toList(),
+      items: _categories
+          .map((id, category) {
+            return MapEntry(
+                id,
+                DropdownMenuItem<MyCategory>(
+                  value: category,
+                  child: Text(
+                    category.name,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ));
+          })
+          .values
+          .toList(),
     );
   }
 
@@ -109,18 +121,23 @@ class _CategoryPickerState extends State<CategoryPicker> {
       onChanged: (MySubcategory value) {
         setState(() {
           _subcategory = value;
-          _submit();
+          _updateEntry();
         });
       },
-      items: _subcategories.map((id, subcategory) {
-        return MapEntry(id, DropdownMenuItem<MySubcategory>(
-          value: subcategory,
-          child: Text(
-            subcategory.name,
-            style: TextStyle(color: Colors.black),
-          ),
-        ));
-      }).values.toList(),
+      items: _subcategories
+          .map((id, subcategory) {
+            return MapEntry(
+                id,
+                DropdownMenuItem<MySubcategory>(
+                  value: subcategory,
+                  child: Text(
+                    subcategory.name,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                ));
+          })
+          .values
+          .toList(),
     );
   }
 }
