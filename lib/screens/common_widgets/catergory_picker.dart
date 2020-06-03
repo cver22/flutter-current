@@ -55,9 +55,8 @@ class _CategoryPickerState extends State<CategoryPicker> {
       _subcategory = _log.subcategories[subcategoryId];
     }
 
-    if(widget.log?.categories != null){
-      _categories = widget.log.categories;
-    }
+
+
 
   }
 
@@ -72,9 +71,12 @@ class _CategoryPickerState extends State<CategoryPicker> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.log?.categories != null) {
+      _categories = widget.log.categories;
+    }
     return Column(
       children: <Widget>[
-        _categoryDropDown(),
+        _categories != null ? _categoryDropDown() : Container(),
         //only shows subcategories after selection of category
         _subcategories != null ? _subcategoryDropDown() : Container(),
       ],
@@ -82,18 +84,25 @@ class _CategoryPickerState extends State<CategoryPicker> {
   }
 
   Widget _categoryDropDown() {
+
     return DropdownButton<MyCategory>(
       value: _category,
       onChanged: (MyCategory value) {
         setState(() {
+          _subcategory = null;
           _category = value;
-          String parentCategoryId = _categories.keys
-              .firstWhere((k) => _categories[k] == _category, orElse: () => null);
+          String _parentCategoryId = _categories.keys.firstWhere(
+              (k) => _categories[k] == _category,
+              orElse: () => null);
 
           //populates subcategory dropdown based on category chosen
           _subcategories = Map();
+          _log.subcategories.forEach((k, v) {
+            if (v.parentCategoryId == _parentCategoryId) {
+              _subcategories.putIfAbsent(k, () => v);
+            }
+          });
           //TODO populate subcategory menu, need to pass partial map of log.subcategories
-
 
           _updateEntry();
         });

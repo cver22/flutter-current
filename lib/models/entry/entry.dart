@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/entry_entity.dart';
 import 'package:flutter/foundation.dart';
 
-class Entry extends Equatable {
+class Entry extends Equatable with ChangeNotifier{
 
   //TODO entry members map
 
