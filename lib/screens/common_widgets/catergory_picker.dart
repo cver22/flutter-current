@@ -3,7 +3,7 @@ import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
-import 'package:expenses/models/entry/entry.dart';
+import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +19,7 @@ class CategoryPicker extends StatefulWidget {
       : super(key: key);
 
   final LogsBloc logsBloc;
-  final Entry entry;
+  final MyEntry entry;
   final Log log;
 
   @override
@@ -29,7 +29,7 @@ class CategoryPicker extends StatefulWidget {
 class _CategoryPickerState extends State<CategoryPicker> {
   //TODO refactor picker to allow editing of categories in the log
   LogsBloc _logsBloc;
-  Entry _entry;
+  MyEntry _entry;
   Log _log;
   Map<String, MyCategory> _categories;
   Map<String, MySubcategory> _subcategories;

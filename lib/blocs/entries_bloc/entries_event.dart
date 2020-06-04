@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/entry/entry.dart';
+import 'package:expenses/models/entry/my_entry.dart';
 
 abstract class EntriesEvent extends Equatable {
   const EntriesEvent();
@@ -14,7 +14,7 @@ class LoadEntries extends EntriesEvent{}
 
 //add new entry to list of entries
 class EntryAdded extends EntriesEvent{
-  final Entry entry;
+  final MyEntry entry;
 
   const EntryAdded({this.entry});
 
@@ -28,7 +28,7 @@ class EntryAdded extends EntriesEvent{
 
 //update an existing entry
 class EntryUpdated extends EntriesEvent{
-  final Entry entry;
+  final MyEntry entry;
 
   const EntryUpdated({this.entry});
 
@@ -42,7 +42,7 @@ class EntryUpdated extends EntriesEvent{
 
 //delete an existing log
 class EntryDeleted extends EntriesEvent{
-  final Entry entry;
+  final MyEntry entry;
 
   const EntryDeleted({this.entry});
 
@@ -55,7 +55,7 @@ class EntryDeleted extends EntriesEvent{
 }
 
 class EntriesUpdated extends EntriesEvent{
-  final List<Entry> entries;
+  final List<MyEntry> entries;
 
   const EntriesUpdated({this.entries});
 

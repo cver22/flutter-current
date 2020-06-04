@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/res/db_consts.dart';
 
-class EntryEntity extends Equatable {
+class MyEntryEntity extends Equatable {
   final String id;
   final String logId;
   final String currency;
@@ -13,7 +13,7 @@ class EntryEntity extends Equatable {
   final String comment;
   final DateTime dateTime;
 
-  const EntryEntity(
+  const MyEntryEntity(
       {this.id,
       this.logId,
       this.currency,
@@ -45,8 +45,8 @@ class EntryEntity extends Equatable {
         'dateTime: $dateTime)}';
   }
 
-  static EntryEntity fromSnapshot(DocumentSnapshot snap) {
-    return EntryEntity(
+  static MyEntryEntity fromSnapshot(DocumentSnapshot snap) {
+    return MyEntryEntity(
       id: snap.documentID,
       logId: snap.data[LOG_ID],
       currency: snap.data[CURRENCY_NAME],

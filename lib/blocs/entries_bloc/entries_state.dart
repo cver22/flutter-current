@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/entry/entry.dart';
+import 'package:expenses/models/entry/my_entry.dart';
 
 abstract class EntriesState extends Equatable {
   const EntriesState();
@@ -11,7 +11,7 @@ abstract class EntriesState extends Equatable {
 class EntriesLoading extends EntriesState {}
 
 class EntriesLoaded extends EntriesState {
-  final List<Entry> entries;
+  final List<MyEntry> entries;
 
   const EntriesLoaded([this.entries = const []]);
 

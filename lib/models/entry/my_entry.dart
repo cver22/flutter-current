@@ -1,12 +1,12 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/entry/entry_entity.dart';
+import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:flutter/foundation.dart';
 
-class Entry extends Equatable with ChangeNotifier{
+class MyEntry extends Equatable with ChangeNotifier{
 
   //TODO entry members map
 
-  Entry(
+  MyEntry(
       {this.id,
       @required this.logId,
       @required this.currency,
@@ -27,7 +27,7 @@ class Entry extends Equatable with ChangeNotifier{
   final String comment;
   final DateTime dateTime;
 
-  Entry copyWith({
+  MyEntry copyWith({
     String id,
     String logId,
     String currency,
@@ -38,7 +38,7 @@ class Entry extends Equatable with ChangeNotifier{
     String comment,
     DateTime dateTime,
   }) {
-    return Entry(
+    return MyEntry(
       id: id ?? this.id,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
@@ -75,7 +75,7 @@ class Entry extends Equatable with ChangeNotifier{
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Entry &&
+      other is MyEntry &&
           runtimeType == other.runtimeType &&
           id == other.id &&
           logId == other.logId &&
@@ -87,8 +87,8 @@ class Entry extends Equatable with ChangeNotifier{
           comment == other.comment &&
           dateTime == other.dateTime;
 
-  EntryEntity toEntity() {
-    return EntryEntity(
+  MyEntryEntity toEntity() {
+    return MyEntryEntity(
       id: id,
       logId: logId,
       currency: currency,
@@ -101,8 +101,8 @@ class Entry extends Equatable with ChangeNotifier{
     );
   }
 
-  static Entry fromEntity(EntryEntity entity) {
-    return Entry(
+  static MyEntry fromEntity(MyEntryEntity entity) {
+    return MyEntry(
       id: entity.id,
       logId: entity.logId,
       currency: entity.currency,

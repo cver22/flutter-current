@@ -1,7 +1,7 @@
 import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
-import 'package:expenses/models/entry/entry.dart';
+import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/catergory_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
@@ -9,7 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddEditEntriesPage extends StatefulWidget {
-  final Entry entry;
+  final MyEntry entry;
   final Log log;
 
   const AddEditEntriesPage({Key key, this.entry, this.log}) : super(key: key);
@@ -19,7 +19,7 @@ class AddEditEntriesPage extends StatefulWidget {
 }
 
 class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
-  Entry _entry;
+  MyEntry _entry;
   String _currency;
   String _category;
   String _subcategory;
@@ -33,7 +33,7 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    _entry = widget.entry == null ? Entry() : widget.entry;
+    _entry = widget.entry == null ? MyEntry() : widget.entry;
     _currency = _entry?.currency ?? 'ca';
     _category = _entry?.category ?? null;
     _subcategory = _entry?.subcategory ?? null;

@@ -1,9 +1,9 @@
-import 'package:expenses/models/entry/entry.dart';
+import 'package:expenses/models/entry/my_entry.dart';
 import 'package:flutter/material.dart';
 
 class EntryListTile extends StatelessWidget {
 
-  final Entry entry;
+  final MyEntry entry;
   final VoidCallback onTap;
 
   const EntryListTile({Key key, @required this.entry, this.onTap}) : super(key: key);

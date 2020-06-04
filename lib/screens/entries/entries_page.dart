@@ -1,6 +1,6 @@
 import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/logs_bloc/logs_bloc.dart';
-import 'package:expenses/models/entry/entry.dart';
+import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/entries/add_edit_entries_page.dart';
 import 'package:expenses/screens/entries/entry_list_tile.dart';
@@ -53,7 +53,7 @@ class EntriesPage extends StatelessWidget {
                         itemCount: entries.length,
                         // ignore: missing_return
                         itemBuilder: (BuildContext context, int index) {
-                          final Entry _entry = entries[index];
+                          final MyEntry _entry = entries[index];
                           if (_entry.active == true) {
                             return EntryListTile(
                               entry: _entry,
