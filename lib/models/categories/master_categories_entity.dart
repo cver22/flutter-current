@@ -6,8 +6,8 @@ import 'package:expenses/res/db_consts.dart';
 
 class MasterCategoriesEntity extends Equatable{
   final String uid;
-  final Map<String, MyCategory> categories;
-  final Map<String, MySubcategory> subcategories;
+  final Map<int, MyCategory> categories;
+  final Map<int, MySubcategory> subcategories;
 
   MasterCategoriesEntity({this.uid, this.categories, this.subcategories});
 

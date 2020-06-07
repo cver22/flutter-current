@@ -3,21 +3,20 @@ import 'package:expenses/models/categories/master_categories_entity.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 
-
 class MasterCategories extends Equatable {
   final String uid; //only required for master category list
-  final Map<String, MyCategory> categories;
-  final Map<String, MySubcategory> subcategories;
+  final List<MyCategory> categories;
+  final List<MySubcategory> subcategories;
 
-  MasterCategories({ this.uid, this.categories, this.subcategories});
+  MasterCategories({this.uid, this.categories, this.subcategories});
 
   @override
   List<Object> get props => [uid, categories, subcategories];
 
   MasterCategories copyWith({
     String uid,
-    Map<String, MyCategory> categories,
-    Map<String, MySubcategory> subcategories,
+    List<MyCategory> categories,
+    List<MySubcategory> subcategories,
   }) {
     return MasterCategories(
       uid: uid ?? this.uid,
@@ -40,22 +39,25 @@ class MasterCategories extends Equatable {
           categories == other.categories &&
           subcategories == other.subcategories;
 
+  MasterCategoriesEntity toEntity() {
+    //converts firebase category maps to list for app
 
-  MasterCategories toEntity() {
-    return MasterCategories(
+    return MasterCategoriesEntity(
       uid: uid,
-      categories: categories,
-      subcategories: subcategories
+      categories: Map.fromIterable(categories,
+          key: (e) => categories.indexOf(e), value: (e) => e),
+      subcategories: Map.fromIterable(subcategories,
+          key: (e) => subcategories.indexOf(e), value: (e) => e),
     );
   }
-
 
   static MasterCategories fromEntity(MasterCategoriesEntity entity) {
+    //converts app list category lists to maps for firebase
+
     return MasterCategories(
       uid: entity.uid,
-      categories: entity.categories,
-      subcategories: entity.subcategories,
+      categories: entity.categories.entries.map((e) => e.value).toList(),
+      subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
     );
   }
-
 }

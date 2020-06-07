@@ -8,6 +8,7 @@ part of 'my_subcategory_entity.dart';
 
 MySubcategoryEntity _$MySubcategoryEntityFromJson(Map<String, dynamic> json) {
   return MySubcategoryEntity(
+    id: json['id'],
     name: json['name'],
     iconCodePoint: json['iconCodePoint'],
     iconFontFamily: json['iconFontFamily'],
@@ -18,6 +19,7 @@ MySubcategoryEntity _$MySubcategoryEntityFromJson(Map<String, dynamic> json) {
 Map<String, dynamic> _$MySubcategoryEntityToJson(
         MySubcategoryEntity instance) =>
     <String, dynamic>{
+      'id': instance.id,
       'name': instance.name,
       'iconCodePoint': instance.iconCodePoint,
       'iconFontFamily': instance.iconFontFamily,

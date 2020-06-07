@@ -9,7 +9,7 @@ class MySubcategoryEntity extends MyCategoryEntity {
   final String parentCategoryId;
 
   const MySubcategoryEntity({
-
+    id,
     name,
     iconCodePoint,
     iconFontFamily,
@@ -18,15 +18,15 @@ class MySubcategoryEntity extends MyCategoryEntity {
             iconCodePoint: iconCodePoint,
             iconFontFamily: iconFontFamily,
             name: name,
-           );
+            id: id);
 
   @override
   List<Object> get props =>
-      [name, iconCodePoint, iconFontFamily, parentCategoryId];
+      [id, name, iconCodePoint, iconFontFamily, parentCategoryId];
 
   @override
   String toString() {
-    return 'MySubcategoryEntity {$NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
+    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId}';
   }
 
   @override
