@@ -12,8 +12,8 @@ class LogEntity extends Equatable {
   final String logName;
   final String currency;
   final bool active;
-  final Map<String, MyCategory> categories;
-  final Map<String, MySubcategory> subcategories;
+  final Map<int, MyCategory> categories;
+  final Map<int, MySubcategory> subcategories;
   final Map<String, dynamic> members;
 
   const LogEntity(
@@ -69,10 +69,10 @@ class LogEntity extends Equatable {
       logName: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
       //TODO subcategories
-      categories: (snap.data[CATEGORIES] as Map<String, dynamic>).map(
+      categories: (snap.data[CATEGORIES] as Map<int, dynamic>).map(
           (key, value) => MapEntry(
               key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
-      subcategories: (snap.data[SUBCATEGORIES] as Map<String, dynamic>).map(
+      subcategories: (snap.data[SUBCATEGORIES] as Map<int, dynamic>).map(
               (key, value) => MapEntry(
               key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       active: snap.data[ACTIVE],

@@ -23,8 +23,8 @@ class Log extends Equatable {
   final String logName;
   final String currency;
   final bool active;
-  final Map<String, MyCategory> categories;
-  final Map<String, MySubcategory> subcategories;
+  final List<MyCategory> categories;
+  final List<MySubcategory> subcategories;
   final Map<String, dynamic> members;
 
   Log copyWith({
@@ -33,8 +33,8 @@ class Log extends Equatable {
     String logName,
     String currency,
     bool active,
-    Map<String, MyCategory> categories,
-    Map<String, MySubcategory> subcategories,
+    List<MyCategory> categories,
+    List<MySubcategory> subcategories,
     Map<String, dynamic> members,
   }) {
     return Log(
@@ -78,8 +78,10 @@ class Log extends Equatable {
         id: id,
         logName: logName,
         currency: currency,
-        categories: categories,
-        subcategories: subcategories,
+        categories: Map.fromIterable(categories,
+            key: (e) => categories.indexOf(e), value: (e) => e),
+        subcategories: Map.fromIterable(subcategories,
+            key: (e) => subcategories.indexOf(e), value: (e) => e),
         active: active,
         members: members);
   }
@@ -90,8 +92,8 @@ class Log extends Equatable {
       id: entity.id,
       logName: entity.logName,
       currency: entity.currency,
-      categories: entity.categories,
-      subcategories: entity.subcategories,
+      categories: entity.categories.entries.map((e) => e.value).toList(),
+      subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
       active: entity.active,
       members: entity.members,
     );
