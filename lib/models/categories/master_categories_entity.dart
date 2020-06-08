@@ -12,7 +12,6 @@ class MasterCategoriesEntity extends Equatable{
   MasterCategoriesEntity({this.uid, this.categories, this.subcategories});
 
   @override
-  // TODO: implement props
   List<Object> get props => [uid, categories, subcategories];
 
   @override

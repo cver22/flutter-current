@@ -12,7 +12,7 @@ class CategoryListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<MyCategory> _categories = log.categories.values.toList();
+    List<MyCategory> _categories = log.categories;
     return ListView.builder(
       itemCount: _categories.length,
       itemBuilder: (BuildContext context, int index) {

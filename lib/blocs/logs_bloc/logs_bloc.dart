@@ -46,38 +46,43 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     //builds initial categories/subcategories for the log from the person's preferences
     //TODO move this initialization to firebase using a Json file in the app
     Log _log = event.log;
-    Map<String, MyCategory> categories = Map();
-    Map<String, MySubcategory> subcategories = Map();
-    MyCategory home = MyCategory(name: 'Home');
-    MyCategory transportation = MyCategory(name: 'Transportation');
+    List<MyCategory> categories = [];
+    List<MySubcategory> subcategories = [];
 
-    categories.putIfAbsent(Uuid().v4(), () => home);
-    categories.putIfAbsent(Uuid().v4(), () => transportation);
+    categories.add(MyCategory(name: 'Home', id: Uuid().v4()));
+    categories.add(MyCategory(name: 'Transportation', id: Uuid().v4()));
 
-    MySubcategory rent = MySubcategory(
+    subcategories.add(MySubcategory(
         name: 'Rent',
-        parentCategoryId: categories.keys
-            .firstWhere((k) => categories[k] == home, orElse: () => null));
-    MySubcategory car = MySubcategory(
-        name: 'Car',
-        parentCategoryId: categories.keys.firstWhere(
-            (k) => categories[k] == transportation,
-            orElse: () => null));
-    MySubcategory bus = MySubcategory(
-        name: 'Bus',
-        parentCategoryId: categories.keys.firstWhere(
-            (k) => categories[k] == transportation,
-            orElse: () => null));
-    MySubcategory parking = MySubcategory(
-        name: 'Parking',
-        parentCategoryId: categories.keys.firstWhere(
-            (k) => categories[k] == transportation,
-            orElse: () => null));
+        id: Uuid().v4(),
+        parentCategoryId:
+            categories.firstWhere((element) => element.name == 'home').id));
 
-    subcategories.putIfAbsent(Uuid().v4(), () => rent);
-    subcategories.putIfAbsent(Uuid().v4(), () => car);
-    subcategories.putIfAbsent(Uuid().v4(), () => bus);
-    subcategories.putIfAbsent(Uuid().v4(), () => parking);
+    subcategories.add(MySubcategory(
+        name: 'Utilities',
+        id: Uuid().v4(),
+        parentCategoryId:
+            categories.firstWhere((element) => element.name == 'home').id));
+
+    subcategories.add(MySubcategory(
+        name: 'Car',
+        id: Uuid().v4(),
+        parentCategoryId:
+            categories.firstWhere((element) => element.name == 'home').id));
+
+    subcategories.add(MySubcategory(
+        name: 'Bus',
+        id: Uuid().v4(),
+        parentCategoryId: categories
+            .firstWhere((element) => element.name == 'transportation')
+            .id));
+
+    subcategories.add(MySubcategory(
+        name: 'Parking',
+        id: Uuid().v4(),
+        parentCategoryId: categories
+            .firstWhere((element) => element.name == 'transportation')
+            .id));
 
     _log = _log.copyWith(categories: categories, subcategories: subcategories);
 

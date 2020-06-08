@@ -3,7 +3,7 @@ import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:flutter/material.dart';
 
 class MyCategory extends Equatable {
-  final String id; //TODO id is likely depreciated, remove if not needed
+  final String id;
   final String name;
   final IconData iconData;
 

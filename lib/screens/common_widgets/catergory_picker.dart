@@ -31,8 +31,8 @@ class _CategoryPickerState extends State<CategoryPicker> {
   LogsBloc _logsBloc;
   MyEntry _entry;
   Log _log;
-  Map<String, MyCategory> _categories;
-  Map<String, MySubcategory> _subcategories;
+  List<MyCategory> _categories;
+  List<MySubcategory> _subcategories;
   MyCategory _category; //TODO set editable default category
   MySubcategory _subcategory; //TODO set editable default category
 
@@ -46,27 +46,22 @@ class _CategoryPickerState extends State<CategoryPicker> {
     //initialize category from existing entry
     if (widget.entry?.category != null) {
       String categoryId = widget.entry.category;
-      _category = _log.categories[categoryId];
+      _category =
+          _log.categories.firstWhere((element) => element.id == categoryId);
     }
 
     //initialize subcategory from existing entry
     if (widget.entry?.subcategory != null) {
       String subcategoryId = widget.entry.subcategory;
-      _subcategory = _log.subcategories[subcategoryId];
+      _subcategory = _log.subcategories
+          .firstWhere((element) => element.id == subcategoryId);
     }
-
-
-
-
   }
 
   void _updateEntry() {
     _entry = _entry.copyWith(
-        category: _categories.keys
-            .firstWhere((k) => _categories[k] == _category, orElse: () => null),
-        subcategory: _subcategories.keys.firstWhere(
-            (k) => _subcategories[k] == _subcategory,
-            orElse: () => null));
+        category: _category.id,
+        subcategory: _subcategory.id);
   }
 
   @override
@@ -84,69 +79,50 @@ class _CategoryPickerState extends State<CategoryPicker> {
   }
 
   Widget _categoryDropDown() {
-
     return DropdownButton<MyCategory>(
       value: _category,
       onChanged: (MyCategory value) {
         setState(() {
           _subcategory = null;
           _category = value;
-          String _parentCategoryId = _categories.keys.firstWhere(
-              (k) => _categories[k] == _category,
-              orElse: () => null);
 
           //populates subcategory dropdown based on category chosen
-          _subcategories = Map();
-          _log.subcategories.forEach((k, v) {
-            if (v.parentCategoryId == _parentCategoryId) {
-              _subcategories.putIfAbsent(k, () => v);
-            }
-          });
-          //TODO populate subcategory menu, need to pass partial map of log.subcategories
+          _subcategories = _log.subcategories
+              .where((e) => e.parentCategoryId == _category.id)
+              .toList();
 
           _updateEntry();
         });
       },
-      items: _categories
-          .map((id, category) {
-            return MapEntry(
-                id,
-                DropdownMenuItem<MyCategory>(
-                  value: category,
-                  child: Text(
-                    category.name,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ));
-          })
-          .values
-          .toList(),
+      items: _categories.map((category) {
+        return DropdownMenuItem<MyCategory>(
+          value: category,
+          child: Text(
+            category.name,
+            style: TextStyle(color: Colors.black),
+          ),
+        );
+      }).toList(),
     );
   }
 
   Widget _subcategoryDropDown() {
     return DropdownButton<MySubcategory>(
-      value: _subcategory,
-      onChanged: (MySubcategory value) {
-        setState(() {
-          _subcategory = value;
-          _updateEntry();
-        });
-      },
-      items: _subcategories
-          .map((id, subcategory) {
-            return MapEntry(
-                id,
-                DropdownMenuItem<MySubcategory>(
-                  value: subcategory,
-                  child: Text(
-                    subcategory.name,
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ));
-          })
-          .values
-          .toList(),
-    );
+        value: _subcategory,
+        onChanged: (MySubcategory value) {
+          setState(() {
+            _subcategory = value;
+            _updateEntry();
+          });
+        },
+        items: _subcategories.map((subcategory) {
+          return DropdownMenuItem<MySubcategory>(
+            value: subcategory,
+            child: Text(
+              subcategory.name,
+              style: TextStyle(color: Colors.black),
+            ),
+          );
+        }));
   }
 }
