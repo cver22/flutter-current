@@ -149,7 +149,7 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
         ),
         //TODO pass logsbloc
         //TODO pass entry via a provider so all screens are updating the same entry
-        //CategoryPicker(entry: _entry, log: _log),
+        CategoryPicker(entry: _entry, log: _log),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
           initialValue: _comment,

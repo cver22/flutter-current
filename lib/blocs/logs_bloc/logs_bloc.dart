@@ -56,32 +56,33 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
         name: 'Rent',
         id: Uuid().v4(),
         parentCategoryId:
-            categories.firstWhere((element) => element.name == 'home').id));
+            categories.firstWhere((element) => element.name == 'Home').id));
 
     subcategories.add(MySubcategory(
         name: 'Utilities',
         id: Uuid().v4(),
         parentCategoryId:
-            categories.firstWhere((element) => element.name == 'home').id));
+            categories.firstWhere((element) => element.name == 'Home').id));
 
     subcategories.add(MySubcategory(
         name: 'Car',
         id: Uuid().v4(),
-        parentCategoryId:
-            categories.firstWhere((element) => element.name == 'home').id));
+        parentCategoryId: categories
+            .firstWhere((element) => element.name == 'Transportation')
+            .id));
 
     subcategories.add(MySubcategory(
         name: 'Bus',
         id: Uuid().v4(),
         parentCategoryId: categories
-            .firstWhere((element) => element.name == 'transportation')
+            .firstWhere((element) => element.name == 'Transportation')
             .id));
 
     subcategories.add(MySubcategory(
         name: 'Parking',
         id: Uuid().v4(),
         parentCategoryId: categories
-            .firstWhere((element) => element.name == 'transportation')
+            .firstWhere((element) => element.name == 'Transportation')
             .id));
 
     _log = _log.copyWith(categories: categories, subcategories: subcategories);

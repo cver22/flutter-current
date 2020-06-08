@@ -44,9 +44,9 @@ class MasterCategories extends Equatable {
 
     return MasterCategoriesEntity(
       uid: uid,
-      categories: Map.fromIterable(categories,
+      categories: Map<int,MyCategory>.fromIterable(categories,
           key: (e) => categories.indexOf(e), value: (e) => e),
-      subcategories: Map.fromIterable(subcategories,
+      subcategories: Map<int,MySubcategory>.fromIterable(subcategories,
           key: (e) => subcategories.indexOf(e), value: (e) => e),
     );
   }

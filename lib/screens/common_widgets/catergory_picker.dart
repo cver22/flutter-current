@@ -59,9 +59,8 @@ class _CategoryPickerState extends State<CategoryPicker> {
   }
 
   void _updateEntry() {
-    _entry = _entry.copyWith(
-        category: _category.id,
-        subcategory: _subcategory.id);
+    _entry =
+        _entry.copyWith(category: _category?.id, subcategory: _subcategory?.id);
   }
 
   @override
@@ -108,21 +107,22 @@ class _CategoryPickerState extends State<CategoryPicker> {
 
   Widget _subcategoryDropDown() {
     return DropdownButton<MySubcategory>(
-        value: _subcategory,
-        onChanged: (MySubcategory value) {
-          setState(() {
-            _subcategory = value;
-            _updateEntry();
-          });
-        },
-        items: _subcategories.map((subcategory) {
-          return DropdownMenuItem<MySubcategory>(
-            value: subcategory,
-            child: Text(
-              subcategory.name,
-              style: TextStyle(color: Colors.black),
-            ),
-          );
-        }));
+      value: _subcategory,
+      onChanged: (MySubcategory value) {
+        setState(() {
+          _subcategory = value;
+          _updateEntry();
+        });
+      },
+      items: _subcategories.map((subcategory) {
+        return DropdownMenuItem<MySubcategory>(
+          value: subcategory,
+          child: Text(
+            subcategory.name,
+            style: TextStyle(color: Colors.black),
+          ),
+        );
+      }).toList(),
+    );
   }
 }

@@ -14,7 +14,7 @@ class Log extends Equatable {
       @required this.logName,
       @required this.currency,
       this.categories,
-        this.subcategories,
+      this.subcategories,
       this.active = true,
       this.members});
 
@@ -78,10 +78,10 @@ class Log extends Equatable {
         id: id,
         logName: logName,
         currency: currency,
-        categories: Map.fromIterable(categories,
-            key: (e) => categories.indexOf(e), value: (e) => e),
-        subcategories: Map.fromIterable(subcategories,
-            key: (e) => subcategories.indexOf(e), value: (e) => e),
+        categories: Map<String,MyCategory>.fromIterable(categories,
+            key: (e) => categories.indexOf(e).toString(), value: (e) => e),
+        subcategories: Map<String,MySubcategory>.fromIterable(subcategories,
+            key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
         active: active,
         members: members);
   }
