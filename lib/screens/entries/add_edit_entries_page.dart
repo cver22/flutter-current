@@ -7,6 +7,7 @@ import 'package:expenses/screens/common_widgets/catergory_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 class AddEditEntriesPage extends StatefulWidget {
   final MyEntry entry;
@@ -33,15 +34,15 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _log = widget?.log;
     _entry = widget.entry == null ? MyEntry() : widget.entry;
-    _currency = _entry?.currency ?? 'ca';
+    _currency = _entry?.currency ?? _log?.currency;
     _category = _entry?.category ?? null;
     _subcategory = _entry?.subcategory ?? null;
     _amount = _entry?.amount ?? null;
     _comment = _entry?.comment ?? null;
     _dateTime = _entry?.dateTime ?? DateTime.now();
     _entriesBloc = BlocProvider.of<EntriesBloc>(context);
-    _log = widget?.log;
   }
 
   void _submit() {
@@ -64,8 +65,6 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
 
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Entry'),
@@ -190,6 +189,8 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
           onChanged: (Log value) {
             setState(() {
               _log = value;
+              _currency = _log.currency;
+              //TODO need to update current currency in picker
             });
           },
           items: _displayLogs.map((Log log) {
