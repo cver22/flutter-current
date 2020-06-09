@@ -35,25 +35,21 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
     // TODO: implement initState
     super.initState();
     _log = widget?.log;
-    _entry = widget.entry == null ? MyEntry() : widget.entry;
-    _currency = _entry?.currency ?? _log?.currency;
-    _category = _entry?.category ?? null;
-    _subcategory = _entry?.subcategory ?? null;
-    _amount = _entry?.amount ?? null;
-    _comment = _entry?.comment ?? null;
-    _dateTime = _entry?.dateTime ?? DateTime.now();
+    _entry = Provider.of<MyEntry>(context, listen: false);
+    if (widget.entry != null) {
+      MyEntry passedEntry = widget.entry;
+      _entry = _entry.copy(widget.entry);
+    }
+    if (_entry.dateTime == null) {
+      _entry = _entry.copyWith(dateTime: DateTime.now());
+    }
+    if (_entry?.currency == null && _log?.currency != null) {
+      _entry = _entry.copyWith(currency: _log.currency);
+    }
     _entriesBloc = BlocProvider.of<EntriesBloc>(context);
   }
 
   void _submit() {
-    _entry = _entry.copyWith(
-        currency: _currency,
-        logId: _log.id,
-        category: _category,
-        subcategory: _subcategory,
-        amount: _amount,
-        comment: _comment,
-        dateTime: _dateTime);
 
     if (_entry.id != null) {
       _entriesBloc..add(EntryUpdated(entry: _entry));
@@ -75,7 +71,7 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
               color: Colors.white,
             ),
             onPressed: () {
-              if (_amount != null) _submit();
+              if (_entry.amount != null) _submit();
             }, //TODO need to use state to take care of this with SavingLogState
           ),
           _entry.id == null
@@ -133,14 +129,16 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             MyCurrencyPicker(
-                currency: _currency,
-                returnCurrency: (currency) => _currency = currency),
+                currency: _entry.currency,
+                returnCurrency: (currency) =>
+                    _entry = _entry.copyWith(currency: currency)),
             Expanded(
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
-                initialValue: _amount?.toStringAsFixed(2) ?? null,
-                onChanged: (value) => _amount = double.parse(value),
+                initialValue: _entry.amount?.toStringAsFixed(2) ?? null,
+                onChanged: (value) =>
+                    _entry = _entry.copyWith(amount: double.parse(value)),
                 //TODO need controllers
               ),
             ),
@@ -151,8 +149,8 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
         CategoryPicker(entry: _entry, log: _log),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
-          initialValue: _comment,
-          onChanged: (value) => _comment = value,
+          initialValue: _entry.comment,
+          onChanged: (value) => _entry = _entry.copyWith(currency: value),
           //TODO validate in the bloc, name cannot be empty
           //TODO need controllers
         ),
@@ -189,7 +187,7 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
           onChanged: (Log value) {
             setState(() {
               _log = value;
-              _currency = _log.currency;
+              _entry = _entry.copyWith(currency: _log.currency);
               //TODO need to update current currency in picker
             });
           },

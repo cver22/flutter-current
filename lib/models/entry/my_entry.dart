@@ -2,8 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:flutter/foundation.dart';
 
-class MyEntry extends Equatable with ChangeNotifier{
-
+class MyEntry extends Equatable with ChangeNotifier {
   //TODO entry members map
 
   MyEntry(
@@ -112,6 +111,20 @@ class MyEntry extends Equatable with ChangeNotifier{
       amount: entity.amount,
       comment: entity.comment,
       dateTime: entity.dateTime,
+    );
+  }
+
+  MyEntry copy(MyEntry entry) {
+    return entry.copyWith(
+      id: entry.id,
+      logId: entry.logId,
+      currency: entry.currency,
+      active: entry.active,
+      category: entry.category,
+      subcategory: entry.subcategory,
+      amount: entry.amount,
+      comment: entry.comment,
+      dateTime: entry.dateTime,
     );
   }
 }
