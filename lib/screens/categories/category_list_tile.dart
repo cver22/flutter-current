@@ -13,6 +13,7 @@ class CategoryListTile extends StatelessWidget {
     return ListTile(
       leading: category.iconData != null ? Icon(category.iconData): Container(),
       title: Text(category.name),
+      //TODO trailing options
       onTap: onTap,
       //TODO add method to edit
     );

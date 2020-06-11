@@ -23,7 +23,7 @@ class CategoryPicker extends StatefulWidget {
 class _CategoryPickerState extends State<CategoryPicker> {
   //TODO refactor picker to allow editing of categories in the log
   LogsBloc _logsBloc;
-  ChangeNotifierEntry _entry;
+  MyEntry _entry;
   Log _log;
   List<MyCategory> _categories;
   List<MySubcategory> _subcategories;
@@ -39,7 +39,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
 
   @override
   Widget build(BuildContext context) {
-    _entry = Provider.of<ChangeNotifierEntry>(context, listen: true);
+    _entry = Provider.of<MyEntry>(context, listen: true);
 
     //initialize category from existing entry
     if (_entry.category != null) {
@@ -116,7 +116,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
 
   void _updateEntry() {
     _entry =
-        _entry.setEntry(_entry.copyWith(subcategory: _subcategory?.id, category: _category?.id));
+        _entry.copyWith(subcategory: _subcategory?.id, category: _category?.id);
     print(_entry);
   }
 }
