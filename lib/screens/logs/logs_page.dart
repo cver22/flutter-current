@@ -1,5 +1,6 @@
 import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
+import 'package:expenses/blocs/my_entry/bloc.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
@@ -51,14 +52,27 @@ class LogsPage extends StatelessWidget {
                               //TODO do I need to pas the logs bloc?
                               onTap: () => Navigator.of(context).push(
                                 MaterialPageRoute(builder: (_) {
-                                  return BlocProvider.value(
+                                  return MultiBlocProvider(
+                                    providers: [
+                                      BlocProvider.value(
+                                          value: BlocProvider.of<EntriesBloc>(
+                                              context)),
+                                      BlocProvider.value(
+                                          value: BlocProvider.of<LogsBloc>(
+                                              context)),
+                                      BlocProvider<MyEntryBloc>(
+                                          create: (context) => MyEntryBloc()),
+                                    ],
+                                  );
+
+                                  /*BlocProvider.value(
                                     value:
                                         BlocProvider.of<EntriesBloc>(context),
                                     child: BlocProvider.value(
                                       value: BlocProvider.of<LogsBloc>(context),
-                                      child: ChangeNotifierProvider<MyEntry>(child: AddEditEntriesPage(log: _log)),
+                                      child: AddEditEntriesPage(log: _log),
                                     ),
-                                  );
+                                  );*/
                                 }),
                               ),
                               onLongPress: () => Navigator.of(context).push(

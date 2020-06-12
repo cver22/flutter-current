@@ -8,12 +8,12 @@ class MyEntry extends Equatable with ChangeNotifier{
 
   MyEntry(
       {this.id,
-      @required this.logId,
-      @required this.currency,
+      this.logId,
+      this.currency,
       this.active = true,
       this.category,
       this.subcategory,
-      @required this.amount,
+      this.amount,
       this.comment,
       this.dateTime});
 

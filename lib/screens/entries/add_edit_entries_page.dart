@@ -1,6 +1,7 @@
 import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
+import 'package:expenses/blocs/my_entry/bloc.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/catergory_picker.dart';
@@ -21,12 +22,7 @@ class AddEditEntriesPage extends StatefulWidget {
 
 class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   MyEntry _entry;
-  String _currency;
-  String _category;
-  String _subcategory;
-  double _amount;
-  String _comment;
-  DateTime _dateTime;
+  MyEntryBloc _entryBloc;
   EntriesBloc _entriesBloc;
   Log _log;
 
@@ -35,22 +31,19 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
     // TODO: implement initState
     super.initState();
     _log = widget?.log;
-    _entry = Provider.of<MyEntry>(context, listen: false);
-    if (widget.entry != null) {
-      MyEntry passedEntry = widget.entry;
-      _entry = _entry.copy(widget.entry);
-    }
-    if (_entry.dateTime == null) {
-      _entry = _entry.copyWith(dateTime: DateTime.now());
-    }
+    _entriesBloc = BlocProvider.of<EntriesBloc>(context);
+    _entryBloc = BlocProvider.of<MyEntryBloc>(context);
+
+    //entryBloc handles null value
+    _entry = _entryBloc..add(LoadMyEntry(myEntry: widget?.entry));
+
+    _entryBloc.
     if (_entry?.currency == null && _log?.currency != null) {
       _entry = _entry.copyWith(currency: _log.currency);
     }
-    _entriesBloc = BlocProvider.of<EntriesBloc>(context);
   }
 
   void _submit() {
-
     if (_entry.id != null) {
       _entriesBloc..add(EntryUpdated(entry: _entry));
     } else {
