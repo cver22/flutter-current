@@ -2,6 +2,7 @@ import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory_entity.dart';
 import 'package:flutter/material.dart';
 
+@immutable
 class MySubcategory extends MyCategory {
   final String parentCategoryId;
 
@@ -31,15 +32,6 @@ class MySubcategory extends MyCategory {
     return 'MySubcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, iconData: $iconData}';
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MySubcategory &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          parentCategoryId == other.parentCategoryId &&
-          name == other.name &&
-          iconData == other.iconData;
 
   @override
   MySubcategoryEntity toEntity() {

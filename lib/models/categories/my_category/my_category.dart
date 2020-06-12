@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:flutter/material.dart';
 
+@immutable
 class MyCategory extends Equatable {
   final String id;
   final String name;
@@ -28,15 +29,6 @@ class MyCategory extends Equatable {
   String toString() {
     return 'MyCategory {id: $id, name: $name, icon: $iconData}';
   }
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MyCategory &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          name == other.name &&
-          iconData == other.iconData;
 
   MyCategoryEntity toEntity() {
     return MyCategoryEntity(

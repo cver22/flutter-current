@@ -2,7 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/models/categories/master_categories_entity.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
+import 'package:flutter/foundation.dart';
 
+@immutable
 class MasterCategories extends Equatable {
   final String uid; //only required for master category list
   final List<MyCategory> categories;
@@ -30,14 +32,6 @@ class MasterCategories extends Equatable {
     return 'MasterCategories {uid: $uid, categories: $categories, subcategories: $subcategories}';
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MasterCategories &&
-          runtimeType == other.runtimeType &&
-          uid == other.uid &&
-          categories == other.categories &&
-          subcategories == other.subcategories;
 
   MasterCategoriesEntity toEntity() {
     //converts firebase category maps to list for app

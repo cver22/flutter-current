@@ -5,6 +5,7 @@ import 'package:expenses/models/log/log_entity.dart';
 import 'package:expenses/res/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
+@immutable
 class Log extends Equatable {
   //TODO log keeps track of who owes who how much "debt map"?
 
@@ -58,29 +59,15 @@ class Log extends Equatable {
     return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories,  $SUBCATEGORIES: $subcategories, active: $active, members: $members}';
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is Log &&
-          runtimeType == other.runtimeType &&
-          logName == other.logName &&
-          currency == other.currency &&
-          categories == other.categories &&
-          subcategories == other.subcategories &&
-          members == other.members &&
-          id == other.id &&
-          uid == other.uid &&
-          active == other.active;
-
   LogEntity toEntity() {
     return LogEntity(
         uid: uid,
         id: id,
         logName: logName,
         currency: currency,
-        categories: Map<String,MyCategory>.fromIterable(categories,
+        categories: Map<String, MyCategory>.fromIterable(categories,
             key: (e) => categories.indexOf(e).toString(), value: (e) => e),
-        subcategories: Map<String,MySubcategory>.fromIterable(subcategories,
+        subcategories: Map<String, MySubcategory>.fromIterable(subcategories,
             key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
         active: active,
         members: members);

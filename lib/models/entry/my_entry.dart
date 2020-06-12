@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:flutter/foundation.dart';
 
+@immutable
 class MyEntry extends Equatable with ChangeNotifier{
   //TODO entry members map
 
@@ -71,20 +72,6 @@ class MyEntry extends Equatable with ChangeNotifier{
         'dateTime: $dateTime}';
   }
 
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MyEntry &&
-          runtimeType == other.runtimeType &&
-          id == other.id &&
-          logId == other.logId &&
-          currency == other.currency &&
-          active == other.active &&
-          category == other.category &&
-          subcategory == other.subcategory &&
-          amount == other.amount &&
-          comment == other.comment &&
-          dateTime == other.dateTime;
 
   MyEntryEntity toEntity() {
     return MyEntryEntity(

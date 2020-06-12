@@ -1,9 +1,11 @@
 import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:expenses/res/db_consts.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 
 part 'my_subcategory_entity.g.dart';
 
+@immutable
 @JsonSerializable()
 class MySubcategoryEntity extends MyCategoryEntity {
   final String parentCategoryId;

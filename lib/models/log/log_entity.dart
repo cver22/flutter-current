@@ -5,7 +5,10 @@ import 'package:expenses/models/categories/my_category/my_category_entity.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory_entity.dart';
 import 'package:expenses/res/db_consts.dart';
+import 'package:flutter/foundation.dart';
 
+
+@immutable
 class LogEntity extends Equatable {
   final String uid;
   final String id;

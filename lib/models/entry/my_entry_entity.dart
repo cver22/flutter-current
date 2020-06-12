@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/res/db_consts.dart';
+import 'package:flutter/foundation.dart';
 
+
+@immutable
 class MyEntryEntity extends Equatable {
   final String id;
   final String logId;

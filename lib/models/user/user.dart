@@ -1,5 +1,8 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
+
+@immutable
 class User extends Equatable {
   final String id;
   final String displayName;
@@ -7,17 +10,6 @@ class User extends Equatable {
   final String photoUrl;
 
   User({this.id, this.displayName, this.email, this.photoUrl});
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-          other is User &&
-              runtimeType == other.runtimeType &&
-              id == other.id &&
-              displayName == other.displayName &&
-              email == other.email &&
-              photoUrl == other.photoUrl;
-
 
   @override
   List<Object> get props => [id, displayName, email, photoUrl];
