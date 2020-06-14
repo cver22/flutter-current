@@ -8,7 +8,17 @@ abstract class MyEntryEvent extends Equatable {
   List<Object> get props => [];
 }
 
-class MyEntryLoaded extends MyEntryEvent {}
+class MyEntryLoaded extends MyEntryEvent {
+  final MyEntry myEntry;
+
+  const MyEntryLoaded({this.myEntry});
+
+  @override
+  List<Object> get props => [myEntry];
+
+  @override
+  String toString() => 'MyEntryLoaded { myEntry: $myEntry }';
+}
 
 class MyEntryUpdated extends MyEntryEvent{
   final MyEntry myEntry;

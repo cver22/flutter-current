@@ -8,7 +8,7 @@ abstract class MyEntryState extends Equatable {
   List<Object> get props => [];
 }
 
-class MyEntryLoading extends MyEntryState {}
+class LoadEntry extends MyEntryState {}
 
 class MyEntryLoaded extends MyEntryState {
   final MyEntry myEntry;

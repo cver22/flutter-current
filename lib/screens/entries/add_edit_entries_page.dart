@@ -35,9 +35,9 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
     _entryBloc = BlocProvider.of<MyEntryBloc>(context);
 
     //entryBloc handles null value
-    _entry = _entryBloc..add(LoadMyEntry(myEntry: widget?.entry));
 
-    _entryBloc.
+
+   
     if (_entry?.currency == null && _log?.currency != null) {
       _entry = _entry.copyWith(currency: _log.currency);
     }
