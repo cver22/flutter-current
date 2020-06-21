@@ -1,23 +1,35 @@
-import 'package:expenses/models/app_tab.dart';
+
+import 'package:expenses/models/auth/auth_state.dart';
+import 'package:expenses/models/login/login_reg_state.dart';
+
 import 'package:meta/meta.dart';
 
 @immutable
 class AppState {
-  final AppTab activeTab;
+  final AuthState authState;
+  final LoginRegState loginRegState;
 
-  AppState({@required this.activeTab});
+
+
+  AppState({
+    @required this.authState,
+    @required this.loginRegState,
+  });
 
   AppState copyWith({
-    AppTab activeTab,
+    AuthState authState,
+    LoginRegState loginState,
   }) {
     return AppState(
-      activeTab: activeTab ?? this.activeTab,
+      authState: authState ?? this.authState,
+      loginRegState: loginState ?? this.loginRegState,
     );
   }
 
   factory AppState.initial() {
     return AppState(
-      activeTab: AppTab.logs,
+      authState: AuthState.initial(),
+      loginRegState: LoginRegState.initial(),
     );
   }
 }

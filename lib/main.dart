@@ -1,78 +1,36 @@
-import 'package:expenses/blocs/authentication_bloc/authentication_bloc.dart';
-import 'package:expenses/blocs/entries_bloc/bloc.dart';
-import 'package:expenses/blocs/logs_bloc/logs_bloc.dart';
+import 'package:expenses/models/auth/auth_state.dart';
+import 'package:expenses/models/auth/auth_status.dart';
 import 'package:expenses/screens/home_screen.dart';
 import 'package:expenses/screens/login/login_screen.dart';
 import 'package:expenses/screens/splash_screen.dart';
-import 'package:expenses/services/entries_repository.dart';
-import 'package:expenses/services/logs_repository.dart';
-import 'package:expenses/services/user_repository.dart';
-import 'package:expenses/utils/simple_bloc_delegate.dart';
+import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/keys.dart';
+import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
-import 'blocs/logs_bloc/bloc.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized(); // allows code before runApp
-  BlocSupervisor.delegate = SimpleBlocDelegate();
-  final FirebaseUserRepository userRepository = FirebaseUserRepository();
-  runApp(
-    MultiBlocProvider(
-      providers: [
-        BlocProvider<AuthenticationBloc>(
-          create: (context) =>
-              AuthenticationBloc(userRepository: userRepository)
-                ..add(AppStarted()),
-        ),
-      ],
-      child: App(userRepository: userRepository),
-    ),
-  );
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  final FirebaseUserRepository _userRepository;
-
-  const App({Key key, @required FirebaseUserRepository userRepository})
-      : assert(userRepository != null),
-        _userRepository = userRepository,
-        super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      home: BlocBuilder<AuthenticationBloc, AuthenticationState>(
-        // ignore: missing_return
-        builder: (context, state) {
-          if (state is Uninitialized) {
-            return SplashScreen();
-          }
-          if (state is Unauthenticated) {
-            return LoginScreen(userRepository: _userRepository);
-          }
-          if (state is Authenticated) {
-            final FirebaseLogsRepository _logsRepository =
-                FirebaseLogsRepository(user: state.user);
-            final FirebaseEntriesRepository _entriesRepository =
-                FirebaseEntriesRepository(user: state.user);
-            return MultiBlocProvider(
-              providers: [
-                BlocProvider<LogsBloc>(
-                  create: (context) => LogsBloc(logsRepository: _logsRepository)
-                    ..add(LoadLogs()),
-                ),
-                BlocProvider<EntriesBloc>(
-                  create: (context) =>
-                      EntriesBloc(entriesRepository: _entriesRepository)
-                        ..add(LoadEntries()),
-                ),
-              ],
-              child: HomeScreen(),
-            );
-          }
-        },
-      ),
+      key: ExpenseKeys.main,
+      home: ConnectState<AuthState>(
+          map: (state) => state.authState,
+          where: notIdentical,
+          builder: (authState) {
+            print('Rendering Main Screen');
+
+            if (authState.authStatus == AuthStatus.authenticated) {
+              return HomeScreen(key: ExpenseKeys.homeScreen);
+            } else if (authState.authStatus == AuthStatus.unauthenticated) {
+              return LoginScreen(key: ExpenseKeys.loginScreen);
+            }
+            return SplashScreen(key: ExpenseKeys.splashScreen,);
+          }),
     );
   }
 }

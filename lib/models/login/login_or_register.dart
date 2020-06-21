@@ -1,0 +1,1 @@
+enum LoginOrRegister{login, register}

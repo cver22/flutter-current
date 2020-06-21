@@ -1,14 +1,14 @@
 import 'dart:async';
-import 'package:expenses/models/user/user.dart';
+import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 //TODO implement error checking
 
 abstract class UserRepository {
-  Future<FirebaseUser> signInWIthGoogle();
+  Future<FirebaseUser> signInWithGoogle();
 
-  Future<void> signInWithCredentials(String email, String password);
+  Future<void> signInWithCredentials({String email, String password});
 
   Future<void> signUp({String email, String password});
 
@@ -28,7 +28,7 @@ class FirebaseUserRepository implements UserRepository {
         _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
-  Future<FirebaseUser> signInWIthGoogle() async {
+  Future<FirebaseUser> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
@@ -39,15 +39,19 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> signInWithCredentials(String email, String password) {
+  Future<void> signInWithCredentials({String email, String password}) {
     return _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
   }
 
   @override
   Future<void> signUp({String email, String password}) async {
-    return await _firebaseAuth.createUserWithEmailAndPassword(
+
+    var auth = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
+    auth.toString();
+
+    return auth;
   }
 
   @override

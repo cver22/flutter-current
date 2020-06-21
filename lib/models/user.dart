@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
-
 @immutable
 class User extends Equatable {
   final String id;

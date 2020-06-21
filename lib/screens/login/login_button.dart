@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 
 class LoginButton extends StatelessWidget {
   final VoidCallback _onPressed;
+  final String _name;
 
-  const LoginButton({Key key, VoidCallback onPressed})
+  const LoginButton({Key key, VoidCallback onPressed, String name})
       : _onPressed = onPressed,
+        _name = name,
         super(key: key);
 
   @override
@@ -14,7 +16,7 @@ class LoginButton extends StatelessWidget {
         borderRadius: BorderRadius.circular(30.0),
       ),
       onPressed: _onPressed,
-      child: Text('Login'),
+      child: Text(_name),
     );
   }
 }
