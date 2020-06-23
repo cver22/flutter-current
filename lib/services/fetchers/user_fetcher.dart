@@ -1,5 +1,5 @@
 import 'package:expenses/models/auth/auth_status.dart';
-import 'package:expenses/models/login/login_reg_state.dart';
+import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
 import 'package:expenses/services/user_repository.dart';
 import 'package:expenses/store/actions/actions.dart';
@@ -17,7 +17,7 @@ class UserFetcher {
   })  : _store = store,
         _userRepository = userRepository;
 
-  FirebaseUserRepository get repo => _userRepository;
+//  FirebaseUserRepository get repo => _userRepository;
 
   Future<void> startApp() async {
     final isSignedIn = await _userRepository.isSignedIn();
@@ -89,6 +89,5 @@ class UserFetcher {
     }
   }
 
-//TODO implement loading of logs and entries from firestore
 
 }

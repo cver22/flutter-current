@@ -1,13 +1,13 @@
 import 'package:expenses/env.dart';
-import 'package:expenses/models/login/login_or_register.dart';
-import 'package:expenses/models/login/login__reg_status.dart';
+import 'package:expenses/models/login_register/login_or_register.dart';
+import 'package:expenses/models/login_register/login__reg_status.dart';
 import 'package:expenses/screens/login/google_login_button.dart';
 import 'package:expenses/screens/login/login_register_button.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:expenses/models/login/login_reg_state.dart';
+import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'package:expenses/screens/login/create_account_button.dart';
 
 class LoginRegisterForm extends StatefulWidget {

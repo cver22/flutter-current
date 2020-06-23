@@ -1,6 +1,6 @@
 import 'package:expenses/env.dart';
-import 'package:expenses/models/login/login_or_register.dart';
-import 'package:expenses/models/login/login_reg_state.dart';
+import 'package:expenses/models/login_register/login_or_register.dart';
+import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:flutter/material.dart';
 

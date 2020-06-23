@@ -1,5 +1,5 @@
-import 'package:expenses/models/login/login_or_register.dart';
-import 'package:expenses/models/login/login__reg_status.dart';
+import 'package:expenses/models/login_register/login_or_register.dart';
+import 'package:expenses/models/login_register/login__reg_status.dart';
 import 'package:meta/meta.dart';
 
 // empty is the initial state of the LoginForm.
