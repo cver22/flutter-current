@@ -2,13 +2,13 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/login/login__reg_status.dart';
 import 'package:expenses/models/login/login_or_register.dart';
 import 'package:expenses/models/login/login_reg_state.dart';
-import 'package:expenses/screens/login/login_form.dart';
+import 'package:expenses/screens/login/login_register_form.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-class LoginScreen extends StatelessWidget {
-  const LoginScreen({Key key}) : super(key: key);
+class LoginRegisterScreen extends StatelessWidget {
+  const LoginRegisterScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,7 @@ class LoginScreen extends StatelessWidget {
                     : 'Register',
               ),
             ),
-            body: LoginForm(),
+            body: LoginRegisterForm(),
           );
         }
 

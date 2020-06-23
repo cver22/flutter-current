@@ -1,7 +1,6 @@
 import 'package:expenses/blocs/entries_bloc/bloc.dart';
 import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
-import 'package:expenses/blocs/my_entry/bloc.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/catergory_picker.dart';
@@ -22,7 +21,6 @@ class AddEditEntriesPage extends StatefulWidget {
 
 class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   MyEntry _entry;
-  MyEntryBloc _entryBloc;
   EntriesBloc _entriesBloc;
   Log _log;
 
@@ -32,7 +30,6 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
     super.initState();
     _log = widget?.log;
     _entriesBloc = BlocProvider.of<EntriesBloc>(context);
-    _entryBloc = BlocProvider.of<MyEntryBloc>(context);
 
     //entryBloc handles null value
 

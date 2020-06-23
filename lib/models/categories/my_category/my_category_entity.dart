@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/res/db_consts.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 

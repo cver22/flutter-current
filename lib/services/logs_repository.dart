@@ -2,8 +2,8 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/log/log_entity.dart';
-import 'package:expenses/models/user/user.dart';
-import 'package:expenses/res/db_consts.dart';
+import 'package:expenses/models/user.dart';
+import 'package:expenses/utils/db_consts.dart';
 
 abstract class LogsRepository {
   Future<void> addNewLog(Log log);

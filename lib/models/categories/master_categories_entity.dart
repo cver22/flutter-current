@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
-import 'package:expenses/res/db_consts.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
 

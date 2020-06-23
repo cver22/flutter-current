@@ -2,7 +2,7 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/login/login_or_register.dart';
 import 'package:expenses/models/login/login__reg_status.dart';
 import 'package:expenses/screens/login/google_login_button.dart';
-import 'package:expenses/screens/login/login_button.dart';
+import 'package:expenses/screens/login/login_register_button.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
@@ -10,12 +10,12 @@ import 'package:flutter/material.dart';
 import 'package:expenses/models/login/login_reg_state.dart';
 import 'package:expenses/screens/login/create_account_button.dart';
 
-class LoginForm extends StatefulWidget {
+class LoginRegisterForm extends StatefulWidget {
   @override
-  _LoginFormState createState() => _LoginFormState();
+  _LoginRegisterFormState createState() => _LoginRegisterFormState();
 }
 
-class _LoginFormState extends State<LoginForm> {
+class _LoginRegisterFormState extends State<LoginRegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
@@ -121,7 +121,7 @@ class _LoginFormState extends State<LoginForm> {
                     padding: EdgeInsets.symmetric(vertical: 20.0),
                     child: Column(
                       children: <Widget>[
-                        LoginButton(
+                        LoginRegisterButton(
                           onPressed: isLoginButtonEnabled(state)
                               ? () => _onFormSubmitted(state, context)
                               : null,
