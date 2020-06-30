@@ -1,5 +1,3 @@
-import 'package:expenses/env.dart';
-import 'package:expenses/models/login_register/login__reg_status.dart';
 import 'package:expenses/models/login_register/login_or_register.dart';
 import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'package:expenses/screens/login/login_register_form.dart';
@@ -15,27 +13,22 @@ class LoginRegisterScreen extends StatelessWidget {
     return ConnectState<LoginRegState>(
       where: notIdentical,
       map: (state) => state.loginRegState,
-      builder: (state) {
-        if (state.loginStatus == LoginStatus.success) {
-          Env.userFetcher.startApp();
-        } else {
-          return Scaffold(
+      builder: (loginRegState) {
+        return WillPopScope(
+          child: Scaffold(
             appBar: AppBar(
+              leading: Container(),
               title: Text(
-                state.loginOrRegister == LoginOrRegister.login
+                loginRegState.loginOrRegister == LoginOrRegister.login
                     ? 'Login'
                     : 'Register',
               ),
             ),
             body: LoginRegisterForm(),
-          );
-        }
-
-        return Container(
-          color: Colors.white,
-          child: Center(
-            child: CircularProgressIndicator(),
           ),
+          onWillPop: () async {
+            return false;
+          },
         );
       },
     );

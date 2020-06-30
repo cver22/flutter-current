@@ -8,8 +8,12 @@ class ExpenseKeys {
 
   // Home Screens
   static final homeScreen = const Key('__homeScreen__');
-
+  static final appScreen = const Key('__appScreen__');
   static final splashScreen = const Key('__splashScreen__');
+
+  //Account Screen
+  static final accountScreen = const Key('__accountScreen__');
+
 
   // Tabs
   /*static final tabSelector = const Key('__tabSelector__');

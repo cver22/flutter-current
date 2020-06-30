@@ -6,9 +6,25 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Text('Splash Screen'),
-        //TODO improve splash screen with logo
+      body: Container(
+        color: Colors.white,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              Text(
+                'Splash screen',
+                style: TextStyle(
+                  fontSize: 30.0,
+                  color: Colors.black,
+                ),
+              ),
+              CircularProgressIndicator(),
+            ],
+          ),
+        ),
       ),
     );
   }

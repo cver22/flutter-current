@@ -1,11 +1,9 @@
-import 'package:expenses/models/auth/auth_state.dart';
-import 'package:expenses/models/auth/auth_status.dart';
+import 'package:expenses/screens/account/account_screen.dart';
+import 'package:expenses/screens/app_screen.dart';
 import 'package:expenses/screens/home_screen.dart';
 import 'package:expenses/screens/login/login_register_screen.dart';
-import 'package:expenses/screens/splash_screen.dart';
-import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -17,20 +15,22 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      routes: {
+        ExpenseRoutes.home: (context) {
+          return HomeScreen(key: ExpenseKeys.homeScreen,);
+        },
+        ExpenseRoutes.loginRegister: (context) {
+          return LoginRegisterScreen(key: ExpenseKeys.loginScreen);
+        },
+        ExpenseRoutes.app: (context) {
+          return AppScreen(key: ExpenseKeys.appScreen);
+        },
+        ExpenseRoutes.account: (context) {
+          return AccountScreen(key: ExpenseKeys.accountScreen);
+        },
+      },
+      initialRoute: ExpenseRoutes.home,
       key: ExpenseKeys.main,
-      home: ConnectState<AuthState>(
-          map: (state) => state.authState,
-          where: notIdentical,
-          builder: (authState) {
-            print('Rendering Main Screen');
-
-            if (authState.authStatus == AuthStatus.authenticated) {
-              return HomeScreen(key: ExpenseKeys.homeScreen);
-            } else if (authState.authStatus == AuthStatus.unauthenticated) {
-              return LoginRegisterScreen(key: ExpenseKeys.loginScreen);
-            }
-            return SplashScreen(key: ExpenseKeys.splashScreen,);
-          }),
     );
   }
 }

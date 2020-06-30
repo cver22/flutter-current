@@ -1,25 +1,22 @@
 part of 'actions.dart';
 
 class UpdateAuthStatus implements Action {
-  final AuthStatus authStatus;
   final Maybe<User> user;
+  final bool isLoading;
 
-  UpdateAuthStatus({this.authStatus, this.user});
+  UpdateAuthStatus({this.user, this.isLoading});
 
   @override
   AppState updateState(AppState appState) {
     return appState.copyWith(
-        authState:
-            appState.authState.copyWith(authStatus: authStatus, user: user));
+        authState: appState.authState.copyWith(user: user, isLoading: isLoading));
   }
 }
 
 class SignOutState implements Action {
   @override
   AppState updateState(AppState appState) {
-
-    return appState.copyWith(authState: AuthState.initial(), loginState: LoginRegState.initial());
-
+    return appState.copyWith(
+        authState: AuthState.initial(), loginState: LoginRegState.initial());
   }
-
 }

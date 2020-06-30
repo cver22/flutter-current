@@ -13,6 +13,7 @@ class LoginRegState {
   final LoginOrRegister loginOrRegister;
   final bool isEmailValid;
   final bool isPasswordValid;
+  final bool isSubmitting;
 
   bool get isFormValid => isEmailValid && isPasswordValid;
 
@@ -21,24 +22,25 @@ class LoginRegState {
     @required this.loginOrRegister,
     @required this.isEmailValid,
     @required this.isPasswordValid,
+    @required this.isSubmitting,
   });
 
   factory LoginRegState.initial() {
     return LoginRegState(
       loginStatus: LoginStatus.initial,
-      loginOrRegister:  LoginOrRegister.login,
+      loginOrRegister: LoginOrRegister.login,
       isEmailValid: true,
       isPasswordValid: true,
+      isSubmitting: false,
     );
   }
 
   LoginRegState submitting() {
     return copyWith(
-      loginStatus: LoginStatus.submitting,
       loginOrRegister: this.loginOrRegister,
       isEmailValid: isEmailValid,
       isPasswordValid: isPasswordValid,
-
+      isSubmitting: true,
     );
   }
 
@@ -48,7 +50,7 @@ class LoginRegState {
       loginOrRegister: this.loginOrRegister,
       isEmailValid: isEmailValid,
       isPasswordValid: isPasswordValid,
-
+      isSubmitting: false,
     );
   }
 
@@ -58,7 +60,7 @@ class LoginRegState {
       loginOrRegister: this.loginOrRegister,
       isEmailValid: isEmailValid,
       isPasswordValid: isPasswordValid,
-
+      isSubmitting: false,
     );
   }
 
@@ -71,7 +73,7 @@ class LoginRegState {
       loginOrRegister: this.loginOrRegister,
       isEmailValid: isEmailValid,
       isPasswordValid: isPasswordValid,
-
+      isSubmitting: false,
     );
   }
 
@@ -80,12 +82,14 @@ class LoginRegState {
     LoginOrRegister loginOrRegister,
     bool isEmailValid,
     bool isPasswordValid,
+    bool isSubmitting,
   }) {
     return LoginRegState(
       loginStatus: loginStatus ?? this.loginStatus,
       loginOrRegister: loginOrRegister ?? this.loginOrRegister,
       isEmailValid: isEmailValid ?? this.isEmailValid,
       isPasswordValid: isPasswordValid ?? this.isPasswordValid,
+      isSubmitting: isSubmitting ?? this.isSubmitting,
     );
   }
 
@@ -95,6 +99,7 @@ class LoginRegState {
     loginStatus: $loginStatus,
     isEmailValid: $isEmailValid,
       isPasswordValid: $isPasswordValid,
+      isSubmitting: $isSubmitting,
       }''';
   }
 }

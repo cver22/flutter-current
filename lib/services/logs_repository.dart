@@ -16,9 +16,9 @@ abstract class LogsRepository {
 }
 
 class FirebaseLogsRepository implements LogsRepository {
-  final User user;
+  final User _user;
 
-  FirebaseLogsRepository({this.user});
+  FirebaseLogsRepository({User user}): _user = user ?? null;
 
   final logsCollection = Firestore.instance.collection('logs');
 
@@ -26,7 +26,7 @@ class FirebaseLogsRepository implements LogsRepository {
   Future<void> addNewLog(Log log) {
     //adds uid to new logs
     //TODO move this to logsBloc so it can also handle when members are added?
-    return logsCollection.add(log.copyWith(uid: user.id).toEntity().toDocument());
+    return logsCollection.add(log.copyWith(uid: _user.id).toEntity().toDocument());
   }
 
   @override
@@ -39,7 +39,7 @@ class FirebaseLogsRepository implements LogsRepository {
   //TODO need to filter by UID for groups
   @override
   Stream<List<Log>> loadLogs() {
-    return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
+    return logsCollection.where(UID, isEqualTo: _user.id).snapshots().map((snapshot) {
       return snapshot.documents
           .map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc)))
           .toList();

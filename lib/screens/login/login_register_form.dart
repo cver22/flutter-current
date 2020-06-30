@@ -1,6 +1,5 @@
 import 'package:expenses/env.dart';
 import 'package:expenses/models/login_register/login_or_register.dart';
-import 'package:expenses/models/login_register/login__reg_status.dart';
 import 'package:expenses/screens/login/google_login_button.dart';
 import 'package:expenses/screens/login/login_register_button.dart';
 import 'package:expenses/store/actions/actions.dart';
@@ -28,8 +27,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
 
   bool isLoginButtonEnabled(LoginRegState state) {
     return state.isFormValid &&
-        isPopulated &&
-        state.loginStatus != LoginStatus.submitting;
+        isPopulated && !state.isSubmitting;
   }
 
   @override
@@ -48,96 +46,70 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
           print('Login status: ${state.loginStatus}');
           print('LoginOrRegister: ${state.loginOrRegister}');
 
-          /*if (loginState.loginStatus == LoginStatus.failure) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Login Failure'),
-                        Icon(Icons.error)
-                      ],
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-            } else if (loginState.loginStatus == LoginStatus.submitting) {
-              Scaffold.of(context)
-                ..hideCurrentSnackBar()
-                ..showSnackBar(
-                  SnackBar(
-                    content: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: <Widget>[
-                        Text('Logging in...'),
-                        CircularProgressIndicator(),
-                      ],
-                    ),
-                    backgroundColor: Colors.red,
-                  ),
-                );
-            }*/
-
-          return Padding(
-            padding: EdgeInsets.all(20.0),
-            child: Form(
-              child: ListView(
-                children: <Widget>[
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0),
-                    child: Image.asset('assets/flutter_logo.png', height: 200),
-                  ),
-                  TextFormField(
-                    controller: _emailController,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.email),
-                      labelText: 'Email',
-                    ),
-                    keyboardType: TextInputType.emailAddress,
-                    autovalidate: true,
-                    autocorrect: false,
-                    //TODO need email validation
-                    validator: (_) {
-                      return !state.isEmailValid ? 'Invalid Email' : null;
-                    },
-                  ),
-                  TextFormField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(
-                      icon: Icon(Icons.lock),
-                      labelText: 'Password',
-                    ),
-                    obscureText: true,
-                    autovalidate: true,
-                    autocorrect: false,
-                    //TODO delay password validation
-                    validator: (_) {
-                      return !state.isPasswordValid ? 'Minimum 10 characters' : null;
-                    },
-                  ),
-                  Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20.0),
-                    child: Column(
-                      children: <Widget>[
-                        LoginRegisterButton(
-                          onPressed: isLoginButtonEnabled(state)
-                              ? () => _onFormSubmitted(state, context)
-                              : null,
-                          name: isLogin(state) ? 'Login' : 'Register',
+          return Stack(
+            children: <Widget>[
+              Padding(
+                padding: EdgeInsets.all(20.0),
+                child: Form(
+                  child: ListView(
+                    children: <Widget>[
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Image.asset('assets/flutter_logo.png', height: 200),
+                      ),
+                      TextFormField(
+                        controller: _emailController,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.email),
+                          labelText: 'Email',
                         ),
-                        GoogleLoginButton(
-                          enabled: isLogin(state),
-                          loginRegState: state,
+                        keyboardType: TextInputType.emailAddress,
+                        autovalidate: true,
+                        autocorrect: false,
+                        //TODO need email validation
+                        validator: (_) {
+                          return !state.isEmailValid ? 'Invalid Email' : null;
+                        },
+                      ),
+                      TextFormField(
+                        controller: _passwordController,
+                        decoration: InputDecoration(
+                          icon: Icon(Icons.lock),
+                          labelText: 'Password',
                         ),
-                        CreateAccountButton(loginState: state),
-                      ],
-                    ),
+                        obscureText: true,
+                        autovalidate: true,
+                        autocorrect: false,
+                        //TODO delay password validation
+                        validator: (_) {
+                          return !state.isPasswordValid ? 'Minimum 10 characters' : null;
+                        },
+                      ),
+                      Padding(
+                        padding: EdgeInsets.symmetric(vertical: 20.0),
+                        child: Column(
+                          children: <Widget>[
+                            LoginRegisterButton(
+                              onPressed: isLoginButtonEnabled(state)
+                                  ? () => _onFormSubmitted(state, context)
+                                  : null,
+                              name: isLogin(state) ? 'Login' : 'Register',
+                            ),
+                            GoogleLoginButton(
+                              enabled: isLogin(state),
+                              loginRegState: state,
+                            ),
+                            CreateAccountButton(loginState: state),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
+              //TODO add modal progress indicator
+            ],
+
           );
         });
   }

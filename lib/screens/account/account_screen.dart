@@ -1,8 +1,11 @@
 import 'package:expenses/env.dart';
+import 'package:expenses/utils/expense_routes.dart';
 import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatelessWidget {
+  const AccountScreen({Key key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     User user = Env.store.state.authState.user.value;
@@ -47,7 +50,7 @@ class AccountScreen extends StatelessWidget {
               child: Text('Logout'),
               onPressed: () {
                 Env.userFetcher.signOut();
-                Navigator.pop(context);
+                Navigator.popUntil(context, ModalRoute.withName(ExpenseRoutes.home));
               },
             )
           ],

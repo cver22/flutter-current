@@ -1,30 +1,31 @@
-import 'package:expenses/models/auth/auth_status.dart';
 import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
 
-
 @immutable
 class AuthState {
   final Maybe<User> user;
-  final AuthStatus authStatus;
+  final bool isLoading;
 
-  AuthState({this.user, this.authStatus});
+  AuthState({
+    this.user,
+    this.isLoading,
+  });
 
   AuthState copyWith({
     Maybe<User> user,
-    AuthStatus authStatus,
+    bool isLoading,
   }) {
     return AuthState(
       user: user ?? this.user,
-      authStatus: authStatus ?? this.authStatus,
+      isLoading: isLoading ?? this.isLoading,
     );
   }
 
   factory AuthState.initial() {
     return AuthState(
       user: Maybe.none(),
-      authStatus: AuthStatus.unauthenticated,
+      isLoading: false,
     );
   }
 }

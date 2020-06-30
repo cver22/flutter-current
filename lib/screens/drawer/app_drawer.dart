@@ -1,5 +1,7 @@
 import 'package:expenses/screens/account/account_screen.dart';
+import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -16,7 +18,7 @@ class AppDrawer extends StatelessWidget {
             ListView(
               shrinkWrap: true,
               children: <Widget>[
-                DrawerListTile(page: AccountScreen(), name: 'Account'),
+                DrawerListTile(route: ExpenseRoutes.account, name: 'Account'),
               ],
             ),
           ],
@@ -27,20 +29,21 @@ class AppDrawer extends StatelessWidget {
 }
 
 class DrawerListTile extends StatelessWidget {
-  final Widget page;
   final String name;
+  final String route;
 
   const DrawerListTile({
-    this.page,
     this.name,
     Key key,
+    this.route,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () => Navigator.push(
-          context, MaterialPageRoute(builder: (context) => page)),
+      onTap: () => SchedulerBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushNamed(context, ExpenseRoutes.account);
+      }),
       trailing: Icon(Icons.chevron_right),
       title: Text(name),
     );
