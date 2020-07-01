@@ -1,4 +1,3 @@
-import 'dart:io';
 
 import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
@@ -35,6 +34,10 @@ class UserFetcher {
   }
 
   //TODO do I need to map alreadyLoggedIn ?
+  /*Future<void> getCurrentUser() async {
+    _startApp();
+  }*/
+
 
   Future<void> signOut() async {
     _store.dispatch(SignOutState());

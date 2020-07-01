@@ -1,3 +1,4 @@
+import 'package:expenses/env.dart';
 import 'package:expenses/models/auth/auth_state.dart';
 import 'package:expenses/screens/splash_screen.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -15,16 +16,23 @@ class HomeScreen extends StatelessWidget {
       map: (state) => state.authState,
       // ignore: missing_return
       builder: (authState) {
+
+        print('logged in user ${authState.user.toString()}');
+        //TODO need to check if already logged in
+
         if (authState.user.isSome) {
           //Prevents calling in the current build cycle
           Future.delayed(Duration.zero, () {
-            Navigator.popUntil(context, ModalRoute.withName(ExpenseRoutes.home));
-            Navigator.pushNamed(context, ExpenseRoutes.app);
+            Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
+                ModalRoute.withName(ExpenseRoutes.home));
           });
-        } else if(authState.user.isNone) {
+        } else if (authState.user.isNone) {
+          //Env.userFetcher.getCurrentUser();
           Future.delayed(Duration(seconds: 2), () {
-            Navigator.popUntil(context, ModalRoute.withName(ExpenseRoutes.home));
-            Navigator.pushNamed(context, ExpenseRoutes.loginRegister);
+            Navigator.pushNamedAndRemoveUntil(
+                context,
+                ExpenseRoutes.loginRegister,
+                ModalRoute.withName(ExpenseRoutes.home));
           });
         }
 

@@ -2,6 +2,7 @@ import 'package:expenses/screens/drawer/app_drawer.dart';
 import 'package:expenses/screens/entries/entries_screen.dart';
 import 'package:expenses/screens/logs/logs_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class AppScreen extends StatefulWidget {
   const AppScreen({Key key}) : super(key: key);
@@ -36,6 +37,9 @@ class _AppScreenState extends State<AppScreen> {
             ],
           ),
         ),
+        //TODO this is an Android exit only, need IOS which is exit(0)
+        //onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+
         onWillPop: () async {
           return false;
         },

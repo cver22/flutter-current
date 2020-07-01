@@ -29,6 +29,9 @@ class LoginRegisterScreen extends StatelessWidget {
           onWillPop: () async {
             return false;
           },
+
+          //TODO this is an Android exit only, need IOS which is exit(0)
+          //onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
         );
       },
     );
