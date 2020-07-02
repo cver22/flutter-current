@@ -26,7 +26,7 @@ class LogsState {
   factory LogsState.initial() {
     return LogsState(
       logs: LinkedHashMap(),
-      isLoading: false,
+      isLoading: true,
       selectedLogId: Maybe.none(),
     );
   }

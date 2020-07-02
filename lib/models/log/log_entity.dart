@@ -15,6 +15,7 @@ class LogEntity extends Equatable {
   final String logName;
   final String currency;
   final bool active;
+  final bool archive;
   final Map<String, MyCategory> categories;
   final Map<String, MySubcategory> subcategories;
   final Map<String, dynamic> members;
@@ -27,6 +28,7 @@ class LogEntity extends Equatable {
       this.categories,
       this.subcategories,
       this.active,
+        this.archive,
       this.members});
 
   //DEPRECATED
@@ -44,11 +46,11 @@ class LogEntity extends Equatable {
 
   @override
   List<Object> get props =>
-      [uid, id, logName, currency, categories, subcategories, active, members];
+      [uid, id, logName, currency, categories, subcategories, active, archive, members];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, $SUBCATEGORIES: $subcategories, ctive: $active, members: $members}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, $SUBCATEGORIES: $subcategories, active: $active, archive: $archive, members: $members}';
   }
 
   //DEPRECATED
@@ -78,6 +80,7 @@ class LogEntity extends Equatable {
               (key, value) => MapEntry(
               key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       active: snap.data[ACTIVE],
+      archive: snap.data[ARCHIVE],
     );
   }
 

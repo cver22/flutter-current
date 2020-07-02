@@ -3,6 +3,7 @@
 const String ID = 'id';
 const String UID = 'uid';
 const String ACTIVE = 'active'; //used to determine if a file is active or deleted
+const String ARCHIVE = 'archive'; //used to determine if log is shown or not
 const String CURRENCY_NAME = 'currency';
 const String CATEGORY = 'category';
 const String SUBCATEGORY = 'subcategory';

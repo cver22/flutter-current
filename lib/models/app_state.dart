@@ -8,6 +8,10 @@ class AppState {
   final AuthState authState;
   final LoginRegState loginRegState;
   final LogsState logsState;
+  //TODO Add single log state
+  //TODO Add single Entry state
+  //TODO add Entries state
+  //TODO add categories state
 
   AppState({
     @required this.authState,

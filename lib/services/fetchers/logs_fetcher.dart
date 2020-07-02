@@ -20,13 +20,13 @@ class LogsFetcher {
   })  : _store = store,
         _logsRepository = logsRepository;
 
-  Future<void> loadLogs() async {
+  /*Future<void> loadLogs() async {
     _logsSubscription?.cancel();
     _logsSubscription = _logsRepository.loadLogs(Env.store.state.authState.user.value).listen(
-          (logs) => add(LogsUpdated(logs: logs)),
+          (logs) => Env.dispatch),
     );
 
-  }
+  }*/
 
 
 
