@@ -6,31 +6,29 @@ import 'package:expenses/models/user.dart';
 import 'package:expenses/utils/db_consts.dart';
 
 abstract class LogsRepository {
-  Future<void> addNewLog(Log log);
+  Future<void> addNewLog(User user, Log log);
 
-  Future<void> deleteLog(Log log);
+  Future<void> deleteLog(User user, Log log);
 
-  Stream<List<Log>> loadLogs();
+  Stream<List<Log>> loadLogs(User user);
 
-  Future<void> updateLog(Log log);
+  Future<void> updateLog(User user, Log log);
 }
 
 class FirebaseLogsRepository implements LogsRepository {
-  final User _user;
 
-  FirebaseLogsRepository({User user}): _user = user ?? null;
 
   final logsCollection = Firestore.instance.collection('logs');
 
   @override
-  Future<void> addNewLog(Log log) {
+  Future<void> addNewLog(User user, Log log) {
     //adds uid to new logs
     //TODO move this to logsBloc so it can also handle when members are added?
-    return logsCollection.add(log.copyWith(uid: _user.id).toEntity().toDocument());
+    return logsCollection.add(log.copyWith(uid: user.id).toEntity().toDocument());
   }
 
   @override
-  Future<void> deleteLog(Log inActive) async {
+  Future<void> deleteLog(User user, Log inActive) async {
     return logsCollection
         .document(inActive.id)
         .updateData(inActive.toEntity().toDocument());
@@ -38,8 +36,8 @@ class FirebaseLogsRepository implements LogsRepository {
 
   //TODO need to filter by UID for groups
   @override
-  Stream<List<Log>> loadLogs() {
-    return logsCollection.where(UID, isEqualTo: _user.id).snapshots().map((snapshot) {
+  Stream<List<Log>> loadLogs(User user) {
+    return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
       return snapshot.documents
           .map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc)))
           .toList();
@@ -47,7 +45,7 @@ class FirebaseLogsRepository implements LogsRepository {
   }
 
   @override
-  Future<void> updateLog(Log update) {
+  Future<void> updateLog(User user, Log update) {
     return logsCollection
         .document(update.id)
         .updateData(update.toEntity().toDocument());

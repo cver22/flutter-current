@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:expenses/env.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log.dart';
@@ -9,6 +12,7 @@ import 'package:uuid/uuid.dart';
 class LogsFetcher {
   final AppStore _store;
   final LogsRepository _logsRepository;
+  StreamSubscription _logsSubscription;
 
   LogsFetcher({
     @required AppStore store,
@@ -17,6 +21,10 @@ class LogsFetcher {
         _logsRepository = logsRepository;
 
   Future<void> loadLogs() async {
+    _logsSubscription?.cancel();
+    _logsSubscription = _logsRepository.loadLogs(Env.store.state.authState.user.value).listen(
+          (logs) => add(LogsUpdated(logs: logs)),
+    );
 
   }
 
@@ -69,7 +77,7 @@ class LogsFetcher {
     print('these are my categories ${_log.categories}');
 
     try {
-      _logsRepository.addNewLog(_log);
+      _logsRepository.addNewLog(Env.store.state.authState.user.value, _log);
     } catch (e) {
       print(e.toString());
     }
