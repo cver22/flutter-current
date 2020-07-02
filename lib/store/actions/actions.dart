@@ -3,7 +3,7 @@ import 'package:expenses/models/auth/auth_state.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/log/logs_state.dart';
 import 'package:expenses/models/login_register/login_reg_state.dart';
-import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
+import 'package:expenses/models/user.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/validators.dart';
 

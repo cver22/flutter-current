@@ -14,6 +14,7 @@ class AppScreen extends StatefulWidget {
 class _AppScreenState extends State<AppScreen> {
   @override
   Widget build(BuildContext context) {
+    print('Rendering App Screen');
     return DefaultTabController(
       length: 3,
       child: WillPopScope(
@@ -37,12 +38,9 @@ class _AppScreenState extends State<AppScreen> {
             ],
           ),
         ),
-        //TODO this is an Android exit only, need IOS which is exit(0)
-        //onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
-
-        onWillPop: () async {
-          return false;
-        },
+        //TODO this is an Android exit only, need iOS which is exit(0) here and in login_register_screen.dart
+        onWillPop: () =>
+            SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
       ),
     );
   }

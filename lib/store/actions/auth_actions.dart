@@ -20,3 +20,10 @@ class SignOutState implements Action {
         authState: AuthState.initial(), loginState: LoginRegState.initial());
   }
 }
+
+class LoadingUser implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return appState.copyWith(authState: appState.authState.copyWith(isLoading: true));
+  }
+}

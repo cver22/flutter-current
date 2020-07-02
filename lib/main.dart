@@ -1,3 +1,4 @@
+import 'package:expenses/env.dart';
 import 'package:expenses/screens/account/account_screen.dart';
 import 'package:expenses/screens/app_screen.dart';
 import 'package:expenses/screens/home_screen.dart';
@@ -7,7 +8,8 @@ import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized(); // allows code before runApp
+  WidgetsFlutterBinding.ensureInitialized();
+  Env.userFetcher.startApp();// allows code before runApp
   runApp(App());
 }
 

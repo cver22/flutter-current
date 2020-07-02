@@ -1,6 +1,7 @@
-
+import 'package:expenses/env.dart';
+import 'package:expenses/models/login_register/login_or_register.dart';
 import 'package:expenses/models/login_register/login_reg_state.dart';
-import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
+import 'package:expenses/models/user.dart';
 import 'package:expenses/services/user_repository.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
@@ -19,13 +20,14 @@ class UserFetcher {
 
 //  FirebaseUserRepository get repo => _userRepository;
 
-  _startApp() async {
+  _getCurrentUser(LoginRegState loginRegState) async {
     print('firing start app');
     final isSignedIn = await _userRepository.isSignedIn();
     if (isSignedIn) {
-      _store.dispatch(UpdateAuthStatus(isLoading: true));
       final Maybe<User> user = Maybe.some(await _userRepository.getUser());
       _store.dispatch(UpdateAuthStatus(user: user, isLoading: false));
+      _store.dispatch(
+          UpdateLoginRegState(loginRegState: loginRegState.success()));
       print('User authenticated: $user');
     } else {
       _store.dispatch(UpdateAuthStatus(user: Maybe.none(), isLoading: false));
@@ -33,11 +35,22 @@ class UserFetcher {
     }
   }
 
-  //TODO do I need to map alreadyLoggedIn ?
-  /*Future<void> getCurrentUser() async {
-    _startApp();
-  }*/
+  _setLoadingAndSubmitting(LoginRegState loginRegState) {
+    _store.dispatch(
+        UpdateLoginRegState(loginRegState: loginRegState.submitting()));
+    _store.dispatch(UpdateAuthStatus(isLoading: true));
+  }
 
+  _loginRegisterFail(LoginRegState loginRegState) {
+    _store.dispatch(UpdateAuthStatus(user: Maybe.none(), isLoading: false));
+    _store
+        .dispatch(UpdateLoginRegState(loginRegState: loginRegState.failure()));
+  }
+
+  Future<void> startApp() async {
+    _store.dispatch(UpdateAuthStatus(isLoading: true));
+    _getCurrentUser(Env.store.state.loginRegState);
+  }
 
   Future<void> signOut() async {
     _store.dispatch(SignOutState());
@@ -45,51 +58,31 @@ class UserFetcher {
   }
 
   Future<void> signInWithGoogle(LoginRegState loginRegState) async {
-    _store.dispatch(
-        UpdateLoginRegState(loginRegState: loginRegState.submitting()));
+    _setLoadingAndSubmitting(loginRegState);
     try {
       await _userRepository.signInWithGoogle();
-      _startApp();
-      _store.dispatch(UpdateLoginRegState(loginRegState: loginRegState.success()));
+      _getCurrentUser(loginRegState);
     } catch (e) {
       print(e.toString());
-      _store.dispatch(UpdateAuthStatus(user: Maybe.none(), isLoading: false));
-      _store.dispatch(
-          UpdateLoginRegState(loginRegState: loginRegState.failure()));
+      _loginRegisterFail(loginRegState);
     }
   }
 
-  Future<void> signInWithCredentials(
+  Future<void> signInOrRegisterWithCredentials(
       {String email, String password, LoginRegState loginRegState}) async {
-    _store.dispatch(
-        UpdateLoginRegState(loginRegState: loginRegState.submitting()));
-
+    _setLoadingAndSubmitting(loginRegState);
     try {
-      await _userRepository.signInWithCredentials(
-          email: email, password: password);
-      _startApp();
-      _store.dispatch(
-          UpdateLoginRegState(loginRegState: loginRegState.success()));
+      if (loginRegState.loginOrRegister == LoginOrRegister.login) {
+        await _userRepository.signInWithCredentials(
+            email: email, password: password);
+      } else if (loginRegState.loginOrRegister == LoginOrRegister.register) {
+        await _userRepository.signUp(email: email, password: password);
+      }
+
+      _getCurrentUser(loginRegState);
     } catch (e) {
       print(e.toString());
-      _store.dispatch(
-          UpdateLoginRegState(loginRegState: loginRegState.failure()));
-    }
-  }
-
-  Future<void> registerWithCredentials(
-      {String email, String password, LoginRegState loginRegState}) async {
-    _store.dispatch(
-        UpdateLoginRegState(loginRegState: loginRegState.submitting()));
-    try {
-      await _userRepository.signUp(email: email, password: password);
-      _startApp();
-      _store.dispatch(
-          UpdateLoginRegState(loginRegState: loginRegState.success()));
-    } catch (e) {
-      print(e.toString());
-      _store.dispatch(
-          UpdateLoginRegState(loginRegState: loginRegState.failure()));
+      _loginRegisterFail(loginRegState);
     }
   }
 }

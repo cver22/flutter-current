@@ -1,6 +1,6 @@
 import 'package:expenses/env.dart';
+import 'package:expenses/models/user.dart';
 import 'package:expenses/utils/expense_routes.dart';
-import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
 import 'package:flutter/material.dart';
 
 class AccountScreen extends StatelessWidget {

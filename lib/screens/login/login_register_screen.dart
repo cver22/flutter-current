@@ -4,6 +4,7 @@ import 'package:expenses/screens/login/login_register_form.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LoginRegisterScreen extends StatelessWidget {
   const LoginRegisterScreen({Key key}) : super(key: key);
@@ -14,6 +15,7 @@ class LoginRegisterScreen extends StatelessWidget {
       where: notIdentical,
       map: (state) => state.loginRegState,
       builder: (loginRegState) {
+        print('Rendering Login Register Screen');
         return WillPopScope(
           child: Scaffold(
             appBar: AppBar(
@@ -26,12 +28,8 @@ class LoginRegisterScreen extends StatelessWidget {
             ),
             body: LoginRegisterForm(),
           ),
-          onWillPop: () async {
-            return false;
-          },
 
-          //TODO this is an Android exit only, need IOS which is exit(0)
-          //onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+          onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
         );
       },
     );

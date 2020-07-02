@@ -1,7 +1,5 @@
 import 'package:flutter/widgets.dart';
 
-//TODO not my keys, need massive editing to use
-
 class ExpenseKeys {
   // Main
   static final main = const Key('__main__');

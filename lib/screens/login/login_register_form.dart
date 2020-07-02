@@ -26,8 +26,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
   }
 
   bool isLoginButtonEnabled(LoginRegState state) {
-    return state.isFormValid &&
-        isPopulated && !state.isSubmitting;
+    return state.isFormValid && isPopulated && !state.isSubmitting;
   }
 
   @override
@@ -43,6 +42,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
         where: notIdentical,
         map: (state) => state.loginRegState,
         builder: (state) {
+          print('Rendering Login Register Form');
           print('Login status: ${state.loginStatus}');
           print('LoginOrRegister: ${state.loginOrRegister}');
 
@@ -55,7 +55,8 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: Image.asset('assets/flutter_logo.png', height: 200),
+                        child:
+                            Image.asset('assets/flutter_logo.png', height: 200),
                       ),
                       TextFormField(
                         controller: _emailController,
@@ -82,7 +83,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                         autocorrect: false,
                         //TODO delay password validation
                         validator: (_) {
-                          return !state.isPasswordValid ? 'Minimum 10 characters' : null;
+                          return !state.isPasswordValid
+                              ? 'Minimum 10 characters'
+                              : null;
                         },
                       ),
                       Padding(
@@ -109,7 +112,6 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
               ),
               //TODO add modal progress indicator
             ],
-
           );
         });
   }
@@ -130,16 +132,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
   }
 
   void _onFormSubmitted(LoginRegState loginState, BuildContext context) {
-    if (isLogin(loginState)) {
-      Env.userFetcher.signInWithCredentials(
-          email: _emailController.text.toString().trim(),
-          password: _passwordController.text.toString(),
-          loginRegState: loginState);
-    } else {
-      Env.userFetcher.registerWithCredentials(
-          email: _emailController.text.toString().trim(),
-          password: _passwordController.text.toString(),
-          loginRegState: loginState);
-    }
+    Env.userFetcher.signInOrRegisterWithCredentials(
+        email: _emailController.text.toString().trim(),
+        password: _passwordController.text.toString(),
+        loginRegState: loginState);
   }
 }

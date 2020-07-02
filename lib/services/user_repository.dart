@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'file:///D:/version-control/flutter/expenses/lib/models/user.dart';
+
+import 'package:expenses/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 

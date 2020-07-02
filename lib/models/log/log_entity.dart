@@ -71,7 +71,6 @@ class LogEntity extends Equatable {
       id: snap.documentID,
       logName: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
-      //TODO subcategories
       categories: (snap.data[CATEGORIES] as Map<String, dynamic>).map(
           (key, value) => MapEntry(
               key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
