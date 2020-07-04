@@ -6,7 +6,6 @@ import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class AddEditLogScreen extends StatefulWidget {
 

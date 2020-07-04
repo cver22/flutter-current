@@ -1,10 +1,11 @@
+import 'package:equatable/equatable.dart';
 import 'package:expenses/models/auth/auth_state.dart';
 import 'package:expenses/models/log/logs_state.dart';
 import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class AppState {
+class AppState extends Equatable{
   final AuthState authState;
   final LoginRegState loginRegState;
   final LogsState logsState;
@@ -37,4 +38,10 @@ class AppState {
       logsState: LogsState.initial(),
     );
   }
+
+  @override
+  bool get stringify => true;
+
+  @override
+  List<Object> get props => [authState, loginRegState, logsState];
 }

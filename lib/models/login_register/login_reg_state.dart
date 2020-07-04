@@ -1,3 +1,4 @@
+import 'package:equatable/equatable.dart';
 import 'package:expenses/models/login_register/login_or_register.dart';
 import 'package:expenses/models/login_register/login__reg_status.dart';
 import 'package:meta/meta.dart';
@@ -8,7 +9,7 @@ import 'package:meta/meta.dart';
 // success is the state of the LoginForm when a login attempt has succeeded.
 
 @immutable
-class LoginRegState {
+class LoginRegState extends Equatable{
   final LoginStatus loginStatus;
   final LoginOrRegister loginOrRegister;
   final bool isEmailValid;
@@ -102,4 +103,10 @@ class LoginRegState {
       isSubmitting: $isSubmitting,
       }''';
   }
+
+  @override
+  List<Object> get props => [loginStatus, loginOrRegister, isEmailValid, isPasswordValid, isSubmitting];
+
+  @override
+  bool get stringify => true;
 }

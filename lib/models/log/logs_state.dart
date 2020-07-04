@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:equatable/equatable.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/foundation.dart';
@@ -8,7 +9,7 @@ import 'package:flutter/foundation.dart';
 //TODO will need a visible method to hide archived/deleted logs
 
 @immutable
-class LogsState {
+class LogsState extends Equatable{
   final Map<String, Log> logs;
   final bool isLoading;
   final Maybe<String> selectedLogId;
@@ -42,4 +43,10 @@ class LogsState {
       selectedLogId: selectedLogId ?? this.selectedLogId,
     );
   }
+
+  @override
+  List<Object> get props => [logs, isLoading, selectedLogId];
+
+  @override
+  bool get stringify => true;
 }

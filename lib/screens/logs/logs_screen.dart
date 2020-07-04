@@ -21,13 +21,13 @@ class LogsScreen extends StatelessWidget {
         map: (state) => state.logsState,
         builder: (logsState) {
           print('Rendering Logs Screen');
-          print('Loading logs: ${logsState.isLoading}');
+          print(logsState.toString());
           if (logsState.isLoading == true) {
             return logsLoading();
           } else if (logsState.isLoading == false &&
               logsState.logs.isNotEmpty) {
             //Only shows logs that have not been "deleted"
-            //TODO create archive bool to show logs that have been archived and not
+            //TODO create archive bool to show logs that have been archived and not visible
             _logs = logsState.logs.entries
                 .map((e) => e.value)
                 .where((e) => e.active == true)
