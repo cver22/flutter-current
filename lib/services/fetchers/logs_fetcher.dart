@@ -1,10 +1,9 @@
 import 'dart:async';
-
-import 'package:expenses/env.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/services/logs_repository.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -20,17 +19,19 @@ class LogsFetcher {
   })  : _store = store,
         _logsRepository = logsRepository;
 
-  /*Future<void> loadLogs() async {
+  Future<void> loadLogs() async {
+    _store.dispatch(SetLogsLoading());
     _logsSubscription?.cancel();
-    _logsSubscription = _logsRepository.loadLogs(Env.store.state.authState.user.value).listen(
-          (logs) => Env.dispatch),
-    );
+    _logsSubscription =
+        _logsRepository.loadLogs(_store.state.authState.user.value).listen(
+              (logs) => _store.dispatch(SetLogs(logList: logs)),
+            );
+    _store.dispatch(SetLogsLoaded());
+  }
 
-  }*/
+  //TODO need updateLog method
 
-
-
-  Future<void> logAdded(Log log) async {
+  Future<void> addLog(Log log) async {
     Log _log = log;
     List<MyCategory> categories = [];
     List<MySubcategory> subcategories = [];
@@ -72,14 +73,40 @@ class LogsFetcher {
             .firstWhere((element) => element.name == 'Transportation')
             .id));
 
-    _log = _log.copyWith(categories: categories, subcategories: subcategories);
+    _log = _log.copyWith(uid: _store.state.authState.user.value.id, categories: categories, subcategories: subcategories);
 
     print('these are my categories ${_log.categories}');
 
     try {
-      _logsRepository.addNewLog(Env.store.state.authState.user.value, _log);
+      _logsRepository.addNewLog(_store.state.authState.user.value, _log);
     } catch (e) {
       print(e.toString());
     }
+  }
+
+  Future<void> updateLog(Log log) async {
+    _store.dispatch(ClearSelectedLog());
+    try{
+      _logsRepository.updateLog(
+          _store.state.authState.user.value, log);
+    } catch (e) {
+      print(e.toString());
+    }
+
+  }
+
+  Future<void> deleteLog(Log log) async {
+    _store.dispatch(ClearSelectedLog());
+    try {
+      _logsRepository.deleteLog(
+          _store.state.authState.user.value, log.copyWith(active: false));
+    }catch (e) {
+      print(e.toString());
+    }
+  }
+
+  //TODO where to close the subscription when exiting the app?
+  Future<void> close() async {
+    _logsSubscription?.cancel();
   }
 }

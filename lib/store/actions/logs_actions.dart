@@ -25,17 +25,7 @@ AppState _updateSingleLog(
   return _updateLogs(appState, (logs) => logs..[logId] = update(logs[logId]));
 }
 
-class DeleteLog implements Action {
-  final String logId;
 
-  DeleteLog({this.logId});
-
-  @override
-  AppState updateState(AppState appState) {
-    return _updateSingleLog(
-        appState, logId, (log) => log.copyWith(active: false));
-  }
-}
 
 //TODO add archive field to log
 /*class MarkArchiveLog implements Action {
@@ -115,17 +105,59 @@ class AddLog implements Action {
   }
 }
 
-//TODO implement SelectLog
-//TODO implement clear selection
-//TODO implement setLogs to show the logs on the screen
+class SetLogsLoading implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return appState.copyWith(
+        logsState: appState.logsState.copyWith(isLoading: true));
+  }
+}
 
-/*class UpdateLogs extends Action {
-  final List<Log> logs;
+class SetLogsLoaded implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return appState.copyWith(
+        logsState: appState.logsState.copyWith(isLoading: false));
+  }
+}
 
-  UpdateLogs({this.logs});
+class SelectLog implements Action {
+  final String logId;
+
+  SelectLog({this.logId});
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogs(appState, (logs) {});
+    return _updateLogState(appState,
+        (logsState) => logsState.copyWith(selectedLogId: Maybe.some(logId)));
   }
-}*/
+}
+
+class ClearSelectedLog implements Action {
+  final String logId;
+
+  ClearSelectedLog({this.logId});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogState(appState,
+        (logsState) => logsState.copyWith(selectedLogId: Maybe.none()));
+  }
+}
+
+class SetLogs implements Action {
+  final Iterable<Log> logList;
+
+  SetLogs({this.logList});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogs(appState, (logs) {
+      logs.addEntries(
+        logList.map(
+          (log) => MapEntry(log.id, log),
+        ),
+      );
+    });
+  }
+}

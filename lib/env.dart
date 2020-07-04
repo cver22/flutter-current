@@ -15,9 +15,9 @@ class Env {
   );
 
   //TODO pass the user to the log once a user is obtained
-  /*static final logsFetcher = LogsFetcher(
+  static final logsFetcher = LogsFetcher(
     store: store,
     logsRepository: FirebaseLogsRepository(),
-  );*/
+  );
 
 }

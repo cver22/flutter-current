@@ -3,6 +3,7 @@ import 'package:expenses/screens/account/account_screen.dart';
 import 'package:expenses/screens/app_screen.dart';
 import 'package:expenses/screens/home_screen.dart';
 import 'package:expenses/screens/login/login_register_screen.dart';
+import 'package:expenses/screens/logs/add_edit_log_Screen.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +31,13 @@ class App extends StatelessWidget {
         ExpenseRoutes.account: (context) {
           return AccountScreen(key: ExpenseKeys.accountScreen);
         },
+        ExpenseRoutes.addEditLog: (context) {
+          return AddEditLogScreen(key: ExpenseKeys.addEditLogScreen);
+        },
+        ExpenseRoutes.logs: (context) {
+          return AddEditLogScreen(key: ExpenseKeys.loginScreen);
+        },
+
       },
       initialRoute: ExpenseRoutes.home,
       key: ExpenseKeys.main,

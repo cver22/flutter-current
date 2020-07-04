@@ -10,10 +10,10 @@ class Log extends Equatable {
   //TODO log keeps track of who owes who how much "debt map"?
 
   Log(
-      {@required this.uid,
-      @required this.id,
-      @required this.logName,
-      @required this.currency,
+      {this.uid,
+      this.id,
+      this.logName,
+      this.currency,
       this.categories,
       this.subcategories,
       this.active = true,

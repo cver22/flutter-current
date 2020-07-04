@@ -1,4 +1,3 @@
-import 'package:expenses/env.dart';
 import 'package:expenses/models/login_register/login_or_register.dart';
 import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'package:expenses/models/user.dart';
@@ -49,7 +48,7 @@ class UserFetcher {
 
   Future<void> startApp() async {
     _store.dispatch(UpdateAuthStatus(isLoading: true));
-    _getCurrentUser(Env.store.state.loginRegState);
+    _getCurrentUser(_store.state.loginRegState);
   }
 
   Future<void> signOut() async {

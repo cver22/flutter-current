@@ -24,11 +24,12 @@ class FirebaseLogsRepository implements LogsRepository {
   Future<void> addNewLog(User user, Log log) {
     //adds uid to new logs
     //TODO move this to logsBloc so it can also handle when members are added?
-    return logsCollection.add(log.copyWith(uid: user.id).toEntity().toDocument());
+    return logsCollection.add(log.toEntity().toDocument());
   }
 
   @override
   Future<void> deleteLog(User user, Log inActive) async {
+
     return logsCollection
         .document(inActive.id)
         .updateData(inActive.toEntity().toDocument());
