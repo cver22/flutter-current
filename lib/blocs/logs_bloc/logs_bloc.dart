@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:expenses/models/categories/master_categories.dart';
@@ -111,3 +112,4 @@ class LogsBloc extends Bloc<LogsEvent, LogsState> {
     return super.close();
   }
 }
+*/

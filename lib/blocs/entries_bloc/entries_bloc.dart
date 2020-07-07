@@ -1,3 +1,4 @@
+/*
 import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:expenses/services/entries_repository.dart';
@@ -59,3 +60,4 @@ class EntriesBloc extends Bloc<EntriesEvent, EntriesState> {
     return super.close();
   }
 }
+*/

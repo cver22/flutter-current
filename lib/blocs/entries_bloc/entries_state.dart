@@ -1,3 +1,4 @@
+/*
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 
@@ -23,3 +24,4 @@ class EntriesLoaded extends EntriesState {
 }
 
 class EntriesLoadFailure extends EntriesState {}
+*/

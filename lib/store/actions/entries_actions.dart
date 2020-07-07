@@ -55,6 +55,24 @@ class ClearSelectedEntry implements Action {
   }
 }
 
+class UpdateSelectedEntry implements Action {
+  final MyEntry entry;
+
+  UpdateSelectedEntry({this.entry});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateEntryState(
+      appState,
+      (entriesState) => entriesState.copyWith(
+        selectedEntry: Maybe.some(
+          entriesState.selectedEntry.value.copy(entry),
+        ),
+      ),
+    );
+  }
+}
+
 class SetEntries implements Action {
   final Iterable<MyEntry> entryList;
 

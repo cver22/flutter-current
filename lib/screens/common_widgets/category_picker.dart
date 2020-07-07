@@ -1,19 +1,17 @@
 import 'package:expenses/blocs/logs_bloc/bloc.dart';
+import 'package:expenses/env.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class CategoryPicker extends StatefulWidget {
-  //TODO probably refactor for this to just access the blocs from context
   //TODO refactor the dropdown to follow the pattern I used in the log picker
   //TODO error checking if no categories or subcategories are present
-  const CategoryPicker({Key key, @required this.logsBloc, @required this.log})
-      : super(key: key);
+  const CategoryPicker({Key key, @required this.log}) : super(key: key);
 
-  final LogsBloc logsBloc;
   final Log log;
 
   @override
@@ -22,7 +20,6 @@ class CategoryPicker extends StatefulWidget {
 
 class _CategoryPickerState extends State<CategoryPicker> {
   //TODO refactor picker to allow editing of categories in the log
-  LogsBloc _logsBloc;
   MyEntry _entry;
   Log _log;
   List<MyCategory> _categories;
@@ -33,14 +30,11 @@ class _CategoryPickerState extends State<CategoryPicker> {
   @override
   void initState() {
     super.initState();
-    _logsBloc = widget.logsBloc;
     _log = widget.log;
   }
 
   @override
   Widget build(BuildContext context) {
-    _entry = Provider.of<MyEntry>(context, listen: true);
-
     //initialize category from existing entry
     if (_entry.category != null) {
       String categoryId = _entry.category;
@@ -115,8 +109,6 @@ class _CategoryPickerState extends State<CategoryPicker> {
   }
 
   void _updateEntry() {
-    _entry =
-        _entry.copyWith(subcategory: _subcategory?.id, category: _category?.id);
-    print(_entry);
+    Env.store.dispatch(UpdateSelectedEntry(entry: _entry));
   }
 }

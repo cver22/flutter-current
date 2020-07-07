@@ -2,6 +2,8 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/log/logs_state.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
+import 'package:expenses/screens/common_widgets/loading_indicator.dart';
+import 'file:///D:/version-control/flutter/expenses/lib/screens/common_widgets/error_widget.dart';
 import 'package:expenses/screens/logs/log_list_tile.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -9,8 +11,12 @@ import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-class LogsScreen extends StatelessWidget {
-  //TODO LogsBloc _logsBloc; and how to dispose
+class LogsScreen extends StatefulWidget {
+  @override
+  _LogsScreenState createState() => _LogsScreenState();
+}
+
+class _LogsScreenState extends State<LogsScreen> {
   List<Log> _logs = [];
 
   @override
@@ -23,11 +29,12 @@ class LogsScreen extends StatelessWidget {
           print('Rendering Logs Screen');
           print(logsState.toString());
           if (logsState.isLoading == true) {
-            return logsLoading();
+            return LoadingIndicator(loadingMessage: 'Loading your logs...');
           } else if (logsState.isLoading == false &&
               logsState.logs.isNotEmpty) {
             //Only shows logs that have not been "deleted"
             //TODO create archive bool to show logs that have been archived and not visible
+            //TODO can I move this logic to the state object and render this widget stateless?
             _logs = logsState.logs.entries
                 .map((e) => e.value)
                 .where((e) => e.active == true)
@@ -47,50 +54,19 @@ class LogsScreen extends StatelessWidget {
           } else if (logsState.isLoading == false && logsState.logs.isEmpty) {
             return EmptyContent();
           } else {
-            return errorWidget();
+            //TODO pass meaningful error message
+            return ErrorContent();
           }
         });
-  }
-
-  Widget errorWidget() {
-    return Center(
-              child: Column(
-            children: <Widget>[
-              Icon(Icons.error),
-              Text('Something went wrong'),
-            ],
-          ));
-  }
-
-  Widget logsLoading() {
-    return Center(
-              child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              CircularProgressIndicator(),
-              Text('Loading your logs...'),
-            ],
-          ));
   }
 
   Widget buildListView() {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: _logs.length,
-      // ignore: missing_return
       itemBuilder: (BuildContext context, int index) {
         final Log _log = _logs[index];
-        return LogListTile(
-          log: _log,
-          onTap: () => {
-            Env.store.dispatch(SelectLog(logId: _log.id)),
-          }, //TODO route to entry page
-          onLongPress: () => {
-            Env.store.dispatch(SelectLog(logId: _log.id)),
-            Navigator.pushNamed(context, ExpenseRoutes.addEditLog),
-
-          },
-        );
+        return LogListTile(log: _log);
       },
     );
   }

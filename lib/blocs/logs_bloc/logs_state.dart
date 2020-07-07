@@ -1,3 +1,4 @@
+/*
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/log/log.dart';
 
@@ -23,3 +24,4 @@ class LogsLoaded extends LogsState {
 }
 
 class LogsLoadFailure extends LogsState {}
+*/

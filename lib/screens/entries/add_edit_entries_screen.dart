@@ -1,40 +1,38 @@
-import 'package:expenses/blocs/entries_bloc/bloc.dart';
-import 'package:expenses/blocs/entries_bloc/entries_bloc.dart';
-import 'package:expenses/blocs/logs_bloc/bloc.dart';
+
+import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
-import 'package:expenses/screens/common_widgets/catergory_picker.dart';
+import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
-class AddEditEntriesPage extends StatefulWidget {
-  final MyEntry entry;
-  final Log log;
-
-  const AddEditEntriesPage({Key key, this.entry, this.log}) : super(key: key);
+class AddEditEntriesScreen extends StatefulWidget {
+  const AddEditEntriesScreen({Key key}) : super(key: key);
 
   @override
-  _AddEditEntriesPageState createState() => _AddEditEntriesPageState();
+  _AddEditEntriesScreenState createState() => _AddEditEntriesScreenState();
 }
 
-class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
+class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   MyEntry _entry;
-  EntriesBloc _entriesBloc;
   Log _log;
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _log = widget?.log;
-    _entriesBloc = BlocProvider.of<EntriesBloc>(context);
+    //TODO set log based on default
+    if (Env.store.state.logsState.selectedLog.isSome) {
+      _log = Env.store.state.logsState.selectedLog.value;
+    } else {
+      //TODO this will cause errors
+      _log = null;
+    }
+    if (Env.store.state.entriesState.selectedEntry.isSome) {
+      _entry = Env.store.state.entriesState.selectedEntry.value;
+    } else {
+      _entry = null;
+    }
 
-    //entryBloc handles null value
-
-
-   
     if (_entry?.currency == null && _log?.currency != null) {
       _entry = _entry.copyWith(currency: _log.currency);
     }
@@ -42,9 +40,9 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
 
   void _submit() {
     if (_entry.id != null) {
-      _entriesBloc..add(EntryUpdated(entry: _entry));
+      Env.entriesFetcher.updateEntry(_entry);
     } else {
-      _entriesBloc..add(EntryAdded(entry: _entry));
+      Env.entriesFetcher.addEntry(_entry);
     }
     Navigator.pop(context);
   }
@@ -62,7 +60,7 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
             ),
             onPressed: () {
               if (_entry.amount != null) _submit();
-            }, //TODO need to use state to take care of this with SavingLogState
+            },
           ),
           _entry.id == null
               ? Container()
@@ -84,24 +82,22 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   }
 
   Widget _buildContents(BuildContext context) {
-    return BlocBuilder<EntriesBloc, EntriesState>(builder: (context, state) {
-      return SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Card(
-            child: Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: <Widget>[
-                  _buildForm(),
-                ],
-              ),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: EdgeInsets.all(16.0),
+        child: Card(
+          child: Padding(
+            padding: EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: <Widget>[
+                _buildForm(),
+              ],
             ),
           ),
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget _buildForm() {
@@ -134,8 +130,6 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
             ),
           ],
         ),
-        //TODO pass logsbloc
-        //TODO pass entry via a provider so all screens are updating the same entry
         CategoryPicker(log: _log),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
@@ -151,47 +145,49 @@ class _AddEditEntriesPageState extends State<AddEditEntriesPage> {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Entry':
-        _entriesBloc..add(EntryDeleted(entry: _entry));
+        Env.entriesFetcher.deleteEntry(_entry);
         Navigator.pop(context);
         break;
     }
   }
 
   Widget _logNameDropDown() {
-    return BlocBuilder<LogsBloc, LogsState>(
-        // ignore: missing_return
-        builder: (context, state) {
-      if (state is LogsLoaded) {
-        List<Log> _allLogs = state.logs;
-        List<Log> _displayLogs = [];
+    if (Env.store.state.logsState.logs.isNotEmpty) {
+      //TODO state should handle what is active and not active
+      List<Log> _allLogs = Env.store.state.logsState.logs.entries
+          .map((e) => e.value)
+          .where((e) => e.active == true)
+          .toList();
+      List<Log> _displayLogs = [];
 
-        for (int i = 0; i < _allLogs.length; i++) {
-          if (_allLogs[i].active) {
-            _displayLogs.add(_allLogs[i]);
-          }
+      for (int i = 0; i < _allLogs.length; i++) {
+        if (_allLogs[i].active) {
+          _displayLogs.add(_allLogs[i]);
         }
-
-        return DropdownButton<Log>(
-          //TODO order preference logs and set default to first log if not navigating from the log itself
-          value: _log,
-          onChanged: (Log value) {
-            setState(() {
-              _log = value;
-              _entry = _entry.copyWith(currency: _log.currency);
-              //TODO need to update current currency in picker
-            });
-          },
-          items: _displayLogs.map((Log log) {
-            return DropdownMenuItem<Log>(
-              value: log,
-              child: Text(
-                log.logName,
-                style: TextStyle(color: Colors.black),
-              ),
-            );
-          }).toList(),
-        );
       }
-    });
+
+      return DropdownButton<Log>(
+        //TODO order preference logs and set default to first log if not navigating from the log itself
+        value: _log,
+        onChanged: (Log value) {
+          setState(() {
+            _log = value;
+            _entry = _entry.copyWith(currency: _log.currency);
+            //TODO need to update current currency in picker
+          });
+        },
+        items: _displayLogs.map((Log log) {
+          return DropdownMenuItem<Log>(
+            value: log,
+            child: Text(
+              log.logName,
+              style: TextStyle(color: Colors.black),
+            ),
+          );
+        }).toList(),
+      );
+    } else {
+      return Container();
+    }
   }
 }

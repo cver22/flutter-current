@@ -1,3 +1,4 @@
+/*
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/log/log.dart';
 
@@ -65,3 +66,4 @@ class LogsUpdated extends LogsEvent{
   String toString() => 'LogsUpdated { logs: $logs }';
 
 }
+*/

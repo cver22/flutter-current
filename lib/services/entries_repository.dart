@@ -1,25 +1,19 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:expenses/models/user.dart';
 
-
 abstract class EntriesRepository {
   Future<void> addNewEntry(MyEntry entry);
 
-  Future<void> deleteEntry(MyEntry entry);
+  Future<void> deleteEntry(User user, MyEntry entry);
 
-  Stream<List<MyEntry>> loadEntries();
+  Stream<List<MyEntry>> loadEntries(User user);
 
-  Future<void> updateEntry(MyEntry entry);
+  Future<void> updateEntry(User user, MyEntry entry);
 }
 
 class FirebaseEntriesRepository implements EntriesRepository {
-  final User user;
-
-  FirebaseEntriesRepository({this.user});
-
   final entriesCollection = Firestore.instance.collection('entries');
 
   @override
@@ -27,8 +21,9 @@ class FirebaseEntriesRepository implements EntriesRepository {
     return entriesCollection.add(entry.toEntity().toDocument());
   }
 
+  //could be deprecated as it is essentially the same function as updateEntry
   @override
-  Future<void> deleteEntry(MyEntry inActive) async {
+  Future<void> deleteEntry(User user, MyEntry inActive) async {
     return entriesCollection
         .document(inActive.id)
         .updateData(inActive.toEntity().toDocument());
@@ -36,7 +31,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
 
   //TODO need to filter by contains UID
   @override
-  Stream<List<MyEntry>> loadEntries() {
+  Stream<List<MyEntry>> loadEntries(User user) {
     return entriesCollection.snapshots().map((snapshot) {
       return snapshot.documents
           .map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc)))
@@ -45,7 +40,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> updateEntry(MyEntry update) {
+  Future<void> updateEntry(User user, MyEntry update) {
     return entriesCollection
         .document(update.id)
         .updateData(update.toEntity().toDocument());

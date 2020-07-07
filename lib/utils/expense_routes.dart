@@ -1,8 +1,11 @@
 class ExpenseRoutes {
   static final home = "/";
-  static final loginRegister = "/loginRegisterscreen";
+  static final loginRegister = "/loginRegisterScreen";
   static final app = "/appS";
-  static final account = "/accountscreen";
-  static final logs = "/logsscreen";
-  static final addEditLog = "/addEditLogscreen";
+  static final account = "/accountScreen";
+  static final logs = "/logsScreen";
+  static final addEditLog = "/addEditLogScreen";
+  static final entries = "/entriesScreen";
+  static final addEditEntries = "/addEditEntriesScreen";
+
 }

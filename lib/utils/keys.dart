@@ -33,6 +33,7 @@ class ExpenseKeys {
 
   // Entries Screens
   static final entriesScreen = const Key('__entriesScreen__');
+  static final addEditEntriesScreen = const Key('__addEditEntriesScreen__');
 
 
   // Logs Page

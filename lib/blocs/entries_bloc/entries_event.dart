@@ -1,3 +1,4 @@
+/*
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 
@@ -66,3 +67,4 @@ class EntriesUpdated extends EntriesEvent{
   String toString() => 'EntriesUpdated { entries: $entries }';
 
 }
+*/
