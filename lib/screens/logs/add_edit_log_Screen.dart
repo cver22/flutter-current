@@ -40,8 +40,8 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
       where: notIdentical,
       map: (state) => state.logsState,
       builder: (logState) {
-        if (logState.selectedLogId.isSome) {
-          _log = logState.logs[logState.selectedLogId];
+        if (logState.selectedLog.isSome) {
+          _log = logState.selectedLog.value;
         }
         _currency = _log?.currency ?? 'ca';
         _name = _log?.logName ?? null;

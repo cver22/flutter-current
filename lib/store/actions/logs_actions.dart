@@ -17,15 +17,14 @@ AppState _updateLogs(
       appState, (logsState) => logsState.copyWith(logs: cloneMap));
 }
 
-AppState _updateSingleLog(
+//Deprecated
+/*AppState _updateSingleLog(
   AppState appState,
   String logId,
   Log update(Log log),
 ) {
   return _updateLogs(appState, (logs) => logs..[logId] = update(logs[logId]));
-}
-
-
+}*/
 
 //TODO add archive field to log
 /*class MarkArchiveLog implements Action {
@@ -41,7 +40,8 @@ AppState _updateSingleLog(
   }
 }*/
 
-class UpdateLog implements Action {
+//Deprecated
+/*class UpdateLog implements Action {
   final String id;
   final String logName;
   final String currency;
@@ -103,7 +103,7 @@ class AddLog implements Action {
               members: members,
             ));
   }
-}
+}*/
 
 class SetLogsLoading implements Action {
   @override
@@ -129,21 +129,38 @@ class SelectLog implements Action {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState,
+            (logsState) => logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId])));
+  }
+}
+
+class ClearSelectedLog implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogState(appState,
+            (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
+  }
+}
+
+//Deprecated
+/*class SelectLog implements Action {
+  final String logId;
+
+  SelectLog({this.logId});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogState(appState,
         (logsState) => logsState.copyWith(selectedLogId: Maybe.some(logId)));
   }
 }
 
 class ClearSelectedLog implements Action {
-  final String logId;
-
-  ClearSelectedLog({this.logId});
-
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState,
         (logsState) => logsState.copyWith(selectedLogId: Maybe.none()));
   }
-}
+}*/
 
 class SetLogs implements Action {
   final Iterable<Log> logList;

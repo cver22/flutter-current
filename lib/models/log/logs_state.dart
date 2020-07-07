@@ -12,40 +12,40 @@ import 'package:flutter/foundation.dart';
 class LogsState extends Equatable{
   final Map<String, Log> logs;
   final bool isLoading;
-  final Maybe<String> selectedLogId;
+  final Maybe<Log> selectedLog;
 
   LogsState({
     this.logs,
     this.isLoading,
-    this.selectedLogId,
+    this.selectedLog,
   });
 
-  Maybe<Log> get selectedLog {
+  /*Maybe<Log> get selectedLog {
     return selectedLogId.map((logId) => this.logs[logId]);
-  }
+  }*/
 
   factory LogsState.initial() {
     return LogsState(
       logs: LinkedHashMap(),
       isLoading: true,
-      selectedLogId: Maybe.none(),
+      selectedLog: Maybe.none(),
     );
   }
 
   LogsState copyWith({
     Map<String, Log> logs,
     bool isLoading,
-    Maybe<String> selectedLogId,
+    Maybe<Log> selectedLog,
   }) {
     return LogsState(
       logs: logs ?? this.logs,
       isLoading: isLoading ?? this.isLoading,
-      selectedLogId: selectedLogId ?? this.selectedLogId,
+      selectedLog: selectedLog ?? this.selectedLog,
     );
   }
 
   @override
-  List<Object> get props => [logs, isLoading, selectedLogId];
+  List<Object> get props => [logs, isLoading, selectedLog];
 
   @override
   bool get stringify => true;
