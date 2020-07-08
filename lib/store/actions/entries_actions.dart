@@ -33,6 +33,19 @@ class SetEntriesLoaded implements Action {
   }
 }
 
+class SetNewSelectedEntry implements Action {
+  MyEntry entry = MyEntry().newEntry();
+
+  @override
+  AppState updateState(AppState appState) {
+    print('this is my new entry $entry');
+    return _updateEntryState(
+        appState,
+        (entriesState) =>
+            entriesState.copyWith(selectedEntry: Maybe.some(entry)));
+  }
+}
+
 class SelectEntry implements Action {
   final String entryId;
 
@@ -56,9 +69,26 @@ class ClearSelectedEntry implements Action {
 }
 
 class UpdateSelectedEntry implements Action {
-  final MyEntry entry;
+  final String id;
+  final String logId;
+  final String currency;
+  final bool active;
+  final String category;
+  final String subcategory;
+  final double amount;
+  final String comment;
+  final DateTime dateTime;
 
-  UpdateSelectedEntry({this.entry});
+  UpdateSelectedEntry(
+      {this.id,
+      this.logId,
+      this.currency,
+      this.active,
+      this.category,
+      this.subcategory,
+      this.amount,
+      this.comment,
+      this.dateTime});
 
   @override
   AppState updateState(AppState appState) {
@@ -66,7 +96,17 @@ class UpdateSelectedEntry implements Action {
       appState,
       (entriesState) => entriesState.copyWith(
         selectedEntry: Maybe.some(
-          entriesState.selectedEntry.value.copy(entry),
+          entriesState.selectedEntry.value.copyWith(
+            id: id,
+            logId: logId,
+            currency: currency,
+            active: active,
+            category: category,
+            subcategory: subcategory,
+            amount: amount,
+            comment: comment,
+            dateTime: dateTime,
+          ),
         ),
       ),
     );

@@ -1,7 +1,8 @@
+import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/entries_state.dart';
-import 'file:///D:/version-control/flutter/expenses/lib/screens/common_widgets/error_widget.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
+import 'package:expenses/screens/common_widgets/error_widget.dart';
 import 'package:expenses/screens/common_widgets/loading_indicator.dart';
 import 'package:expenses/screens/entries/entry_list_tile.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -9,9 +10,11 @@ import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-//TODO show the entries
+
 
 class EntriesScreen extends StatefulWidget {
+  const EntriesScreen({Key key}) : super(key: key);
+
   @override
   _EntriesScreenState createState() => _EntriesScreenState();
 }
@@ -19,8 +22,10 @@ class EntriesScreen extends StatefulWidget {
 class _EntriesScreenState extends State<EntriesScreen> {
   List<MyEntry> _entries = [];
 
+
   @override
   Widget build(BuildContext context) {
+    Env.entriesFetcher.loadEntries();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         //TODO pass default log or retrieve from state
@@ -32,6 +37,9 @@ class _EntriesScreenState extends State<EntriesScreen> {
         where: notIdentical,
         map: (state) => state.entriesState,
         builder: (entriesState) {
+          print('Rendering entries screen');
+          print('Entries State: ${entriesState}');
+
           if (entriesState.isLoading == true) {
             return LoadingIndicator(loadingMessage: 'Loading your entries...');
           } else if (entriesState.isLoading == false &&

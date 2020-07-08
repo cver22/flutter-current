@@ -5,7 +5,7 @@ import 'package:expenses/models/log/log.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/foundation.dart';
 
-//TODO equatable or a to string method
+
 //TODO will need a visible method to hide archived/deleted logs
 
 @immutable

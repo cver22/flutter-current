@@ -1,4 +1,3 @@
-import 'package:expenses/blocs/logs_bloc/bloc.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
@@ -30,20 +29,22 @@ class _CategoryPickerState extends State<CategoryPicker> {
   @override
   void initState() {
     super.initState();
-    _log = widget.log;
+    _log = widget?.log;
+    print('category log: $_log');
+    //TODO pass entry and default log to get categories
   }
 
   @override
   Widget build(BuildContext context) {
     //initialize category from existing entry
-    if (_entry.category != null) {
+    if (_entry?.category != null) {
       String categoryId = _entry.category;
       _category =
           _log.categories.firstWhere((element) => element.id == categoryId);
     }
 
     //initialize subcategory from existing entry
-    if (_entry.subcategory != null) {
+    if (_entry?.subcategory != null) {
       String subcategoryId = _entry.subcategory;
       _subcategory = _log.subcategories
           .firstWhere((element) => element.id == subcategoryId);
@@ -109,6 +110,6 @@ class _CategoryPickerState extends State<CategoryPicker> {
   }
 
   void _updateEntry() {
-    Env.store.dispatch(UpdateSelectedEntry(entry: _entry));
+    Env.store.dispatch(UpdateSelectedEntry(category: _category?.id, subcategory: _subcategory?.id));
   }
 }

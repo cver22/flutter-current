@@ -1,6 +1,7 @@
 import 'package:expenses/screens/drawer/app_drawer.dart';
 import 'package:expenses/screens/entries/entries_screen.dart';
 import 'package:expenses/screens/logs/logs_screen.dart';
+import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -32,8 +33,8 @@ class _AppScreenState extends State<AppScreen> {
           ),
           body: TabBarView(
             children: [
-              LogsScreen(),
-              EntriesScreen(),
+              LogsScreen(key: ExpenseKeys.logsScreen),
+              EntriesScreen(key: ExpenseKeys.entriesScreen), //TODO should lead to empty content if user has not yet started a log
               Icon(Icons.assessment),
             ],
           ),

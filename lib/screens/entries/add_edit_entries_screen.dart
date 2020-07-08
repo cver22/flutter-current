@@ -1,10 +1,12 @@
-
 import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:flutter/material.dart';
+
+//TODO refactor to build with ConnectState Widget to allow rebuild, issue created when I changed the log
 
 class AddEditEntriesScreen extends StatefulWidget {
   const AddEditEntriesScreen({Key key}) : super(key: key);
@@ -21,17 +23,16 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   void initState() {
     super.initState();
     //TODO set log based on default
+    if (Env.store.state.entriesState.selectedEntry.isNone) {
+      Env.store.dispatch(SetNewSelectedEntry());
+    }
+    _entry = Env.store.state.entriesState.selectedEntry.value;
+
     if (Env.store.state.logsState.selectedLog.isSome) {
       _log = Env.store.state.logsState.selectedLog.value;
-    } else {
-      //TODO this will cause errors
-      _log = null;
+      _entry = _entry.copyWith(logId: _log.id);
     }
-    if (Env.store.state.entriesState.selectedEntry.isSome) {
-      _entry = Env.store.state.entriesState.selectedEntry.value;
-    } else {
-      _entry = null;
-    }
+
 
     if (_entry?.currency == null && _log?.currency != null) {
       _entry = _entry.copyWith(currency: _log.currency);
@@ -59,10 +60,10 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
               color: Colors.white,
             ),
             onPressed: () {
-              if (_entry.amount != null) _submit();
+              if (_entry?.amount != null) _submit();
             },
           ),
-          _entry.id == null
+          _entry?.id == null
               ? Container()
               : PopupMenuButton<String>(
                   onSelected: handleClick,
@@ -115,14 +116,14 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             MyCurrencyPicker(
-                currency: _entry.currency,
+                currency: _entry?.currency,
                 returnCurrency: (currency) =>
                     _entry = _entry.copyWith(currency: currency)),
             Expanded(
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
-                initialValue: _entry.amount?.toStringAsFixed(2) ?? null,
+                initialValue: _entry?.amount?.toStringAsFixed(2) ?? null,
                 onChanged: (value) =>
                     _entry = _entry.copyWith(amount: double.parse(value)),
                 //TODO need controllers
@@ -133,7 +134,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         CategoryPicker(log: _log),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
-          initialValue: _entry.comment,
+          initialValue: _entry?.comment,
           onChanged: (value) => _entry = _entry.copyWith(currency: value),
           //TODO validate in the bloc, name cannot be empty
           //TODO need controllers

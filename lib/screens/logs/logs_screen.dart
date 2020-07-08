@@ -5,13 +5,14 @@ import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/common_widgets/loading_indicator.dart';
 import 'file:///D:/version-control/flutter/expenses/lib/screens/common_widgets/error_widget.dart';
 import 'package:expenses/screens/logs/log_list_tile.dart';
-import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class LogsScreen extends StatefulWidget {
+  const LogsScreen({Key key}) : super(key: key);
+
   @override
   _LogsScreenState createState() => _LogsScreenState();
 }

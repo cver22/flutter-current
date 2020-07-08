@@ -1,9 +1,10 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 @immutable
-class MyEntry extends Equatable with ChangeNotifier{
+class MyEntry extends Equatable with ChangeNotifier {
   //TODO entry members map
 
   MyEntry(
@@ -51,6 +52,10 @@ class MyEntry extends Equatable with ChangeNotifier{
     );
   }
 
+  MyEntry newEntry() {
+    return MyEntry().copyWith(id: Uuid().v4());
+  }
+
   @override
   List<Object> get props => [
         id,
@@ -66,12 +71,11 @@ class MyEntry extends Equatable with ChangeNotifier{
 
   @override
   String toString() {
-    return 'Log {id: $id, logId: $logId, '
+    return 'Entry {id: $id, logId: $logId, '
         'currency: $currency, active: $active, category: $category, '
         'subcategory: $subcategory, amount: $amount, comment: $comment, '
         'dateTime: $dateTime}';
   }
-
 
   MyEntryEntity toEntity() {
     return MyEntryEntity(
@@ -101,18 +105,17 @@ class MyEntry extends Equatable with ChangeNotifier{
     );
   }
 
-  MyEntry copy(MyEntry entry) {
+  /*MyEntry copy(MyEntry entry) {
     return entry.copyWith(
-      id: entry.id,
-      logId: entry.logId,
-      currency: entry.currency,
-      active: entry.active,
-      category: entry.category,
-      subcategory: entry.subcategory,
-      amount: entry.amount,
-      comment: entry.comment,
-      dateTime: entry.dateTime,
+      id: entry?.id ?? this.id,
+      logId: entry?.logId ?? this.logId,
+      currency: entry?.currency ?? this.currency,
+      active: entry?.active ?? this.active,
+      category: entry?.category ?? this.category,
+      subcategory: entry?.subcategory ?? this.subcategory,
+      amount: entry?.amount ?? this.amount,
+      comment: entry?.comment ?? this.comment,
+      dateTime: entry?.dateTime ?? this.dateTime,
     );
-  }
+  }*/
 }
-

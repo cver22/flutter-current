@@ -25,7 +25,7 @@ class EntriesFetcher {
         .listen(
           (entries) => _store.dispatch(SetEntries(entryList: entries)),
         );
-    _store.dispatch(SetEntriesLoading());
+    _store.dispatch(SetEntriesLoaded());
   }
 
   Future<void> addEntry(MyEntry entry) async {
