@@ -38,6 +38,7 @@ class FirebaseLogsRepository implements LogsRepository {
   //TODO need to filter by UID for groups
   @override
   Stream<List<Log>> loadLogs(User user) {
+    //TODO as the app uses maps, should this be passed straight as a map?
     return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
       return snapshot.documents
           .map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc)))

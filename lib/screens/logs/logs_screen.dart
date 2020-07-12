@@ -36,10 +36,7 @@ class _LogsScreenState extends State<LogsScreen> {
             //Only shows logs that have not been "deleted"
             //TODO create archive bool to show logs that have been archived and not visible
             //TODO can I move this logic to the state object and render this widget stateless?
-            _logs = logsState.logs.entries
-                .map((e) => e.value)
-                .where((e) => e.active == true)
-                .toList();
+            _logs = logsState.logs.entries.map((e) => e.value).toList();
 
             return SingleChildScrollView(
               child: Column(

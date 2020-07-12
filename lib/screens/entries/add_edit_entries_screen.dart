@@ -1,9 +1,12 @@
 import 'package:expenses/env.dart';
+import 'package:expenses/models/entry/entries_state.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 //TODO refactor to build with ConnectState Widget to allow rebuild, issue created when I changed the log
@@ -33,7 +36,6 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
       _entry = _entry.copyWith(logId: _log.id);
     }
 
-
     if (_entry?.currency == null && _log?.currency != null) {
       _entry = _entry.copyWith(currency: _log.currency);
     }
@@ -50,36 +52,42 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Entry'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.check,
-              color: Colors.white,
-            ),
-            onPressed: () {
-              if (_entry?.amount != null) _submit();
-            },
-          ),
-          _entry?.id == null
-              ? Container()
-              : PopupMenuButton<String>(
-                  onSelected: handleClick,
-                  itemBuilder: (BuildContext context) {
-                    return {'Delete Entry'}.map((String choice) {
-                      return PopupMenuItem<String>(
-                        value: choice,
-                        child: Text(choice),
-                      );
-                    }).toList();
+    return ConnectState<EntriesState>(
+        where: notIdentical,
+        map: (state) => state.entriesState,
+        builder: (entriesState) {
+          print('Rendering AddEditEntriesScreen');
+          return Scaffold(
+            appBar: AppBar(
+              title: Text('Entry'),
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    if (_entry?.amount != null) _submit();
                   },
                 ),
-        ],
-      ),
-      body: _buildContents(context),
-    );
+                _entry?.id == null
+                    ? Container()
+                    : PopupMenuButton<String>(
+                        onSelected: handleClick,
+                        itemBuilder: (BuildContext context) {
+                          return {'Delete Entry'}.map((String choice) {
+                            return PopupMenuItem<String>(
+                              value: choice,
+                              child: Text(choice),
+                            );
+                          }).toList();
+                        },
+                      ),
+              ],
+            ),
+            body: _buildContents(context),
+          );
+        });
   }
 
   Widget _buildContents(BuildContext context) {
@@ -155,17 +163,8 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   Widget _logNameDropDown() {
     if (Env.store.state.logsState.logs.isNotEmpty) {
       //TODO state should handle what is active and not active
-      List<Log> _allLogs = Env.store.state.logsState.logs.entries
-          .map((e) => e.value)
-          .where((e) => e.active == true)
-          .toList();
-      List<Log> _displayLogs = [];
-
-      for (int i = 0; i < _allLogs.length; i++) {
-        if (_allLogs[i].active) {
-          _displayLogs.add(_allLogs[i]);
-        }
-      }
+      List<Log> _logs =
+          Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
 
       return DropdownButton<Log>(
         //TODO order preference logs and set default to first log if not navigating from the log itself
@@ -177,7 +176,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             //TODO need to update current currency in picker
           });
         },
-        items: _displayLogs.map((Log log) {
+        items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(
             value: log,
             child: Text(

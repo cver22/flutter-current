@@ -17,7 +17,63 @@ AppState _updateLogs(
       appState, (logsState) => logsState.copyWith(logs: cloneMap));
 }
 
-//Deprecated
+class SetLogsLoading implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return appState.copyWith(
+        logsState: appState.logsState.copyWith(isLoading: true));
+  }
+}
+
+class SetLogsLoaded implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return appState.copyWith(
+        logsState: appState.logsState.copyWith(isLoading: false));
+  }
+}
+
+class SelectLog implements Action {
+  final String logId;
+
+  SelectLog({this.logId});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogState(
+        appState,
+        (logsState) =>
+            logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId])));
+  }
+}
+
+class ClearSelectedLog implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogState(
+        appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
+  }
+}
+
+class SetLogs implements Action {
+  final Iterable<Log> logList;
+  Iterable<Log> activeLogList;
+
+  SetLogs({this.logList});
+
+  @override
+  AppState updateState(AppState appState) {
+    activeLogList = logList.where((e) => e.active).toList();
+    return _updateLogs(appState, (logs) {
+      logs.addEntries(
+        activeLogList.map(
+          (log) => MapEntry(log.id, log),
+        ),
+      );
+    });
+  }
+
+//Deprecated in favour of fetcher
 /*AppState _updateSingleLog(
   AppState appState,
   String logId,
@@ -26,7 +82,6 @@ AppState _updateLogs(
   return _updateLogs(appState, (logs) => logs..[logId] = update(logs[logId]));
 }*/
 
-//TODO add archive field to log
 /*class MarkArchiveLog implements Action {
   final String logId;
   final String archive;
@@ -105,42 +160,6 @@ class AddLog implements Action {
   }
 }*/
 
-class SetLogsLoading implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    return appState.copyWith(
-        logsState: appState.logsState.copyWith(isLoading: true));
-  }
-}
-
-class SetLogsLoaded implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    return appState.copyWith(
-        logsState: appState.logsState.copyWith(isLoading: false));
-  }
-}
-
-class SelectLog implements Action {
-  final String logId;
-
-  SelectLog({this.logId});
-
-  @override
-  AppState updateState(AppState appState) {
-    return _updateLogState(appState,
-            (logsState) => logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId])));
-  }
-}
-
-class ClearSelectedLog implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    return _updateLogState(appState,
-            (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
-  }
-}
-
 //Deprecated
 /*class SelectLog implements Action {
   final String logId;
@@ -161,20 +180,4 @@ class ClearSelectedLog implements Action {
         (logsState) => logsState.copyWith(selectedLogId: Maybe.none()));
   }
 }*/
-
-class SetLogs implements Action {
-  final Iterable<Log> logList;
-
-  SetLogs({this.logList});
-
-  @override
-  AppState updateState(AppState appState) {
-    return _updateLogs(appState, (logs) {
-      logs.addEntries(
-        logList.map(
-          (log) => MapEntry(log.id, log),
-        ),
-      );
-    });
-  }
 }
