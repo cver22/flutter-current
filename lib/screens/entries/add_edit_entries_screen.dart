@@ -6,10 +6,12 @@ import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 //TODO refactor to build with ConnectState Widget to allow rebuild, issue created when I changed the log
+//TODO need to handle back button to dump selected entry
 
 class AddEditEntriesScreen extends StatefulWidget {
   const AddEditEntriesScreen({Key key}) : super(key: key);
@@ -20,7 +22,6 @@ class AddEditEntriesScreen extends StatefulWidget {
 
 class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   MyEntry _entry;
-  Log _log;
 
   @override
   void initState() {
@@ -28,20 +29,21 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     //TODO set log based on default
     if (Env.store.state.entriesState.selectedEntry.isNone) {
       Env.store.dispatch(SetNewSelectedEntry());
+      setEntryLogAndCurrency();
     }
-    _entry = Env.store.state.entriesState.selectedEntry.value;
+  }
 
+  void setEntryLogAndCurrency() {
     if (Env.store.state.logsState.selectedLog.isSome) {
-      _log = Env.store.state.logsState.selectedLog.value;
-      _entry = _entry.copyWith(logId: _log.id);
-    }
-
-    if (_entry?.currency == null && _log?.currency != null) {
-      _entry = _entry.copyWith(currency: _log.currency);
+      Log _log = Env.store.state.logsState.selectedLog.value;
+      Env.store.dispatch(
+          UpdateSelectedEntry(logId: _log.id, currency: _log.currency));
     }
   }
 
   void _submit() {
+    //TODO clear selected entry after saving without causing a fatal rebuild
+    print('saving entry $_entry');
     if (_entry.id != null) {
       Env.entriesFetcher.updateEntry(_entry);
     } else {
@@ -56,7 +58,10 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         where: notIdentical,
         map: (state) => state.entriesState,
         builder: (entriesState) {
+          _entry = Env.store.state.entriesState.selectedEntry.value;
           print('Rendering AddEditEntriesScreen');
+          print('entry $_entry');
+          print('log: ${Env.store.state.logsState.selectedLog.value.id}');
           return Scaffold(
             appBar: AppBar(
               title: Text('Entry'),
@@ -85,12 +90,12 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
                       ),
               ],
             ),
-            body: _buildContents(context),
+            body: _buildContents(entriesState),
           );
         });
   }
 
-  Widget _buildContents(BuildContext context) {
+  Widget _buildContents(EntriesState entriesState) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -100,7 +105,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildForm(),
+                _buildForm(entriesState),
               ],
             ),
           ),
@@ -109,7 +114,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm(EntriesState entriesState) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -125,27 +130,31 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           children: <Widget>[
             MyCurrencyPicker(
                 currency: _entry?.currency,
-                returnCurrency: (currency) =>
-                    _entry = _entry.copyWith(currency: currency)),
+                returnCurrency: (currency) => Env.store
+                    .dispatch(UpdateSelectedEntry(currency: currency))),
             Expanded(
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
                 initialValue: _entry?.amount?.toStringAsFixed(2) ?? null,
-                onChanged: (value) =>
-                    _entry = _entry.copyWith(amount: double.parse(value)),
+                onChanged: (value) => Env.store.dispatch(
+                  UpdateSelectedEntry(
+                    amount: double.parse(value),
+                  ),
+                ),
                 //TODO need controllers
               ),
             ),
           ],
         ),
-        CategoryPicker(log: _log),
+        CategoryPicker(entry: entriesState.selectedEntry.value),
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
           initialValue: _entry?.comment,
-          onChanged: (value) => _entry = _entry.copyWith(currency: value),
-          //TODO validate in the bloc, name cannot be empty
-          //TODO need controllers
+          onChanged: (value) => Env.store.dispatch(
+            UpdateSelectedEntry(comment: value),
+            //TODO need controllers
+          ),
         ),
       ],
     );
@@ -168,12 +177,13 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
 
       return DropdownButton<Log>(
         //TODO order preference logs and set default to first log if not navigating from the log itself
-        value: _log,
+        value: Env.store.state.logsState.selectedLog.value,
         onChanged: (Log value) {
           setState(() {
-            _log = value;
-            _entry = _entry.copyWith(currency: _log.currency);
-            //TODO need to update current currency in picker
+            Env.store.dispatch(SelectLog(logId: value.id));
+
+            Env.store
+                .dispatch(ChangeLog(logId: value.id, currency: value.currency));
           });
         },
         items: _logs.map((Log log) {

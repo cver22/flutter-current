@@ -52,8 +52,21 @@ class MyEntry extends Equatable with ChangeNotifier {
     );
   }
 
-  MyEntry newEntry() {
-    return MyEntry().copyWith(id: Uuid().v4());
+  MyEntry changeLog({
+    String logId,
+    String currency,
+  }) {
+    return MyEntry(
+      id: this.id,
+      logId: logId ?? this.logId,
+      currency: currency ?? this.currency,
+      active: this.active,
+      category: null,
+      subcategory: null,
+      amount: this.amount,
+      comment: this.comment,
+      dateTime: this.dateTime,
+    );
   }
 
   @override
@@ -105,7 +118,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     );
   }
 
-  /*MyEntry copy(MyEntry entry) {
+/*MyEntry copy(MyEntry entry) {
     return entry.copyWith(
       id: entry?.id ?? this.id,
       logId: entry?.logId ?? this.logId,

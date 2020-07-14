@@ -13,9 +13,9 @@ class EntryListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(Icons.category),
-      title: Text(entry.comment),
+      title: entry?.comment != null ? Text(entry.comment) : Text(''),
       subtitle: Text('Category, subcategories, tags'),
-      trailing: Text('\$ ${entry.amount.toString()}'),
+      trailing: Text('\$ ${entry?.amount.toString()}'),
       onTap: () => {
         Env.store.dispatch(SelectEntry(entryId: entry.id)),
         Navigator.pushNamed(context, ExpenseRoutes.addEditEntries),

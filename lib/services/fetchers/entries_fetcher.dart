@@ -5,6 +5,7 @@ import 'package:expenses/services/entries_repository.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:meta/meta.dart';
+import 'package:uuid/uuid.dart';
 
 class EntriesFetcher {
   final AppStore _store;
@@ -30,7 +31,8 @@ class EntriesFetcher {
 
   Future<void> addEntry(MyEntry entry) async {
     try {
-      _entriesRepository.addNewEntry(entry);
+      _entriesRepository.addNewEntry(
+          entry.copyWith(id: Uuid().v4(), dateTime: DateTime.now()));
     } catch (e) {
       print(e.toString());
     }

@@ -34,7 +34,7 @@ class SetEntriesLoaded implements Action {
 }
 
 class SetNewSelectedEntry implements Action {
-  MyEntry entry = MyEntry().newEntry();
+  MyEntry entry = MyEntry();
 
   @override
   AppState updateState(AppState appState) {
@@ -107,6 +107,25 @@ class UpdateSelectedEntry implements Action {
             comment: comment,
             dateTime: dateTime,
           ),
+        ),
+      ),
+    );
+  }
+}
+
+class ChangeLog implements Action {
+  final String logId;
+  final String currency;
+
+  ChangeLog({this.logId, this.currency});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateEntryState(
+      appState,
+      (entriesState) => entriesState.copyWith(
+        selectedEntry: Maybe.some(
+          entriesState.selectedEntry.value.changeLog(logId: logId, currency: currency),
         ),
       ),
     );

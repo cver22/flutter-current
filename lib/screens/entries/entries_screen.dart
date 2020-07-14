@@ -38,7 +38,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
         map: (state) => state.entriesState,
         builder: (entriesState) {
           print('Rendering entries screen');
-          print('Entries State: ${entriesState}');
+          print('Entries State: $entriesState');
 
           if (entriesState.isLoading == true) {
             return LoadingIndicator(loadingMessage: 'Loading your entries...');

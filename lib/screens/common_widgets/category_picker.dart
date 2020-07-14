@@ -4,14 +4,15 @@ import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/store/actions/actions.dart';
+
 import 'package:flutter/material.dart';
 
 class CategoryPicker extends StatefulWidget {
   //TODO refactor the dropdown to follow the pattern I used in the log picker
   //TODO error checking if no categories or subcategories are present
-  const CategoryPicker({Key key, @required this.log}) : super(key: key);
+  const CategoryPicker({Key key, @required this.entry}) : super(key: key);
 
-  final Log log;
+  final MyEntry entry;
 
   @override
   _CategoryPickerState createState() => _CategoryPickerState();
@@ -27,20 +28,18 @@ class _CategoryPickerState extends State<CategoryPicker> {
   MySubcategory _subcategory; //TODO set editable default category
 
   @override
-  void initState() {
-    super.initState();
-    _log = widget?.log;
-    print('category log: $_log');
-    //TODO pass entry and default log to get categories
-  }
-
-  @override
   Widget build(BuildContext context) {
+    //TODO pass entry and default log to get categories
+    _entry = widget?.entry;
+    _log = Env.store.state.logsState.logs[_entry.logId];
+
     //initialize category from existing entry
     if (_entry?.category != null) {
       String categoryId = _entry.category;
       _category =
           _log.categories.firstWhere((element) => element.id == categoryId);
+    } else {
+      _category = null;
     }
 
     //initialize subcategory from existing entry
@@ -48,10 +47,15 @@ class _CategoryPickerState extends State<CategoryPicker> {
       String subcategoryId = _entry.subcategory;
       _subcategory = _log.subcategories
           .firstWhere((element) => element.id == subcategoryId);
+    } else {
+      _subcategory = null;
     }
-    if (widget.log?.categories != null) {
-      _categories = widget.log.categories;
+
+    //TODO I suspect this could be _categories = _log?.categories;
+    if (_log?.categories != null) {
+      _categories = _log.categories;
     }
+
     return Column(
       children: <Widget>[
         _categories != null ? _categoryDropDown() : Container(),
@@ -110,6 +114,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
   }
 
   void _updateEntry() {
-    Env.store.dispatch(UpdateSelectedEntry(category: _category?.id, subcategory: _subcategory?.id));
+    Env.store.dispatch(UpdateSelectedEntry(
+        category: _category?.id, subcategory: _subcategory?.id));
   }
 }
