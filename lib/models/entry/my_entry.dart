@@ -69,6 +69,22 @@ class MyEntry extends Equatable with ChangeNotifier {
     );
   }
 
+  MyEntry changeCategories({
+    String category,
+  }) {
+    return MyEntry(
+      id: this.id,
+      logId: logId ?? this.logId,
+      currency: currency ?? this.currency,
+      active: this.active,
+      category: category,
+      subcategory: null,
+      amount: this.amount,
+      comment: this.comment,
+      dateTime: this.dateTime,
+    );
+  }
+
   @override
   List<Object> get props => [
         id,

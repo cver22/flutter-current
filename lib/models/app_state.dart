@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/auth/auth_state.dart';
+import 'package:expenses/models/categories/categories_state.dart';
 import 'package:expenses/models/entry/entries_state.dart';
 import 'package:expenses/models/log/logs_state.dart';
 import 'package:expenses/models/login_register/login_reg_state.dart';
@@ -11,29 +12,28 @@ class AppState extends Equatable {
   final LoginRegState loginRegState;
   final LogsState logsState;
   final EntriesState entriesState;
-
-  //TODO Add single log state
-  //TODO Add single Entry state
-  //TODO add Entries state
-  //TODO add categories state
+  final CategoriesState categoriesState;
 
   AppState(
       {@required this.authState,
       @required this.loginRegState,
       @required this.logsState,
-      @required this.entriesState});
+      @required this.entriesState,
+      @required this.categoriesState});
 
   AppState copyWith({
     AuthState authState,
     LoginRegState loginState,
     LogsState logsState,
     EntriesState entriesState,
+    CategoriesState categoriesState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
       loginRegState: loginState ?? this.loginRegState,
       logsState: logsState ?? this.logsState,
       entriesState: entriesState ?? this.entriesState,
+      categoriesState: categoriesState ?? this.categoriesState,
     );
   }
 
@@ -43,6 +43,7 @@ class AppState extends Equatable {
       loginRegState: LoginRegState.initial(),
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
+      categoriesState: CategoriesState.initial(),
     );
   }
 
@@ -50,5 +51,5 @@ class AppState extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props => [authState, loginRegState, logsState, entriesState];
+  List<Object> get props => [authState, loginRegState, logsState, entriesState, categoriesState];
 }

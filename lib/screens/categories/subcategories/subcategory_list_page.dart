@@ -16,10 +16,9 @@ class SubcategoryListPage extends StatelessWidget {
     return ListView.builder(
       itemCount: _subcategories.length,
       itemBuilder: (BuildContext context, int index) {
-        //TODO may be able to iterate map.forEach instead
-        final MySubcategory _subcategory = _subcategories[index];
+
         return SubcategoryListTile(
-          subcategory: _subcategory,
+          subcategory: _subcategories[index],
           onTap: () {},
         );
       },

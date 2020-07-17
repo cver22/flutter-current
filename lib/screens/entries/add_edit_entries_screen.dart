@@ -23,24 +23,6 @@ class AddEditEntriesScreen extends StatefulWidget {
 class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   MyEntry _entry;
 
-  @override
-  void initState() {
-    super.initState();
-    //TODO set log based on default
-    if (Env.store.state.entriesState.selectedEntry.isNone) {
-      Env.store.dispatch(SetNewSelectedEntry());
-      setEntryLogAndCurrency();
-    }
-  }
-
-  void setEntryLogAndCurrency() {
-    if (Env.store.state.logsState.selectedLog.isSome) {
-      Log _log = Env.store.state.logsState.selectedLog.value;
-      Env.store.dispatch(
-          UpdateSelectedEntry(logId: _log.id, currency: _log.currency));
-    }
-  }
-
   void _submit() {
     //TODO clear selected entry after saving without causing a fatal rebuild
     print('saving entry $_entry');
@@ -61,7 +43,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           _entry = Env.store.state.entriesState.selectedEntry.value;
           print('Rendering AddEditEntriesScreen');
           print('entry $_entry');
-          print('log: ${Env.store.state.logsState.selectedLog.value.id}');
+
           return Scaffold(
             appBar: AppBar(
               title: Text('Entry'),
@@ -122,7 +104,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Text('Log: '),
-            _logNameDropDown(),
+            _logNameDropDown(entriesState),
           ],
         ),
         Row(
@@ -163,27 +145,28 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Entry':
+        //TODO likely causes error
         Env.entriesFetcher.deleteEntry(_entry);
         Navigator.pop(context);
         break;
     }
   }
 
-  Widget _logNameDropDown() {
+  Widget _logNameDropDown(EntriesState entriesState) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
-      //TODO state should handle what is active and not active
       List<Log> _logs =
           Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
 
       return DropdownButton<Log>(
         //TODO order preference logs and set default to first log if not navigating from the log itself
-        value: Env.store.state.logsState.selectedLog.value,
-        onChanged: (Log value) {
+        value: Env
+            .store.state.logsState.logs[entriesState.selectedEntry.value.logId],
+        onChanged: (Log log) {
           setState(() {
-            Env.store.dispatch(SelectLog(logId: value.id));
-
-            Env.store
-                .dispatch(ChangeLog(logId: value.id, currency: value.currency));
+            if (log.id != entriesState.selectedEntry.value.logId) {
+              Env.store.dispatch(ChangeEntryLog(log: log));
+              Env.store.dispatch(UpdateCategoriesStatus(subcategories: Maybe.none()));
+            }
           });
         },
         items: _logs.map((Log log) {

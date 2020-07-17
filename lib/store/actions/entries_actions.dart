@@ -34,22 +34,27 @@ class SetEntriesLoaded implements Action {
 }
 
 class SetNewSelectedEntry implements Action {
-  MyEntry entry = MyEntry();
+  final String logId;
+
+  SetNewSelectedEntry({@required this.logId});
 
   @override
   AppState updateState(AppState appState) {
-    print('this is my new entry $entry');
+    MyEntry _entry = MyEntry();
+    Log _log = Env.store.state.logsState.logs[logId];
+    _entry = _entry.copyWith(logId: _log.id, currency: _log.currency);
+    print('this is my new entry $_entry');
     return _updateEntryState(
         appState,
         (entriesState) =>
-            entriesState.copyWith(selectedEntry: Maybe.some(entry)));
+            entriesState.copyWith(selectedEntry: Maybe.some(_entry)));
   }
 }
 
 class SelectEntry implements Action {
   final String entryId;
 
-  SelectEntry({this.entryId});
+  SelectEntry({@required this.entryId});
 
   @override
   AppState updateState(AppState appState) {
@@ -113,11 +118,10 @@ class UpdateSelectedEntry implements Action {
   }
 }
 
-class ChangeLog implements Action {
-  final String logId;
-  final String currency;
+class ChangeEntryLog implements Action {
+  final Log log;
 
-  ChangeLog({this.logId, this.currency});
+  ChangeEntryLog({@required this.log});
 
   @override
   AppState updateState(AppState appState) {
@@ -125,7 +129,26 @@ class ChangeLog implements Action {
       appState,
       (entriesState) => entriesState.copyWith(
         selectedEntry: Maybe.some(
-          entriesState.selectedEntry.value.changeLog(logId: logId, currency: currency),
+          entriesState.selectedEntry.value
+              .changeLog(logId: log.id, currency: log.currency),
+        ),
+      ),
+    );
+  }
+}
+
+class ChangeEntryCategories implements Action {
+  final String category;
+
+  ChangeEntryCategories({@required this.category});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateEntryState(
+      appState,
+      (entriesState) => entriesState.copyWith(
+        selectedEntry: Maybe.some(
+          entriesState.selectedEntry.value.changeCategories(category: category),
         ),
       ),
     );

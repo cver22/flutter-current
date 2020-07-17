@@ -6,7 +6,6 @@ import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 
 class LogListTile extends StatelessWidget {
-
   final Log log;
 
   const LogListTile({Key key, @required this.log}) : super(key: key);
@@ -19,7 +18,7 @@ class LogListTile extends StatelessWidget {
           CurrencyPickerUtils.getCountryByIsoCode(log.currency).currencyCode),
       trailing: Icon(Icons.chevron_right),
       onTap: () => {
-        Env.store.dispatch(SelectLog(logId: log.id)),
+        Env.store.dispatch(SetNewSelectedEntry(logId: log.id)),
         Navigator.pushNamed(context, ExpenseRoutes.addEditEntries),
       },
       onLongPress: () => {
