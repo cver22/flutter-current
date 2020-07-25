@@ -22,7 +22,7 @@ class CategoriesState extends Equatable {
   }) {
     return CategoriesState(
       categories: categories.isNone ? this.categories : categories,
-      subcategories: subcategories.isNone ? this.subcategories : categories,
+      subcategories: subcategories.isNone ? this.subcategories : subcategories,
     );
   }
 

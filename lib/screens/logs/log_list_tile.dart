@@ -18,7 +18,7 @@ class LogListTile extends StatelessWidget {
           CurrencyPickerUtils.getCountryByIsoCode(log.currency).currencyCode),
       trailing: Icon(Icons.chevron_right),
       onTap: () => {
-        Env.store.dispatch(SetNewSelectedEntry(logId: log.id)),
+        Env.store.dispatch(SetNewSelectedEntry(logId: log.id,)),
         Navigator.pushNamed(context, ExpenseRoutes.addEditEntries),
       },
       onLongPress: () => {

@@ -1,6 +1,7 @@
 import 'package:expenses/env.dart';
 import 'package:expenses/screens/account/account_screen.dart';
 import 'package:expenses/screens/app_screen.dart';
+import 'package:expenses/screens/categories/category_list_dialog.dart';
 import 'package:expenses/screens/entries/add_edit_entries_screen.dart';
 import 'package:expenses/screens/entries/entries_screen.dart';
 import 'package:expenses/screens/home_screen.dart';
@@ -42,6 +43,12 @@ class App extends StatelessWidget {
         ExpenseRoutes.addEditEntries: (context) {
           return AddEditEntriesScreen(key: ExpenseKeys.addEditEntriesScreen);
         },
+
+        ExpenseRoutes.categories: (context) {
+          return CategoryListDialog(key: ExpenseKeys.categoriesDialog);
+        }
+
+
 
         //TODO how to use these with tabs?
         /*ExpenseRoutes.logs: (context) {

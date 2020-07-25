@@ -39,4 +39,8 @@ class ExpenseKeys {
   // Logs Page
   static final logsScreen = const Key('__logsScreen__');
   static final addEditLogScreen = const Key('__addEditLogScreen__');
+
+  // Categories Dialogs
+static final categoriesDialog = const Key('__categoriesDialog___');
+static final subcategoriesDialog = const Key('__subcategoriesDialog');
 }

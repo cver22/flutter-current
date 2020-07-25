@@ -35,41 +35,43 @@ class _CategoryPickerState extends State<CategoryPicker> {
     _entry = widget?.entry;
     _log = Env.store.state.logsState.logs[_entry.logId];
 
-    //initialize category from existing entry
-    if (_entry?.category != null) {
-      String categoryId = _entry.category;
-      _category =
-          _log.categories.firstWhere((element) => element.id == categoryId);
-    } else {
-      _category = null;
-    }
 
-    //initialize subcategory from existing entry
-    if (_entry?.subcategory != null) {
-      String subcategoryId = _entry.subcategory;
-      _subcategory = _log.subcategories
-          .firstWhere((element) => element.id == subcategoryId);
-    } else {
-      _subcategory = null;
-    }
-
-    //TODO I suspect this could be _categories = _log?.categories;
-    if (_log?.categories != null) {
-      Env.store.dispatch(
-          UpdateCategoriesStatus(categories: Maybe.some(_log.categories)));
-    }
 
     return ConnectState<CategoriesState>(
         where: notIdentical,
         map: (state) => state.categoriesState,
         builder: (categoriesState) {
+          //initialize category from existing entry
+          if (_entry?.category != null) {
+            String categoryId = _entry.category;
+            _category =
+                _log.categories.firstWhere((element) => element.id == categoryId);
+          } else {
+            _category = null;
+          }
+
+          //initialize subcategory from existing entry
+          if (_entry?.subcategory != null) {
+            String subcategoryId = _entry.subcategory;
+            _subcategory = _log.subcategories
+                .firstWhere((element) => element.id == subcategoryId);
+          } else {
+            _subcategory = null;
+          }
+
+          //TODO I suspect this could be _categories = _log?.categories;
+          if (_log?.categories != null) {
+            Env.store.dispatch(
+                UpdateCategoriesStatus(categories: Maybe.some(_log.categories)));
+          }
+
           return Column(
             children: <Widget>[
               categoriesState.categories.isSome
                   ? _categoryDropDown(categoriesState)
                   : Container(),
               //only shows subcategories after selection of category
-              categoriesState.subcategories.isSome
+              categoriesState.subcategories.isSome && _category != null
                   ? _subcategoryDropDown(categoriesState)
                   : Container(),
             ],

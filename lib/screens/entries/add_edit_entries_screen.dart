@@ -2,10 +2,12 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/entries_state.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
+import 'file:///D:/version-control/flutter/expenses/lib/screens/categories/category_button.dart';
 import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -130,6 +132,23 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           ],
         ),
         CategoryPicker(entry: entriesState.selectedEntry.value),
+        CategoryButton(
+          onPressed: () => Navigator.pushNamed(context, ExpenseRoutes.categories),
+          category: _entry?.category == null
+              ? null
+              : Env.store.state.logsState.logs[_entry.logId].categories
+                  .firstWhere((element) => element.id == _entry.category),
+        ),
+        _entry?.category == null
+            ? Container()
+            : CategoryButton(
+                category: _entry?.subcategory == null
+                    ? null
+                    : Env.store.state.logsState.logs[_entry.logId].subcategories
+                        .firstWhere(
+                            (element) => element.id == _entry.subcategory),
+              ),
+        //TODO setup subcategory button
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
           initialValue: _entry?.comment,
@@ -165,7 +184,8 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           setState(() {
             if (log.id != entriesState.selectedEntry.value.logId) {
               Env.store.dispatch(ChangeEntryLog(log: log));
-              Env.store.dispatch(UpdateCategoriesStatus(subcategories: Maybe.none()));
+              Env.store.dispatch(UpdateCategoriesStatus(
+                  categories: Maybe.none(), subcategories: Maybe.none()));
             }
           });
         },
