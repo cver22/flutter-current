@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
+import 'package:expenses/models/log/log.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
@@ -52,16 +53,27 @@ class MyEntry extends Equatable with ChangeNotifier {
   }
 
   MyEntry changeLog({
-    String logId,
-    String currency,
+    Log log,
   }) {
+    String _logId = this.logId;
+    String _category = this.category;
+    String _subcategory = this.subcategory;
+    String _currency = this.currency;
+
+    if(log.id != this.logId) {
+      _logId = log.id;
+      _currency = log.currency;
+      _category = null;
+      _subcategory = null;
+    }
+
     return MyEntry(
       id: this.id,
-      logId: logId ?? this.logId,
-      currency: currency ?? this.currency,
+      logId: _logId ?? this.logId,
+      currency: _currency ?? this.currency,
       active: this.active,
-      category: null,
-      subcategory: null,
+      category: _category,
+      subcategory: _subcategory,
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,

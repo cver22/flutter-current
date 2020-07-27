@@ -51,15 +51,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
                 .where((e) => e.active == true)
                 .toList();
 
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  buildListView(),
-                ],
-              ),
-            );
+            return buildListView();
           } else if (entriesState.isLoading == false &&
               entriesState.entries.isEmpty) {
             return EmptyContent();
@@ -74,7 +66,9 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
   Widget buildListView() {
     return ListView.builder(
+      scrollDirection: Axis.vertical,
         shrinkWrap: true,
+        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];

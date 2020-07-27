@@ -2,15 +2,12 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/entries_state.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
+import 'package:expenses/screens/categories/category_button.dart';
 import 'package:expenses/screens/categories/category_list_dialog.dart';
 import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
-import 'file:///D:/version-control/flutter/expenses/lib/screens/categories/category_button.dart';
-import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -45,6 +42,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         map: (state) => state.entriesState,
         builder: (entriesState) {
           //TODO if navigating from FAB, need to create a selected entry
+          //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before poping, probably use a future delay to handle
           _entry = Env.store.state.entriesState.selectedEntry.value;
           print('Rendering AddEditEntriesScreen');
           print('entry $_entry');
@@ -135,19 +133,22 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           ],
         ),
         //CategoryPicker(entry: entriesState.selectedEntry.value),
-        CategoryButton(
-          label: 'Select a Category',
-          onPressed: () => {
-            showDialog(
-              context: context,
-              builder: (_) => CategoryListDialog(),
-            ),
-          },
-          category: _entry?.category == null
-              ? null
-              : Env.store.state.logsState.logs[_entry.logId].categories
-                  .firstWhere((element) => element.id == _entry.category),
-        ),
+        SizedBox(height: 10.0),
+        _entry?.logId == null
+            ? Container()
+            : CategoryButton(
+                label: 'Select a Category',
+                onPressed: () => {
+                  showDialog(
+                    context: context,
+                    builder: (_) => CategoryListDialog(),
+                  ),
+                },
+                category: _entry?.category == null
+                    ? null
+                    : Env.store.state.logsState.logs[_entry.logId].categories
+                        .firstWhere((element) => element.id == _entry.category),
+              ),
         _entry?.category == null
             ? Container()
             : CategoryButton(
@@ -166,13 +167,12 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
                         .firstWhere(
                             (element) => element.id == _entry.subcategory),
               ),
-        //TODO setup subcategory button
         TextFormField(
           decoration: InputDecoration(hintText: 'Comment'),
           initialValue: _entry?.comment,
           onChanged: (value) => Env.store.dispatch(
             UpdateSelectedEntry(comment: value),
-            //TODO need controllers
+            //TODO need controllers (do I need controllers if I am using connect state?)
           ),
         ),
       ],
@@ -199,13 +199,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         value: Env
             .store.state.logsState.logs[entriesState.selectedEntry.value.logId],
         onChanged: (Log log) {
-          setState(() {
-            if (log.id != entriesState.selectedEntry.value.logId) {
-              Env.store.dispatch(ChangeEntryLog(log: log));
-              Env.store.dispatch(UpdateCategoriesStatus(
-                  categories: Maybe.none(), subcategories: Maybe.none()));
-            }
-          });
+          Env.store.dispatch(ChangeEntryLog(log: log));
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(

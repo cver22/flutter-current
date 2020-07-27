@@ -22,6 +22,7 @@ class SubcategoryListDialog extends StatelessWidget {
         .toList();
 
     return Dialog(
+      elevation: 5.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       //TODO move to constant
       child: Column(

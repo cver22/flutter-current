@@ -4,8 +4,6 @@ import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/categories/category_list_tile.dart';
 import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'package:expenses/store/actions/actions.dart';
-import 'package:expenses/utils/maybe.dart';
-
 import 'package:flutter/material.dart';
 
 class CategoryListDialog extends StatelessWidget {
@@ -18,6 +16,7 @@ class CategoryListDialog extends StatelessWidget {
     List<MyCategory> _categories = _log.categories;
 
     return Dialog(
+      elevation: 5.0,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       //TODO move to constant
       child: Column(

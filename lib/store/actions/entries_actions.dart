@@ -130,7 +130,7 @@ class ChangeEntryLog implements Action {
       (entriesState) => entriesState.copyWith(
         selectedEntry: Maybe.some(
           entriesState.selectedEntry.value
-              .changeLog(logId: log.id, currency: log.currency),
+              .changeLog(log: log),
         ),
       ),
     );
