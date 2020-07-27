@@ -1,7 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:flutter/foundation.dart';
-import 'package:uuid/uuid.dart';
 
 @immutable
 class MyEntry extends Equatable with ChangeNotifier {
@@ -72,13 +71,19 @@ class MyEntry extends Equatable with ChangeNotifier {
   MyEntry changeCategories({
     String category,
   }) {
+    //safety checks if category has changed and thus erased the selected subcategory
+    String _subcategory;
+    if(category == this.category){
+      _subcategory = this.subcategory;
+    }
+
     return MyEntry(
       id: this.id,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
       active: this.active,
       category: category,
-      subcategory: null,
+      subcategory: _subcategory,
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,

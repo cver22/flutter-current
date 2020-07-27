@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 class CategoryButton extends StatelessWidget {
   final MyCategory category;
   final Function onPressed;
+  final String label;
 
-  const CategoryButton({Key key, this.category, this.onPressed}) : super(key: key);
+  const CategoryButton({Key key, this.category, this.onPressed, this.label}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,7 @@ class CategoryButton extends StatelessWidget {
         children: <Widget>[
           Icon(category?.iconData ?? Icons.map),
           SizedBox(width: 30.0),
-          Text(category?.name ?? 'Select a Category'),
+          Text(category?.name ?? label),
         ],
       ),
     );

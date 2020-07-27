@@ -11,7 +11,7 @@ class CategoryListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: category.iconData != null ? Icon(category.iconData): Container(),
+      leading: category.iconData != null ? Icon(category.iconData): Icon(Icons.error),
       title: Text(category.name),
       //TODO trailing options
       onTap: onTap,

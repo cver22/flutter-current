@@ -1,21 +1,25 @@
 import 'package:expenses/env.dart';
-import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/categories/category_list_tile.dart';
-import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'package:expenses/store/actions/actions.dart';
-import 'package:expenses/utils/maybe.dart';
 
 import 'package:flutter/material.dart';
 
-class CategoryListDialog extends StatelessWidget {
-  CategoryListDialog({Key key}) : super(key: key);
+class SubcategoryListDialog extends StatelessWidget {
+  final VoidCallback backChevron;
+
+  SubcategoryListDialog({Key key, this.backChevron}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     Log _log = Env.store.state.logsState
         .logs[Env.store.state.entriesState.selectedEntry.value.logId];
-    List<MyCategory> _categories = _log.categories;
+    List<MySubcategory> _subcategories = _log.subcategories
+        .where((element) =>
+            element.parentCategoryId ==
+            Env.store.state.entriesState.selectedEntry.value.category)
+        .toList();
 
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
@@ -26,42 +30,33 @@ class CategoryListDialog extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               IconButton(
                 icon: Icon(Icons.chevron_left),
-                onPressed: () => Navigator.pop(context),
+                onPressed: backChevron,
               ),
               Text(
-                'Category',
+                'Subcategory',
                 style: TextStyle(fontSize: 20.0),
+              ),
+              FlatButton(
+                child: Text('Skip'),
+                onPressed: () => Navigator.of(context).pop(),
               ),
             ],
           ),
           ListView(
               shrinkWrap: true,
               //TODO implement onReorder
-              children: _categories
-                  .map((MyCategory category) => CategoryListTile(
-                      category: category,
+              children: _subcategories
+                  .map((MySubcategory subcategory) => CategoryListTile(
+                      category: subcategory,
                       onTap: () {
                         Env.store.dispatch(
-                            ChangeEntryCategories(category: category.id));
-
+                            UpdateSelectedEntry(subcategory: subcategory.id));
                         Navigator.of(context).pop();
-                        showDialog(
-                          context: context,
-                          builder: (_) => SubcategoryListDialog(
-                            backChevron: () => {
-                              Navigator.of(context).pop(),
-                              showDialog(
-                                context: context,
-                                builder: (_) => CategoryListDialog(),
-                              ),
-                            },
-                          ),
-                        );
                       }))
                   .toList()),
         ],

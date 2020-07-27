@@ -2,6 +2,8 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/entries_state.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
+import 'package:expenses/screens/categories/category_list_dialog.dart';
+import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'file:///D:/version-control/flutter/expenses/lib/screens/categories/category_button.dart';
 import 'package:expenses/screens/common_widgets/category_picker.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
@@ -42,6 +44,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         where: notIdentical,
         map: (state) => state.entriesState,
         builder: (entriesState) {
+          //TODO if navigating from FAB, need to create a selected entry
           _entry = Env.store.state.entriesState.selectedEntry.value;
           print('Rendering AddEditEntriesScreen');
           print('entry $_entry');
@@ -131,9 +134,15 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             ),
           ],
         ),
-        CategoryPicker(entry: entriesState.selectedEntry.value),
+        //CategoryPicker(entry: entriesState.selectedEntry.value),
         CategoryButton(
-          onPressed: () => Navigator.pushNamed(context, ExpenseRoutes.categories),
+          label: 'Select a Category',
+          onPressed: () => {
+            showDialog(
+              context: context,
+              builder: (_) => CategoryListDialog(),
+            ),
+          },
           category: _entry?.category == null
               ? null
               : Env.store.state.logsState.logs[_entry.logId].categories
@@ -142,6 +151,15 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         _entry?.category == null
             ? Container()
             : CategoryButton(
+                label: 'Select a Subcategory',
+                onPressed: () => {
+                  showDialog(
+                    context: context,
+                    builder: (_) => SubcategoryListDialog(
+                      backChevron: () => Navigator.of(context).pop(),
+                    ),
+                  ),
+                },
                 category: _entry?.subcategory == null
                     ? null
                     : Env.store.state.logsState.logs[_entry.logId].subcategories
