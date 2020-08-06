@@ -17,7 +17,7 @@ class SignOutState implements Action {
   @override
   AppState updateState(AppState appState) {
     return appState.copyWith(
-        authState: AuthState.initial(), loginState: LoginRegState.initial(), logsState: LogsState.initial());
+        authState: AuthState.initial(), loginState: LoginRegState.initial(), logsState: LogsState.initial(), entriesState: EntriesState.initial());
     //TODO reset all states to initial
   }
 }

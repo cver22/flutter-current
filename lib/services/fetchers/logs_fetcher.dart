@@ -29,8 +29,6 @@ class LogsFetcher {
     _store.dispatch(SetLogsLoaded());
   }
 
-  //TODO need updateLog method
-
   Future<void> addLog(Log log) async {
     Log _log = log;
     List<MyCategory> categories = [];
@@ -73,6 +71,7 @@ class LogsFetcher {
             .firstWhere((element) => element.name == 'Transportation')
             .id));
 
+
     _log = _log.copyWith(uid: _store.state.authState.user.value.id, categories: categories, subcategories: subcategories);
 
     print('these are my categories ${_log.categories}');
@@ -96,6 +95,7 @@ class LogsFetcher {
   }
 
   Future<void> deleteLog(Log log) async {
+    //TODO need error checking if this log is the default log, need to make another log the default log
     _store.dispatch(ClearSelectedLog());
     try {
       _logsRepository.deleteLog(

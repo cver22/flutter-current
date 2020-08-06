@@ -28,6 +28,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
     Env.entriesFetcher.loadEntries();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        //TODO deactivate add entries button if there is no default log
         //TODO pass default log or retrieve from state
         onPressed: () =>
             Navigator.pushNamed(context, ExpenseRoutes.addEditEntries),

@@ -16,20 +16,15 @@ abstract class LogsRepository {
 }
 
 class FirebaseLogsRepository implements LogsRepository {
-
-
   final logsCollection = Firestore.instance.collection('logs');
 
   @override
   Future<void> addNewLog(User user, Log log) {
-    //adds uid to new logs
-    //TODO move this to logsBloc so it can also handle when members are added?
     return logsCollection.add(log.toEntity().toDocument());
   }
 
   @override
   Future<void> deleteLog(User user, Log inActive) async {
-
     return logsCollection
         .document(inActive.id)
         .updateData(inActive.toEntity().toDocument());
@@ -39,7 +34,10 @@ class FirebaseLogsRepository implements LogsRepository {
   @override
   Stream<List<Log>> loadLogs(User user) {
     //TODO as the app uses maps, should this be passed straight as a map?
-    return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
+    return logsCollection
+        .where(UID, isEqualTo: user.id)
+        .snapshots()
+        .map((snapshot) {
       return snapshot.documents
           .map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc)))
           .toList();

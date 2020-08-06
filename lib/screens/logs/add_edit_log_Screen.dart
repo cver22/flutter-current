@@ -112,7 +112,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
       decoration: InputDecoration(labelText: 'Log Title'),
       initialValue: _name,
       onChanged: (value) => _name = value,
-      //TODO validate in the bloc, name cannot be empty
+      //TODO validate name cannot be empty
       //TODO need controllers
     );
   }
