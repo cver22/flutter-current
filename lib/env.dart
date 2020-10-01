@@ -2,6 +2,7 @@ import 'package:expenses/models/app_state.dart';
 import 'package:expenses/services/entries_repository.dart';
 import 'package:expenses/services/fetchers/entries_fetcher.dart';
 import 'package:expenses/services/fetchers/logs_fetcher.dart';
+import 'package:expenses/services/fetchers/settings_fetcher.dart';
 import 'package:expenses/services/logs_repository.dart';
 import 'package:expenses/services/user_repository.dart';
 import 'package:expenses/store/app_store.dart';
@@ -24,4 +25,6 @@ class Env {
     store: store,
     entriesRepository: FirebaseEntriesRepository(),
   );
+
+  static final settingsFetcher = SettingsFetcher(store: store); //SettingsFetcher
 }

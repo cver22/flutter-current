@@ -8,6 +8,8 @@ import 'package:flutter/foundation.dart';
 @immutable
 class Log extends Equatable {
   //TODO log keeps track of who owes who how much "debt map"?
+  //TODO need default to last or home currency for entries in this log
+  //TODO each log to have its own settings
 
   Log(
       {this.uid,
