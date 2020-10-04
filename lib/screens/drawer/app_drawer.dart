@@ -19,6 +19,7 @@ class AppDrawer extends StatelessWidget {
               shrinkWrap: true,
               children: <Widget>[
                 DrawerListTile(route: ExpenseRoutes.account, name: 'Account'),
+                DrawerListTile(route: ExpenseRoutes.settings, name: 'Settings'),
               ],
             ),
           ],
@@ -42,7 +43,7 @@ class DrawerListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushNamed(context, ExpenseRoutes.account);
+        Navigator.pushNamed(context, route);
       }),
       trailing: Icon(Icons.chevron_right),
       title: Text(name),

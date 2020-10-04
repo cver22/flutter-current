@@ -9,9 +9,6 @@ class ExpenseKeys {
   static final appScreen = const Key('__appScreen__');
   static final splashScreen = const Key('__splashScreen__');
 
-  //Account Screen
-  static final accountScreen = const Key('__accountScreen__');
-
 
   // Tabs
   /*static final tabSelector = const Key('__tabSelector__');
@@ -20,6 +17,8 @@ class ExpenseKeys {
 
   // App Drawer
   static final appDrawer = const Key('__appDrawer__');
+  static final accountScreen = const Key('__accountScreen__');
+  static final settingsScreen = const Key('__settingsScreen__');
 
   // Common Widgets
   static final emptyContent = const Key('__emptyContent__');

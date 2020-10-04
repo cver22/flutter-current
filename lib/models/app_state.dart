@@ -47,6 +47,7 @@ class AppState extends Equatable {
       loginRegState: LoginRegState.initial(),
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
+      settingsState: SettingsState.initial(),
       //TODO add setting state initial
 
     );

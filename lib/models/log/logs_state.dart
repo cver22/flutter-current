@@ -10,6 +10,7 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class LogsState extends Equatable{
+  //map of logId and log
   final Map<String, Log> logs;
   final bool isLoading;
   final Maybe<Log> selectedLog;

@@ -9,5 +9,6 @@ class ExpenseRoutes {
   static final addEditEntries = "/addEditEntriesScreen";
   static final categories = '/categoriesDialog';
   static final subcategories = '/subcategoriesDialog';
+  static final settings = "/subcategoriesScreen";
 
 }

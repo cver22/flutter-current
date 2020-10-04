@@ -13,15 +13,17 @@ class SettingsEntity implements Equatable {
     this.homeCurrency,
     this.defaultCategoryEntities,
     this.defaultSubcategoryEntities,
+    this.defaultLogId,
   });
 
   final String homeCurrency;
   final List<MyCategoryEntity> defaultCategoryEntities;
   final List<MySubcategoryEntity> defaultSubcategoryEntities;
+  final String defaultLogId;
 
   @override
   List<Object> get props =>
-      [homeCurrency, defaultCategoryEntities, defaultSubcategoryEntities];
+      [homeCurrency, defaultCategoryEntities, defaultSubcategoryEntities, defaultLogId];
 
   @override
   bool get stringify => true;

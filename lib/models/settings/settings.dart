@@ -15,29 +15,32 @@ class Settings extends Equatable {
     this.homeCurrency,
     this.defaultCategories,
     this.defaultSubcategories,
+    this.defaultLogId,
   });
 
   final String homeCurrency;
   final List<MyCategory> defaultCategories;
   final List<MySubcategory> defaultSubcategories;
+  final String defaultLogId;
 
 
   Settings copyWith({
     String homeCurrency,
     List<MyCategory> defaultCategories,
     List<MySubcategory> defaultSubcategories,
-    bool defaultToHomeCurrency,
+    String defaultLogId,
   }) {
     return Settings(
       homeCurrency: homeCurrency ?? this.homeCurrency,
       defaultCategories: defaultCategories ?? this.defaultCategories,
       defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,
+      defaultLogId: defaultLogId ?? this.defaultLogId,
     );
   }
 
   @override
   List<Object> get props =>
-      [homeCurrency, defaultCategories, defaultSubcategories];
+      [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId];
 
   @override
   bool get stringify => true;
@@ -59,6 +62,7 @@ class Settings extends Equatable {
       homeCurrency: homeCurrency,
       defaultCategoryEntities: defaultCategoryEntities,
       defaultSubcategoryEntities: defaultSubcategoryEntities,
+      defaultLogId: defaultLogId,
     );
   }
 
@@ -80,6 +84,7 @@ class Settings extends Equatable {
       homeCurrency: entity.homeCurrency,
       defaultCategories: returnedDefaultCategories,
       defaultSubcategories: returnedDefaultSubcategories,
+      defaultLogId: entity.defaultLogId,
     );
   }
 }

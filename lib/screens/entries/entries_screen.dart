@@ -5,12 +5,11 @@ import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/common_widgets/error_widget.dart';
 import 'package:expenses/screens/common_widgets/loading_indicator.dart';
 import 'package:expenses/screens/entries/entry_list_tile.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-
-
 
 class EntriesScreen extends StatefulWidget {
   const EntriesScreen({Key key}) : super(key: key);
@@ -22,7 +21,6 @@ class EntriesScreen extends StatefulWidget {
 class _EntriesScreenState extends State<EntriesScreen> {
   List<MyEntry> _entries = [];
 
-
   @override
   Widget build(BuildContext context) {
     Env.entriesFetcher.loadEntries();
@@ -30,8 +28,20 @@ class _EntriesScreenState extends State<EntriesScreen> {
       floatingActionButton: FloatingActionButton(
         //TODO deactivate add entries button if there is no default log
         //TODO pass default log or retrieve from state
-        onPressed: () =>
-            Navigator.pushNamed(context, ExpenseRoutes.addEditEntries),
+        onPressed: () {
+          String defaultLogId =
+              Env.store.state.settingsState.settings.defaultLogId;
+          Map logs = Env.store.state.logsState.logs;
+          if (defaultLogId != null && logs.containsKey(defaultLogId)) {
+            Navigator.pushNamed(context, ExpenseRoutes.addEditEntries);
+          } else {
+            //TODO user/error message, set a default log
+            Scaffold.of(context).showSnackBar(SnackBar(
+              content: Text("Please set a default log."),
+            ));
+          }
+        },
+
         child: Icon(Icons.add),
       ),
       body: ConnectState<EntriesState>(
@@ -67,9 +77,10 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
   Widget buildListView() {
     return ListView.builder(
-      scrollDirection: Axis.vertical,
+        scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+        padding:
+            const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];

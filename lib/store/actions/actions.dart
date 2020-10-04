@@ -9,7 +9,6 @@ import 'package:expenses/models/login_register/login_reg_state.dart';
 import 'package:expenses/models/settings/settings.dart';
 import 'package:expenses/models/settings/settings_state.dart';
 import 'package:expenses/models/user.dart';
-import 'package:expenses/services/fetchers/settings_fetcher.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/validators.dart';
 import 'package:meta/meta.dart';

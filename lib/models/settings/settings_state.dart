@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/env.dart';
+import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/settings/settings.dart';
 
 
@@ -11,10 +12,14 @@ class SettingsState extends Equatable {
   });
 
   factory SettingsState.initial() {
-    Env.settingsFetcher.readSettings();
+    List<MyCategory> categories = [];
+    List<MySubcategory> subcategories = [];
+    //Env.settingsFetcher.readSettings();
     return SettingsState(
-      settings: Env.store.state.settingsState.settings,
+      settings: Settings(homeCurrency: null, defaultLogId: null, defaultSubcategories: subcategories, defaultCategories: categories),
+      //settings: Env.store.state.settingsState.settings,
     );
+    //TODO some sort of error handling if there are no settings values
   }
 
   SettingsState copyWith({

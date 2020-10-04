@@ -189,6 +189,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     }
   }
 
+  //TODO similar code used here and in settings - refactor to use same widget and pass required functions only
   Widget _logNameDropDown(EntriesState entriesState) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
       List<Log> _logs =

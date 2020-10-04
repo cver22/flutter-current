@@ -3,7 +3,6 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/entry/my_entry_entity.dart';
 import 'package:expenses/models/user.dart';
-import 'package:expenses/store/actions/actions.dart';
 
 abstract class EntriesRepository {
   Future<void> addNewEntry(MyEntry entry);
