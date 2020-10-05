@@ -10,15 +10,21 @@ AppState _updateSettingsState(
 }
 
 class UpdateSettings implements Action {
-  final Settings settings;
+  final Maybe<Settings> settings;
 
   UpdateSettings({@required this.settings});
 
   @override
   AppState updateState(AppState appState) {
-    Env.settingsFetcher.writeSettings(settings);
+    Env.settingsFetcher.writeAppSettings(settings.value);
 
-    return _updateSettingsState(appState,
-        (settingsState) => settingsState.copyWith(settings: settings));
+    return _updateSettingsState(
+        appState,
+        (settingsState) => settingsState.copyWith(
+              settings: settings,
+            ));
   }
 }
+
+
+

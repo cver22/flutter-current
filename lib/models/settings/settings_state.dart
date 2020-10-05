@@ -1,29 +1,28 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/models/categories/my_category/my_category.dart';
-import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
+import 'package:expenses/env.dart';
 import 'package:expenses/models/settings/settings.dart';
+import 'package:expenses/utils/maybe.dart';
 
 
 class SettingsState extends Equatable {
-  final Settings settings;
+  final Maybe<Settings> settings;
 
   SettingsState({
     this.settings,
   });
 
   factory SettingsState.initial() {
-    List<MyCategory> categories = [];
-    List<MySubcategory> subcategories = [];
-    //Env.settingsFetcher.readSettings();
     return SettingsState(
-      settings: Settings(homeCurrency: null, defaultLogId: null, defaultSubcategories: subcategories, defaultCategories: categories),
-      //settings: Env.store.state.settingsState.settings,
+      settings: Maybe.none(),
     );
-    //TODO some sort of error handling if there are no settings values
+  }
+
+  void initializeSettings() {
+    Env.settingsFetcher.readAppSettings();
   }
 
   SettingsState copyWith({
-    Settings settings,
+    Maybe<Settings> settings,
   }) {
     return SettingsState(
       settings: settings ?? this.settings,

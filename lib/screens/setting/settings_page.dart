@@ -1,9 +1,12 @@
+import 'dart:convert';
+
 import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/settings/settings_state.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -16,16 +19,22 @@ class SettingsPage extends StatelessWidget {
         where: notIdentical,
         map: (state) => state.settingsState,
         builder: (settingsState) {
+          Map json = settingsState.settings.value.toEntity().toJson();
+          JsonEncoder encoder = JsonEncoder.withIndent('  ');
+          String prettyPrint = encoder.convert(json);
           return Scaffold(
             appBar: AppBar(
               title: Text('Settings'),
             ),
-            body: Column(
-              children: <Widget>[
-                _logNameDropDown(settingsState: settingsState),
+            body: SingleChildScrollView(
+              child: Column(
+                  children: <Widget>[
+                  _logNameDropDown(settingsState: settingsState),
+
+
               ],
             ),
-          );
+          ),);
         });
   }
 
@@ -35,20 +44,19 @@ class SettingsPage extends StatelessWidget {
       Map<String, Log> _logsMap = _store.state.logsState.logs;
       List<Log> _logs = _logsMap.entries.map((e) => e.value).toList();
 
-      String _defaultLogId = settingsState.settings.defaultLogId;
+      String _defaultLogId = settingsState.settings.value.defaultLogId;
 
       if (_defaultLogId == null && !_logsMap.containsKey(_defaultLogId)) {
         _defaultLogId = _logs.first.id;
       }
 
       return DropdownButton<Log>(
-        //TODO order preference logs and set default to first log if not navigating from the log itself
         value: _logs.firstWhere((e) => e.id == _defaultLogId),
         onChanged: (Log log) {
           _defaultLogId = log.id;
           _store.dispatch(UpdateSettings(
-              settings: settingsState.settings
-                  .copyWith(defaultLogId: _defaultLogId)));
+              settings: Maybe.some(settingsState.settings.value
+                  .copyWith(defaultLogId: _defaultLogId))));
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(

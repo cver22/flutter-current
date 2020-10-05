@@ -1,3 +1,4 @@
+import 'package:expenses/env.dart';
 import 'package:expenses/models/auth/auth_state.dart';
 import 'package:expenses/screens/splash_screen.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -20,6 +21,10 @@ class HomeScreen extends StatelessWidget {
 
         if (authState.user.isSome && authState.isLoading == false) {
           //Prevents calling in the current build cycle
+
+          Env.store.state.settingsState.initializeSettings();
+          print('current settings ${Env.store.state.settingsState.settings}');
+
           Future.delayed(Duration.zero, () {
             Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
                 ModalRoute.withName(ExpenseRoutes.home));

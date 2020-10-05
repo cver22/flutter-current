@@ -30,7 +30,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
         //TODO pass default log or retrieve from state
         onPressed: () {
           String defaultLogId =
-              Env.store.state.settingsState.settings.defaultLogId;
+              Env.store.state.settingsState.settings.value.defaultLogId;
           Map logs = Env.store.state.logsState.logs;
           if (defaultLogId != null && logs.containsKey(defaultLogId)) {
             Navigator.pushNamed(context, ExpenseRoutes.addEditEntries);

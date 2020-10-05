@@ -1,0 +1,54 @@
+{"homeCurrency": null,
+  "defaultCategoryEntities": [
+    {
+      "id": "home",
+      "name": "Home",
+      "iconCodePoint": null,
+      "iconFontFamily": null
+    },
+    {
+      "id": "transportation",
+      "name": "Transportation",
+      "iconCodePoint": null,
+      "iconFontFamily": null
+    }
+  ],
+  "defaultSubcategoryEntities": [
+    {
+      "id": "a",
+      "name": "Rent",
+      "iconCodePoint": null,
+      "iconFontFamily": null,
+      "parentCategoryId": "home"
+    },
+    {
+      "id": "b",
+      "name": "Utilities",
+      "iconCodePoint": null,
+      "iconFontFamily": null,
+      "parentCategoryId": "home"
+    },
+    {
+      "id": "c",
+      "name": "Car",
+      "iconCodePoint": null,
+      "iconFontFamily": null,
+      "parentCategoryId": "transportation"
+    },
+    {
+      "id": "d",
+      "name": "Bus",
+      "iconCodePoint": null,
+      "iconFontFamily": null,
+      "parentCategoryId": "transportation"
+    },
+    {
+      "id": "e",
+      "name": "Parking",
+      "iconCodePoint": null,
+      "iconFontFamily": null,
+      "parentCategoryId": "transportation"
+    }
+  ],
+  "defaultLogId": null
+}

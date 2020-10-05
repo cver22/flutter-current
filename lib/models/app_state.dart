@@ -14,8 +14,6 @@ class AppState extends Equatable {
   final EntriesState entriesState;
   final SettingsState settingsState;
 
-
-
   AppState(
       {@required this.authState,
       @required this.loginRegState,
@@ -29,7 +27,6 @@ class AppState extends Equatable {
     LogsState logsState,
     EntriesState entriesState,
     SettingsState settingsState,
-
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -37,7 +34,6 @@ class AppState extends Equatable {
       logsState: logsState ?? this.logsState,
       entriesState: entriesState ?? this.entriesState,
       settingsState: settingsState ?? this.settingsState,
-
     );
   }
 
@@ -48,8 +44,6 @@ class AppState extends Equatable {
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
       settingsState: SettingsState.initial(),
-      //TODO add setting state initial
-
     );
   }
 
@@ -57,5 +51,6 @@ class AppState extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props => [authState, loginRegState, logsState, entriesState, settingsState];
+  List<Object> get props =>
+      [authState, loginRegState, logsState, entriesState, settingsState];
 }
