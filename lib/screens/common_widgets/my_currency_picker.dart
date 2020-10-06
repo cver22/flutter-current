@@ -17,6 +17,7 @@ class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
   Widget build(BuildContext context) {
     _currency = widget.currency;
     return CurrencyPickerDropdown(
+      //TODO change to local currency based on phone
       initialValue: _currency == null ? 'ca' : _currency,
       itemBuilder: _buildDropdownItem,
       onValuePicked: (Country country) {

@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:expenses/env.dart';
 import 'package:expenses/models/settings/settings.dart';
+import 'package:expenses/models/settings/settings_entity.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:expenses/utils/maybe.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
@@ -41,8 +43,8 @@ class SettingsFetcher {
   Future<void> writeAppSettings(Settings settings) async {
     final file = await _localFile;
     try {
-      // Write settings to file from store.
-      file.writeAsString('${settings.toEntity().toJson()}');
+      // Write settings to file from store as a json.
+      file.writeAsString(json.encode(settings.toEntity().toJson()));
     } catch (e) {
       print('Error writing settings: ${e.toString()}');
     }
@@ -56,39 +58,37 @@ class SettingsFetcher {
         (prefs.getBool('settings_initialized') ?? false);
 
     try {
-      //if the settings are already loaded, do nothing
-      print('settings already loaded ${_store.state.settingsState.settings}');
+
+
       if (settingsInitialized &&
           Env.store.state.settingsState.settings.isSome) {
+        //if the settings are already loaded, do nothing
         return;
-        //if no settings have ever been loaded, load the default
+
       } else if (!settingsInitialized) {
+        //if no settings have ever been loaded, load the default
         String jsonString =
             await rootBundle.loadString('assets/default_settings.txt');
-        print('try loading from assets $jsonString');
+
         _store.dispatch(UpdateSettings(
-          settings: Maybe.some(Settings.fromEntity(json.decode(jsonString))),
-          //TODO START HERE ****why cant I read the file to settings?****
+          settings: Maybe.some(Settings.fromEntity(
+              SettingsEntity.fromJson(json.decode(jsonString)))),
         ));
-        print(
-            'settings loaded from assets ${_store.state.settingsState.settings}');
+
         //marks that default settings have previously been read from assets
         prefs.setBool('settings_initialized', true);
 
-        //reads the settings from the saved file to reload them
+
       } else {
-        //TODO also not properly loading from file
-        print('try loading from file');
+        //reads the settings from the saved file to reload them if they are not yet loaded
         final file = await _localFile;
 
-        _store.dispatch(
-          UpdateSettings(
-              settings: Maybe.some(
-            Settings.fromEntity(json.decode(await file.readAsString())),
-          )),
-        );
-        print(
-            'settings loaded from local file ${_store.state.settingsState.settings}');
+        Map<String, dynamic> jsonData = json.decode(await file.readAsString());
+
+        _store.dispatch(UpdateSettings(
+          settings: Maybe.some(
+              Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
+        ));
       }
     } catch (e) {
       // If encountering an error

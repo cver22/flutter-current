@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/settings/settings_state.dart';
+import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -30,6 +31,10 @@ class SettingsPage extends StatelessWidget {
               child: Column(
                   children: <Widget>[
                   _logNameDropDown(settingsState: settingsState),
+                    MyCurrencyPicker(
+                        currency: settingsState.settings.value.homeCurrency,
+                        returnCurrency: (currency) => Env.store
+                            .dispatch(UpdateSettings(settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
 
 
               ],
