@@ -25,7 +25,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   MyEntry _entry;
 
   void _submit() {
-    //TODO clear selected entry after saving without causing a fatal rebuild
+    //TODO clear selected entry after saving without causing a fatal rebuild, also clear when using the back button
     print('saving entry $_entry');
     if (_entry.id != null) {
       Env.entriesFetcher.updateEntry(_entry);
@@ -42,8 +42,9 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         map: (state) => state.entriesState,
         builder: (entriesState) {
           //TODO if navigating from FAB, need to create a selected entry
-          //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before poping, probably use a future delay to handle
+          //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
           _entry = Env.store.state.entriesState.selectedEntry.value;
+
           print('Rendering AddEditEntriesScreen');
           print('entry $_entry');
 

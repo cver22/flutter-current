@@ -11,8 +11,8 @@ import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
-class SettingsPage extends StatelessWidget {
-  SettingsPage({Key key}) : super(key: key);
+class SettingsScreen extends StatelessWidget {
+  SettingsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,9 +20,8 @@ class SettingsPage extends StatelessWidget {
         where: notIdentical,
         map: (state) => state.settingsState,
         builder: (settingsState) {
-          Map json = settingsState.settings.value.toEntity().toJson();
-          JsonEncoder encoder = JsonEncoder.withIndent('  ');
-          String prettyPrint = encoder.convert(json);
+          print('Rendering SettingsScreen');
+
           return Scaffold(
             appBar: AppBar(
               title: Text('Settings'),

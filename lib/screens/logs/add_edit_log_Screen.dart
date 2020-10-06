@@ -43,7 +43,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
         if (logState.selectedLog.isSome) {
           _log = logState.selectedLog.value;
         }
-        _currency = _log?.currency ?? 'ca';
+        _currency = _log?.currency ?? 'ca'; //TODO change to home currency as default
         _name = _log?.logName ?? null;
         return Scaffold(
           appBar: AppBar(

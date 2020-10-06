@@ -33,6 +33,8 @@ class _EntriesScreenState extends State<EntriesScreen> {
               Env.store.state.settingsState.settings.value.defaultLogId;
           Map logs = Env.store.state.logsState.logs;
           if (defaultLogId != null && logs.containsKey(defaultLogId)) {
+            //sets logId for selected entry to defaultLogId for new entry when navigating from FAB
+            Env.store.dispatch(SetNewSelectedEntry(logId: Env.store.state.settingsState.settings.value.defaultLogId));
             Navigator.pushNamed(context, ExpenseRoutes.addEditEntries);
           } else {
             //TODO user/error message, set a default log
