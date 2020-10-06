@@ -3,7 +3,6 @@ import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/categories/category_list_tile.dart';
 import 'package:expenses/store/actions/actions.dart';
-
 import 'package:flutter/material.dart';
 
 class SubcategoryListDialog extends StatelessWidget {
@@ -48,20 +47,24 @@ class SubcategoryListDialog extends StatelessWidget {
               ),
             ],
           ),
-          ListView(
-              shrinkWrap: true,
-              //TODO implement onReorder
-              children: _subcategories
-                  .map((MySubcategory subcategory) => CategoryListTile(
-                      category: subcategory,
-                      onTap: () {
-                        Env.store.dispatch(
-                            UpdateSelectedEntry(subcategory: subcategory.id));
-                        Navigator.of(context).pop();
-                      }))
-                  .toList()),
+          _entrySubcategoryListView(_subcategories, context),
         ],
       ),
     );
+  }
+
+  ListView _entrySubcategoryListView(List<MySubcategory> _subcategories, BuildContext context) {
+    return ListView(
+            shrinkWrap: true,
+            //TODO implement onReorder
+            children: _subcategories
+                .map((MySubcategory subcategory) => CategoryListTile(
+                    category: subcategory,
+                    onTap: () {
+                      Env.store.dispatch(
+                          UpdateSelectedEntry(subcategory: subcategory.id));
+                      Navigator.of(context).pop();
+                    }))
+                .toList());
   }
 }

@@ -1,8 +1,9 @@
-import 'dart:convert';
-
 import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/settings/settings_state.dart';
+import 'package:expenses/screens/categories/category_button.dart';
+import 'package:expenses/screens/categories/category_list_dialog.dart';
+import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
@@ -28,17 +29,18 @@ class SettingsScreen extends StatelessWidget {
             ),
             body: SingleChildScrollView(
               child: Column(
-                  children: <Widget>[
+                children: <Widget>[
                   _logNameDropDown(settingsState: settingsState),
-                    MyCurrencyPicker(
-                        currency: settingsState.settings.value.homeCurrency,
-                        returnCurrency: (currency) => Env.store
-                            .dispatch(UpdateSettings(settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
-
-
-              ],
+                  MyCurrencyPicker(
+                      currency: settingsState.settings.value.homeCurrency,
+                      returnCurrency: (currency) => Env.store.dispatch(UpdateSettings(
+                          settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
+                  _categoryButton(settingsState: settingsState, context: context),
+                  _subcategoryButton(settingsState: settingsState, context: context),
+                ],
+              ),
             ),
-          ),);
+          );
         });
   }
 
@@ -58,9 +60,8 @@ class SettingsScreen extends StatelessWidget {
         value: _logs.firstWhere((e) => e.id == _defaultLogId),
         onChanged: (Log log) {
           _defaultLogId = log.id;
-          _store.dispatch(UpdateSettings(
-              settings: Maybe.some(settingsState.settings.value
-                  .copyWith(defaultLogId: _defaultLogId))));
+          _store.dispatch(
+              UpdateSettings(settings: Maybe.some(settingsState.settings.value.copyWith(defaultLogId: _defaultLogId))));
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(
@@ -75,5 +76,39 @@ class SettingsScreen extends StatelessWidget {
     } else {
       return Container();
     }
+  }
+
+  Widget _categoryButton({SettingsState settingsState, BuildContext context}) {
+
+    return settingsState?.settings?.value?.defaultCategories == null
+        ? Container()
+        : CategoryButton(
+            label: 'Edit Default Categories',
+            onPressed: () => {
+              showDialog(
+                context: context,
+                builder: (_) => CategoryListDialog(),
+              ),
+            },
+            category: null, // do not pass a category, maintains label
+          );
+  }
+
+  Widget _subcategoryButton({SettingsState settingsState, BuildContext context}) {
+    return settingsState?.settings?.value?.defaultSubcategories == null
+        ? Container()
+        : CategoryButton(
+      label: 'Edit Default Subcategories',
+      onPressed: () => {
+        showDialog(
+          context: context,
+          builder: (_) => SubcategoryListDialog(
+            backChevron: () => Navigator.of(context).pop(),
+          ),
+        ),
+      },
+      category: null, // do not pass a category, maintains label
+
+    );
   }
 }

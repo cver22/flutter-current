@@ -11,8 +11,7 @@ class CategoryListDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Log _log = Env.store.state.logsState
-        .logs[Env.store.state.entriesState.selectedEntry.value.logId];
+    Log _log = Env.store.state.logsState.logs[Env.store.state.entriesState.selectedEntry.value.logId];
     List<MyCategory> _categories = _log.categories;
 
     return Dialog(
@@ -45,8 +44,7 @@ class CategoryListDialog extends StatelessWidget {
                   .map((MyCategory category) => CategoryListTile(
                       category: category,
                       onTap: () {
-                        Env.store.dispatch(
-                            ChangeEntryCategories(category: category.id));
+                        Env.store.dispatch(ChangeEntryCategories(category: category.id));
 
                         Navigator.of(context).pop();
                         showDialog(
