@@ -13,6 +13,7 @@ const String NAME = 'name';
 const String ICON_CODE_POINT = 'iconCodePoint';
 const String ICON_FONT_FAMILY = 'iconFontFamily';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
+enum CategoryOrSubcategory {category, subcategory}
 
 //Log constants
 const String LOGS_COLLECTION = 'logs';

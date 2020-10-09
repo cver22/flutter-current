@@ -2,41 +2,50 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log.dart';
-import 'package:expenses/screens/categories/category_list_dialog.dart';
+import 'package:expenses/models/settings/settings.dart';
 import 'package:expenses/screens/categories/category_list_tile.dart';
-import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
+import 'package:expenses/screens/categories/edit_category_dialog.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
 
+//This widget is used in all category and subcategory lists throughout the application
+//by choosing setting or not, the widget automatically decides how to act
+
 class NewCategoryListDialog extends StatelessWidget {
-  final String catOrSubDialog;
-  final List<MyCategory> categories;
-  final List<MySubcategory> subcategories;
+  final CategoryOrSubcategory categoryOrSubcategory;
+  final bool editSettings; //automatically set to false if not set
+  final bool editLogDefaults;
   final VoidCallback backChevron;
   final Log log;
 
   NewCategoryListDialog(
-      {Key key, @required this.catOrSubDialog, this.categories, this.subcategories, this.backChevron, this.log})
+      {Key key,
+      @required this.categoryOrSubcategory,
+      this.editSettings = false,
+      this.editLogDefaults,
+      this.backChevron,
+      this.log})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<MyCategory> _categories = [];
-    // ignore: unused_local_variable
     List<MySubcategory> _subcategories = [];
 
     //determines which list is passed based on if it comes from default or the entry
     //TODO also make this work to edit the categories directly from a log screen
-    if (log != null && catOrSubDialog == CATEGORY) {
+    if (log != null && categoryOrSubcategory == CategoryOrSubcategory.category) {
       _categories = log.categories;
-    } else if (log != null && catOrSubDialog == SUBCATEGORY) {
+    } else if (log != null && categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
       _subcategories = log.subcategories
           .where((element) => element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.category)
           .toList();
     } else {
-      _categories = categories;
-      _subcategories = subcategories;
+      Settings _settings = Env.store.state.settingsState.settings.value;
+      _categories = _settings.defaultCategories;
+      _subcategories = _settings.defaultSubcategories;
     }
 
     return Dialog(
@@ -59,7 +68,7 @@ class NewCategoryListDialog extends StatelessWidget {
                 onPressed: () => backChevron ?? Navigator.pop(context),
               ),
               Text(
-                catOrSubDialog,
+                categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
                 //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
                 style: TextStyle(fontSize: 20.0),
               ),
@@ -72,14 +81,14 @@ class NewCategoryListDialog extends StatelessWidget {
     );
   }
 
-  // TODO *****START HERE ********  build on press methods for editing purposes for each list
+  // TODO *****START HERE ********  build on tap methods for editing purposes for each list
 
   ListView _entryCategoryListView(
       List<MyCategory> _categories, List<MySubcategory> _subcategories, BuildContext context) {
     return ListView(
         shrinkWrap: true,
         //TODO implement onReorder
-        children: catOrSubDialog == SUBCATEGORY
+        children: categoryOrSubcategory == CategoryOrSubcategory.subcategory
             ? _subcategoryList(_subcategories, context)
             : categoryList(_categories, context));
   }
@@ -88,20 +97,22 @@ class NewCategoryListDialog extends StatelessWidget {
     return _categories
         .map((MyCategory category) => CategoryListTile(
             category: category,
+            onLongPress: () {
+              showDialog(
+                context: context,
+                builder: (_) => EditCategoryDialog(category: category, categoryOrSubcategory: CategoryOrSubcategory.category,),
+              );
+            },
             onTap: () {
               Env.store.dispatch(ChangeEntryCategories(category: category.id));
-
+              //TODO change dialogues to a named route so that popUntil named route can be used to navigate back from the subcategories
               Navigator.of(context).pop();
               showDialog(
                 context: context,
-                builder: (_) => SubcategoryListDialog(
-                  backChevron: () => {
-                    Navigator.of(context).pop(),
-                    showDialog(
-                      context: context,
-                      builder: (_) => CategoryListDialog(),
-                    ),
-                  },
+                builder: (_) => NewCategoryListDialog(
+                  categoryOrSubcategory: CategoryOrSubcategory.subcategory,
+                  log: log,
+                  key: ExpenseKeys.subcategoriesDialog,
                 ),
               );
             }))
@@ -115,6 +126,16 @@ class NewCategoryListDialog extends StatelessWidget {
             onTap: () {
               Env.store.dispatch(UpdateSelectedEntry(subcategory: subcategory.id));
               Navigator.of(context).pop();
+            }))
+        .toList();
+  }
+
+  List<CategoryListTile> settingsCategoryList(List<MyCategory> _categories, BuildContext context) {
+    return _categories
+        .map((MyCategory category) => CategoryListTile(
+            category: category,
+            onTap: () {
+              //Env.store.dispatch(ChangeEntryCategories(category: category.id));
             }))
         .toList();
   }

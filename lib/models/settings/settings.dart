@@ -16,12 +16,14 @@ class Settings extends Equatable {
     this.defaultCategories,
     this.defaultSubcategories,
     this.defaultLogId,
+    this.autoInsertDecimalPoint
   });
 
   final String homeCurrency;
   final List<MyCategory> defaultCategories;
   final List<MySubcategory> defaultSubcategories;
   final String defaultLogId;
+  final bool autoInsertDecimalPoint;
 
 
   Settings copyWith({
@@ -29,18 +31,20 @@ class Settings extends Equatable {
     List<MyCategory> defaultCategories,
     List<MySubcategory> defaultSubcategories,
     String defaultLogId,
+    String autoInsertDecimalPoint
   }) {
     return Settings(
       homeCurrency: homeCurrency ?? this.homeCurrency,
       defaultCategories: defaultCategories ?? this.defaultCategories,
       defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,
       defaultLogId: defaultLogId ?? this.defaultLogId,
+      autoInsertDecimalPoint: autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
     );
   }
 
   @override
   List<Object> get props =>
-      [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId];
+      [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId, autoInsertDecimalPoint];
 
   @override
   bool get stringify => true;
@@ -63,6 +67,7 @@ class Settings extends Equatable {
       defaultCategoryEntities: defaultCategoryEntities,
       defaultSubcategoryEntities: defaultSubcategoryEntities,
       defaultLogId: defaultLogId,
+      autoInsertDecimalPoint: autoInsertDecimalPoint,
     );
   }
 
@@ -85,6 +90,7 @@ class Settings extends Equatable {
       defaultCategories: returnedDefaultCategories,
       defaultSubcategories: returnedDefaultSubcategories,
       defaultLogId: entity.defaultLogId,
+      autoInsertDecimalPoint: entity.autoInsertDecimalPoint,
     );
   }
 }

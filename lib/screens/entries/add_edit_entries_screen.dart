@@ -4,10 +4,13 @@ import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/categories/category_button.dart';
 import 'package:expenses/screens/categories/category_list_dialog.dart';
+import 'package:expenses/screens/categories/new_category_list_dialog.dart';
 import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -23,6 +26,7 @@ class AddEditEntriesScreen extends StatefulWidget {
 
 class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   MyEntry _entry;
+  Log _log;
 
   void _submit() {
     //TODO clear selected entry after saving without causing a fatal rebuild, also clear when using the back button
@@ -44,6 +48,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           //TODO if navigating from FAB, need to create a selected entry
           //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
           _entry = Env.store.state.entriesState.selectedEntry.value;
+          _log = Env.store.state.logsState.logs[_entry.logId];
 
           print('Rendering AddEditEntriesScreen');
           print('entry $_entry');
@@ -116,8 +121,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           children: <Widget>[
             MyCurrencyPicker(
                 currency: _entry?.currency,
-                returnCurrency: (currency) => Env.store
-                    .dispatch(UpdateSelectedEntry(currency: currency))),
+                returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
             Expanded(
               child: TextFormField(
                 keyboardType: TextInputType.number,
@@ -135,48 +139,58 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         ),
         //CategoryPicker(entry: entriesState.selectedEntry.value),
         SizedBox(height: 10.0),
-        _entry?.logId == null
-            ? Container()
-            : CategoryButton(
-                label: 'Select a Category',
-                onPressed: () => {
-                  showDialog(
-                    context: context,
-                    builder: (_) => CategoryListDialog(),
-                  ),
-                },
-                category: _entry?.category == null
-                    ? null
-                    : Env.store.state.logsState.logs[_entry.logId].categories
-                        .firstWhere((element) => element.id == _entry.category),
-              ),
-        _entry?.category == null
-            ? Container()
-            : CategoryButton(
-                label: 'Select a Subcategory',
-                onPressed: () => {
-                  showDialog(
-                    context: context,
-                    builder: (_) => SubcategoryListDialog(
-                      backChevron: () => Navigator.of(context).pop(),
-                    ),
-                  ),
-                },
-                category: _entry?.subcategory == null
-                    ? null
-                    : Env.store.state.logsState.logs[_entry.logId].subcategories
-                        .firstWhere(
-                            (element) => element.id == _entry.subcategory),
-              ),
-        TextFormField(
-          decoration: InputDecoration(hintText: 'Comment'),
-          initialValue: _entry?.comment,
-          onChanged: (value) => Env.store.dispatch(
-            UpdateSelectedEntry(comment: value),
-            //TODO need controllers (do I need controllers if I am using connect state?)
+        _entry?.logId == null ? Container() : _categoryButton(),
+        _entry?.category == null ? Container() : _subcategoryButton(),
+        _commentFormField(),
+      ],
+    );
+  }
+
+  CategoryButton _categoryButton() {
+    return CategoryButton(
+      label: 'Select a Category',
+      onPressed: () => {
+        showDialog(
+          context: context,
+          builder: (_) => NewCategoryListDialog(
+            categoryOrSubcategory: CategoryOrSubcategory.category,
+            log: _log,
+            key: ExpenseKeys.categoriesDialog,
           ),
         ),
-      ],
+      },
+      category:
+          _entry?.category == null ? null : _log.categories.firstWhere((element) => element.id == _entry.category),
+    );
+  }
+
+  CategoryButton _subcategoryButton() {
+    return CategoryButton(
+      label: 'Select a Subcategory',
+      onPressed: () => {
+        showDialog(
+          context: context,
+          builder: (_) => NewCategoryListDialog(
+            categoryOrSubcategory: CategoryOrSubcategory.subcategory,
+            log: _log,
+            key: ExpenseKeys.subcategoriesDialog,
+          ),
+        ),
+      },
+      category: _entry?.subcategory == null
+          ? null
+          : _log.subcategories.firstWhere((element) => element.id == _entry.subcategory),
+    );
+  }
+
+  TextFormField _commentFormField() {
+    return TextFormField(
+      decoration: InputDecoration(hintText: 'Comment'),
+      initialValue: _entry?.comment,
+      onChanged: (value) => Env.store.dispatch(
+        UpdateSelectedEntry(comment: value),
+        //TODO need controllers (do I need controllers if I am using connect state?)
+      ),
     );
   }
 
@@ -193,13 +207,11 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   //TODO similar code used here and in settings - refactor to use same widget and pass required functions only
   Widget _logNameDropDown(EntriesState entriesState) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
-      List<Log> _logs =
-          Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
+      List<Log> _logs = Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
 
       return DropdownButton<Log>(
         //TODO order preference logs and set default to first log if not navigating from the log itself
-        value: Env
-            .store.state.logsState.logs[entriesState.selectedEntry.value.logId],
+        value: Env.store.state.logsState.logs[entriesState.selectedEntry.value.logId],
         onChanged: (Log log) {
           Env.store.dispatch(ChangeEntryLog(log: log));
         },
