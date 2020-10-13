@@ -49,35 +49,38 @@ class NewCategoryListDialog extends StatelessWidget {
       _subcategories = _settings.defaultSubcategories;
     }
 
-    return Dialog(
-      //TODO move to constants
-      elevation: 5.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+    return Visibility(
+      visible: true,
+      child: Dialog(
+        //TODO move to constants
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
 
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.chevron_left),
-                //if no back action is passed, automatically set to pop context
-                onPressed: () => backChevron ?? Navigator.pop(context),
-              ),
-              Text(
-                categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
-                //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
-                style: TextStyle(fontSize: 20.0),
-              ),
-            ],
-          ),
-          //shows this list view if the category list comes from the log
-          _entryCategoryListView(_categories, _subcategories, context),
-        ],
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.max,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.chevron_left),
+                  //if no back action is passed, automatically set to pop context
+                  onPressed: backChevron ?? () => Get.back(),
+                ),
+                Text(
+                  categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
+                  //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
+                  style: TextStyle(fontSize: 20.0),
+                ),
+              ],
+            ),
+            //shows this list view if the category list comes from the log
+            _entryCategoryListView(_categories, _subcategories, context),
+          ],
+        ),
       ),
     );
   }
@@ -104,30 +107,30 @@ class NewCategoryListDialog extends StatelessWidget {
                 builder: (_) => EditCategoryDialog(
                   category: category,
                   categoryOrSubcategory: CategoryOrSubcategory.category,
+                  //TODO - make functioning category edit dialog
                 ),
               );
             },
             onTap: () {
               Env.store.dispatch(ChangeEntryCategories(category: category.id));
-              //TODO change dialogues to a named route so that Get.offNamedUntil named route can be used to navigate back from the subcategories
               Get.back();
               Get.dialog(
                 NewCategoryListDialog(
                   categoryOrSubcategory: CategoryOrSubcategory.subcategory,
                   log: log,
                   key: ExpenseKeys.subcategoriesDialog,
+                  backChevron: () => {
+                    Get.back(),
+                    Get.dialog(
+                      NewCategoryListDialog(
+                        categoryOrSubcategory: CategoryOrSubcategory.category,
+                        log: Env.store.state.logsState.logs[Env.store.state.entriesState.selectedEntry.value.logId],
+                        key: ExpenseKeys.categoriesDialog,
+                      ),
+                    ),
+                  },
                 ),
               );
-
-              /*Navigator.of(context).pop();
-              showDialog(
-                context: context,
-                builder: (_) => NewCategoryListDialog(
-                  categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-                  log: log,
-                  key: ExpenseKeys.subcategoriesDialog,
-                ),
-              );*/
             }))
         .toList();
   }
@@ -138,6 +141,7 @@ class NewCategoryListDialog extends StatelessWidget {
             category: subcategory,
             onTap: () {
               Env.store.dispatch(UpdateSelectedEntry(subcategory: subcategory.id));
+              //TODO this doesn't work, need to be able to dismiss the dialog
               Get.back();
             }))
         .toList();

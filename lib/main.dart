@@ -29,50 +29,11 @@ class App extends StatelessWidget {
         GetPage(name: ExpenseRoutes.account, page: () => AccountScreen(key: ExpenseKeys.accountScreen)),
         GetPage(name: ExpenseRoutes.settings, page: () => SettingsScreen(key: ExpenseKeys.settingsScreen)),
         GetPage(name: ExpenseRoutes.addEditLog, page: () => AddEditLogScreen(key: ExpenseKeys.addEditLogScreen)),
-        GetPage(name: ExpenseRoutes.addEditEntries, page: () => AddEditEntriesScreen(key: ExpenseKeys.addEditEntriesScreen)),
+        GetPage(
+            name: ExpenseRoutes.addEditEntries,
+            page: () => AddEditEntriesScreen(key: ExpenseKeys.addEditEntriesScreen)),
         GetPage(name: ExpenseRoutes.categories, page: () => CategoryListDialog(key: ExpenseKeys.categoriesDialog)),
-
       ],
-      routes: {
-        ExpenseRoutes.home: (context) {
-          return HomeScreen(
-            key: ExpenseKeys.homeScreen,
-          );
-        },
-        ExpenseRoutes.loginRegister: (context) {
-          return LoginRegisterScreen(key: ExpenseKeys.loginScreen);
-        },
-        ExpenseRoutes.app: (context) {
-          return AppScreen(key: ExpenseKeys.appScreen);
-        },
-        ExpenseRoutes.account: (context) {
-          return AccountScreen(key: ExpenseKeys.accountScreen);
-        },
-
-        ExpenseRoutes.settings: (context) {
-          return SettingsScreen(key: ExpenseKeys.settingsScreen);
-        },
-        ExpenseRoutes.addEditLog: (context) {
-          return AddEditLogScreen(key: ExpenseKeys.addEditLogScreen);
-        },
-        ExpenseRoutes.addEditEntries: (context) {
-          return AddEditEntriesScreen(key: ExpenseKeys.addEditEntriesScreen);
-        },
-
-        ExpenseRoutes.categories: (context) {
-          return CategoryListDialog(key: ExpenseKeys.categoriesDialog);
-        },
-
-        //TODO how to use these with tabs?
-        /*ExpenseRoutes.logs: (context) {
-          return LogsScreen(key: ExpenseKeys.logsScreen);
-        },
-
-        ExpenseRoutes.entries: (context) {
-          return EntriesScreen(key: ExpenseKeys.entriesScreen);
-        },
-*/
-      },
       initialRoute: ExpenseRoutes.home,
       key: ExpenseKeys.main,
     );

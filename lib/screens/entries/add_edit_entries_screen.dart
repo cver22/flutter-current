@@ -158,7 +158,6 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             key: ExpenseKeys.categoriesDialog,
           ),
         ),
-
       },
       category:
           _entry?.category == null ? null : _log.categories.firstWhere((element) => element.id == _entry.category),
@@ -174,9 +173,9 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
             log: _log,
             key: ExpenseKeys.subcategoriesDialog,
+
           ),
         ),
-
       },
       category: _entry?.subcategory == null
           ? null
