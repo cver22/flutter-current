@@ -6,6 +6,7 @@ import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class AddEditLogScreen extends StatefulWidget {
 
@@ -31,7 +32,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
       Env.logsFetcher.addLog(_log);
     }
 
-    Navigator.pop(context);
+    Get.back();
   }
 
   @override
@@ -121,7 +122,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
     switch (value) {
       case 'Delete Log':
         Env.logsFetcher.deleteLog(_log);
-        Navigator.pop(context);
+        Get.back();
         break;
     }
   }

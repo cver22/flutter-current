@@ -5,6 +5,7 @@ import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -26,15 +27,17 @@ class HomeScreen extends StatelessWidget {
           print('current settings ${Env.store.state.settingsState.settings}');
 
           Future.delayed(Duration.zero, () {
-            Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
-                ModalRoute.withName(ExpenseRoutes.home));
+            Get.offAllNamed(ExpenseRoutes.app);
+            /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
+                ModalRoute.withName(ExpenseRoutes.home));*/
           });
         } else if (authState.user.isNone && authState.isLoading == false) {
           Future.delayed(Duration(seconds: 1), () {
-            Navigator.pushNamedAndRemoveUntil(
+            Get.offAllNamed(ExpenseRoutes.loginRegister);
+           /* Navigator.pushNamedAndRemoveUntil(
                 context,
                 ExpenseRoutes.loginRegister,
-                ModalRoute.withName(ExpenseRoutes.home));
+                ModalRoute.withName(ExpenseRoutes.home));*/
           });
         }
 

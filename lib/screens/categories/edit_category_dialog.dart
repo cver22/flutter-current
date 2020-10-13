@@ -1,6 +1,7 @@
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
@@ -74,7 +75,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             FlatButton(
               child: Text('Cancel'),
               onPressed: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             FlatButton(

@@ -9,6 +9,7 @@ import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class LogsScreen extends StatefulWidget {
   const LogsScreen({Key key}) : super(key: key);
@@ -76,8 +77,9 @@ class _LogsScreenState extends State<LogsScreen> {
       child: Text('Add Log'),
       elevation: 2.0,
       onPressed: () => {
-        Navigator.pushNamed(context, ExpenseRoutes.addEditLog),
-      }, //TODO Navigate to add edit log page
+
+        Get.toNamed(ExpenseRoutes.addEditLog),
+      },
     );
   }
 }

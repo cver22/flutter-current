@@ -2,6 +2,7 @@ import 'package:expenses/screens/account/account_screen.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:get/get.dart';
 
 class AppDrawer extends StatelessWidget {
   @override
@@ -43,7 +44,7 @@ class DrawerListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => SchedulerBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushNamed(context, route);
+        Get.toNamed(route);
       }),
       trailing: Icon(Icons.chevron_right),
       title: Text(name),

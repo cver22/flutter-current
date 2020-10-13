@@ -13,6 +13,7 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 //TODO refactor to build with ConnectState Widget to allow rebuild, issue created when I changed the log
 //TODO need to handle back button to dump selected entry
@@ -36,7 +37,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     } else {
       Env.entriesFetcher.addEntry(_entry);
     }
-    Navigator.pop(context);
+    Get.back();
   }
 
   @override
@@ -150,14 +151,14 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     return CategoryButton(
       label: 'Select a Category',
       onPressed: () => {
-        showDialog(
-          context: context,
-          builder: (_) => NewCategoryListDialog(
+        Get.dialog(
+          NewCategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.category,
             log: _log,
             key: ExpenseKeys.categoriesDialog,
           ),
         ),
+
       },
       category:
           _entry?.category == null ? null : _log.categories.firstWhere((element) => element.id == _entry.category),
@@ -168,14 +169,14 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     return CategoryButton(
       label: 'Select a Subcategory',
       onPressed: () => {
-        showDialog(
-          context: context,
-          builder: (_) => NewCategoryListDialog(
+        Get.dialog(
+          NewCategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
             log: _log,
             key: ExpenseKeys.subcategoriesDialog,
           ),
         ),
+
       },
       category: _entry?.subcategory == null
           ? null
@@ -199,7 +200,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
       case 'Delete Entry':
         //TODO likely causes error
         Env.entriesFetcher.deleteEntry(_entry);
-        Navigator.pop(context);
+        Get.back();
         break;
     }
   }

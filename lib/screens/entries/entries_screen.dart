@@ -10,6 +10,7 @@ import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class EntriesScreen extends StatefulWidget {
   const EntriesScreen({Key key}) : super(key: key);
@@ -35,7 +36,7 @@ class _EntriesScreenState extends State<EntriesScreen> {
           if (defaultLogId != null && logs.containsKey(defaultLogId)) {
             //sets logId for selected entry to defaultLogId for new entry when navigating from FAB
             Env.store.dispatch(SetNewSelectedEntry(logId: Env.store.state.settingsState.settings.value.defaultLogId));
-            Navigator.pushNamed(context, ExpenseRoutes.addEditEntries);
+            Get.toNamed(ExpenseRoutes.addEditEntries);
           } else {
             //TODO user/error message, set a default log
             Scaffold.of(context).showSnackBar(SnackBar(

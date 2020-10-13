@@ -5,6 +5,7 @@ import 'package:expenses/screens/categories/category_list_tile.dart';
 import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CategoryListDialog extends StatelessWidget {
   CategoryListDialog({Key key}) : super(key: key);
@@ -46,8 +47,18 @@ class CategoryListDialog extends StatelessWidget {
                       onTap: () {
                         Env.store.dispatch(ChangeEntryCategories(category: category.id));
 
-                        Navigator.of(context).pop();
-                        showDialog(
+                        Get.back();
+                        Get.dialog(SubcategoryListDialog(
+                          backChevron: () => {
+                            Get.back(),
+                            Get.dialog(CategoryListDialog()),
+                            /*showDialog(
+                              context: context,
+                              builder: (_) => CategoryListDialog(),
+                            ),*/
+                          },
+                        ));
+/*                        showDialog(
                           context: context,
                           builder: (_) => SubcategoryListDialog(
                             backChevron: () => {
@@ -58,7 +69,7 @@ class CategoryListDialog extends StatelessWidget {
                               ),
                             },
                           ),
-                        );
+                        );*/
                       }))
                   .toList()),
         ],

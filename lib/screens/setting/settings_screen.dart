@@ -11,6 +11,7 @@ import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key key}) : super(key: key);
@@ -79,12 +80,12 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _categoryButton({SettingsState settingsState, BuildContext context}) {
-
     return settingsState?.settings?.value?.defaultCategories == null
         ? Container()
         : CategoryButton(
             label: 'Edit Default Categories',
             onPressed: () => {
+              /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
                 builder: (_) => CategoryListDialog(),
@@ -98,17 +99,21 @@ class SettingsScreen extends StatelessWidget {
     return settingsState?.settings?.value?.defaultSubcategories == null
         ? Container()
         : CategoryButton(
-      label: 'Edit Default Subcategories',
-      onPressed: () => {
-        showDialog(
+            label: 'Edit Default Subcategories',
+            onPressed: () => {
+              /*Get.dialog(
+                SubcategoryListDialog(
+                  backChevron: () => Navigator.of(context).pop(),
+                ),
+              )*/
+              showDialog(
           context: context,
           builder: (_) => SubcategoryListDialog(
             backChevron: () => Navigator.of(context).pop(),
           ),
         ),
-      },
-      category: null, // do not pass a category, maintains label
-
-    );
+            },
+            category: null, // do not pass a category, maintains label
+          );
   }
 }

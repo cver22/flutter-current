@@ -9,6 +9,7 @@ import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 //This widget is used in all category and subcategory lists throughout the application
 //by choosing setting or not, the widget automatically decides how to act
@@ -100,13 +101,25 @@ class NewCategoryListDialog extends StatelessWidget {
             onLongPress: () {
               showDialog(
                 context: context,
-                builder: (_) => EditCategoryDialog(category: category, categoryOrSubcategory: CategoryOrSubcategory.category,),
+                builder: (_) => EditCategoryDialog(
+                  category: category,
+                  categoryOrSubcategory: CategoryOrSubcategory.category,
+                ),
               );
             },
             onTap: () {
               Env.store.dispatch(ChangeEntryCategories(category: category.id));
-              //TODO change dialogues to a named route so that popUntil named route can be used to navigate back from the subcategories
-              Navigator.of(context).pop();
+              //TODO change dialogues to a named route so that Get.offNamedUntil named route can be used to navigate back from the subcategories
+              Get.back();
+              Get.dialog(
+                NewCategoryListDialog(
+                  categoryOrSubcategory: CategoryOrSubcategory.subcategory,
+                  log: log,
+                  key: ExpenseKeys.subcategoriesDialog,
+                ),
+              );
+
+              /*Navigator.of(context).pop();
               showDialog(
                 context: context,
                 builder: (_) => NewCategoryListDialog(
@@ -114,7 +127,7 @@ class NewCategoryListDialog extends StatelessWidget {
                   log: log,
                   key: ExpenseKeys.subcategoriesDialog,
                 ),
-              );
+              );*/
             }))
         .toList();
   }
@@ -125,7 +138,7 @@ class NewCategoryListDialog extends StatelessWidget {
             category: subcategory,
             onTap: () {
               Env.store.dispatch(UpdateSelectedEntry(subcategory: subcategory.id));
-              Navigator.of(context).pop();
+              Get.back();
             }))
         .toList();
   }
