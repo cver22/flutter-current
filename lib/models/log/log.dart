@@ -11,16 +11,15 @@ class Log extends Equatable {
   //TODO need default to last or home currency for entries in this log
   //TODO each log to have its own settings
 
-  Log(
-      {this.uid,
-      this.id,
-      this.logName,
-      this.currency,
-      this.categories,
-      this.subcategories,
-      this.active = true,
-        this.archive = false,
-      this.members});
+  Log({this.uid,
+    this.id,
+    this.logName,
+    this.currency,
+    this.categories,
+    this.subcategories,
+    this.active = true,
+    this.archive = false,
+    this.members});
 
   final String uid;
   final String id;
@@ -56,9 +55,30 @@ class Log extends Equatable {
     );
   }
 
+  Log editLogCategories({Log log, MyCategory category}) {
+    List<MyCategory> categories = log.categories;
+
+    categories[categories.indexWhere((e) => e.id == category.id)] = category;
+
+    return log.copyWith(categories: categories);
+  }
+
+  Log setCategoryDefault({Log log, MyCategory category}) {
+    List<MyCategory> categories = log.categories;
+
+    categories.forEach((element) {
+      int index = categories.indexOf(element);
+      if (element.id == category.id) {
+        categories[index] = element.copyWith(isDefault: true);
+      } else {
+        categories[index] = (element.copyWith(isDefault: false));
+      }
+    });
+    return log.copyWith(categories: categories);
+  }
+
   @override
-  List<Object> get props =>
-      [uid, id, logName, currency, categories, subcategories, active, archive, members];
+  List<Object> get props => [uid, id, logName, currency, categories, subcategories, active, archive, members];
 
   @override
   String toString() {

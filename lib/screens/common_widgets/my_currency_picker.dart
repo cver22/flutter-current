@@ -7,12 +7,14 @@ class MyCurrencyPicker extends StatefulWidget {
   final Function(String) returnCurrency;
 
   const MyCurrencyPicker({Key key, this.currency, this.returnCurrency}) : super(key: key);
+
   @override
   _MyCurrencyPickerState createState() => _MyCurrencyPickerState();
 }
 
 class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
   String _currency;
+
   @override
   Widget build(BuildContext context) {
     _currency = widget.currency;
@@ -23,20 +25,19 @@ class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
       onValuePicked: (Country country) {
         _currency = country.isoCode;
         widget.returnCurrency(_currency);
-        //print("${country.name}");
       },
     );
   }
 
   Widget _buildDropdownItem(Country country) => Container(
-    child: Row(
-      children: <Widget>[
-        CurrencyPickerUtils.getDefaultFlagImage(country),
-        SizedBox(
-          width: 8.0,
+        child: Row(
+          children: <Widget>[
+            CurrencyPickerUtils.getDefaultFlagImage(country),
+            SizedBox(
+              width: 8.0,
+            ),
+            Text("+${country.currencyCode}(${country.isoCode})"),
+          ],
         ),
-        Text("+${country.currencyCode}(${country.isoCode})"),
-      ],
-    ),
-  );
+      );
 }

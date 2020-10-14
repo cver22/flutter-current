@@ -52,15 +52,13 @@ class MyEntry extends Equatable with ChangeNotifier {
     );
   }
 
-  MyEntry changeLog({
-    Log log,
-  }) {
+  MyEntry changeLog({Log log}) {
     String _logId = this.logId;
     String _category = this.category;
     String _subcategory = this.subcategory;
     String _currency = this.currency;
 
-    if(log.id != this.logId) {
+    if (log.id != this.logId) {
       _logId = log.id;
       _currency = log.currency;
       _category = null;
@@ -85,7 +83,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   }) {
     //safety checks if category has changed and thus erased the selected subcategory
     String _subcategory;
-    if(category == this.category){
+    if (category == this.category) {
       _subcategory = this.subcategory;
     }
 
@@ -103,17 +101,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   }
 
   @override
-  List<Object> get props => [
-        id,
-        logId,
-        currency,
-        active,
-        category,
-        subcategory,
-        amount,
-        comment,
-        dateTime
-      ];
+  List<Object> get props => [id, logId, currency, active, category, subcategory, amount, comment, dateTime];
 
   @override
   String toString() {

@@ -16,16 +16,12 @@ import 'package:get/get.dart';
 
 class NewCategoryListDialog extends StatelessWidget {
   final CategoryOrSubcategory categoryOrSubcategory;
-  final bool editSettings; //automatically set to false if not set
-  final bool editLogDefaults;
   final VoidCallback backChevron;
   final Log log;
 
   NewCategoryListDialog(
       {Key key,
       @required this.categoryOrSubcategory,
-      this.editSettings = false,
-      this.editLogDefaults,
       this.backChevron,
       this.log})
       : super(key: key);
@@ -34,6 +30,8 @@ class NewCategoryListDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     List<MyCategory> _categories = [];
     List<MySubcategory> _subcategories = [];
+    bool editSettings = false;
+
 
     //determines which list is passed based on if it comes from default or the entry
     //TODO also make this work to edit the categories directly from a log screen
@@ -44,72 +42,77 @@ class NewCategoryListDialog extends StatelessWidget {
           .where((element) => element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.category)
           .toList();
     } else {
+      editSettings = true;
       Settings _settings = Env.store.state.settingsState.settings.value;
       _categories = _settings.defaultCategories;
       _subcategories = _settings.defaultSubcategories;
     }
 
-    return Visibility(
-      visible: true,
-      child: Dialog(
-        //TODO move to constants
-        elevation: 5.0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+//TODO need to make this a ConnectState dependent on if its used for editing entries, settings, or a log
+    return Dialog(
+      //TODO move to constants
+      elevation: 5.0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
 
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.max,
-              children: <Widget>[
-                IconButton(
-                  icon: Icon(Icons.chevron_left),
-                  //if no back action is passed, automatically set to pop context
-                  onPressed: backChevron ?? () => Get.back(),
-                ),
-                Text(
-                  categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
-                  //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
-                  style: TextStyle(fontSize: 20.0),
-                ),
-              ],
-            ),
-            //shows this list view if the category list comes from the log
-            _entryCategoryListView(_categories, _subcategories, context),
-          ],
-        ),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              IconButton(
+                icon: Icon(Icons.chevron_left),
+                //if no back action is passed, automatically set to pop context
+                onPressed: backChevron ?? () => Get.back(),
+              ),
+              Text(
+                categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
+                //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
+                style: TextStyle(fontSize: 20.0),
+              ),
+            ],
+          ),
+          //shows this list view if the category list comes from the log
+          _entryCategoryListView(_categories, _subcategories, context, editSettings),
+        ],
       ),
     );
   }
 
-  // TODO *****START HERE ********  build on tap methods for editing purposes for each list
 
   ListView _entryCategoryListView(
-      List<MyCategory> _categories, List<MySubcategory> _subcategories, BuildContext context) {
+      List<MyCategory> _categories, List<MySubcategory> _subcategories, BuildContext context, bool editSettings) {
     return ListView(
         shrinkWrap: true,
         //TODO implement onReorder
         children: categoryOrSubcategory == CategoryOrSubcategory.subcategory
             ? _subcategoryList(_subcategories, context)
-            : categoryList(_categories, context));
+            : _categoryList(_categories, context, editSettings));
   }
 
-  List<CategoryListTile> categoryList(List<MyCategory> _categories, BuildContext context) {
+  List<CategoryListTile> _categoryList(List<MyCategory> _categories, BuildContext context, bool editSettings) {
     return _categories
         .map((MyCategory category) => CategoryListTile(
             category: category,
             onLongPress: () {
-              showDialog(
-                context: context,
-                builder: (_) => EditCategoryDialog(
-                  category: category,
-                  categoryOrSubcategory: CategoryOrSubcategory.category,
-                  //TODO - make functioning category edit dialog
-                ),
-              );
+
+              Get.dialog(EditCategoryDialog(
+                save: /*editSettings ? null : null*/(name) => Env.logsFetcher
+                      .updateLog(log.editLogCategories(log: log, category: category.copyWith(name: name))),
+
+                /*setDefault: (category) => {
+                    Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
+                  },*/
+
+                //TODO create delete function
+                category: category,
+                categoryOrSubcategory: CategoryOrSubcategory.category,
+                //TODO - make functioning category edit dialog
+              ),);
+
             },
             onTap: () {
               Env.store.dispatch(ChangeEntryCategories(category: category.id));
@@ -141,7 +144,6 @@ class NewCategoryListDialog extends StatelessWidget {
             category: subcategory,
             onTap: () {
               Env.store.dispatch(UpdateSelectedEntry(subcategory: subcategory.id));
-              //TODO this doesn't work, need to be able to dismiss the dialog
               Get.back();
             }))
         .toList();

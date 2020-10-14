@@ -7,27 +7,30 @@ class MyCategory extends Equatable {
   final String id;
   final String name;
   final IconData iconData;
+  final bool isDefault;
 
-  MyCategory({this.id, @required this.name, this.iconData});
+  MyCategory({this.id, @required this.name, this.iconData, this.isDefault = false});
 
   @override
-  List<Object> get props => [id, name, iconData];
+  List<Object> get props => [id, name, iconData, isDefault];
 
   MyCategory copyWith({
     String id,
     String name,
     IconData iconData,
+    bool isDefault,
   }) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       iconData: iconData ?? this.iconData,
+      isDefault: isDefault ?? this.isDefault,
     );
   }
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, icon: $iconData}';
+    return 'MyCategory {id: $id, name: $name, icon: $iconData, isDefault: $isDefault}';
   }
 
   MyCategoryEntity toEntity() {
@@ -36,6 +39,7 @@ class MyCategory extends Equatable {
       name: name,
       iconCodePoint: iconData?.codePoint.toString(),
       iconFontFamily: iconData?.fontFamily,
+      isDefault: isDefault,
     );
   }
 
@@ -45,6 +49,7 @@ class MyCategory extends Equatable {
       name: entity.name,
       iconData: entity?.iconCodePoint != null && entity?.iconFontFamily !=null ? IconData(int.parse(entity.iconCodePoint),
           fontFamily: entity.iconFontFamily) : null,
+      isDefault: entity.isDefault,
     );
   }
 }

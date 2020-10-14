@@ -72,7 +72,7 @@ class SetLogs implements Action {
       );
     });
   }
-
+}
 //Deprecated in favour of fetcher
 /*AppState _updateSingleLog(
   AppState appState,
@@ -180,4 +180,4 @@ class ClearSelectedLog implements Action {
         (logsState) => logsState.copyWith(selectedLogId: Maybe.none()));
   }
 }*/
-}
+

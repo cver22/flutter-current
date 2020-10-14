@@ -12,6 +12,7 @@ MyCategoryEntity _$MyCategoryEntityFromJson(Map<String, dynamic> json) {
     name: json['name'] as String,
     iconCodePoint: json['iconCodePoint'] as String,
     iconFontFamily: json['iconFontFamily'] as String,
+    isDefault: json['isDefault'] as bool,
   );
 }
 
@@ -21,4 +22,5 @@ Map<String, dynamic> _$MyCategoryEntityToJson(MyCategoryEntity instance) =>
       'name': instance.name,
       'iconCodePoint': instance.iconCodePoint,
       'iconFontFamily': instance.iconFontFamily,
+      'isDefault': instance.isDefault,
     };
