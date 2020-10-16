@@ -1,7 +1,6 @@
 import 'package:expenses/env.dart';
 import 'package:expenses/screens/account/account_screen.dart';
 import 'package:expenses/screens/app_screen.dart';
-import 'package:expenses/screens/categories/category_list_dialog.dart';
 import 'package:expenses/screens/entries/add_edit_entries_screen.dart';
 import 'package:expenses/screens/home_screen.dart';
 import 'package:expenses/screens/login/login_register_screen.dart';
@@ -32,7 +31,7 @@ class App extends StatelessWidget {
         GetPage(
             name: ExpenseRoutes.addEditEntries,
             page: () => AddEditEntriesScreen(key: ExpenseKeys.addEditEntriesScreen)),
-        GetPage(name: ExpenseRoutes.categories, page: () => CategoryListDialog(key: ExpenseKeys.categoriesDialog)),
+
       ],
       initialRoute: ExpenseRoutes.home,
       key: ExpenseKeys.main,

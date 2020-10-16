@@ -44,8 +44,11 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   void dispose() {
+
     _controller.dispose();
     super.dispose();
+
+
   }
 
   //TODO ****** Needs some tweaking ******

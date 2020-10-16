@@ -2,9 +2,7 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/settings/settings_state.dart';
 import 'package:expenses/screens/categories/category_button.dart';
-import 'package:expenses/screens/categories/category_list_dialog.dart';
 import 'package:expenses/screens/categories/new_category_list_dialog.dart';
-import 'package:expenses/screens/categories/subcategories/subcategory_list_dialog.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
@@ -13,7 +11,6 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key key}) : super(key: key);

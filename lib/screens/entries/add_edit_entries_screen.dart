@@ -154,6 +154,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             categoryOrSubcategory: CategoryOrSubcategory.category,
             log: _log,
             key: ExpenseKeys.categoriesDialog,
+            settingsLogEntry: SettingsLogEntry.entry,
           ),
         ),
       },
@@ -171,6 +172,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
             log: _log,
             key: ExpenseKeys.subcategoriesDialog,
+            settingsLogEntry: SettingsLogEntry.entry,
 
           ),
         ),
