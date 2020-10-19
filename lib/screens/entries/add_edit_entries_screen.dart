@@ -177,6 +177,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           ),
         ),
       },
+
       category: _entry?.subcategory == null
           ? null
           : _log.subcategories.firstWhere((element) => element.id == _entry.subcategory),

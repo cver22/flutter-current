@@ -11,15 +11,16 @@ class Log extends Equatable {
   //TODO need default to last or home currency for entries in this log
   //TODO each log to have its own settings
 
-  Log({this.uid,
-    this.id,
-    this.logName,
-    this.currency,
-    this.categories,
-    this.subcategories,
-    this.active = true,
-    this.archive = false,
-    this.members});
+  Log(
+      {this.uid,
+      this.id,
+      this.logName,
+      this.currency,
+      this.categories,
+      this.subcategories,
+      this.active = true,
+      this.archive = false,
+      this.members});
 
   final String uid;
   final String id;
@@ -61,6 +62,14 @@ class Log extends Equatable {
     categories[categories.indexWhere((e) => e.id == category.id)] = category;
 
     return log.copyWith(categories: categories);
+  }
+
+  Log editLogSubcategories({Log log, MySubcategory subcategory}) {
+    List<MySubcategory> subcategories = log.subcategories;
+
+    subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+
+    return log.copyWith(subcategories: subcategories);
   }
 
   Log setCategoryDefault({Log log, MyCategory category}) {

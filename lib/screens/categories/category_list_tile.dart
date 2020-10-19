@@ -11,6 +11,14 @@ class CategoryListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    //TODO implement default category system
+    //String name;
+    /*if(category?.isDefault == true){
+      name = '${category.name}' + ' (Default)';
+    }else{
+      name = category.name;
+    }*/
     return ListTile(
       onLongPress: onLongPress,
       leading: category.iconData != null ? Icon(category.iconData): Icon(Icons.error),

@@ -88,6 +88,7 @@ class SettingsScreen extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) => NewCategoryListDialog(
+                  settingsLogEntry: SettingsLogEntry.settings,
                   categoryOrSubcategory: CategoryOrSubcategory.category,
                 ),
               ),
@@ -110,6 +111,7 @@ class SettingsScreen extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) => NewCategoryListDialog(
+                  settingsLogEntry: SettingsLogEntry.settings,
                   categoryOrSubcategory: CategoryOrSubcategory.subcategory,
                 ),
               ),

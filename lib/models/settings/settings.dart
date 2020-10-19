@@ -42,6 +42,22 @@ class Settings extends Equatable {
     );
   }
 
+  Settings editLogCategories({Settings settings, MyCategory category}) {
+    List<MyCategory> categories = settings.defaultCategories;
+
+    categories[categories.indexWhere((e) => e.id == category.id)] = category;
+
+    return settings.copyWith(defaultCategories: categories);
+  }
+
+  Settings editLogSubcategories({Settings settings, MySubcategory subcategory}) {
+    List<MySubcategory> subcategories = settings.defaultSubcategories;
+
+    subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+
+    return settings.copyWith(defaultSubcategories: subcategories);
+  }
+
   @override
   List<Object> get props =>
       [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId, autoInsertDecimalPoint];

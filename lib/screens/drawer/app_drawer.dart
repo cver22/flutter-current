@@ -44,6 +44,7 @@ class DrawerListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       onTap: () => SchedulerBinding.instance.addPostFrameCallback((_) {
+        Get.back(); //pops drawer prior to opening next screen
         Get.toNamed(route);
       }),
       trailing: Icon(Icons.chevron_right),
