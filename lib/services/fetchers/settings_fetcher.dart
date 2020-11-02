@@ -8,7 +8,6 @@ import 'package:expenses/store/app_store.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';

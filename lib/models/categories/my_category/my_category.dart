@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class MyCategory extends Equatable {
   final String id;
   final String name;
-  final IconData iconData;
+  final IconData iconData; //TODO - change to use emoji
   final bool isDefault;
 
   MyCategory({this.id, @required this.name, this.iconData, this.isDefault = false});

@@ -4,6 +4,7 @@ import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/models/log/log_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
+import 'package:uuid/uuid.dart';
 
 @immutable
 class Log extends Equatable {
@@ -56,18 +57,30 @@ class Log extends Equatable {
     );
   }
 
-  Log editLogCategories({Log log, MyCategory category}) {
+  Log addEditLogCategories({Log log, MyCategory category}) {
     List<MyCategory> categories = log.categories;
 
-    categories[categories.indexWhere((e) => e.id == category.id)] = category;
-
+    //update category if it already exists
+    //otherwise add category to the list
+    if(category?.id != null) {
+      categories[categories.indexWhere((e) => e.id == category.id)] = category;
+    }else {
+      categories.add(category.copyWith(id: Uuid().v4()));
+    }
     return log.copyWith(categories: categories);
   }
 
-  Log editLogSubcategories({Log log, MySubcategory subcategory}) {
+  Log addEditLogSubcategories({Log log, MySubcategory subcategory}) {
     List<MySubcategory> subcategories = log.subcategories;
 
-    subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+    //update subcategory if it already exists
+    //otherwise add subcategory to the list
+    if(subcategory?.id != null) {
+      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+    }else {
+      subcategories.add(subcategory.copyWith(id: Uuid().v4()));
+    }
+
 
     return log.copyWith(subcategories: subcategories);
   }

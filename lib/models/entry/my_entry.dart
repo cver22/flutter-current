@@ -12,8 +12,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.logId,
       this.currency,
       this.active = true,
-      this.category,
-      this.subcategory,
+      this.categoryId,
+      this.subcategoryId,
       this.amount,
       this.comment,
       this.dateTime});
@@ -22,8 +22,8 @@ class MyEntry extends Equatable with ChangeNotifier {
   final String logId;
   final String currency;
   final bool active;
-  final String category;
-  final String subcategory;
+  final String categoryId;
+  final String subcategoryId;
   final double amount;
   final String comment;
   final DateTime dateTime;
@@ -33,8 +33,8 @@ class MyEntry extends Equatable with ChangeNotifier {
     String logId,
     String currency,
     bool active,
-    String category,
-    String subcategory,
+    String categoryId,
+    String subcategoryId,
     double amount,
     String comment,
     DateTime dateTime,
@@ -44,8 +44,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
       active: active ?? this.active,
-      category: category ?? this.category,
-      subcategory: subcategory ?? this.subcategory,
+      categoryId: categoryId ?? this.categoryId,
+      subcategoryId: subcategoryId ?? this.subcategoryId,
       amount: amount ?? this.amount,
       comment: comment ?? this.comment,
       dateTime: dateTime ?? this.dateTime,
@@ -54,8 +54,8 @@ class MyEntry extends Equatable with ChangeNotifier {
 
   MyEntry changeLog({Log log}) {
     String _logId = this.logId;
-    String _category = this.category;
-    String _subcategory = this.subcategory;
+    String _category = this.categoryId;
+    String _subcategory = this.subcategoryId;
     String _currency = this.currency;
 
     if (log.id != this.logId) {
@@ -70,8 +70,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       logId: _logId ?? this.logId,
       currency: _currency ?? this.currency,
       active: this.active,
-      category: _category,
-      subcategory: _subcategory,
+      categoryId: _category,
+      subcategoryId: _subcategory,
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,
@@ -81,10 +81,10 @@ class MyEntry extends Equatable with ChangeNotifier {
   MyEntry changeCategories({
     String category,
   }) {
-    //safety checks if category has changed and thus erased the selected subcategory
+    //safety checks if category has changed and thus erases the selected subcategory
     String _subcategory;
-    if (category == this.category) {
-      _subcategory = this.subcategory;
+    if (category == this.categoryId) {
+      _subcategory = this.subcategoryId;
     }
 
     return MyEntry(
@@ -92,8 +92,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
       active: this.active,
-      category: category,
-      subcategory: _subcategory,
+      categoryId: category,
+      subcategoryId: _subcategory,
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,
@@ -101,13 +101,13 @@ class MyEntry extends Equatable with ChangeNotifier {
   }
 
   @override
-  List<Object> get props => [id, logId, currency, active, category, subcategory, amount, comment, dateTime];
+  List<Object> get props => [id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime];
 
   @override
   String toString() {
     return 'Entry {id: $id, logId: $logId, '
-        'currency: $currency, active: $active, category: $category, '
-        'subcategory: $subcategory, amount: $amount, comment: $comment, '
+        'currency: $currency, active: $active, category: $categoryId, '
+        'subcategory: $subcategoryId, amount: $amount, comment: $comment, '
         'dateTime: $dateTime}';
   }
 
@@ -117,8 +117,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       logId: logId,
       currency: currency,
       active: active,
-      category: category,
-      subcategory: subcategory,
+      category: categoryId,
+      subcategory: subcategoryId,
       amount: amount,
       comment: comment,
       dateTime: dateTime,
@@ -131,25 +131,12 @@ class MyEntry extends Equatable with ChangeNotifier {
       logId: entity.logId,
       currency: entity.currency,
       active: entity.active,
-      category: entity.category,
-      subcategory: entity.subcategory,
+      categoryId: entity.category,
+      subcategoryId: entity.subcategory,
       amount: entity.amount,
       comment: entity.comment,
       dateTime: entity.dateTime,
     );
   }
 
-/*MyEntry copy(MyEntry entry) {
-    return entry.copyWith(
-      id: entry?.id ?? this.id,
-      logId: entry?.logId ?? this.logId,
-      currency: entry?.currency ?? this.currency,
-      active: entry?.active ?? this.active,
-      category: entry?.category ?? this.category,
-      subcategory: entry?.subcategory ?? this.subcategory,
-      amount: entry?.amount ?? this.amount,
-      comment: entry?.comment ?? this.comment,
-      dateTime: entry?.dateTime ?? this.dateTime,
-    );
-  }*/
 }

@@ -2,7 +2,7 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/settings/settings_state.dart';
 import 'package:expenses/screens/categories/category_button.dart';
-import 'package:expenses/screens/categories/new_category_list_dialog.dart';
+import 'package:expenses/screens/categories/category_list_dialog.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
@@ -87,7 +87,7 @@ class SettingsScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => NewCategoryListDialog(
+                builder: (_) => CategoryListDialog(
                   settingsLogEntry: SettingsLogEntry.settings,
                   categoryOrSubcategory: CategoryOrSubcategory.category,
                 ),
@@ -110,7 +110,7 @@ class SettingsScreen extends StatelessWidget {
               )*/
               showDialog(
                 context: context,
-                builder: (_) => NewCategoryListDialog(
+                builder: (_) => CategoryListDialog(
                   settingsLogEntry: SettingsLogEntry.settings,
                   categoryOrSubcategory: CategoryOrSubcategory.subcategory,
                 ),

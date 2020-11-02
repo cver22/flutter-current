@@ -37,6 +37,7 @@ dependencies:
   provider: ^4.1.2
   shared_preferences: ^0.5.12
   get: ^3.13.2
+  emojis: ^0.9.3
 
 
   # The following adds the Cupertino Icons font to your application.

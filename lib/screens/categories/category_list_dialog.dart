@@ -16,26 +16,27 @@ import 'package:get/get.dart';
 
 //This widget is used in all category and subcategory lists throughout the application
 
-class NewCategoryListDialog extends StatefulWidget {
+class CategoryListDialog extends StatefulWidget {
   final CategoryOrSubcategory categoryOrSubcategory;
   final VoidCallback backChevron;
   final Log log;
   final SettingsLogEntry settingsLogEntry;
 
-  NewCategoryListDialog(
+  CategoryListDialog(
       {Key key, @required this.categoryOrSubcategory, this.backChevron, this.log, @required this.settingsLogEntry})
       : super(key: key);
 
   @override
-  _NewCategoryListDialogState createState() => _NewCategoryListDialogState();
+  _CategoryListDialogState createState() => _CategoryListDialogState();
 }
 
-class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
+class _CategoryListDialogState extends State<CategoryListDialog> {
   @override
   Widget build(BuildContext context) {
     List<MyCategory> _categories = [];
     List<MySubcategory> _subcategories = [];
     SettingsLogEntry _settingsLogEntry = widget.settingsLogEntry;
+    CategoryOrSubcategory _categoryOrSubcategory = widget.categoryOrSubcategory;
 
     //determines which list is passed based on if it comes from default or the entry
     switch (widget.settingsLogEntry) {
@@ -50,17 +51,15 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
       case SettingsLogEntry.entry:
         if (widget.log != null) {
           _categories = widget.log.categories;
-          if (widget.categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
+          if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
             _subcategories = widget.log.subcategories
                 .where(
-                    (element) => element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.category)
+                    (element) => element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.categoryId)
                 .toList();
           }
         }
         break;
     }
-
-    print('setLogEnt: $_settingsLogEntry, cat or sub: ${widget.categoryOrSubcategory}');
 
     if (_settingsLogEntry == SettingsLogEntry.settings) {
       return ConnectState(
@@ -68,7 +67,7 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
           map: (state) => state.settingsState,
           builder: (state) {
             print('the current state is $state');
-            return buildDialog(_categories, _subcategories, context, _settingsLogEntry);
+            return buildDialog(_categories, _subcategories, context, _settingsLogEntry, _categoryOrSubcategory);
           });
     } else {
       return ConnectState(
@@ -76,13 +75,13 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
           map: (state) => state.logsState,
           builder: (state) {
             print('the current state is $state');
-            return buildDialog(_categories, _subcategories, context, _settingsLogEntry);
+            return buildDialog(_categories, _subcategories, context, _settingsLogEntry, _categoryOrSubcategory);
           });
     }
   }
 
   Dialog buildDialog(List<MyCategory> _categories, List<MySubcategory> _subcategories, BuildContext context,
-      SettingsLogEntry _settingsLogEntry) {
+      SettingsLogEntry _settingsLogEntry, CategoryOrSubcategory _categoryOrSubcategory) {
     return Dialog(
       //TODO move to constants
       elevation: 5.0,
@@ -94,7 +93,7 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: <Widget>[
           Row(
-            mainAxisAlignment: MainAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             mainAxisSize: MainAxisSize.max,
             children: <Widget>[
               IconButton(
@@ -103,9 +102,14 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
                 onPressed: widget.backChevron ?? () => Get.back(),
               ),
               Text(
-                widget.categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
+                _categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
                 //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
                 style: TextStyle(fontSize: 20.0),
+              ),
+              IconButton(
+                icon: Icon(Icons.add),
+                //if no back action is passed, automatically set to pop context
+                onPressed: () => _addNew(_categories, _subcategories, _settingsLogEntry, _categoryOrSubcategory),
               ),
             ],
           ),
@@ -141,13 +145,13 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
   Future<dynamic> _switchOnCatTap(MyCategory category, SettingsLogEntry setLogEnt) {
     switch (setLogEnt) {
       case SettingsLogEntry.settings:
-        return _settingsCatOnTap(category);
+        return _settingsAddEditCategory(category);
         break;
       case SettingsLogEntry.entry:
-        return _entryCatOnTap(category);
+        return _entrySelectCategory(category);
         break;
       case SettingsLogEntry.log:
-        return null;
+        return null; //TODO add method
         break;
       default:
         print('Error encountered loading Cat on Tap');
@@ -156,7 +160,7 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
     }
   }
 
-  Future<dynamic> _settingsCatOnTap(MyCategory category) {
+  Future<dynamic> _settingsAddEditCategory(MyCategory category) {
     Settings settings = Env.store.state.settingsState.settings.value;
     return Get.dialog(
       EditCategoryDialog(
@@ -176,17 +180,18 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
 
         //TODO create delete function
         category: category,
+        categories: settings.defaultCategories,
         categoryOrSubcategory: CategoryOrSubcategory.category,
         //TODO - make functioning category edit dialog
       ),
     );
   }
 
-  Future<dynamic> _entryCatOnTap(MyCategory category) {
+  Future<dynamic> _entrySelectCategory(MyCategory category) {
     Env.store.dispatch(ChangeEntryCategories(category: category.id));
     Get.back();
     return Get.dialog(
-      NewCategoryListDialog(
+      CategoryListDialog(
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
         log: widget.log,
         key: ExpenseKeys.subcategoriesDialog,
@@ -194,7 +199,7 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
         backChevron: () => {
           Get.back(),
           Get.dialog(
-            NewCategoryListDialog(
+            CategoryListDialog(
               categoryOrSubcategory: CategoryOrSubcategory.category,
               log: Env.store.state.logsState.logs[Env.store.state.entriesState.selectedEntry.value.logId],
               key: ExpenseKeys.categoriesDialog,
@@ -207,16 +212,17 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
   }
 
   Future<dynamic> _switchCatOnLongPress(MyCategory category, SettingsLogEntry setLogEnt) {
+    //methods for settings and logs onLongPress not required at this time
     switch (setLogEnt) {
-      case SettingsLogEntry.settings:
-        return null;
-        break;
+      /*case SettingsLogEntry.settings:
+        return null; //not required
+        break;*/
       case SettingsLogEntry.entry:
-        return _entryCatOnLongPress(category);
+        return _entryAddEditCategory(category);
         break;
-      case SettingsLogEntry.log:
-        return null;
-        break;
+      /*case SettingsLogEntry.log:
+        return null; //not required
+        break;*/
       default:
         print('Error encountered loading Cat On Long Press');
         return null;
@@ -224,11 +230,11 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
     }
   }
 
-  Future<dynamic> _entryCatOnLongPress(MyCategory category) {
+  Future<dynamic> _entryAddEditCategory(MyCategory category) {
     return Get.dialog(
       EditCategoryDialog(
         save: (name, unused) => Env.logsFetcher
-            .updateLog(widget.log.editLogCategories(log: widget.log, category: category.copyWith(name: name))),
+            .updateLog(widget.log.addEditLogCategories(log: widget.log, category: category.copyWith(name: name))),
 
         /*setDefault: (category) => {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
@@ -249,7 +255,7 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
           (MySubcategory subcategory) => CategoryListTile(
             category: subcategory,
             onTap: () => _switchSubOnTap(subcategory, _categories, setLogEnt),
-            onLongPress: () => _switchSubOnLongPress(subcategory, _categories, setLogEnt),
+            onLongPress: () => _switchSubcategoryOnLongPress(subcategory, _categories, setLogEnt),
           ),
         )
         .toList();
@@ -258,13 +264,13 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
   Future<dynamic> _switchSubOnTap(MySubcategory subcategory, List<MyCategory> _categories, SettingsLogEntry setLogEnt) {
     switch (setLogEnt) {
       case SettingsLogEntry.settings:
-        return _settingsSubOnTap(subcategory, _categories);
+        return _settingsAddEditSubcategory(subcategory, _categories);
         break;
       case SettingsLogEntry.entry:
-        return _entrySubOnTap(subcategory);
+        return _entrySelectSubcategory(subcategory);
         break;
       case SettingsLogEntry.log:
-        return null;
+        return null; //TODO add method
         break;
       default:
         print('Error encountered loading Sub On Tap');
@@ -273,7 +279,7 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
     }
   }
 
-  Future<dynamic> _settingsSubOnTap(MySubcategory subcategory, List<MyCategory> _categories) {
+  Future<dynamic> _settingsAddEditSubcategory(MySubcategory subcategory, List<MyCategory> _categories) {
     Settings settings = Env.store.state.settingsState.settings.value;
     return Get.dialog(
       EditCategoryDialog(
@@ -281,7 +287,8 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
         save: (name, parentCategoryId) => Env.store.dispatch(
           UpdateSettings(
             settings: Maybe.maybe(
-              settings.editLogSubcategories(settings: settings,
+              settings.editLogSubcategories(
+                settings: settings,
                 subcategory: subcategory.copyWith(name: name, parentCategoryId: parentCategoryId),
               ),
             ),
@@ -296,39 +303,39 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
     );
   }
 
-  Future<void> _entrySubOnTap(MySubcategory subcategory) async {
+  Future<void> _entrySelectSubcategory(MySubcategory subcategory) async {
     //onTap method for Entry Subcategories
     Env.store.dispatch(UpdateSelectedEntry(subcategory: subcategory.id));
     Get.back();
   }
 
-  Future<dynamic> _switchSubOnLongPress(
+  Future<dynamic> _switchSubcategoryOnLongPress(
       MySubcategory subcategory, List<MyCategory> _categories, SettingsLogEntry setLogEnt) {
+    //methods for settings and logs onLongPress not required at this time
     switch (setLogEnt) {
-      case SettingsLogEntry.settings:
-        return null;
-        break;
+      /*case SettingsLogEntry.settings:
+        return null; //not required
+        break;*/
       case SettingsLogEntry.entry:
-        return _entrySubOnLongPress(subcategory, _categories);
+        return _entryAddEditSubcategory(subcategory, _categories);
         break;
-      case SettingsLogEntry.log:
-        return null;
-        break;
+      /* case SettingsLogEntry.log:
+        return null; //not required
+        break;*/
       default:
-        print('Error encountered loading Sub On Long Press');
+        print('Error encountered loading Sub On Long Press or not required');
         return null;
         break;
     }
   }
 
-  Future<dynamic> _entrySubOnLongPress(MySubcategory subcategory, List<MyCategory> _categories) {
+  Future<dynamic> _entryAddEditSubcategory(MySubcategory subcategory, List<MyCategory> _categories) {
     return Get.dialog(
       EditCategoryDialog(
         categories: _categories,
         save: (name, parentCategoryId) => {
-          Env.logsFetcher.updateLog(widget.log.editLogSubcategories(
+          Env.logsFetcher.updateLog(widget.log.addEditLogSubcategories(
               log: widget.log, subcategory: subcategory.copyWith(name: name, parentCategoryId: parentCategoryId))),
-          //TODO refactor, if the parentId of a subcategory does not match the category when its edited, the subcategory should clear from the UI for the entry
         },
 
         //TODO default function
@@ -338,5 +345,44 @@ class _NewCategoryListDialogState extends State<NewCategoryListDialog> {
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
     );
+  }
+
+  Future<dynamic> _addNew(List<MyCategory> _categories, List<MySubcategory> _subcategories,
+      SettingsLogEntry settingsLogEntry, CategoryOrSubcategory categoryOrSubcategory) {
+    if (categoryOrSubcategory == CategoryOrSubcategory.category) {
+      MyCategory newCategory = MyCategory();
+      switch (settingsLogEntry) {
+        case SettingsLogEntry.settings:
+          return _settingsAddEditCategory(newCategory);
+          break;
+        case SettingsLogEntry.entry:
+          return _entryAddEditCategory(newCategory);
+          break;
+        case SettingsLogEntry.log:
+          return _entryAddEditCategory(newCategory);
+          break;
+        default:
+          print('Error encountered trying to add new category ');
+          return null;
+          break;
+      }
+    } else {
+      MySubcategory newSubcategory = MySubcategory();
+      switch (settingsLogEntry) {
+        case SettingsLogEntry.settings:
+          return _settingsAddEditSubcategory(newSubcategory, _categories);
+          break;
+        case SettingsLogEntry.entry:
+          return _entryAddEditSubcategory(newSubcategory, _categories);
+          break;
+        case SettingsLogEntry.log:
+          return _entryAddEditSubcategory(newSubcategory, _categories);
+          break;
+        default:
+          print('Error encountered trying to add new subcategory');
+          return null;
+          break;
+      }
+    }
   }
 }

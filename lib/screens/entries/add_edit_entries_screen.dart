@@ -3,7 +3,7 @@ import 'package:expenses/models/entry/entries_state.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/screens/categories/category_button.dart';
-import 'package:expenses/screens/categories/new_category_list_dialog.dart';
+import 'package:expenses/screens/categories/category_list_dialog.dart';
 import 'package:expenses/screens/common_widgets/my_currency_picker.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -139,7 +139,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         //CategoryPicker(entry: entriesState.selectedEntry.value),
         SizedBox(height: 10.0),
         _entry?.logId == null ? Container() : _categoryButton(),
-        _entry?.category == null ? Container() : _subcategoryButton(),
+        _entry?.categoryId == null ? Container() : _subcategoryButton(),
         _commentFormField(),
       ],
     );
@@ -150,7 +150,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
       label: 'Select a Category',
       onPressed: () => {
         Get.dialog(
-          NewCategoryListDialog(
+          CategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.category,
             log: _log,
             key: ExpenseKeys.categoriesDialog,
@@ -159,7 +159,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         ),
       },
       category:
-          _entry?.category == null ? null : _log.categories.firstWhere((element) => element.id == _entry.category),
+          _entry?.categoryId == null ? null : _log.categories.firstWhere((element) => element.id == _entry.categoryId),
     );
   }
 
@@ -168,7 +168,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
       label: 'Select a Subcategory',
       onPressed: () => {
         Get.dialog(
-          NewCategoryListDialog(
+          CategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
             log: _log,
             key: ExpenseKeys.subcategoriesDialog,
@@ -178,9 +178,9 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         ),
       },
 
-      category: _entry?.subcategory == null
+      category: _entry?.subcategoryId == null
           ? null
-          : _log.subcategories.firstWhere((element) => element.id == _entry.subcategory),
+          : _log.subcategories.firstWhere((element) => element.id == _entry.subcategoryId),
     );
   }
 

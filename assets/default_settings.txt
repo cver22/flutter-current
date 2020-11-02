@@ -3,50 +3,50 @@
     {
       "id": "home",
       "name": "Home",
-      "iconCodePoint": null,
-      "iconFontFamily": null
+      "iconCodePoint": "59335",
+      "iconFontFamily": "MaterialIcons"
     },
     {
       "id": "transportation",
       "name": "Transportation",
-      "iconCodePoint": null,
-      "iconFontFamily": null
+      "iconCodePoint": "59132",
+      "iconFontFamily": "MaterialIcons"
     }
   ],
   "defaultSubcategoryEntities": [
     {
-      "id": "a",
+      "id": "rent",
       "name": "Rent",
-      "iconCodePoint": null,
-      "iconFontFamily": null,
+      "iconCodePoint": "59335",
+      "iconFontFamily": "MaterialIcons",
       "parentCategoryId": "home"
     },
     {
-      "id": "b",
+      "id": "utilities",
       "name": "Utilities",
-      "iconCodePoint": null,
-      "iconFontFamily": null,
+      "iconCodePoint": "58869",
+      "iconFontFamily": "MaterialIcons",
       "parentCategoryId": "home"
     },
     {
-      "id": "c",
+      "id": "car",
       "name": "Car",
-      "iconCodePoint": null,
-      "iconFontFamily": null,
+      "iconCodePoint": "59067",
+      "iconFontFamily": "MaterialIcons",
       "parentCategoryId": "transportation"
     },
     {
-      "id": "d",
+      "id": "bus",
       "name": "Bus",
-      "iconCodePoint": null,
-      "iconFontFamily": null,
+      "iconCodePoint": "59066",
+      "iconFontFamily": "MaterialIcons",
       "parentCategoryId": "transportation"
     },
     {
-      "id": "e",
+      "id": "parking",
       "name": "Parking",
-      "iconCodePoint": null,
-      "iconFontFamily": null,
+      "iconCodePoint": "59442",
+      "iconFontFamily": "MaterialIcons",
       "parentCategoryId": "transportation"
     }
   ],

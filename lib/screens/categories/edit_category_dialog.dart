@@ -8,7 +8,8 @@ class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
   final Function(MyCategory) setDefault;
   final Function(String, String) save; //Category, parentCategoryId
-  final MySubcategory category;
+  final MySubcategory category; //TODO needs to handle both categories and subcategories separately
+  //TODO I can likely simplify the category and subcategory system where all parent categories have no parent ID, only subcategories do
   final CategoryOrSubcategory categoryOrSubcategory;
   final List<MyCategory> categories;
 
@@ -32,14 +33,18 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   TextEditingController _controller;
   String _parentCategoryId;
   List<MyCategory> _categories = [];
+  bool newCategory = true;
 
   void initState() {
     super.initState();
     _categories = widget?.categories;
-    _categoryOrSubcategory = widget.categoryOrSubcategory;
+    _categoryOrSubcategory = widget?.categoryOrSubcategory;
     _category = widget?.category;
+    if (_category.name != null) {
+      newCategory = false;
+    }
     _parentCategoryId = _category?.parentCategoryId;
-    _controller = TextEditingController(text: _category.name);
+    _controller = TextEditingController(text: _category?.name ?? '');
     _controller.addListener(() {
       final textController = _controller.text;
       _controller.value = _controller.value.copyWith(
@@ -58,15 +63,21 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   //TODO implement method to change category of a subcategory
   @override
   Widget build(BuildContext context) {
+    MyCategory initialCategory;
+
+    initialCategory = _parentCategoryId != null && _parentCategoryId != ''
+        ? _categories?.firstWhere((e) => e.id == _parentCategoryId)
+        : _categories.first;
+
     return AlertDialog(
-      title: Text(_categoryOrSubcategory == CategoryOrSubcategory.category ? 'Edit Category' : 'Edit Subcategory'),
+      title: Text(dialogTitle(_categoryOrSubcategory, newCategory)),
       content: Column(
-        //TODO add parent category dropdown to this dialog
+        mainAxisSize: MainAxisSize.min,
         children: [
           _categoryOrSubcategory == CategoryOrSubcategory.category
               ? Container()
               : DropdownButton<MyCategory>(
-                  value: _categories.firstWhere((e) => e.id == _parentCategoryId),
+                  value: initialCategory,
                   items: _categories.map((MyCategory category) {
                     return DropdownMenuItem<MyCategory>(
                       value: category,
@@ -79,6 +90,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                   onChanged: _onChanged),
           Row(
             children: <Widget>[
+              //TODO START HERE - Build a selector, will need a widget to show the icon and be a clickable button to select it - Start with just printing it.
               Expanded(
                 flex: 1,
                 child: _category?.iconData != null ? Icon(_category?.iconData) : Icon(Icons.error),
@@ -127,17 +139,38 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             FlatButton(
               child: Text('Save'),
               onPressed: () => {
-                if (_controller.text != _category.name || _category.parentCategoryId != _parentCategoryId)
+                //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
+                if (_controller.text.length > 0)
                   {
                     widget?.save(_controller.text, _parentCategoryId),
+                    Get.back(),
+                  }
+                else
+                  {
+                    null,
                   },
-                Get.back(),
               },
             ),
           ],
         )
       ],
     );
+  }
+
+  String dialogTitle(CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
+    if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
+      if (newCategory) {
+        return 'New Category';
+      } else {
+        return 'Edit Category';
+      }
+    } else {
+      if (newCategory) {
+        return 'New Subcategory';
+      } else {
+        return 'Edit Subcategory';
+      }
+    }
   }
 
   void _onChanged(MyCategory category) {

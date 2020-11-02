@@ -32,8 +32,7 @@ class _LogsScreenState extends State<LogsScreen> {
           print(logsState.toString());
           if (logsState.isLoading == true) {
             return LoadingIndicator(loadingMessage: 'Loading your logs...');
-          } else if (logsState.isLoading == false &&
-              logsState.logs.isNotEmpty) {
+          } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
             //TODO create archive bool to show logs that have been archived and not visible
             //TODO can I move this logic to the state object and render this widget stateless?
             _logs = logsState.logs.entries.map((e) => e.value).toList();
@@ -42,15 +41,20 @@ class _LogsScreenState extends State<LogsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  buildListView(),
-                  SizedBox(height: 20.0),
-                  addLogButton(context)
-                ],
+                children: <Widget>[buildListView(), SizedBox(height: 20.0), addLogButton(context)],
               ),
             );
           } else if (logsState.isLoading == false && logsState.logs.isEmpty) {
-            return EmptyContent();
+            return SingleChildScrollView(
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    addLogButton(context),
+                    SizedBox(height: 20.0),
+                    EmptyContent(),
+                  ]),
+            );
           } else {
             //TODO pass meaningful error message
             return ErrorContent();
@@ -77,7 +81,6 @@ class _LogsScreenState extends State<LogsScreen> {
       child: Text('Add Log'),
       elevation: 2.0,
       onPressed: () => {
-
         Get.toNamed(ExpenseRoutes.addEditLog),
       },
     );
