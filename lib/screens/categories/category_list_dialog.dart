@@ -16,7 +16,7 @@ import 'package:get/get.dart';
 
 //This widget is used in all category and subcategory lists throughout the application
 
-class CategoryListDialog extends StatefulWidget {
+class CategoryListDialog extends StatelessWidget {
   final CategoryOrSubcategory categoryOrSubcategory;
   final VoidCallback backChevron;
   final Log log;
@@ -27,19 +27,14 @@ class CategoryListDialog extends StatefulWidget {
       : super(key: key);
 
   @override
-  _CategoryListDialogState createState() => _CategoryListDialogState();
-}
-
-class _CategoryListDialogState extends State<CategoryListDialog> {
-  @override
   Widget build(BuildContext context) {
     List<MyCategory> _categories = [];
     List<MySubcategory> _subcategories = [];
-    SettingsLogEntry _settingsLogEntry = widget.settingsLogEntry;
-    CategoryOrSubcategory _categoryOrSubcategory = widget.categoryOrSubcategory;
+    SettingsLogEntry _settingsLogEntry = settingsLogEntry;
+    CategoryOrSubcategory _categoryOrSubcategory = categoryOrSubcategory;
 
     //determines which list is passed based on if it comes from default or the entry
-    switch (widget.settingsLogEntry) {
+    switch (settingsLogEntry) {
       case SettingsLogEntry.settings:
         Settings _settings = Env.store.state.settingsState.settings.value;
         _categories = _settings.defaultCategories;
@@ -49,10 +44,10 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //do something
         break;
       case SettingsLogEntry.entry:
-        if (widget.log != null) {
-          _categories = widget.log.categories;
+        if (log != null) {
+          _categories = log.categories;
           if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
-            _subcategories = widget.log.subcategories
+            _subcategories = log.subcategories
                 .where(
                     (element) => element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.categoryId)
                 .toList();
@@ -99,7 +94,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
               IconButton(
                 icon: Icon(Icons.chevron_left),
                 //if no back action is passed, automatically set to pop context
-                onPressed: widget.backChevron ?? () => Get.back(),
+                onPressed: backChevron ?? () => Get.back(),
               ),
               Text(
                 _categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
@@ -125,7 +120,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     return ListView(
         shrinkWrap: true,
         //TODO implement onReorder
-        children: widget.categoryOrSubcategory == CategoryOrSubcategory.subcategory
+        children: categoryOrSubcategory == CategoryOrSubcategory.subcategory
             ? _subcategoryList(_subcategories, _categories, context, _settingsLogEntry)
             : _categoryList(_categories, context, _settingsLogEntry));
   }
@@ -193,7 +188,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     return Get.dialog(
       CategoryListDialog(
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-        log: widget.log,
+        log: log,
         key: ExpenseKeys.subcategoriesDialog,
         settingsLogEntry: SettingsLogEntry.entry,
         backChevron: () => {
@@ -234,7 +229,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     return Get.dialog(
       EditCategoryDialog(
         save: (name, unused) => Env.logsFetcher
-            .updateLog(widget.log.addEditLogCategories(log: widget.log, category: category.copyWith(name: name))),
+            .updateLog(log.addEditLogCategories(log: log, category: category.copyWith(name: name))),
 
         /*setDefault: (category) => {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
@@ -334,8 +329,8 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
       EditCategoryDialog(
         categories: _categories,
         save: (name, parentCategoryId) => {
-          Env.logsFetcher.updateLog(widget.log.addEditLogSubcategories(
-              log: widget.log, subcategory: subcategory.copyWith(name: name, parentCategoryId: parentCategoryId))),
+          Env.logsFetcher.updateLog(log.addEditLogSubcategories(
+              log: log, subcategory: subcategory.copyWith(name: name, parentCategoryId: parentCategoryId))),
         },
 
         //TODO default function

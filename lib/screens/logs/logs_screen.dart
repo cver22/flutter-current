@@ -1,6 +1,8 @@
+import 'package:emojis/emoji.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/models/log/logs_state.dart';
+import 'package:expenses/screens/categories/emoji/emoji_grid.dart';
 import 'package:expenses/screens/common_widgets/empty_content.dart';
 import 'package:expenses/screens/common_widgets/error_widget.dart';
 import 'package:expenses/screens/common_widgets/loading_indicator.dart';
@@ -41,7 +43,12 @@ class _LogsScreenState extends State<LogsScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[buildListView(), SizedBox(height: 20.0), addLogButton(context)],
+                children: <Widget>[
+                  buildListView(),
+                  SizedBox(height: 20.0),
+                  EmojiGrid(emojiGroup: EmojiGroup.animalsNature),
+                  addLogButton(context),
+                ],
               ),
             );
           } else if (logsState.isLoading == false && logsState.logs.isEmpty) {

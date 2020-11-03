@@ -1,5 +1,6 @@
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
+import 'package:expenses/screens/categories/emoji/emoji_grid.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -33,13 +34,16 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   TextEditingController _controller;
   String _parentCategoryId;
   List<MyCategory> _categories = [];
-  bool newCategory = true;
+  bool newCategory;
+  bool showEmojiGrid;
 
   void initState() {
     super.initState();
+    showEmojiGrid = false;
     _categories = widget?.categories;
     _categoryOrSubcategory = widget?.categoryOrSubcategory;
     _category = widget?.category;
+    newCategory = true;
     if (_category.name != null) {
       newCategory = false;
     }
@@ -93,7 +97,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               //TODO START HERE - Build a selector, will need a widget to show the icon and be a clickable button to select it - Start with just printing it.
               Expanded(
                 flex: 1,
-                child: _category?.iconData != null ? Icon(_category?.iconData) : Icon(Icons.error),
+                child: RaisedButton(
+                  child: _category?.iconData != null ? Icon(_category?.iconData) : Icon(Icons.error),
+                  onPressed: () => setState(() {
+                    showEmojiGrid = true;
+                  }),
+                ),
               ),
               SizedBox(width: 20),
               Expanded(
@@ -102,6 +111,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ),
             ],
           ),
+          showEmojiGrid ? EmojiGrid() : Container(),
         ],
       ),
       actions: <Widget>[
