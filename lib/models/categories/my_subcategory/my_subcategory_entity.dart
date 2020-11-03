@@ -17,20 +17,21 @@ class MySubcategoryEntity extends MyCategoryEntity {
     iconFontFamily,
     isDefault,
     this.parentCategoryId,
+    emojiChar,
   }) : super(
             iconCodePoint: iconCodePoint,
             iconFontFamily: iconFontFamily,
             name: name,
             id: id,
-  isDefault: isDefault);
+            isDefault: isDefault,
+            emojiChar: emojiChar);
 
   @override
-  List<Object> get props =>
-      [id, name, iconCodePoint, iconFontFamily, parentCategoryId, isDefault];
+  List<Object> get props => [id, name, iconCodePoint, iconFontFamily, parentCategoryId, isDefault, emojiChar];
 
   @override
   String toString() {
-    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId, isDefault: $isDefault}';
+    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $ICON_CODE_POINT: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, $PARENT_CATEGORY_ID: $parentCategoryId, isDefault: $isDefault, emojiChar: $emojiChar}';
   }
 
   @override
@@ -39,4 +40,5 @@ class MySubcategoryEntity extends MyCategoryEntity {
 
   @override
   Map<String, dynamic> toJson() => _$MySubcategoryEntityToJson(this);
+
 }

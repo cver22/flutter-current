@@ -8,29 +8,32 @@ class MyCategory extends Equatable {
   final String name;
   final IconData iconData; //TODO - change to use emoji
   final bool isDefault;
+  final String emojiChar;
 
-  MyCategory({this.id, @required this.name, this.iconData, this.isDefault = false});
+  MyCategory( {this.id, @required this.name, this.iconData, this.isDefault = false, this.emojiChar});
 
   @override
-  List<Object> get props => [id, name, iconData, isDefault];
+  List<Object> get props => [id, name, iconData, isDefault, emojiChar];
 
   MyCategory copyWith({
     String id,
     String name,
     IconData iconData,
     bool isDefault,
+    String emojiChar
   }) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       iconData: iconData ?? this.iconData,
       isDefault: isDefault ?? this.isDefault,
+      emojiChar: emojiChar ?? this.emojiChar,
     );
   }
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, icon: $iconData, isDefault: $isDefault}';
+    return 'MyCategory {id: $id, name: $name, icon: $iconData, isDefault: $isDefault, emojiChar: $emojiChar}';
   }
 
   MyCategoryEntity toEntity() {
@@ -40,6 +43,7 @@ class MyCategory extends Equatable {
       iconCodePoint: iconData?.codePoint.toString(),
       iconFontFamily: iconData?.fontFamily,
       isDefault: isDefault,
+      emojiChar: emojiChar,
     );
   }
 
@@ -50,6 +54,7 @@ class MyCategory extends Equatable {
       iconData: entity?.iconCodePoint != null && entity?.iconFontFamily !=null ? IconData(int.parse(entity.iconCodePoint),
           fontFamily: entity.iconFontFamily) : null,
       isDefault: entity.isDefault,
+      emojiChar: entity.emojiChar,
     );
   }
 }

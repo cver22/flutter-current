@@ -34,4 +34,5 @@ class SettingsEntity implements Equatable {
       _$SettingsEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$SettingsEntityToJson(this);
+
 }

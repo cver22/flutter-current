@@ -12,7 +12,7 @@ class EmojiGridTile extends StatelessWidget {
     return GridTile(
       child: Text(
         '${Emoji.byChar(emojiChar)}',
-        style: TextStyle(fontSize: 30), //TODO media query
+        style: TextStyle(fontSize: 25), //TODO media query
       ),
     );
   }

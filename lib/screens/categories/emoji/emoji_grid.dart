@@ -16,10 +16,11 @@ class EmojiGrid extends StatelessWidget {
       charList.add(element.char);
     });
 
-
     return Container(
-      height: 200, // TODO media query
+      height: 100,
+      width: 500, // TODO media query
       child: GridView.builder(
+        shrinkWrap: true,
         scrollDirection: Axis.vertical,
         itemCount: charList.length,
         gridDelegate:

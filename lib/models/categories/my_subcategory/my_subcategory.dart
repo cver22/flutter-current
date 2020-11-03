@@ -6,11 +6,11 @@ import 'package:flutter/material.dart';
 class MySubcategory extends MyCategory {
   final String parentCategoryId;
 
-  MySubcategory({id, name, iconData, isDefault, @required this.parentCategoryId})
-      : super(id: id, name: name, iconData: iconData, isDefault: isDefault);
+  MySubcategory({id, name, iconData, isDefault, emojiChar, @required this.parentCategoryId})
+      : super(id: id, name: name, iconData: iconData, isDefault: isDefault, emojiChar: emojiChar);
 
   @override
-  List<Object> get props => [parentCategoryId, id, name, iconData, isDefault];
+  List<Object> get props => [parentCategoryId, id, name, iconData, isDefault, emojiChar];
 
   @override
   MySubcategory copyWith({
@@ -19,6 +19,7 @@ class MySubcategory extends MyCategory {
     String name,
     IconData iconData,
     bool isDefault,
+    String emojiChar,
   }) {
     return MySubcategory(
       parentCategoryId: parentCategoryId ?? this.parentCategoryId,
@@ -26,12 +27,13 @@ class MySubcategory extends MyCategory {
       name: name ?? this.name,
       iconData: iconData ?? this.iconData,
       isDefault: isDefault ?? this.isDefault,
+      emojiChar: emojiChar ?? this.emojiChar,
     );
   }
 
   @override
   String toString() {
-    return 'MySubcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, iconData: $iconData, isDefault $isDefault}';
+    return 'MySubcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, iconData: $iconData, isDefault $isDefault, emojiChar: $emojiChar}';
   }
 
 

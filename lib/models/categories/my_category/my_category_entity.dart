@@ -13,20 +13,22 @@ class MyCategoryEntity extends Equatable {
   final String iconCodePoint;
   final String iconFontFamily;
   final bool isDefault;
+  final String emojiChar;
 
   const MyCategoryEntity(
-      {this.id, this.name, this.iconCodePoint, this.iconFontFamily, this.isDefault = false});
+      {this.id, this.name, this.iconCodePoint, this.iconFontFamily, this.isDefault = false, this.emojiChar});
 
   @override
-  List<Object> get props => [id, name, iconCodePoint, iconFontFamily, isDefault];
+  List<Object> get props => [id, name, iconCodePoint, iconFontFamily, isDefault, emojiChar];
 
   @override
   String toString() {
-    return 'MyCategoryEntity {id: $id, name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, isDefault: $isDefault }';
+    return 'MyCategoryEntity {id: $id, name: $name, iconCodePoint: $iconCodePoint, $ICON_FONT_FAMILY: $iconFontFamily, isDefault: $isDefault, emojiChar $emojiChar}';
   }
 
   factory MyCategoryEntity.fromJson(Map<String, dynamic> json) =>
       _$MyCategoryEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$MyCategoryEntityToJson(this);
+
 }

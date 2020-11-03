@@ -1,3 +1,4 @@
+import 'package:emojis/emoji.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
 import 'package:expenses/screens/categories/emoji/emoji_grid.dart';
@@ -78,20 +79,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          _categoryOrSubcategory == CategoryOrSubcategory.category
-              ? Container()
-              : DropdownButton<MyCategory>(
-                  value: initialCategory,
-                  items: _categories.map((MyCategory category) {
-                    return DropdownMenuItem<MyCategory>(
-                      value: category,
-                      child: Text(
-                        category.name,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: _onChanged),
+
           Row(
             children: <Widget>[
               //TODO START HERE - Build a selector, will need a widget to show the icon and be a clickable button to select it - Start with just printing it.
@@ -111,7 +99,13 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ),
             ],
           ),
-          showEmojiGrid ? EmojiGrid() : Container(),
+          _selectParentCategory(initialCategory),
+          SizedBox(height: 10),
+          showEmojiGrid
+              ? EmojiGrid(
+                emojiGroup: EmojiGroup.smileysEmotion,
+              )
+              : Container(),
         ],
       ),
       actions: <Widget>[
@@ -165,6 +159,29 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         )
       ],
     );
+  }
+
+  Widget _selectParentCategory(MyCategory initialCategory) {
+    return _categoryOrSubcategory == CategoryOrSubcategory.category
+            ? Container()
+            : Row(
+              children: [
+                Text('Parent Category: '),
+                SizedBox(width: 10),
+                DropdownButton<MyCategory>(
+                    value: initialCategory,
+                    items: _categories.map((MyCategory category) {
+                      return DropdownMenuItem<MyCategory>(
+                        value: category,
+                        child: Text(
+                          category.name,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: _onChanged),
+              ],
+            );
   }
 
   String dialogTitle(CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
