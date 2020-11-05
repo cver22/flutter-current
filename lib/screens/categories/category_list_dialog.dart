@@ -16,7 +16,7 @@ import 'package:get/get.dart';
 
 //This widget is used in all category and subcategory lists throughout the application
 
-class CategoryListDialog extends StatelessWidget {
+class CategoryListDialog extends StatefulWidget {
   final CategoryOrSubcategory categoryOrSubcategory;
   final VoidCallback backChevron;
   final Log log;
@@ -27,14 +27,19 @@ class CategoryListDialog extends StatelessWidget {
       : super(key: key);
 
   @override
+  _CategoryListDialogState createState() => _CategoryListDialogState();
+}
+
+class _CategoryListDialogState extends State<CategoryListDialog> {
+  @override
   Widget build(BuildContext context) {
     List<MyCategory> _categories = [];
     List<MySubcategory> _subcategories = [];
-    SettingsLogEntry _settingsLogEntry = settingsLogEntry;
-    CategoryOrSubcategory _categoryOrSubcategory = categoryOrSubcategory;
+    SettingsLogEntry _settingsLogEntry = widget.settingsLogEntry;
+    CategoryOrSubcategory _categoryOrSubcategory = widget.categoryOrSubcategory;
 
     //determines which list is passed based on if it comes from default or the entry
-    switch (settingsLogEntry) {
+    switch (widget.settingsLogEntry) {
       case SettingsLogEntry.settings:
         Settings _settings = Env.store.state.settingsState.settings.value;
         _categories = _settings.defaultCategories;
@@ -44,10 +49,10 @@ class CategoryListDialog extends StatelessWidget {
         //do something
         break;
       case SettingsLogEntry.entry:
-        if (log != null) {
-          _categories = log.categories;
+        if (widget.log != null) {
+          _categories = widget.log.categories;
           if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
-            _subcategories = log.subcategories
+            _subcategories = widget.log.subcategories
                 .where(
                     (element) => element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.categoryId)
                 .toList();
@@ -94,7 +99,7 @@ class CategoryListDialog extends StatelessWidget {
               IconButton(
                 icon: Icon(Icons.chevron_left),
                 //if no back action is passed, automatically set to pop context
-                onPressed: backChevron ?? () => Get.back(),
+                onPressed: widget.backChevron ?? () => Get.back(),
               ),
               Text(
                 _categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
@@ -120,7 +125,7 @@ class CategoryListDialog extends StatelessWidget {
     return ListView(
         shrinkWrap: true,
         //TODO implement onReorder
-        children: categoryOrSubcategory == CategoryOrSubcategory.subcategory
+        children: widget.categoryOrSubcategory == CategoryOrSubcategory.subcategory
             ? _subcategoryList(_subcategories, _categories, context, _settingsLogEntry)
             : _categoryList(_categories, context, _settingsLogEntry));
   }
@@ -159,7 +164,7 @@ class CategoryListDialog extends StatelessWidget {
     Settings settings = Env.store.state.settingsState.settings.value;
     return Get.dialog(
       EditCategoryDialog(
-        save: (name, unused) => Env.store.dispatch(
+        save: (name, emojiChar, unused) => Env.store.dispatch(
           UpdateSettings(
             settings: Maybe.maybe(
               settings.editLogCategories(
@@ -188,7 +193,7 @@ class CategoryListDialog extends StatelessWidget {
     return Get.dialog(
       CategoryListDialog(
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-        log: log,
+        log: widget.log,
         key: ExpenseKeys.subcategoriesDialog,
         settingsLogEntry: SettingsLogEntry.entry,
         backChevron: () => {
@@ -228,8 +233,8 @@ class CategoryListDialog extends StatelessWidget {
   Future<dynamic> _entryAddEditCategory(MyCategory category) {
     return Get.dialog(
       EditCategoryDialog(
-        save: (name, unused) => Env.logsFetcher
-            .updateLog(log.addEditLogCategories(log: log, category: category.copyWith(name: name))),
+        save: (name, emojiChar, unused) => Env.logsFetcher
+            .updateLog(widget.log.addEditLogCategories(log: widget.log, category: category.copyWith(name: name))),
 
         /*setDefault: (category) => {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
@@ -279,16 +284,23 @@ class CategoryListDialog extends StatelessWidget {
     return Get.dialog(
       EditCategoryDialog(
         categories: _categories,
-        save: (name, parentCategoryId) => Env.store.dispatch(
-          UpdateSettings(
-            settings: Maybe.maybe(
-              settings.editLogSubcategories(
-                settings: settings,
-                subcategory: subcategory.copyWith(name: name, parentCategoryId: parentCategoryId),
+        save: (name, emojiChar, parentCategoryId) =>
+        {
+          setState(() {
+            Env.store.dispatch(
+              UpdateSettings(
+                settings: Maybe.maybe(
+                  settings.editLogSubcategories(
+                    settings: settings,
+                    subcategory:
+                    subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId),
+                  ),
+                ),
               ),
-            ),
-          ),
-        ),
+            );
+
+          })
+        },
         //TODO default function
 
         //TODO create delete function
@@ -328,9 +340,11 @@ class CategoryListDialog extends StatelessWidget {
     return Get.dialog(
       EditCategoryDialog(
         categories: _categories,
-        save: (name, parentCategoryId) => {
-          Env.logsFetcher.updateLog(log.addEditLogSubcategories(
-              log: log, subcategory: subcategory.copyWith(name: name, parentCategoryId: parentCategoryId))),
+        save: (name, emojiChar, parentCategoryId) => {
+          setState(() {
+            Env.logsFetcher.updateLog(widget.log.addEditLogSubcategories(
+                log: widget.log, subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId)));
+          })
         },
 
         //TODO default function

@@ -1,7 +1,6 @@
-import 'package:emojis/emoji.dart';
 import 'package:expenses/models/categories/my_category/my_category.dart';
 import 'package:expenses/models/categories/my_subcategory/my_subcategory.dart';
-import 'package:expenses/screens/categories/emoji/emoji_grid.dart';
+import 'package:expenses/screens/categories/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -9,7 +8,7 @@ import 'package:get/get.dart';
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
   final Function(MyCategory) setDefault;
-  final Function(String, String) save; //Category, parentCategoryId
+  final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
   final MySubcategory category; //TODO needs to handle both categories and subcategories separately
   //TODO I can likely simplify the category and subcategory system where all parent categories have no parent ID, only subcategories do
   final CategoryOrSubcategory categoryOrSubcategory;
@@ -37,6 +36,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   List<MyCategory> _categories = [];
   bool newCategory;
   bool showEmojiGrid;
+  String emojiChar;
 
   void initState() {
     super.initState();
@@ -44,9 +44,14 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     _categories = widget?.categories;
     _categoryOrSubcategory = widget?.categoryOrSubcategory;
     _category = widget?.category;
-    newCategory = true;
+
     if (_category.name != null) {
       newCategory = false;
+      emojiChar = _category.emojiChar ?? '\u{2757}'; // exclamation_mark
+    } else {
+      newCategory = true;
+      showEmojiGrid = true;
+      emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
     }
     _parentCategoryId = _category?.parentCategoryId;
     _controller = TextEditingController(text: _category?.name ?? '');
@@ -79,14 +84,17 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-
           Row(
             children: <Widget>[
               //TODO START HERE - Build a selector, will need a widget to show the icon and be a clickable button to select it - Start with just printing it.
               Expanded(
                 flex: 1,
                 child: RaisedButton(
-                  child: _category?.iconData != null ? Icon(_category?.iconData) : Icon(Icons.error),
+                  child: Text(
+                    emojiChar,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(fontSize: 22),
+                  ),
                   onPressed: () => setState(() {
                     showEmojiGrid = true;
                   }),
@@ -102,9 +110,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
           _selectParentCategory(initialCategory),
           SizedBox(height: 10),
           showEmojiGrid
-              ? EmojiGrid(
-                emojiGroup: EmojiGroup.smileysEmotion,
-              )
+              ? EmojiPicker(
+                  emojiSelection: (emoji) => {
+                        setState(() {
+                          emojiChar = emoji;
+                        })
+                      })
               : Container(),
         ],
       ),
@@ -146,7 +157,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                 //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
                 if (_controller.text.length > 0)
                   {
-                    widget?.save(_controller.text, _parentCategoryId),
+                    print('${_controller.text}, $emojiChar, $_parentCategoryId'),
+                    widget?.save(_controller.text, emojiChar, _parentCategoryId),
                     Get.back(),
                   }
                 else
@@ -163,25 +175,25 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
   Widget _selectParentCategory(MyCategory initialCategory) {
     return _categoryOrSubcategory == CategoryOrSubcategory.category
-            ? Container()
-            : Row(
-              children: [
-                Text('Parent Category: '),
-                SizedBox(width: 10),
-                DropdownButton<MyCategory>(
-                    value: initialCategory,
-                    items: _categories.map((MyCategory category) {
-                      return DropdownMenuItem<MyCategory>(
-                        value: category,
-                        child: Text(
-                          category.name,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: _onChanged),
-              ],
-            );
+        ? Container()
+        : Row(
+            children: [
+              Text('Parent Category: '),
+              SizedBox(width: 10),
+              DropdownButton<MyCategory>(
+                  value: initialCategory,
+                  items: _categories.map((MyCategory category) {
+                    return DropdownMenuItem<MyCategory>(
+                      value: category,
+                      child: Text(
+                        category.name,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: _onChanged),
+            ],
+          );
   }
 
   String dialogTitle(CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {

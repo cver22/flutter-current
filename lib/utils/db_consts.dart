@@ -52,3 +52,8 @@ const String PHOTO_URL = 'photoUrl';
 const String EMAIL = 'email';
 const String MEMBER_NAME = 'memberName';
 
+
+//UI constants
+const double EMOJI_SIZE = 22.0;
+
+

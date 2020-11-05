@@ -2,6 +2,7 @@ import 'package:expenses/env.dart';
 import 'package:expenses/models/entry/my_entry.dart';
 import 'package:expenses/models/log/log.dart';
 import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,11 @@ class EntryListTile extends StatelessWidget {
     }
 
     return ListTile(
-      leading: Icon(displayIcon(log)),
+      leading: Text(
+        '${displayChar(log)}',
+        textAlign: TextAlign.center,
+        style: TextStyle(fontSize: EMOJI_SIZE),
+      ),
       title: entry?.comment != null ? Text(entry.comment) : Text(''),
       subtitle: Text(categoriesSubcategoriesTags(log)),
       trailing: Text('\$ ${entry?.amount.toString()}'),
@@ -30,14 +35,14 @@ class EntryListTile extends StatelessWidget {
     );
   }
 
-  IconData displayIcon(Log log) {
-    IconData iconData = Icons.error;
+  String displayChar(Log log) {
+    String emojiChar;
 
     if (entry?.categoryId != null && log != null) {
-      iconData = log.categories.firstWhere((element) => element.id == entry.categoryId).iconData ?? iconData;
+      emojiChar = log.categories.firstWhere((element) => element.id == entry.categoryId)?.emojiChar ?? '\u{2757}';
     }
 
-    return iconData;
+    return emojiChar;
   }
 
   String categoriesSubcategoriesTags(Log log) {

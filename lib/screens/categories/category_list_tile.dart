@@ -1,4 +1,5 @@
 import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 class CategoryListTile extends StatelessWidget {
@@ -21,7 +22,7 @@ class CategoryListTile extends StatelessWidget {
     }*/
     return ListTile(
       onLongPress: onLongPress,
-      leading: category.iconData != null ? Icon(category.iconData): Icon(Icons.error),
+      leading: category.emojiChar != null ? Text(category.emojiChar, textAlign: TextAlign.center, style: TextStyle(fontSize: EMOJI_SIZE),) : Text('\u{2757}', textAlign: TextAlign.center, style: TextStyle(fontSize: EMOJI_SIZE),),
       title: Text(category.name),
       //TODO trailing options
       onTap: onTap,

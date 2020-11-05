@@ -1,4 +1,5 @@
 import 'package:expenses/models/categories/my_category/my_category.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 class CategoryButton extends StatelessWidget {
@@ -17,8 +18,15 @@ class CategoryButton extends StatelessWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
-          Icon(category?.iconData ?? Icons.map),
-          SizedBox(width: 30.0),
+          category?.emojiChar != null
+              ? Text(
+                  category.emojiChar,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: EMOJI_SIZE),
+                )
+              : Icon(Icons.edit_outlined),
+
+          SizedBox(width: 10.0),
           Text(category?.name ?? label),
         ],
       ),

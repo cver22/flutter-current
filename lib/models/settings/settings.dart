@@ -6,18 +6,14 @@ import 'package:expenses/models/categories/my_subcategory/my_subcategory_entity.
 import 'package:expenses/models/settings/settings_entity.dart';
 import 'package:meta/meta.dart';
 
-
-
 @immutable
 class Settings extends Equatable {
-
-  Settings({
-    this.homeCurrency,
-    this.defaultCategories,
-    this.defaultSubcategories,
-    this.defaultLogId,
-    this.autoInsertDecimalPoint
-  });
+  Settings(
+      {this.homeCurrency,
+      this.defaultCategories,
+      this.defaultSubcategories,
+      this.defaultLogId,
+      this.autoInsertDecimalPoint});
 
   final String homeCurrency;
   final List<MyCategory> defaultCategories;
@@ -25,14 +21,12 @@ class Settings extends Equatable {
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
 
-
-  Settings copyWith({
-    String homeCurrency,
-    List<MyCategory> defaultCategories,
-    List<MySubcategory> defaultSubcategories,
-    String defaultLogId,
-    String autoInsertDecimalPoint
-  }) {
+  Settings copyWith(
+      {String homeCurrency,
+      List<MyCategory> defaultCategories,
+      List<MySubcategory> defaultSubcategories,
+      String defaultLogId,
+      String autoInsertDecimalPoint}) {
     return Settings(
       homeCurrency: homeCurrency ?? this.homeCurrency,
       defaultCategories: defaultCategories ?? this.defaultCategories,
@@ -45,7 +39,11 @@ class Settings extends Equatable {
   Settings editLogCategories({Settings settings, MyCategory category}) {
     List<MyCategory> categories = settings.defaultCategories;
 
-    categories[categories.indexWhere((e) => e.id == category.id)] = category;
+    if (categories.contains(category.id)) {
+      categories[categories.indexWhere((e) => e.id == category.id)] = category;
+    } else {
+      categories.add(category);
+    }
 
     return settings.copyWith(defaultCategories: categories);
   }
@@ -53,7 +51,11 @@ class Settings extends Equatable {
   Settings editLogSubcategories({Settings settings, MySubcategory subcategory}) {
     List<MySubcategory> subcategories = settings.defaultSubcategories;
 
-    subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+    if (subcategories.contains(subcategory.id)) {
+      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+    } else {
+      subcategories.add(subcategory);
+    }
 
     return settings.copyWith(defaultSubcategories: subcategories);
   }

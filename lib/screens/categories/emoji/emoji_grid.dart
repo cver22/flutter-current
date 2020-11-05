@@ -4,8 +4,9 @@ import 'package:flutter/material.dart';
 
 class EmojiGrid extends StatelessWidget {
   final EmojiGroup emojiGroup;
+  final Function(String) emojiSelection;
 
-  EmojiGrid({@required this.emojiGroup});
+  EmojiGrid({@required this.emojiGroup, @required this.emojiSelection});
 
   //TODO on pressed method
 
@@ -16,21 +17,18 @@ class EmojiGrid extends StatelessWidget {
       charList.add(element.char);
     });
 
-    return Container(
-      height: 100,
-      width: 500, // TODO media query
-      child: GridView.builder(
-        shrinkWrap: true,
-        scrollDirection: Axis.vertical,
-        itemCount: charList.length,
-        gridDelegate:
-            SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8, crossAxisSpacing: 1.0, mainAxisSpacing: 1.0),
-        itemBuilder: (BuildContext context, int index) {
-          return EmojiGridTile(
-            emojiChar: charList[index],
-          );
-        },
-      ),
+    return GridView.builder(
+      shrinkWrap: true,
+      scrollDirection: Axis.vertical,
+      itemCount: charList.length,
+      gridDelegate:
+          SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 8, crossAxisSpacing: 1.0, mainAxisSpacing: 1.0),
+      itemBuilder: (BuildContext context, int index) {
+        return EmojiGridTile(
+          emojiSelection: emojiSelection,
+          emojiChar: charList[index],
+        );
+      },
     );
   }
 }
