@@ -10,8 +10,6 @@ MySubcategoryEntity _$MySubcategoryEntityFromJson(Map<String, dynamic> json) {
   return MySubcategoryEntity(
     id: json['id'],
     name: json['name'],
-    iconCodePoint: json['iconCodePoint'],
-    iconFontFamily: json['iconFontFamily'],
     isDefault: json['isDefault'],
     parentCategoryId: json['parentCategoryId'] as String,
     emojiChar: json['emojiChar'],
@@ -23,8 +21,6 @@ Map<String, dynamic> _$MySubcategoryEntityToJson(
     <String, dynamic>{
       'id': instance.id,
       'name': instance.name,
-      'iconCodePoint': instance.iconCodePoint,
-      'iconFontFamily': instance.iconFontFamily,
       'isDefault': instance.isDefault,
       'emojiChar': instance.emojiChar,
       'parentCategoryId': instance.parentCategoryId,

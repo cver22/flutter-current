@@ -6,26 +6,24 @@ import 'package:flutter/material.dart';
 class MyCategory extends Equatable {
   final String id;
   final String name;
-  final IconData iconData; //TODO - change to use emoji
   final bool isDefault;
   final String emojiChar;
 
-  MyCategory( {this.id, @required this.name, this.iconData, this.isDefault = false, this.emojiChar});
+  MyCategory( {this.id, @required this.name, this.isDefault = false, this.emojiChar});
 
   @override
-  List<Object> get props => [id, name, iconData, isDefault, emojiChar];
+  List<Object> get props => [id, name, isDefault, emojiChar];
 
   MyCategory copyWith({
     String id,
     String name,
-    IconData iconData,
+
     bool isDefault,
     String emojiChar
   }) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
-      iconData: iconData ?? this.iconData,
       isDefault: isDefault ?? this.isDefault,
       emojiChar: emojiChar ?? this.emojiChar,
     );
@@ -33,15 +31,13 @@ class MyCategory extends Equatable {
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, icon: $iconData, isDefault: $isDefault, emojiChar: $emojiChar}';
+    return 'MyCategory {id: $id, name: $name, isDefault: $isDefault, emojiChar: $emojiChar}';
   }
 
   MyCategoryEntity toEntity() {
     return MyCategoryEntity(
       id: id,
       name: name,
-      iconCodePoint: iconData?.codePoint.toString(),
-      iconFontFamily: iconData?.fontFamily,
       isDefault: isDefault,
       emojiChar: emojiChar,
     );
@@ -51,8 +47,6 @@ class MyCategory extends Equatable {
     return MyCategory(
       id: entity.id,
       name: entity.name,
-      iconData: entity?.iconCodePoint != null && entity?.iconFontFamily !=null ? IconData(int.parse(entity.iconCodePoint),
-          fontFamily: entity.iconFontFamily) : null,
       isDefault: entity.isDefault,
       emojiChar: entity.emojiChar,
     );
