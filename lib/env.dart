@@ -1,12 +1,13 @@
-import 'package:expenses/models/app_state.dart';
-import 'package:expenses/services/entries_repository.dart';
-import 'package:expenses/services/fetchers/entries_fetcher.dart';
-import 'package:expenses/services/fetchers/logs_fetcher.dart';
-import 'package:expenses/services/fetchers/settings_fetcher.dart';
-import 'package:expenses/services/logs_repository.dart';
-import 'package:expenses/services/user_repository.dart';
+import 'package:expenses/app/models/app_state.dart';
+import 'package:expenses/auth_user/user_repository.dart';
+import 'package:expenses/auth_user/user_fetcher.dart';
+import 'package:expenses/entry/entries_fetcher.dart';
+import 'package:expenses/entry/entries_repository.dart';
+import 'package:expenses/log/logs_fetcher.dart';
+import 'package:expenses/log/logs_repository.dart';
+import 'package:expenses/settings/settings_fetcher.dart';
 import 'package:expenses/store/app_store.dart';
-import 'package:expenses/services/fetchers/user_fetcher.dart';
+
 
 class Env {
   static final store = AppStore(AppState.initial());

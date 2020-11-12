@@ -1,4 +1,5 @@
-import 'package:expenses/models/app_state.dart';
+
+import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:rxdart/rxdart.dart';
 

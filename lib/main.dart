@@ -1,11 +1,12 @@
+import 'package:expenses/app/app_screen.dart';
+import 'package:expenses/app/home_screen.dart';
+import 'package:expenses/entry/entry_screen/add_edit_entries_screen.dart';
 import 'package:expenses/env.dart';
-import 'package:expenses/screens/account/account_screen.dart';
-import 'package:expenses/screens/app_screen.dart';
-import 'package:expenses/screens/entries/add_edit_entries_screen.dart';
-import 'package:expenses/screens/home_screen.dart';
-import 'package:expenses/screens/login/login_register_screen.dart';
-import 'package:expenses/screens/logs/add_edit_log_Screen.dart';
-import 'package:expenses/screens/setting/settings_screen.dart';
+import 'package:expenses/log/log_ui/add_edit_log_Screen.dart';
+import 'package:expenses/login_register/login_register_ui/login_register_screen.dart';
+import 'package:expenses/settings/settings_ui/account_screen.dart';
+
+import 'package:expenses/settings/settings_ui/settings_screen.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';

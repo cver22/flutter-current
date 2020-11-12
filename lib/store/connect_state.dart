@@ -1,5 +1,5 @@
+import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/env.dart';
-import 'package:expenses/models/app_state.dart';
 import 'package:flutter/widgets.dart';
 
 class ConnectState<T> extends StatelessWidget {
