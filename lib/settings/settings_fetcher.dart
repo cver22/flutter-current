@@ -48,17 +48,22 @@ class SettingsFetcher {
     }
   }
 
-  Future<void> readAppSettings() async {
+  Future<void> readResetAppSettings({bool resetSettings}) async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
     //determines if this is the first instance the user has logged in and sets the default settings
-    final settingsInitialized = (prefs.getBool('settings_initialized') ?? false);
+    bool settingsInitialized = (prefs.getBool('settings_initialized') ?? false);
+
+    if(resetSettings){
+      settingsInitialized = false;
+    }
 
     try {
       if (settingsInitialized && Env.store.state.settingsState.settings.isSome) {
         //if the settings are already loaded, do nothing
         return;
       } else if (!settingsInitialized) {
+        print('Resetting settings');
         //if no settings have ever been loaded, load the default
         String jsonString = await rootBundle.loadString('assets/default_settings.txt');
 
@@ -83,4 +88,6 @@ class SettingsFetcher {
       print('Error reading settings ${e.toString()}');
     }
   }
+
+
 }

@@ -1,52 +1,58 @@
 {"homeCurrency": null,
   "defaultCategoryEntities": [
     {
+      "id": "noCategory",
+      "name": " No Category",
+      "emojiChar": "🔴",
+      "isDefault": true
+    },
+    {
       "id": "home",
       "name": "Home",
-      "iconCodePoint": "59335",
-      "iconFontFamily": "MaterialIcons"
+      "emojiChar": "🏠"
     },
     {
       "id": "transportation",
       "name": "Transportation",
-      "iconCodePoint": "59132",
-      "iconFontFamily": "MaterialIcons"
+      "emojiChar": "🚀"
     }
   ],
   "defaultSubcategoryEntities": [
     {
+      "id": "noSubcategory",
+      "name": "No Subcategory",
+      "emojiChar": "🔴",
+      "isDefault": true,
+      "parentCategoryId": "noCategory"
+    },
+    {
       "id": "rent",
       "name": "Rent",
-      "iconCodePoint": "59335",
-      "iconFontFamily": "MaterialIcons",
+      "emojiChar": "🏚️",
       "parentCategoryId": "home"
     },
     {
       "id": "utilities",
       "name": "Utilities",
-      "iconCodePoint": "58869",
-      "iconFontFamily": "MaterialIcons",
+      "emojiChar": "💡",
       "parentCategoryId": "home"
     },
     {
       "id": "car",
       "name": "Car",
-      "iconCodePoint": "59067",
-      "iconFontFamily": "MaterialIcons",
+      "emojiChar": "🚘",
       "parentCategoryId": "transportation"
     },
     {
       "id": "bus",
       "name": "Bus",
-      "iconCodePoint": "59066",
-      "iconFontFamily": "MaterialIcons",
+      "emojiChar": "🚌",
       "parentCategoryId": "transportation"
     },
     {
       "id": "parking",
       "name": "Parking",
-      "iconCodePoint": "59442",
-      "iconFontFamily": "MaterialIcons",
+      "emojiChar": "🅿️",
       "parentCategoryId": "transportation"
     }
   ],

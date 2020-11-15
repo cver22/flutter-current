@@ -11,6 +11,8 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_navigation/src/dialog/dialog_route.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key key}) : super(key: key);
@@ -37,6 +39,38 @@ class SettingsScreen extends StatelessWidget {
                           settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
                   _categoryButton(settingsState: settingsState, context: context),
                   _subcategoryButton(settingsState: settingsState, context: context),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  RaisedButton(
+                      //TODO convert to Get or not necessary?
+                      child: Text('Rest All Settings'),
+                      onPressed: () => {
+                        showDialog(context: context, barrierDismissible: true, builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Reset Settings'),
+                            content: SingleChildScrollView(
+                              child: Text('Are you sure you want to reset all settings?'),
+                            ),
+                            actions: [
+                              TextButton(
+                                child: Text('Cancel'),
+                                onPressed: () {
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                              TextButton(
+                                child: Text('Yes'),
+                                onPressed: () {
+                                  Env.settingsFetcher.readResetAppSettings(resetSettings: true);
+                                  Navigator.of(context).pop();
+                                },
+                              ),
+                            ],
+
+                          );
+                        })
+                      }),
                 ],
               ),
             ),

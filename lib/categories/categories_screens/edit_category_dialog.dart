@@ -11,7 +11,7 @@ class EditCategoryDialog extends StatefulWidget {
   final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
   final MySubcategory subcategory; //TODO needs to handle both categories and subcategories separately
   final MyCategory category;
-  final String initialParrent;
+  final String initialParent;
 
   //TODO I can likely simplify the category and subcategory system where all parent categories have no parent ID, only subcategories do
   final CategoryOrSubcategory categoryOrSubcategory;
@@ -26,7 +26,7 @@ class EditCategoryDialog extends StatefulWidget {
     this.subcategory,
     this.category,
     this.categories,
-    this.initialParrent,
+    this.initialParent,
   }) : super(key: key);
 
   @override
@@ -46,6 +46,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   bool _showEmojiGrid;
   String _emojiChar;
   MyCategory _selectedCategory;
+
+  //TODO prevent NoCategory and NoSubcategory from being edited or deleted
 
   void initState() {
     super.initState();
@@ -76,7 +78,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         _name = _subcategory?.name;
         _id = _subcategory?.id;
         _parentCategoryId = _subcategory?.parentCategoryId;
-        if(!_categories.any((element) => element.id == _parentCategoryId)){
+        if (!_categories.any((element) => element.id == _parentCategoryId)) {
           _parentCategoryId = _categories.first.id;
         }
       } else {
@@ -84,7 +86,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         _showEmojiGrid = true;
         _emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
         _name = '';
-        _parentCategoryId = widget?.initialParrent ?? _categories.first.id;
+        _parentCategoryId = widget?.initialParent ?? _categories.first.id;
       }
       _selectedCategory = _categories?.firstWhere((e) => e.id == _parentCategoryId);
     }
@@ -98,6 +100,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         composing: TextRange.empty,
       );
     });
+
   }
 
   void dispose() {
@@ -105,7 +108,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     super.dispose();
   }
 
-  //TODO implement method to change category of a subcategory
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
@@ -115,7 +117,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         children: [
           Row(
             children: <Widget>[
-              //TODO START HERE - Build a selector, will need a widget to show the icon and be a clickable button to select it - Start with just printing it.
               Expanded(
                 flex: 1,
                 child: RaisedButton(

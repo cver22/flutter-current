@@ -1,5 +1,7 @@
 part of 'actions.dart';
 
+//TODO update all actions to utilize private functions?
+
 AppState _updateLogState(
   AppState appState,
   LogsState update(LogsState logsState),

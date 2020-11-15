@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
+import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/logs_repository.dart';
 import 'package:expenses/store/actions/actions.dart';
@@ -22,57 +23,19 @@ class LogsFetcher {
   Future<void> loadLogs() async {
     _store.dispatch(SetLogsLoading());
     _logsSubscription?.cancel();
-    _logsSubscription =
-        _logsRepository.loadLogs(_store.state.authState.user.value).listen(
-              (logs) => _store.dispatch(SetLogs(logList: logs)),
-            );
+    _logsSubscription = _logsRepository.loadLogs(_store.state.authState.user.value).listen(
+          (logs) => _store.dispatch(SetLogs(logList: logs)),
+        );
     _store.dispatch(SetLogsLoaded());
   }
 
   Future<void> addLog(Log log) async {
     Log _log = log;
-    List<MyCategory> categories = [];
-    List<MySubcategory> subcategories = [];
+    List<MyCategory> categories = Env.store.state.settingsState.settings.value.defaultCategories;
+    List<MySubcategory> subcategories = Env.store.state.settingsState.settings.value.defaultSubcategories;
 
-    // Sample subcategories, later sample to be retrieved from JSON
-    categories.add(MyCategory(name: 'Home', id: Uuid().v4()));
-    categories.add(MyCategory(name: 'Transportation', id: Uuid().v4()));
-
-    subcategories.add(MySubcategory(
-        name: 'Rent',
-        id: Uuid().v4(),
-        parentCategoryId:
-            categories.firstWhere((element) => element.name == 'Home').id));
-
-    subcategories.add(MySubcategory(
-        name: 'Utilities',
-        id: Uuid().v4(),
-        parentCategoryId:
-            categories.firstWhere((element) => element.name == 'Home').id));
-
-    subcategories.add(MySubcategory(
-        name: 'Car',
-        id: Uuid().v4(),
-        parentCategoryId: categories
-            .firstWhere((element) => element.name == 'Transportation')
-            .id));
-
-    subcategories.add(MySubcategory(
-        name: 'Bus',
-        id: Uuid().v4(),
-        parentCategoryId: categories
-            .firstWhere((element) => element.name == 'Transportation')
-            .id));
-
-    subcategories.add(MySubcategory(
-        name: 'Parking',
-        id: Uuid().v4(),
-        parentCategoryId: categories
-            .firstWhere((element) => element.name == 'Transportation')
-            .id));
-
-
-    _log = _log.copyWith(uid: _store.state.authState.user.value.id, categories: categories, subcategories: subcategories);
+    _log =
+        _log.copyWith(uid: _store.state.authState.user.value.id, categories: categories, subcategories: subcategories);
 
     print('these are my categories ${_log.categories}');
 
@@ -85,22 +48,19 @@ class LogsFetcher {
 
   Future<void> updateLog(Log log) async {
     _store.dispatch(ClearSelectedLog());
-    try{
-      _logsRepository.updateLog(
-          _store.state.authState.user.value, log);
+    try {
+      _logsRepository.updateLog(_store.state.authState.user.value, log);
     } catch (e) {
       print(e.toString());
     }
-
   }
 
   Future<void> deleteLog(Log log) async {
     //TODO need error checking if this log is the default log, need to make another log the default log
     _store.dispatch(ClearSelectedLog());
     try {
-      _logsRepository.deleteLog(
-          _store.state.authState.user.value, log.copyWith(active: false));
-    }catch (e) {
+      _logsRepository.deleteLog(_store.state.authState.user.value, log.copyWith(active: false));
+    } catch (e) {
       print(e.toString());
     }
   }

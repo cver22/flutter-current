@@ -17,10 +17,6 @@ class SettingsState extends Equatable {
     );
   }
 
-  void initializeSettings() {
-    Env.settingsFetcher.readAppSettings();
-  }
-
   SettingsState copyWith({
     Maybe<Settings> settings,
   }) {

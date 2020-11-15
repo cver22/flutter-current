@@ -25,6 +25,3 @@ class UpdateSettings implements Action {
             ));
   }
 }
-
-
-

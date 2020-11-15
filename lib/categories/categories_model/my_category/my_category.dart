@@ -9,18 +9,12 @@ class MyCategory extends Equatable {
   final bool isDefault;
   final String emojiChar;
 
-  MyCategory( {this.id, @required this.name, this.isDefault = false, this.emojiChar});
+  MyCategory({this.id, @required this.name, this.isDefault = false, this.emojiChar});
 
   @override
   List<Object> get props => [id, name, isDefault, emojiChar];
 
-  MyCategory copyWith({
-    String id,
-    String name,
-
-    bool isDefault,
-    String emojiChar
-  }) {
+  MyCategory copyWith({String id, String name, bool isDefault, String emojiChar}) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,

@@ -23,7 +23,7 @@ class HomeScreen extends StatelessWidget {
         if (authState.user.isSome && authState.isLoading == false) {
           //Prevents calling in the current build cycle
 
-          Env.store.state.settingsState.initializeSettings();
+          Env.settingsFetcher.readResetAppSettings(resetSettings: false);
           print('current settings ${Env.store.state.settingsState.settings}');
 
           Future.delayed(Duration.zero, () {
