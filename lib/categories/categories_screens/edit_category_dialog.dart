@@ -11,6 +11,7 @@ class EditCategoryDialog extends StatefulWidget {
   final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
   final MySubcategory subcategory; //TODO needs to handle both categories and subcategories separately
   final MyCategory category;
+  final String initialParrent;
 
   //TODO I can likely simplify the category and subcategory system where all parent categories have no parent ID, only subcategories do
   final CategoryOrSubcategory categoryOrSubcategory;
@@ -25,6 +26,7 @@ class EditCategoryDialog extends StatefulWidget {
     this.subcategory,
     this.category,
     this.categories,
+    this.initialParrent,
   }) : super(key: key);
 
   @override
@@ -37,17 +39,17 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   MyCategory _category;
   TextEditingController _controller;
   String _parentCategoryId;
-  String name;
-  String id;
+  String _name;
+  String _id;
   List<MyCategory> _categories = [];
-  bool newCategory;
-  bool showEmojiGrid;
-  String emojiChar;
-  MyCategory initialCategory;
+  bool _newCategory;
+  bool _showEmojiGrid;
+  String _emojiChar;
+  MyCategory _selectedCategory;
 
   void initState() {
     super.initState();
-    showEmojiGrid = false;
+    _showEmojiGrid = false;
     _categories = widget?.categories;
     _categoryOrSubcategory = widget?.categoryOrSubcategory;
 
@@ -55,39 +57,39 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       _category = widget?.category;
 
       if (_category.name != null) {
-        newCategory = false;
-        emojiChar = _category.emojiChar ?? '\u{2757}'; // exclamation_mark
-        name = _category?.name;
-        id = _category?.id;
+        _newCategory = false;
+        _emojiChar = _category.emojiChar ?? '\u{2757}'; // exclamation_mark
+        _name = _category?.name;
+        _id = _category?.id;
       } else {
-        newCategory = true;
-        showEmojiGrid = true;
-        emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
-        name = '';
+        _newCategory = true;
+        _showEmojiGrid = true;
+        _emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
+        _name = '';
       }
     } else {
       _subcategory = widget?.subcategory;
 
       if (_subcategory.name != null) {
-        newCategory = false;
-        emojiChar = _subcategory.emojiChar ?? '\u{2757}'; // exclamation_mark
-        name = _subcategory?.name;
-        id = _subcategory?.id;
+        _newCategory = false;
+        _emojiChar = _subcategory.emojiChar ?? '\u{2757}'; // exclamation_mark
+        _name = _subcategory?.name;
+        _id = _subcategory?.id;
         _parentCategoryId = _subcategory?.parentCategoryId;
         if(!_categories.any((element) => element.id == _parentCategoryId)){
           _parentCategoryId = _categories.first.id;
         }
       } else {
-        newCategory = true;
-        showEmojiGrid = true;
-        emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
-        name = '';
-        _parentCategoryId = _categories.first.id;
+        _newCategory = true;
+        _showEmojiGrid = true;
+        _emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
+        _name = '';
+        _parentCategoryId = widget?.initialParrent ?? _categories.first.id;
       }
-      initialCategory = _categories?.firstWhere((e) => e.id == _parentCategoryId);
+      _selectedCategory = _categories?.firstWhere((e) => e.id == _parentCategoryId);
     }
 
-    _controller = TextEditingController(text: name);
+    _controller = TextEditingController(text: _name);
     _controller.addListener(() {
       final textController = _controller.text;
       _controller.value = _controller.value.copyWith(
@@ -107,7 +109,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(dialogTitle(_categoryOrSubcategory, newCategory)),
+      title: Text(dialogTitle(_categoryOrSubcategory, _newCategory)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -118,12 +120,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                 flex: 1,
                 child: RaisedButton(
                   child: Text(
-                    emojiChar,
+                    _emojiChar,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 22),
                   ),
                   onPressed: () => setState(() {
-                    showEmojiGrid = true;
+                    _showEmojiGrid = true;
                   }),
                 ),
               ),
@@ -134,14 +136,14 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ),
             ],
           ),
-          _selectParentCategory(initialCategory),
+          _selectParentCategory(_selectedCategory),
           SizedBox(height: 10),
-          showEmojiGrid
+          _showEmojiGrid
               ? Expanded(
                   child: EmojiPicker(
                       emojiSelection: (emoji) => {
                             setState(() {
-                              emojiChar = emoji;
+                              _emojiChar = emoji;
                             })
                           }),
                 )
@@ -155,7 +157,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             FlatButton(
                 child: Text('Delete'),
                 onPressed: () => {
-                      widget?.delete(id),
+                      widget?.delete(_id),
                       Get.back(),
                     }),
             FlatButton(
@@ -186,8 +188,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                 //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
                 if (_controller.text.length > 0)
                   {
-                    print('${_controller.text}, $emojiChar, $_parentCategoryId'),
-                    widget?.save(_controller.text, emojiChar, _parentCategoryId),
+                    print('${_controller.text}, $_emojiChar, $_parentCategoryId'),
+                    widget?.save(_controller.text, _emojiChar, _parentCategoryId),
                     Get.back(),
                   }
                 else
@@ -244,6 +246,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   void _onParentCategoryChanged(MyCategory category) {
     setState(() {
       _parentCategoryId = category.id;
+      _selectedCategory = _categories?.firstWhere((e) => e.id == _parentCategoryId);
     });
   }
 }

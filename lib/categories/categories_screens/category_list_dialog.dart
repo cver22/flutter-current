@@ -46,6 +46,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         _subcategories = _settings.defaultSubcategories;
         break;
       case SettingsLogEntry.log:
+        //TODO start here and build out log category editing
         //do something
         break;
       case SettingsLogEntry.entry:
@@ -120,8 +121,8 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     );
   }
 
-  Widget _entryCategoryListView(List<MyCategory> _categories, List<MySubcategory> _subcategories,
-      BuildContext context, SettingsLogEntry _settingsLogEntry) {
+  Widget _entryCategoryListView(List<MyCategory> _categories, List<MySubcategory> _subcategories, BuildContext context,
+      SettingsLogEntry _settingsLogEntry) {
     return Expanded(
       flex: 1,
       child: ListView(
@@ -168,7 +169,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     return Get.dialog(
       EditCategoryDialog(
         save: (name, emojiChar, unused) => {
-          setState (() {
+          setState(() {
             Env.store.dispatch(
               UpdateSettings(
                 settings: Maybe.maybe(
@@ -185,24 +186,21 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         /*setDefault: (category) => {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
         },*/
-        delete: (id) =>
-        {
+        delete: (id) => {
           setState(() {
             List<MyCategory> categories = settings.defaultCategories;
-            if(categories.length >2) {
+            if (categories.length > 2) {
               categories = categories.where((element) => element.id != category.id).toList();
               Env.store
                   .dispatch(UpdateSettings(settings: Maybe.some(settings.copyWith(defaultCategories: categories))));
-            }else {
+            } else {
               //TODO error message, must have at least one category
             }
-
           })
         },
         category: category,
         categories: settings.defaultCategories,
         categoryOrSubcategory: CategoryOrSubcategory.category,
-        //TODO - make functioning category edit dialog
       ),
     );
   }
@@ -253,8 +251,8 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   Future<dynamic> _entryAddEditCategory(MyCategory category) {
     return Get.dialog(
       EditCategoryDialog(
-        save: (name, emojiChar, unused) => Env.logsFetcher
-            .updateLog(widget.log.addEditLogCategories(log: widget.log, category: category.copyWith(name: name))),
+        save: (name, emojiChar, unused) => Env.logsFetcher.updateLog(widget.log
+            .addEditLogCategories(log: widget.log, category: category.copyWith(name: name, emojiChar: emojiChar))),
 
         /*setDefault: (category) => {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
@@ -263,19 +261,37 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO create delete function
         category: category,
         categoryOrSubcategory: CategoryOrSubcategory.category,
-        //TODO - make functioning category edit dialog
       ),
     );
   }
 
   List<CategoryListTile> _subcategoryList(List<MySubcategory> _subcategories, List<MyCategory> _categories,
       BuildContext context, SettingsLogEntry setLogEnt) {
-    return _subcategories
+    List<MySubcategory> _organizedSubcategories = [];
+    if (setLogEnt == SettingsLogEntry.settings) {
+      Iterator it = _categories.iterator;
+      for (int i = 0; i < _categories.length; i++) {
+        //Adds title to setting subcategory list
+        _organizedSubcategories
+            .add(MySubcategory(parentCategoryId: null, name: _categories[i].name, emojiChar: _categories[i].emojiChar));
+        for (int j = 0; j < _subcategories.length; j++) {
+          //Adds subcategories organized by category for settings
+          if (_subcategories[j].parentCategoryId == _categories[i].id) {
+            _organizedSubcategories.add(_subcategories[j]);
+          }
+        }
+      }
+    } else  {
+      _organizedSubcategories = _subcategories;
+    }
+
+    return _organizedSubcategories
         .map(
           (MySubcategory subcategory) => CategoryListTile(
             category: subcategory,
-            onTap: () => _switchSubOnTap(subcategory, _categories, setLogEnt),
-            onLongPress: () => _switchSubcategoryOnLongPress(subcategory, _categories, setLogEnt),
+            onTap: subcategory.parentCategoryId == null ? null : () => _switchSubOnTap(subcategory, _categories, setLogEnt),
+            onLongPress: subcategory.parentCategoryId == null ? null : () => _switchSubcategoryOnLongPress(subcategory, _categories, setLogEnt),
+            heading: subcategory.parentCategoryId == null ? true : false,
           ),
         )
         .toList();
@@ -320,8 +336,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
           })
         },
         //TODO default function
-        delete: (id) =>
-        {
+        delete: (id) => {
           setState(() {
             List<MySubcategory> subcategories = [];
             subcategories = settings.defaultSubcategories.where((element) => element.id != subcategory.id).toList();
@@ -329,7 +344,6 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
                 .dispatch(UpdateSettings(settings: Maybe.some(settings.copyWith(defaultSubcategories: subcategories))));
           })
         },
-        //TODO create delete function
         subcategory: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
@@ -378,6 +392,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO default function
 
         //TODO create delete function
+        initialParrent: Env.store.state.entriesState.selectedEntry.value.categoryId,
         subcategory: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
