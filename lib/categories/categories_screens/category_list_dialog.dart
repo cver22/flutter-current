@@ -151,6 +151,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     return _categories
         .map(
           (MyCategory category) => CategoryListTile(
+            key: Key(category.id),
             category: category,
             onTapEdit: () => _switchCatOnTapEdit(category),
             onTap: () => _switchOnCatTap(category),
@@ -312,7 +313,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
       for (int i = 0; i < _categories.length; i++) {
         //Adds title to setting subcategory list
         _organizedSubcategories
-            .add(MySubcategory(parentCategoryId: null, name: _categories[i].name, emojiChar: _categories[i].emojiChar));
+            .add(MySubcategory(parentCategoryId: null, name: _categories[i].name, emojiChar: _categories[i].emojiChar, id: _categories[i].id));
         for (int j = 0; j < _subcategories.length; j++) {
           //Adds subcategories organized by category for settings
           if (_subcategories[j].parentCategoryId == _categories[i].id) {
@@ -327,6 +328,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     return _organizedSubcategories
         .map(
           (MySubcategory subcategory) => CategoryListTile(
+            key: Key(subcategory.id),
             category: subcategory,
             onTap: subcategory.parentCategoryId == null ? null : () => _switchSubOnTap(subcategory),
             onTapEdit: subcategory.parentCategoryId == null ? null : () => _switchSubcategoryOnTapEdit(subcategory),
