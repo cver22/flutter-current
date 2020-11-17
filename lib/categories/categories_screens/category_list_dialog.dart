@@ -33,6 +33,7 @@ class CategoryListDialog extends StatefulWidget {
 class _CategoryListDialogState extends State<CategoryListDialog> {
   List<MyCategory> _categories = [];
   List<MySubcategory> _subcategories = [];
+  List<MySubcategory> _organizedSubcategories = [];
   SettingsLogEntry _settingsLogEntry;
   CategoryOrSubcategory _categoryOrSubcategory;
   Log _log;
@@ -308,12 +309,14 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   }
 
   List<CategoryListTile> _subcategoryList(BuildContext context) {
-    List<MySubcategory> _organizedSubcategories = [];
     if (_settingsLogEntry == SettingsLogEntry.settings || _settingsLogEntry == SettingsLogEntry.log) {
       for (int i = 0; i < _categories.length; i++) {
         //Adds title to setting subcategory list
-        _organizedSubcategories
-            .add(MySubcategory(parentCategoryId: null, name: _categories[i].name, emojiChar: _categories[i].emojiChar, id: _categories[i].id));
+        _organizedSubcategories.add(MySubcategory(
+            parentCategoryId: null,
+            name: _categories[i].name,
+            emojiChar: _categories[i].emojiChar,
+            id: _categories[i].id));
         for (int j = 0; j < _subcategories.length; j++) {
           //Adds subcategories organized by category for settings
           if (_subcategories[j].parentCategoryId == _categories[i].id) {
