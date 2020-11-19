@@ -13,23 +13,20 @@ AppState _updateEntries(
 ) {
   Map<String, MyEntry> cloneMap = Map.from(appState.entriesState.entries);
   updateInPlace(cloneMap);
-  return _updateEntryState(
-      appState, (entriesState) => entriesState.copyWith(entries: cloneMap));
+  return _updateEntryState(appState, (entriesState) => entriesState.copyWith(entries: cloneMap));
 }
 
 class SetEntriesLoading implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(
-        entriesState: appState.entriesState.copyWith(isLoading: true));
+    return appState.copyWith(entriesState: appState.entriesState.copyWith(isLoading: true));
   }
 }
 
 class SetEntriesLoaded implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(
-        entriesState: appState.entriesState.copyWith(isLoading: false));
+    return appState.copyWith(entriesState: appState.entriesState.copyWith(isLoading: false));
   }
 }
 
@@ -44,10 +41,7 @@ class SetNewSelectedEntry implements Action {
     Log _log = Env.store.state.logsState.logs[logId];
     _entry = _entry.copyWith(logId: _log.id, currency: _log.currency);
     print('this is my new entry $_entry');
-    return _updateEntryState(
-        appState,
-        (entriesState) =>
-            entriesState.copyWith(selectedEntry: Maybe.some(_entry)));
+    return _updateEntryState(appState, (entriesState) => entriesState.copyWith(selectedEntry: Maybe.some(_entry)));
   }
 }
 
@@ -59,17 +53,14 @@ class SelectEntry implements Action {
   @override
   AppState updateState(AppState appState) {
     return _updateEntryState(
-        appState,
-        (entriesState) => entriesState.copyWith(
-            selectedEntry: Maybe.some(entriesState.entries[entryId])));
+        appState, (entriesState) => entriesState.copyWith(selectedEntry: Maybe.some(entriesState.entries[entryId])));
   }
 }
 
 class ClearSelectedEntry implements Action {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(appState,
-        (entriesState) => entriesState.copyWith(selectedEntry: Maybe.none()));
+    return _updateEntryState(appState, (entriesState) => entriesState.copyWith(selectedEntry: Maybe.none()));
   }
 }
 
@@ -129,8 +120,7 @@ class ChangeEntryLog implements Action {
       appState,
       (entriesState) => entriesState.copyWith(
         selectedEntry: Maybe.some(
-          entriesState.selectedEntry.value
-              .changeLog(log: log),
+          entriesState.selectedEntry.value.changeLog(log: log),
         ),
       ),
     );
@@ -159,14 +149,14 @@ class SetEntries implements Action {
   final Iterable<MyEntry> entryList;
 
   SetEntries({this.entryList});
-
+  //Only shows logs that have not been "deleted" using active filter
   @override
   AppState updateState(AppState appState) {
     return _updateEntries(appState, (entries) {
       entries.addEntries(
-        entryList.map(
-          (entry) => MapEntry(entry.id, entry),
-        ),
+        entryList.where((e) => e.active == true).map(
+              (entry) => MapEntry(entry.id, entry),
+            ),
       );
     });
   }

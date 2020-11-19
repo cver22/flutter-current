@@ -12,31 +12,25 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class EntriesScreen extends StatefulWidget {
-  const EntriesScreen({Key key}) : super(key: key);
-
-  @override
-  _EntriesScreenState createState() => _EntriesScreenState();
-}
-
-class _EntriesScreenState extends State<EntriesScreen> {
-  List<MyEntry> _entries = [];
+class EntriesScreen extends StatelessWidget {
+  EntriesScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<MyEntry> _entries = [];
     Env.entriesFetcher.loadEntries();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         //TODO deactivate add entries button if there is no default log
         //TODO pass default log or retrieve from state
         onPressed: () {
-          String defaultLogId =
-              Env.store.state.settingsState.settings.value.defaultLogId;
+          String defaultLogId = Env.store.state.settingsState.settings.value.defaultLogId;
           Map logs = Env.store.state.logsState.logs;
           if (defaultLogId != null && logs.containsKey(defaultLogId)) {
             //sets logId for selected entry to defaultLogId for new entry when navigating from FAB
             Env.store.dispatch(SetNewSelectedEntry(logId: Env.store.state.settingsState.settings.value.defaultLogId));
             Get.toNamed(ExpenseRoutes.addEditEntries);
+
           } else {
             //TODO user/error message, set a default log
             Scaffold.of(context).showSnackBar(SnackBar(
@@ -56,18 +50,13 @@ class _EntriesScreenState extends State<EntriesScreen> {
 
           if (entriesState.isLoading == true) {
             return LoadingIndicator(loadingMessage: 'Loading your entries...');
-          } else if (entriesState.isLoading == false &&
-              entriesState.entries.isNotEmpty) {
-            //Only shows logs that have not been "deleted"
-            //TODO can I move this logic to the state object and render this widget stateless?
-            _entries = entriesState.entries.entries
-                .map((e) => e.value)
-                .where((e) => e.active == true)
-                .toList();
+          } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
 
-            return buildListView();
-          } else if (entriesState.isLoading == false &&
-              entriesState.entries.isEmpty) {
+
+            _entries = entriesState.entries.entries.map((e) => e.value).toList();
+
+            return buildListView(_entries);
+          } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
             return EmptyContent();
           } else {
             //TODO pass meaningful error message
@@ -78,12 +67,11 @@ class _EntriesScreenState extends State<EntriesScreen> {
     );
   }
 
-  Widget buildListView() {
+  Widget buildListView(List<MyEntry> _entries) {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        padding:
-            const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];

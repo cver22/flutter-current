@@ -13,33 +13,29 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-//TODO refactor to build with ConnectState Widget to allow rebuild, issue created when I changed the log
-//TODO need to handle back button to dump selected entry
+class AddEditEntriesScreen extends StatelessWidget {
+   AddEditEntriesScreen({Key key}) : super(key: key);
 
-class AddEditEntriesScreen extends StatefulWidget {
-  const AddEditEntriesScreen({Key key}) : super(key: key);
-
-  @override
-  _AddEditEntriesScreenState createState() => _AddEditEntriesScreenState();
-}
-
-class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
-  MyEntry _entry;
-  Log _log;
-
-  void _submit() {
-    //TODO clear selected entry after saving without causing a fatal rebuild, also clear when using the back button
-    print('saving entry $_entry');
-    if (_entry.id != null) {
-      Env.entriesFetcher.updateEntry(_entry);
-    } else {
-      Env.entriesFetcher.addEntry(_entry);
+  void _submit({@required MyEntry entry}) {
+    print('saving entry $entry');
+    if (entry.id != null &&
+        entry !=
+            Env.store.state.entriesState.entries.entries
+                .map((e) => e.value)
+                .toList()
+                .firstWhere((element) => element.id == entry.id)) {
+      //update entry if id is not null and thus already exists an the entry has been modified
+      Env.entriesFetcher.updateEntry(entry);
+    } else if (entry.id == null) {
+      Env.entriesFetcher.addEntry(entry);
     }
     Get.back();
   }
 
   @override
   Widget build(BuildContext context) {
+    MyEntry _entry;
+    Log _log;
     return ConnectState<EntriesState>(
         where: notIdentical,
         map: (state) => state.entriesState,
@@ -62,7 +58,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
                     color: Colors.white,
                   ),
                   onPressed: () {
-                    if (_entry?.amount != null) _submit();
+                    if (_entry?.amount != null) _submit(entry: _entry);
                   },
                 ),
                 _entry?.id == null
@@ -80,12 +76,12 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
                       ),
               ],
             ),
-            body: _buildContents(entriesState),
+            body: _buildContents(entriesState: entriesState, log: _log, entry: _entry),
           );
         });
   }
 
-  Widget _buildContents(EntriesState entriesState) {
+  Widget _buildContents({@required EntriesState entriesState, @required Log log, @required MyEntry entry}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -95,7 +91,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildForm(entriesState),
+                _buildForm(entriesState: entriesState, log: log, entry: entry),
               ],
             ),
           ),
@@ -104,7 +100,7 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
     );
   }
 
-  Widget _buildForm(EntriesState entriesState) {
+  Widget _buildForm({@required EntriesState entriesState, @required Log log, @required MyEntry entry}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -112,20 +108,20 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Text('Log: '),
-            _logNameDropDown(entriesState),
+            _logNameDropDown(entriesState: entriesState),
           ],
         ),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             MyCurrencyPicker(
-                currency: _entry?.currency,
+                currency: entry?.currency,
                 returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
             Expanded(
               child: TextFormField(
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
-                initialValue: _entry?.amount?.toStringAsFixed(2) ?? null,
+                initialValue: entry?.amount?.toStringAsFixed(2) ?? null,
                 onChanged: (value) => Env.store.dispatch(
                   UpdateSelectedEntry(
                     amount: double.parse(value),
@@ -138,59 +134,56 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
         ),
         //CategoryPicker(entry: entriesState.selectedEntry.value),
         SizedBox(height: 10.0),
-        _entry?.logId == null ? Container() : _categoryButton(),
-        _entry?.categoryId == null ? Container() : _subcategoryButton(),
-        _commentFormField(),
+        entry?.logId == null ? Container() : _categoryButton(log: log, entry: entry),
+        entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
+        _commentFormField(entry: entry),
       ],
     );
   }
 
-  CategoryButton _categoryButton() {
+  CategoryButton _categoryButton({@required Log log, @required MyEntry entry}) {
     return CategoryButton(
       label: 'Select a Category',
       onPressed: () => {
         Get.dialog(
           CategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.category,
-            log: _log,
+            log: log,
             key: ExpenseKeys.categoriesDialog,
             settingsLogEntry: SettingsLogEntry.entry,
           ),
         ),
       },
       category:
-          _entry?.categoryId == null ? null : _log.categories.firstWhere((element) => element.id == _entry.categoryId),
+          entry?.categoryId == null ? null : log.categories.firstWhere((element) => element.id == entry.categoryId),
     );
   }
 
-  CategoryButton _subcategoryButton() {
+  CategoryButton _subcategoryButton({@required Log log, @required MyEntry entry}) {
     return CategoryButton(
       label: 'Select a Subcategory',
       onPressed: () => {
         Get.dialog(
           CategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-            log: _log,
+            log: log,
             key: ExpenseKeys.subcategoriesDialog,
             settingsLogEntry: SettingsLogEntry.entry,
-
           ),
         ),
       },
-
-      category: _entry?.subcategoryId == null
+      category: entry?.subcategoryId == null
           ? null
-          : _log.subcategories.firstWhere((element) => element.id == _entry.subcategoryId),
+          : log.subcategories.firstWhere((element) => element.id == entry.subcategoryId),
     );
   }
 
-  TextFormField _commentFormField() {
+  TextFormField _commentFormField({@required MyEntry entry}) {
     return TextFormField(
       decoration: InputDecoration(hintText: 'Comment'),
-      initialValue: _entry?.comment,
+      initialValue: entry?.comment,
       onChanged: (value) => Env.store.dispatch(
         UpdateSelectedEntry(comment: value),
-        //TODO need controllers (do I need controllers if I am using connect state?)
       ),
     );
   }
@@ -198,15 +191,14 @@ class _AddEditEntriesScreenState extends State<AddEditEntriesScreen> {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Entry':
-        //TODO likely causes error
-        Env.entriesFetcher.deleteEntry(_entry);
+        Env.entriesFetcher.deleteEntry(Env.store.state.entriesState.selectedEntry.value);
         Get.back();
         break;
     }
   }
 
   //TODO similar code used here and in settings - refactor to use same widget and pass required functions only
-  Widget _logNameDropDown(EntriesState entriesState) {
+  Widget _logNameDropDown({@required EntriesState entriesState}) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
       List<Log> _logs = Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
 

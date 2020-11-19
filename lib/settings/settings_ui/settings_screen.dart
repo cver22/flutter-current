@@ -89,7 +89,7 @@ class SettingsScreen extends StatelessWidget {
       }
 
       return DropdownButton<Log>(
-        value: _logs.firstWhere((e) => e.id == _defaultLogId),
+        value: _logs?.firstWhere((e) => e.id == _defaultLogId),
         onChanged: (Log log) {
           _defaultLogId = log.id;
           _store.dispatch(

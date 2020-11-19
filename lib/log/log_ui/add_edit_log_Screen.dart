@@ -12,40 +12,27 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class AddEditLogScreen extends StatefulWidget {
+class AddEditLogScreen extends StatelessWidget {
   const AddEditLogScreen({Key key}) : super(key: key);
-
-  @override
-  _AddEditLogScreenState createState() => _AddEditLogScreenState();
-}
-
-class _AddEditLogScreenState extends State<AddEditLogScreen> {
-  //TODO text editing controllers and dispose
-  Log _log = Log();
-  String _currency;
-  String _name;
 
   void _submit() {
     print('submit pressed');
-    _log = _log.copyWith(logName: _name, currency: _currency);
+    Log log = Env.store.state.logsState.selectedLog.value;
 
-    if (_log.id != null) {
-      Env.logsFetcher.updateLog(_log);
+    if (log.id != null) {
+      Env.logsFetcher.updateLog(log);
     } else {
-      Env.logsFetcher.addLog(_log);
+      Env.logsFetcher.addLog(log);
     }
 
     Get.back();
   }
 
   @override
-  void dispose() {
-    Env.store.dispatch(ClearSelectedLog());
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
+    Log _log = Log(currency: 'ca');
+    String _currency;
+    String _name;
     return ConnectState<LogsState>(
       where: notIdentical,
       map: (state) => state.logsState,
@@ -53,7 +40,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
         if (logsState.selectedLog.isSome) {
           _log = logsState.selectedLog.value;
         }
-        _currency = _log?.currency ?? 'ca'; //TODO change to home currency as default
+        _currency = _log?.currency; //TODO change to home currency as default
         _name = _log?.logName ?? null;
         return Scaffold(
           appBar: AppBar(
@@ -66,7 +53,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
                 ),
                 onPressed: () {
                   if (_name != null && _name != '') _submit();
-                }, //TODO need to use state to take care of this with SavingLogState
+                },
               ),
               _log.id == null
                   ? Container()
@@ -83,13 +70,13 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
                     ),
             ],
           ),
-          body: _buildContents(logsState, context),
+          body: _buildContents(context: context, log: _log, currency: _currency),
         );
       },
     );
   }
 
-  Widget _buildContents(LogsState logsState, BuildContext context) {
+  Widget _buildContents({@required BuildContext context, @required Log log, @required String currency}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -99,14 +86,17 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildForm(),
+                _buildForm(log: log),
                 SizedBox(height: 16.0),
-                _log.uid == null ? Container() : _categoryButton(context: context),
-                _log.uid == null ? Container() : _subcategoryButton(context: context),
+                log.uid == null ? Container() : _categoryButton(context: context, log: log),
+                log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
-                _log.uid == null
-                    ? MyCurrencyPicker(currency: _currency, returnCurrency: (currency) => _currency = currency)
-                    : Text('Currency: ${CurrencyPickerUtils.getCountryByIsoCode(_currency).currencyCode}'),
+                log.uid == null
+                    ? MyCurrencyPicker(
+                        currency: currency,
+                        returnCurrency: (currency) =>
+                            Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
+                    : Text('Currency: ${CurrencyPickerUtils.getCountryByIsoCode(currency).currencyCode}'),
               ],
             ),
           ),
@@ -115,11 +105,11 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
     );
   }
 
-  Widget _buildForm() {
+  Widget _buildForm({@required Log log}) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
-      initialValue: _name,
-      onChanged: (value) => _name = value,
+      initialValue: log.logName,
+      onChanged: (value) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(logName: value))),
       //TODO validate name cannot be empty
       //TODO need controllers
     );
@@ -128,14 +118,14 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Log':
-        Env.logsFetcher.deleteLog(_log);
+        Env.logsFetcher.deleteLog(Env.store.state.logsState.selectedLog.value);
         Get.back();
         break;
     }
   }
 
-  Widget _categoryButton({BuildContext context}) {
-    return _log.categories == null
+  Widget _categoryButton({@required BuildContext context, @required Log log}) {
+    return log.categories == null
         ? Container()
         : CategoryButton(
             label: 'Edit Log Categories',
@@ -144,7 +134,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
               showDialog(
                 context: context,
                 builder: (_) => CategoryListDialog(
-                  log: _log,
+                  log: log,
                   settingsLogEntry: SettingsLogEntry.log,
                   categoryOrSubcategory: CategoryOrSubcategory.category,
                 ),
@@ -154,8 +144,8 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
           );
   }
 
-  Widget _subcategoryButton({BuildContext context}) {
-    return _log.subcategories == null
+  Widget _subcategoryButton({@required BuildContext context, @required Log log}) {
+    return log.subcategories == null
         ? Container()
         : CategoryButton(
             label: 'Edit Log Subcategories',
@@ -168,7 +158,7 @@ class _AddEditLogScreenState extends State<AddEditLogScreen> {
               showDialog(
                 context: context,
                 builder: (_) => CategoryListDialog(
-                  log: _log,
+                  log: log,
                   settingsLogEntry: SettingsLogEntry.log,
                   categoryOrSubcategory: CategoryOrSubcategory.subcategory,
                 ),

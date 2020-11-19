@@ -27,8 +27,9 @@ class EntryListTile extends StatelessWidget {
       ),
       title: entry?.comment != null ? Text(entry.comment) : Text(''),
       subtitle: Text(categoriesSubcategoriesTags(log)),
-      trailing: Text('\$ ${entry?.amount.toString()}'),
+      trailing: Text('\$ ${entry?.amount?.toStringAsFixed(2)}'),
       onTap: () => {
+        Env.store.dispatch(ClearSelectedEntry()),
         Env.store.dispatch(SelectEntry(entryId: entry.id)),
         Get.toNamed(ExpenseRoutes.addEditEntries),
       },
@@ -50,11 +51,13 @@ class EntryListTile extends StatelessWidget {
     String subcategory = 'Subcategory';
 
     if (entry?.categoryId != null && log != null) {
-      category = '${log.categories.firstWhere((element) => element.id == entry?.categoryId)?.emojiChar} ${log.categories.firstWhere((element) => element.id == entry?.categoryId)?.name}';
+      category =
+          '${log.categories.firstWhere((element) => element.id == entry?.categoryId)?.emojiChar} ${log.categories.firstWhere((element) => element.id == entry?.categoryId)?.name}';
     }
 
     if (entry?.subcategoryId != null && log != null) {
-      subcategory = '${log.subcategories.firstWhere((element) => element.id == entry?.subcategoryId)?.emojiChar} ${log.subcategories.firstWhere((element) => element.id == entry?.subcategoryId)?.name}';
+      subcategory =
+          '${log.subcategories.firstWhere((element) => element.id == entry?.subcategoryId)?.emojiChar} ${log.subcategories.firstWhere((element) => element.id == entry?.subcategoryId)?.name}';
     }
 
     return '$category, $subcategory, tags';

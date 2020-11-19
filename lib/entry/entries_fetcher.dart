@@ -39,7 +39,6 @@ class EntriesFetcher {
   }
 
   Future<void> updateEntry(MyEntry entry) async {
-    _store.dispatch(ClearSelectedEntry());
     try {
       _entriesRepository.updateEntry(_store.state.authState.user.value, entry);
     } catch (e) {
@@ -48,10 +47,11 @@ class EntriesFetcher {
   }
 
   Future<void> deleteEntry(MyEntry entry) async {
-    _store.dispatch(ClearSelectedLog());
+
     try {
-      _entriesRepository.deleteEntry(
+      _entriesRepository.updateEntry(
           _store.state.authState.user.value, entry.copyWith(active: false));
+
     } catch (e) {
       print(e.toString());
     }

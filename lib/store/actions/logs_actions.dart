@@ -15,23 +15,31 @@ AppState _updateLogs(
 ) {
   Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
   updateInPlace(cloneMap);
-  return _updateLogState(
-      appState, (logsState) => logsState.copyWith(logs: cloneMap));
+  return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
 }
 
 class SetLogsLoading implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(
-        logsState: appState.logsState.copyWith(isLoading: true));
+    return appState.copyWith(logsState: appState.logsState.copyWith(isLoading: true));
   }
 }
 
 class SetLogsLoaded implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(
-        logsState: appState.logsState.copyWith(isLoading: false));
+    return appState.copyWith(logsState: appState.logsState.copyWith(isLoading: false));
+  }
+}
+
+class UpdateSelectedLog implements Action {
+  final Log log;
+
+  UpdateSelectedLog({this.log});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
   }
 }
 
@@ -42,35 +50,29 @@ class SelectLog implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogState(
-        appState,
-        (logsState) =>
-            logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId])));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId])));
   }
 }
 
 class ClearSelectedLog implements Action {
   @override
   AppState updateState(AppState appState) {
-    return _updateLogState(
-        appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
   }
 }
 
 class SetLogs implements Action {
   final Iterable<Log> logList;
-  Iterable<Log> activeLogList;
 
   SetLogs({this.logList});
 
   @override
   AppState updateState(AppState appState) {
-    activeLogList = logList.where((e) => e.active).toList();
     return _updateLogs(appState, (logs) {
       logs.addEntries(
-        activeLogList.map(
-          (log) => MapEntry(log.id, log),
-        ),
+        logList.where((e) => e.active).map(
+              (log) => MapEntry(log.id, log),
+            ),
       );
     });
   }
@@ -182,4 +184,3 @@ class ClearSelectedLog implements Action {
         (logsState) => logsState.copyWith(selectedLogId: Maybe.none()));
   }
 }*/
-

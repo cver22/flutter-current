@@ -1,4 +1,3 @@
-
 import 'package:expenses/app/common_widgets/empty_content.dart';
 import 'package:expenses/app/common_widgets/error_widget.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
@@ -12,25 +11,21 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class LogsScreen extends StatefulWidget {
-  const LogsScreen({Key key}) : super(key: key);
-
-  @override
-  _LogsScreenState createState() => _LogsScreenState();
-}
-
-class _LogsScreenState extends State<LogsScreen> {
-  List<Log> _logs = [];
+class LogsScreen extends StatelessWidget {
+  LogsScreen({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<Log> _logs = [];
     Env.logsFetcher.loadLogs();
     return ConnectState<LogsState>(
         where: notIdentical,
         map: (state) => state.logsState,
         builder: (logsState) {
           print('Rendering Logs Screen');
-          print(logsState.toString());
+          logsState.logs.values.forEach((element) {
+            print('Log name ${element.logName} is active: ${element.active}');
+          });
           if (logsState.isLoading == true) {
             return LoadingIndicator(loadingMessage: 'Loading your logs...');
           } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
@@ -43,7 +38,7 @@ class _LogsScreenState extends State<LogsScreen> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  buildListView(),
+                  buildListView(_logs),
                   SizedBox(height: 20.0),
                   addLogButton(context),
                 ],
@@ -67,7 +62,7 @@ class _LogsScreenState extends State<LogsScreen> {
         });
   }
 
-  Widget buildListView() {
+  Widget buildListView(List<Log> _logs) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: _logs.length,

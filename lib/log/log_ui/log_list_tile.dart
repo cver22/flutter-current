@@ -15,14 +15,17 @@ class LogListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(log.logName),
-      subtitle: Text(
-          CurrencyPickerUtils.getCountryByIsoCode(log.currency).currencyCode),
+      subtitle: Text(CurrencyPickerUtils.getCountryByIsoCode(log.currency).currencyCode),
       trailing: Icon(Icons.chevron_right),
       onTap: () => {
-        Env.store.dispatch(SetNewSelectedEntry(logId: log.id,)),
+        Env.store.dispatch(ClearSelectedEntry()),
+        Env.store.dispatch(SetNewSelectedEntry(
+          logId: log.id,
+        )),
         Get.toNamed(ExpenseRoutes.addEditEntries),
       },
       onLongPress: () => {
+        Env.store.dispatch(ClearSelectedLog()),
         Env.store.dispatch(SelectLog(logId: log.id)),
         Get.toNamed(ExpenseRoutes.addEditLog),
       },
