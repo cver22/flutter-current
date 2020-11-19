@@ -13,7 +13,7 @@ class CreateAccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return FlatButton(
-      child: Text('Create an Account'),
+      child: loginState.loginOrRegister == LoginOrRegister.login ? Text('Create an Account') : Text('Go to Login'),
       onPressed: () {
         Env.store.dispatch(UpdateLoginRegState(
             loginRegState: loginState.copyWith(
@@ -23,10 +23,7 @@ class CreateAccountButton extends StatelessWidget {
   }
 
   LoginOrRegister _changeLoginRegister(LoginRegState loginState) {
-    if(loginState.loginOrRegister == LoginOrRegister.login){
-      return LoginOrRegister.register;
-    } else{
-      return LoginOrRegister.login;
-    }
+    //switches function of ui and logic
+    return loginState.loginOrRegister == LoginOrRegister.login ? LoginOrRegister.register : LoginOrRegister.login;
   }
 }

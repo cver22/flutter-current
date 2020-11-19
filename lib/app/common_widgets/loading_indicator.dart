@@ -12,8 +12,9 @@ class LoadingIndicator extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
+            Text(loadingMessage, style: TextStyle(height: 20.0),),
+            SizedBox(height: 10.0,),
             CircularProgressIndicator(),
-            Text(loadingMessage),
           ],
         ));
   }

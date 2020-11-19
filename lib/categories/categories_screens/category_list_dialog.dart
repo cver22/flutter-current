@@ -50,54 +50,44 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   @override
   Widget build(BuildContext context) {
     //determines which list is passed based on if it comes from default or the entry
-    switch (widget.settingsLogEntry) {
-      case SettingsLogEntry.settings:
-        _settings = Env.store.state.settingsState.settings.value;
-        _categories = _settings.defaultCategories;
-        _subcategories = _settings.defaultSubcategories;
-        break;
-      case SettingsLogEntry.log:
-        if (_log != null) {
-          _categories = widget.log.categories;
-          if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
-            _subcategories = _log.subcategories;
-          }
-        }
-        break;
-      case SettingsLogEntry.entry:
-        if (_log != null) {
-          _categories = _log.categories;
-          if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
-            _subcategories = _log.subcategories
-                .where((element) =>
-                    element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.categoryId)
-                .toList();
-          }
-        }
-        break;
-    }
 
     if (_settingsLogEntry == SettingsLogEntry.settings) {
       return ConnectState(
           where: notIdentical,
           map: (state) => state.settingsState,
           builder: (state) {
+            _settings = Env.store.state.settingsState.settings.value;
+            _categories = _settings.defaultCategories;
+            _subcategories = _settings.defaultSubcategories;
             print('the current state is $state');
-            return buildDialog(_categories, _subcategories, context, _settingsLogEntry, _categoryOrSubcategory, null);
+            return buildDialog(context);
           });
     } else {
       return ConnectState(
           where: notIdentical,
           map: (state) => state.logsState,
           builder: (state) {
+            if (_log != null) {
+              _categories = _log.categories;
+
+              if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
+                _subcategories = _settingsLogEntry == SettingsLogEntry.log
+                    ? _log.subcategories
+                    : _log.subcategories
+                        .where((element) =>
+                            element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.categoryId)
+                        .toList();
+              }
+            } else {
+              print('An error has occurred in category_list_dialog at connect state');
+            }
             print('the current state is $state');
-            return buildDialog(_categories, _subcategories, context, _settingsLogEntry, _categoryOrSubcategory, _log);
+            return buildDialog(context);
           });
     }
   }
 
-  Dialog buildDialog(List<MyCategory> _categories, List<MySubcategory> _subcategories, BuildContext context,
-      SettingsLogEntry _settingsLogEntry, CategoryOrSubcategory _categoryOrSubcategory, Log log) {
+  Dialog buildDialog(BuildContext context) {
     return Dialog(
       //TODO move to constants
       elevation: 5.0,
@@ -139,13 +129,91 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   Widget _categoryOrSubcategoryListView(BuildContext context) {
     return Expanded(
       flex: 1,
-      child: ListView(
-          shrinkWrap: true,
+      child: ReorderableListView(
+          scrollController: PrimaryScrollController.of(context) ?? ScrollController(),
+          onReorder: _onReorder,
           //TODO implement onReorder
           children: widget.categoryOrSubcategory == CategoryOrSubcategory.subcategory
               ? _subcategoryList(context)
               : _categoryList(context)),
     );
+  }
+
+  void _onReorder(int oldIndex, int newIndex) {
+
+    //TODO, rethink this
+
+    List<MySubcategory> _allSubcategories = [];
+    bool reOrdered = false;
+    if (newIndex > oldIndex) {
+      newIndex -= 1;
+    }
+    print('initial oldIndex $oldIndex and initial newIndex $newIndex');
+
+    //ensures headings can not be moved
+    if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory &&
+        _organizedSubcategories[oldIndex].parentCategoryId != null) {
+      // Modifies the new and old index to reflect the position of the element in the original _subcategories
+      _allSubcategories = _log?.subcategories ?? _settings.defaultSubcategories;
+
+      if (_settingsLogEntry != SettingsLogEntry.entry) {
+        int headings = 0;
+        for (int i = 0; i < _organizedSubcategories.length; i++) {
+          if (_organizedSubcategories[i].parentCategoryId == null) {
+            headings += 1;
+          } else if (i == newIndex) {
+            newIndex = newIndex - headings;
+          }
+        }
+        reOrdered = true;
+      } else {
+        //reorder entry subcategories
+        MySubcategory subcategoryBefore;
+        MySubcategory subcategoryAfter;
+        if (newIndex == 0 && _organizedSubcategories.length > 1) {
+          subcategoryAfter = _organizedSubcategories[newIndex + 1];
+          newIndex = _allSubcategories.indexOf(subcategoryAfter) - 1;
+        } else if (newIndex <= _organizedSubcategories.length && _organizedSubcategories.length > 1) {
+          subcategoryBefore = _organizedSubcategories[newIndex - 1];
+          newIndex = _allSubcategories.indexOf(subcategoryBefore) + 1;
+        }
+        reOrdered = true;
+      }
+
+      if (reOrdered) {
+        oldIndex = _allSubcategories.indexOf(_organizedSubcategories[oldIndex]);
+        print('modified oldIndex $oldIndex and modified newIndex $newIndex');
+
+        MySubcategory subcategory = _allSubcategories.removeAt(oldIndex);
+        _allSubcategories.insert(newIndex, subcategory);
+      }
+    } else if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
+      MyCategory category = _categories.removeAt(oldIndex);
+      _categories.insert(newIndex, category);
+      reOrdered = true;
+    } else {
+      print('That tile can\'t be reordered');
+    }
+
+    //save reordered list to the appropriate location
+    if (reOrdered) {
+      switch (_settingsLogEntry) {
+        case SettingsLogEntry.settings:
+          Env.store.dispatch(UpdateSettings(
+              settings: Maybe.some(
+                  _settings.copyWith(defaultCategories: _categories, defaultSubcategories: _allSubcategories))));
+          break;
+        case SettingsLogEntry.entry:
+          Env.logsFetcher.updateLog(_log.copyWith(categories: _categories, subcategories: _allSubcategories));
+          break;
+        case SettingsLogEntry.log:
+          Env.logsFetcher.updateLog(_log.copyWith(categories: _categories, subcategories: _allSubcategories));
+          break;
+        default:
+          print('Error saving new subcategories');
+          break;
+      }
+    }
   }
 
   List<CategoryListTile> _categoryList(BuildContext context) {

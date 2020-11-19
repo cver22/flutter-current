@@ -28,17 +28,19 @@ class HomeScreen extends StatelessWidget {
 
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);
-            /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
-                ModalRoute.withName(ExpenseRoutes.home));*/
+
           });
+          /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
+                ModalRoute.withName(ExpenseRoutes.home));*/
         } else if (authState.user.isNone && authState.isLoading == false) {
-          Future.delayed(Duration(seconds: 1), () {
+          Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.loginRegister);
-           /* Navigator.pushNamedAndRemoveUntil(
+
+          });
+          /* Navigator.pushNamedAndRemoveUntil(
                 context,
                 ExpenseRoutes.loginRegister,
                 ModalRoute.withName(ExpenseRoutes.home));*/
-          });
         }
 
         //TODO prevent returning to the splash screen with the back button

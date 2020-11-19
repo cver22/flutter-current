@@ -1,5 +1,6 @@
 import 'package:expenses/app/app_screen.dart';
 import 'package:expenses/app/home_screen.dart';
+import 'package:expenses/app/splash_screen.dart';
 import 'package:expenses/entry/entry_screen/add_edit_entries_screen.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_ui/add_edit_log_Screen.dart';
@@ -32,6 +33,7 @@ class App extends StatelessWidget {
         GetPage(
             name: ExpenseRoutes.addEditEntries,
             page: () => AddEditEntriesScreen(key: ExpenseKeys.addEditEntriesScreen)),
+
 
       ],
       initialRoute: ExpenseRoutes.home,

@@ -10,5 +10,6 @@ class ExpenseRoutes {
   static final categories = '/categoriesDialog';
   static final subcategories = '/subcategoriesDialog';
   static final settings = "/subcategoriesScreen";
+  static final splashScreen = "/splashScreen";
 
 }

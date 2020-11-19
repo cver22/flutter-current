@@ -11,8 +11,6 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/dialog/dialog_route.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key key}) : super(key: key);
@@ -44,7 +42,7 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   RaisedButton(
                       //TODO convert to Get or not necessary?
-                      child: Text('Rest All Settings'),
+                      child: Text('Reset All Settings'),
                       onPressed: () => {
                         showDialog(context: context, barrierDismissible: true, builder: (BuildContext context) {
                           return AlertDialog(

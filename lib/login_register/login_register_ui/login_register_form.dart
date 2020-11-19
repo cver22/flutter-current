@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
@@ -8,6 +9,8 @@ import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:expenses/utils/expense_routes.dart';
 
 
 
@@ -47,6 +50,13 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
           print('Rendering Login Register Form');
           print('Login status: ${state.loginStatus}');
           print('LoginOrRegister: ${state.loginOrRegister}');
+
+          if(Env.store.state.authState.user.isSome){
+            Future.delayed(Duration.zero, () {
+              Get.toNamed(ExpenseRoutes.home);
+
+            });
+          }
 
           return Stack(
             children: <Widget>[
@@ -112,7 +122,12 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                   ),
                 ),
               ),
-              //TODO add modal progress indicator
+
+              if (state.isSubmitting == true) Stack(children: [
+                Opacity(opacity: 0.5,child: ModalBarrier(dismissible: false, color: Colors.grey)),
+                LoadingIndicator(loadingMessage: state.loginOrRegister == LoginOrRegister.login ? 'Logging In' : 'Registering'),
+
+              ],) else Container(),
             ],
           );
         });
