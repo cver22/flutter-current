@@ -70,9 +70,9 @@ class SetLogs implements Action {
   AppState updateState(AppState appState) {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
-        logList.where((e) => e.active).map(
-              (log) => MapEntry(log.id, log),
-            ),
+        logList.map(
+          (log) => MapEntry(log.id, log),
+        ),
       );
     });
   }

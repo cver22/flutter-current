@@ -44,31 +44,33 @@ class SettingsScreen extends StatelessWidget {
                       //TODO convert to Get or not necessary?
                       child: Text('Reset All Settings'),
                       onPressed: () => {
-                        showDialog(context: context, barrierDismissible: true, builder: (BuildContext context) {
-                          return AlertDialog(
-                            title: Text('Reset Settings'),
-                            content: SingleChildScrollView(
-                              child: Text('Are you sure you want to reset all settings?'),
-                            ),
-                            actions: [
-                              TextButton(
-                                child: Text('Cancel'),
-                                onPressed: () {
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                              TextButton(
-                                child: Text('Yes'),
-                                onPressed: () {
-                                  Env.settingsFetcher.readResetAppSettings(resetSettings: true);
-                                  Navigator.of(context).pop();
-                                },
-                              ),
-                            ],
-
-                          );
-                        })
-                      }),
+                            showDialog(
+                                context: context,
+                                barrierDismissible: true,
+                                builder: (BuildContext context) {
+                                  return AlertDialog(
+                                    title: Text('Reset Settings'),
+                                    content: SingleChildScrollView(
+                                      child: Text('Are you sure you want to reset all settings?'),
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        child: Text('Cancel'),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      TextButton(
+                                        child: Text('Yes'),
+                                        onPressed: () {
+                                          Env.settingsFetcher.readResetAppSettings(resetSettings: true);
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                    ],
+                                  );
+                                })
+                          }),
                 ],
               ),
             ),
@@ -84,8 +86,10 @@ class SettingsScreen extends StatelessWidget {
 
       String _defaultLogId = settingsState.settings.value.defaultLogId;
 
-      if (_defaultLogId == null && !_logsMap.containsKey(_defaultLogId)) {
+      //catches error if default log is null or is no longer active
+      if (_defaultLogId == null || !_logsMap.containsKey(_defaultLogId)) {
         _defaultLogId = _logs.first.id;
+        print(_defaultLogId);
       }
 
       return DropdownButton<Log>(

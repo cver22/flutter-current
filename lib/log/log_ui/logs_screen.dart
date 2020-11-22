@@ -34,6 +34,7 @@ class LogsScreen extends StatelessWidget {
             _logs = logsState.logs.entries.map((e) => e.value).toList();
 
             return SingleChildScrollView(
+              scrollDirection: Axis.vertical,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
