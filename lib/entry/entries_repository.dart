@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/entry/entry_model/my_entry_entity.dart';
+import 'package:expenses/utils/db_consts.dart';
 
 abstract class EntriesRepository {
   Future<void> addNewEntry(MyEntry entry);
@@ -22,7 +23,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   //TODO need to filter by contains UID
   @override
   Stream<List<MyEntry>> loadEntries(User user) {
-    return entriesCollection.snapshots().map((snapshot) {
+    return entriesCollection.where(ACTIVE, isEqualTo: true).snapshots().map((snapshot) {
       return snapshot.documents.map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc))).toList();
     });
   }

@@ -154,7 +154,7 @@ class SetEntries implements Action {
   AppState updateState(AppState appState) {
     return _updateEntries(appState, (entries) {
       entries.addEntries(
-        entryList.where((e) => e.active == true).map(
+        entryList.map(
               (entry) => MapEntry(entry.id, entry),
             ),
       );
