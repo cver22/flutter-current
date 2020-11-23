@@ -5,23 +5,23 @@ import 'package:json_annotation/json_annotation.dart';
 part 'my_category_entity.g.dart';
 
 @immutable
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class MyCategoryEntity extends Equatable {
   final String id;
   final String name;
-
   final bool isDefault;
   final String emojiChar;
+  final Map<String, int> tagIdFrequency;
 
   const MyCategoryEntity(
-      {this.id, this.name, this.isDefault = false, this.emojiChar});
+      {this.id, this.name, this.isDefault = false, this.emojiChar, this.tagIdFrequency});
 
   @override
-  List<Object> get props => [id, name, isDefault, emojiChar];
+  List<Object> get props => [id, name, isDefault, emojiChar, tagIdFrequency];
 
   @override
   String toString() {
-    return 'MyCategoryEntity {id: $id, name: $name, isDefault: $isDefault, emojiChar $emojiChar}';
+    return 'MyCategoryEntity {id: $id, name: $name, isDefault: $isDefault, emojiChar $emojiChar tagIdFrequency: $tagIdFrequency}';
   }
 
   factory MyCategoryEntity.fromJson(Map<String, dynamic> json) =>

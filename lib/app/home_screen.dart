@@ -25,6 +25,7 @@ class HomeScreen extends StatelessWidget {
 
           Env.settingsFetcher.readResetAppSettings(resetSettings: false);
           print('current settings ${Env.store.state.settingsState.settings}');
+          Env.logsFetcher.loadLogs();
 
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);

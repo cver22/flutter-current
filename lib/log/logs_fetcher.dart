@@ -7,7 +7,8 @@ import 'package:expenses/log/logs_repository.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:flutter/foundation.dart';
-
+import 'package:expenses/settings/settings_model/settings_state.dart';
+import 'package:expenses/utils/maybe.dart';
 
 class LogsFetcher {
   final AppStore _store;
@@ -50,7 +51,6 @@ class LogsFetcher {
     _store.dispatch(ClearSelectedLog());
     try {
       _logsRepository.updateLog(_store.state.authState.user.value, log);
-
     } catch (e) {
       print(e.toString());
     }
@@ -60,6 +60,14 @@ class LogsFetcher {
     //TODO need error checking if this log is the default log, need to make another log the default log
     _store.dispatch(ClearSelectedLog());
     try {
+      SettingsState settings = SettingsState(settings: _store.state.settingsState.settings);
+
+      //ensures the default log is updated if the current log is default and deleted
+      if (settings.settings.value.defaultLogId == log.id) {
+        Env.store.dispatch(UpdateSettings(
+            settings: Maybe.some(settings.settings.value.copyWith(
+                defaultLogId: _store.state.logsState.logs.values.firstWhere((element) => element.id != log.id).id))));
+      }
       _logsRepository.updateLog(_store.state.authState.user.value, log.copyWith(active: false));
     } catch (e) {
       print(e.toString());

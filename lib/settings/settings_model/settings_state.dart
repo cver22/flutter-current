@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/env.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/utils/maybe.dart';
 

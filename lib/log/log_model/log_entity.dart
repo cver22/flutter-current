@@ -4,6 +4,8 @@ import 'package:expenses/categories/categories_model/my_category/my_category.dar
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
+import 'package:expenses/categories/categories_model/tags/tag.dart';
+import 'package:expenses/categories/categories_model/tags/tag_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
@@ -19,6 +21,7 @@ class LogEntity extends Equatable {
   final Map<String, MyCategory> categories;
   final Map<String, MySubcategory> subcategories;
   final Map<String, dynamic> members;
+  final Map<String, Tag> tags;
 
   const LogEntity(
       {this.uid,
@@ -29,7 +32,8 @@ class LogEntity extends Equatable {
       this.subcategories,
       this.active,
         this.archive,
-      this.members});
+      this.members,
+      this.tags});
 
   //DEPRECATED
   //for use in other database types
@@ -46,11 +50,11 @@ class LogEntity extends Equatable {
 
   @override
   List<Object> get props =>
-      [uid, id, logName, currency, categories, subcategories, active, archive, members];
+      [uid, id, logName, currency, categories, subcategories, active, archive, members, tags];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, $SUBCATEGORIES: $subcategories, active: $active, archive: $archive, members: $members}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, $SUBCATEGORIES: $subcategories, active: $active, archive: $archive, members: $members, tags: $tags}';
   }
 
   //DEPRECATED
@@ -81,6 +85,9 @@ class LogEntity extends Equatable {
               key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       active: snap.data[ACTIVE],
       archive: snap.data[ARCHIVE],
+      tags: (snap.data[TAG] as Map<String, dynamic>).map(
+              (key, value) => MapEntry(
+              key, Tag.fromEntity(TagEntity.fromJson(value)))),
     );
   }
 
@@ -94,6 +101,8 @@ class LogEntity extends Equatable {
       SUBCATEGORIES: subcategories
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       ACTIVE: active,
+      TAG: tags
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
     };
   }
 }

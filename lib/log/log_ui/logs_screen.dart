@@ -17,7 +17,6 @@ class LogsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Log> _logs = [];
-    Env.logsFetcher.loadLogs();
     return ConnectState<LogsState>(
         where: notIdentical,
         map: (state) => state.logsState,

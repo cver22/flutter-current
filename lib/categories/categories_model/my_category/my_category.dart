@@ -8,11 +8,12 @@ class MyCategory extends Equatable {
   final String name;
   final bool isDefault;
   final String emojiChar;
+  final Map<String,int> tagIdFrequency;
 
-  MyCategory({this.id, @required this.name, this.isDefault = false, this.emojiChar});
+  MyCategory({this.id, @required this.name, this.isDefault = false, this.emojiChar, this.tagIdFrequency});
 
   @override
-  List<Object> get props => [id, name, isDefault, emojiChar];
+  List<Object> get props => [id, name, isDefault, emojiChar, this.tagIdFrequency];
 
   MyCategory copyWith({String id, String name, bool isDefault, String emojiChar}) {
     return MyCategory(
@@ -20,12 +21,13 @@ class MyCategory extends Equatable {
       name: name ?? this.name,
       isDefault: isDefault ?? this.isDefault,
       emojiChar: emojiChar ?? this.emojiChar,
+      tagIdFrequency: tagIdFrequency ?? this.tagIdFrequency,
     );
   }
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, isDefault: $isDefault, emojiChar: $emojiChar}';
+    return 'MyCategory {id: $id, name: $name, isDefault: $isDefault, emojiChar: $emojiChar, tagIdFrequency: $tagIdFrequency}';
   }
 
   MyCategoryEntity toEntity() {
@@ -34,6 +36,7 @@ class MyCategory extends Equatable {
       name: name,
       isDefault: isDefault,
       emojiChar: emojiChar,
+      tagIdFrequency: tagIdFrequency, // TODO Fix this
     );
   }
 
@@ -43,6 +46,8 @@ class MyCategory extends Equatable {
       name: entity.name,
       isDefault: entity.isDefault,
       emojiChar: entity.emojiChar,
+      tagIdFrequency: entity.tagIdFrequency,
+      //TODO start here
     );
   }
 }

@@ -13,6 +13,8 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+
+//TODO change back to stateful widget to utilize focus node
 class AddEditEntriesScreen extends StatelessWidget {
    AddEditEntriesScreen({Key key}) : super(key: key);
 
@@ -40,7 +42,6 @@ class AddEditEntriesScreen extends StatelessWidget {
         where: notIdentical,
         map: (state) => state.entriesState,
         builder: (entriesState) {
-          //TODO if navigating from FAB, need to create a selected entry
           //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
           _entry = Env.store.state.entriesState.selectedEntry.value;
           _log = Env.store.state.logsState.logs[_entry.logId];
@@ -119,6 +120,7 @@ class AddEditEntriesScreen extends StatelessWidget {
                 returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
             Expanded(
               child: TextFormField(
+                autofocus: true,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
                 initialValue: entry?.amount?.toStringAsFixed(2) ?? null,
