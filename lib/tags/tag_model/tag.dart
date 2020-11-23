@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/tags/tag_entity.dart';
+import 'package:expenses/tags/tag_model/tag_entity.dart';
 import 'package:meta/meta.dart';
 
 @immutable

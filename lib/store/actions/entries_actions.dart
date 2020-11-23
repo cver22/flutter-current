@@ -39,7 +39,7 @@ class SetNewSelectedEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry _entry = MyEntry();
     Log _log = Env.store.state.logsState.logs[logId];
-    _entry = _entry.copyWith(logId: _log.id, currency: _log.currency);
+    _entry = _entry.copyWith(logId: _log.id, currency: _log.currency, dateTime: DateTime.now());
     print('this is my new entry $_entry');
     return _updateEntryState(appState, (entriesState) => entriesState.copyWith(selectedEntry: Maybe.some(_entry)));
   }

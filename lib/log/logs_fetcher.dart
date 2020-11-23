@@ -6,6 +6,7 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/logs_repository.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:flutter/foundation.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 import 'package:expenses/utils/maybe.dart';
@@ -34,11 +35,11 @@ class LogsFetcher {
     Log _log = log;
     List<MyCategory> categories = Env.store.state.settingsState.settings.value.defaultCategories;
     List<MySubcategory> subcategories = Env.store.state.settingsState.settings.value.defaultSubcategories;
+    List<Tag> tags = [];
 
     _log =
-        _log.copyWith(uid: _store.state.authState.user.value.id, categories: categories, subcategories: subcategories);
+        _log.copyWith(uid: _store.state.authState.user.value.id, categories: categories, subcategories: subcategories, tags: tags);
 
-    print('these are my categories ${_log.categories}');
 
     try {
       _logsRepository.addNewLog(_store.state.authState.user.value, _log);

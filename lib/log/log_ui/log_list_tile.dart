@@ -21,6 +21,7 @@ class LogListTile extends StatelessWidget {
         Env.store.dispatch(ClearSelectedEntry()),
         Env.store.dispatch(SetNewSelectedEntry(
           logId: log.id,
+
         )),
         Get.toNamed(ExpenseRoutes.addEditEntries),
       },

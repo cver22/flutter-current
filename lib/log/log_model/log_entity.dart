@@ -4,8 +4,8 @@ import 'package:expenses/categories/categories_model/my_category/my_category.dar
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
-import 'package:expenses/categories/categories_model/tags/tag.dart';
-import 'package:expenses/categories/categories_model/tags/tag_entity.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
+import 'package:expenses/tags/tag_model/tag_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 

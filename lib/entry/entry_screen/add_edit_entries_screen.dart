@@ -1,4 +1,5 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
+import 'package:expenses/entry/entry_screen/entries_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/entries_state.dart';
@@ -12,11 +13,11 @@ import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
+import 'package:date_time_picker/date_time_picker.dart';
 
 //TODO change back to stateful widget to utilize focus node
 class AddEditEntriesScreen extends StatelessWidget {
-   AddEditEntriesScreen({Key key}) : super(key: key);
+  AddEditEntriesScreen({Key key}) : super(key: key);
 
   void _submit({@required MyEntry entry}) {
     print('saving entry $entry');
@@ -77,12 +78,16 @@ class AddEditEntriesScreen extends StatelessWidget {
                       ),
               ],
             ),
-            body: _buildContents(entriesState: entriesState, log: _log, entry: _entry),
+            body: _buildContents(context: context, entriesState: entriesState, log: _log, entry: _entry),
           );
         });
   }
 
-  Widget _buildContents({@required EntriesState entriesState, @required Log log, @required MyEntry entry}) {
+  Widget _buildContents(
+      {@required BuildContext context,
+      @required EntriesState entriesState,
+      @required Log log,
+      @required MyEntry entry}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -92,7 +97,7 @@ class AddEditEntriesScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildForm(entriesState: entriesState, log: log, entry: entry),
+                _buildForm(context: context, entriesState: entriesState, log: log, entry: entry),
               ],
             ),
           ),
@@ -101,7 +106,11 @@ class AddEditEntriesScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildForm({@required EntriesState entriesState, @required Log log, @required MyEntry entry}) {
+  Widget _buildForm(
+      {@required BuildContext context,
+      @required EntriesState entriesState,
+      @required Log log,
+      @required MyEntry entry}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -135,6 +144,8 @@ class AddEditEntriesScreen extends StatelessWidget {
           ],
         ),
         //CategoryPicker(entry: entriesState.selectedEntry.value),
+        SizedBox(height: 10.0),
+        EntriesDateButton(context: context, log: log, entry: entry),
         SizedBox(height: 10.0),
         entry?.logId == null ? Container() : _categoryButton(log: log, entry: entry),
         entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
