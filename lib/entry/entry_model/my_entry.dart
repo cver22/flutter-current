@@ -16,7 +16,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.subcategoryId,
       this.amount,
       this.comment,
-      this.dateTime});
+      this.dateTime,
+      this.tagIDs});
 
   final String id;
   final String logId;
@@ -27,6 +28,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   final double amount;
   final String comment;
   final DateTime dateTime;
+  final List<String> tagIDs;
 
   MyEntry copyWith({
     String id,
@@ -38,6 +40,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     double amount,
     String comment,
     DateTime dateTime,
+    List<String> tagIDs,
   }) {
     return MyEntry(
       id: id ?? this.id,
@@ -49,6 +52,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: amount ?? this.amount,
       comment: comment ?? this.comment,
       dateTime: dateTime ?? this.dateTime,
+      tagIDs: tagIDs ?? this.tagIDs,
     );
   }
 
@@ -57,12 +61,15 @@ class MyEntry extends Equatable with ChangeNotifier {
     String _category = this.categoryId;
     String _subcategory = this.subcategoryId;
     String _currency = this.currency;
+    List<String> _tagIDs = this.tagIDs;
 
     if (log.id != this.logId) {
       _logId = log.id;
       _currency = log.currency;
       _category = null;
       _subcategory = null;
+      _tagIDs = null;
+
     }
 
     return MyEntry(
@@ -75,6 +82,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,
+      tagIDs: _tagIDs,
     );
   }
 
@@ -97,18 +105,19 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,
+      tagIDs: this.tagIDs,
     );
   }
 
   @override
-  List<Object> get props => [id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime];
+  List<Object> get props => [id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs];
 
   @override
   String toString() {
     return 'Entry {id: $id, logId: $logId, '
         'currency: $currency, active: $active, category: $categoryId, '
         'subcategory: $subcategoryId, amount: $amount, comment: $comment, '
-        'dateTime: $dateTime}';
+        'dateTime: $dateTime, tagIDs: $tagIDs}';
   }
 
   MyEntryEntity toEntity() {
@@ -122,6 +131,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: amount,
       comment: comment,
       dateTime: dateTime,
+      tagIDs: Map<String, String>.fromIterable(tagIDs,
+          key: (e) => e, value: (e) => e),
     );
   }
 
@@ -136,6 +147,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: entity.amount,
       comment: entity.comment,
       dateTime: entity.dateTime,
+      tagIDs: entity.tagIDs.entries.map((e) => e.value).toList(),
+
     );
   }
 
