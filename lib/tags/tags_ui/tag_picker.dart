@@ -6,7 +6,7 @@ import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_collection.dart';
-import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/tags/tags_ui/tag_editor.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -18,33 +18,11 @@ class TagPicker extends StatefulWidget {
 }
 
 class _TagPickerState extends State<TagPicker> {
-  final _controller = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
-  List<Tag> _logAllTags = [];
+    List<Tag> _logAllTags = [];
   List<String> _selectedEntryTags = [], _categoryRecentTags = [], _logRecentTags = [];
   Map<String, int> _categoryAllTags = {};
-  Tag _currentTag;
   MyEntry _entry;
   Log _log;
-  bool newTag = false;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller.addListener(() {
-      final text = _controller.text.toLowerCase();
-      _controller.value = _controller.value.copyWith(
-        text: text,
-        selection: TextSelection(baseOffset: text.length, extentOffset: text.length),
-        composing: TextRange.empty,
-      );
-    });
-  }
-
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,48 +37,8 @@ class _TagPickerState extends State<TagPicker> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                children: [
-                  Text(
-                    '#',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: EMOJI_SIZE,
-                    ),
-                  ),
-                  TextFormField(
-                    key: _formKey,
-                    decoration: InputDecoration(hintText: 'Tag your transaction'),
-                    controller: _controller,
-                    keyboardType: TextInputType.text,
-                    validator: (name) {
-                      Pattern pattern = r'^[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)*$';
-                      RegExp regex = new RegExp(pattern);
-                      if (!regex.hasMatch(name))
-                        return 'Invalid tag';
-                      else
-                        return null;
-                    },
-                  ),
-                  IconButton(
-                      icon: newTag ? Icon(Icons.add) : Icon(Icons.check),
-                      onPressed: () {
-                        //can be used to edit
-                        if (_formKey.currentState.validate()) {
-                          _currentTag = _currentTag.copyWith(name: _controller.text);
-                          if (_currentTag.id == null) {
-                            newTag = true;
-                          }
-                          Env.logsFetcher.updateLog(_log.addEditLogTags(log: _log, tag: _currentTag));
-                          if (!_selectedEntryTags.contains(_currentTag.id) && newTag) {
-                            _selectedEntryTags.add(_currentTag.id);
-                            Env.store.dispatch(UpdateSelectedEntry(tagIDs: _selectedEntryTags));
-                          }
-                          _controller.clear();
-                        }
-                      }),
-                ],
-              ),
+              TagEditor(selectedEntryTags: _selectedEntryTags, log: _log),
+
               SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -122,6 +60,7 @@ class _TagPickerState extends State<TagPicker> {
           );
         });
   }
+
 
   void _tagListBuilders(int maxTags) {
     //builds their respective preliminary tag lists if the entry has a log and a category

@@ -4,6 +4,7 @@ import 'package:expenses/entry/entry_model/entries_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
+import 'package:expenses/tags/tag_model/selected_tag_state.dart';
 
 import 'package:meta/meta.dart';
 
@@ -14,13 +15,15 @@ class AppState extends Equatable {
   final LogsState logsState;
   final EntriesState entriesState;
   final SettingsState settingsState;
+  final SelectedTagState selectedTagState;
 
   AppState(
       {@required this.authState,
       @required this.loginRegState,
       @required this.logsState,
       @required this.entriesState,
-      @required this.settingsState});
+      @required this.settingsState,
+      @required this.selectedTagState});
 
   AppState copyWith({
     AuthState authState,
@@ -28,6 +31,7 @@ class AppState extends Equatable {
     LogsState logsState,
     EntriesState entriesState,
     SettingsState settingsState,
+    SelectedTagState selectedTagState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -35,6 +39,7 @@ class AppState extends Equatable {
       logsState: logsState ?? this.logsState,
       entriesState: entriesState ?? this.entriesState,
       settingsState: settingsState ?? this.settingsState,
+      selectedTagState: selectedTagState ?? this.selectedTagState,
     );
   }
 
@@ -45,6 +50,7 @@ class AppState extends Equatable {
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
       settingsState: SettingsState.initial(),
+      selectedTagState: SelectedTagState.initial(),
     );
   }
 
@@ -53,5 +59,5 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState];
+      [authState, loginRegState, logsState, entriesState, settingsState, selectedTagState];
 }

@@ -26,7 +26,7 @@ class TagCollection extends StatelessWidget {
   }
 
 //TODO maybe filter by what is typed
-//TODO need to be able to pass an on edit that passes the tag back to the tag picker to edit it, maybe make a current tag state and separate it from the rest of the system
+//TODO use tag state to pass onEdit to the selector
 
 
 }
