@@ -8,7 +8,7 @@ class Tag extends Equatable {
   final String name;
   final int logFrequency;
 
-  Tag({this.id, this.name, this.logFrequency});
+  Tag({this.id, this.name, this.logFrequency = 0 });
 
   Tag copyWith({String id, String name}) {
     return Tag(

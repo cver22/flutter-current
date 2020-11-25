@@ -74,6 +74,7 @@ class UpdateSelectedEntry implements Action {
   final double amount;
   final String comment;
   final DateTime dateTime;
+  final List<String> tagIDs;
 
   UpdateSelectedEntry(
       {this.id,
@@ -84,7 +85,8 @@ class UpdateSelectedEntry implements Action {
       this.subcategory,
       this.amount,
       this.comment,
-      this.dateTime});
+      this.dateTime,
+      this.tagIDs});
 
   @override
   AppState updateState(AppState appState) {
@@ -102,6 +104,7 @@ class UpdateSelectedEntry implements Action {
             amount: amount,
             comment: comment,
             dateTime: dateTime,
+            tagIDs: tagIDs,
           ),
         ),
       ),
