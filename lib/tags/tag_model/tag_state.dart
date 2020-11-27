@@ -4,27 +4,31 @@ import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class SelectedTagState extends Equatable {
+class TagState extends Equatable {
   final Maybe<Tag> selectedTag;
+  final List<Tag> newTags;
 
-  SelectedTagState({this.selectedTag});
+  TagState({this.selectedTag, this.newTags});
 
-  factory SelectedTagState.initial() {
-    return SelectedTagState(
+  factory TagState.initial() {
+    return TagState(
       selectedTag: Maybe.none(),
+      newTags: [],
     );
   }
 
-  SelectedTagState copyWith({
+  TagState copyWith({
     Maybe<Tag> selectedTag,
+    List<Tag> newTags,
   }) {
-    return SelectedTagState(
+    return TagState(
       selectedTag: selectedTag ?? this.selectedTag,
+      newTags: newTags ?? this.newTags,
     );
   }
 
   @override
-  List<Object> get props => [selectedTag];
+  List<Object> get props => [selectedTag, newTags];
 
   @override
   bool get stringify => true;

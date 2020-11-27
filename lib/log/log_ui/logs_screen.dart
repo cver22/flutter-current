@@ -25,7 +25,8 @@ class LogsScreen extends StatelessWidget {
           logsState.logs.values.forEach((element) {
             print('Log name ${element.logName} is active: ${element.active}');
           });
-          if (logsState.isLoading == true) {
+
+          if (logsState.isLoading == true && Env.store.state.entriesState.selectedEntry.isNone) {
             return LoadingIndicator(loadingMessage: 'Loading your logs...');
           } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
             //TODO create archive bool to show logs that have been archived and not visible

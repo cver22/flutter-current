@@ -4,7 +4,7 @@ import 'package:expenses/entry/entry_model/entries_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/tags/tag_model/selected_tag_state.dart';
+import 'package:expenses/tags/tag_model/tag_state.dart';
 
 import 'package:meta/meta.dart';
 
@@ -15,7 +15,7 @@ class AppState extends Equatable {
   final LogsState logsState;
   final EntriesState entriesState;
   final SettingsState settingsState;
-  final SelectedTagState selectedTagState;
+  final TagState tagState;
 
   AppState(
       {@required this.authState,
@@ -23,7 +23,7 @@ class AppState extends Equatable {
       @required this.logsState,
       @required this.entriesState,
       @required this.settingsState,
-      @required this.selectedTagState});
+      @required this.tagState});
 
   AppState copyWith({
     AuthState authState,
@@ -31,7 +31,7 @@ class AppState extends Equatable {
     LogsState logsState,
     EntriesState entriesState,
     SettingsState settingsState,
-    SelectedTagState selectedTagState,
+    TagState tagState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -39,7 +39,7 @@ class AppState extends Equatable {
       logsState: logsState ?? this.logsState,
       entriesState: entriesState ?? this.entriesState,
       settingsState: settingsState ?? this.settingsState,
-      selectedTagState: selectedTagState ?? this.selectedTagState,
+      tagState: tagState ?? this.tagState,
     );
   }
 
@@ -50,7 +50,7 @@ class AppState extends Equatable {
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
       settingsState: SettingsState.initial(),
-      selectedTagState: SelectedTagState.initial(),
+      tagState: TagState.initial(),
     );
   }
 
@@ -59,5 +59,5 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState, selectedTagState];
+      [authState, loginRegState, logsState, entriesState, settingsState, tagState];
 }

@@ -62,9 +62,9 @@ class MyEntryEntity extends Equatable {
       amount: snap.data[AMOUNT],
       comment: snap.data[COMMENT],
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data[DATE_TIME]),
-      tagIDs: (snap.data[TAG] as Map<String, String>).map(
+     /* tagIDs: (snap.data[TAG] as Map<String, String>)?.map(
               (key, value) => MapEntry(
-              key, value)),
+              key, value)),*/
 
     );
   }

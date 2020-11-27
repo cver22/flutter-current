@@ -17,7 +17,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.amount,
       this.comment,
       this.dateTime,
-      this.tagIDs});
+      this.tagIDs });
 
   final String id;
   final String logId;
@@ -147,7 +147,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: entity.amount,
       comment: entity.comment,
       dateTime: entity.dateTime,
-      tagIDs: entity.tagIDs.entries.map((e) => e.value).toList(),
+      tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
 
     );
   }

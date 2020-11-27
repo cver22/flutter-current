@@ -1,19 +1,22 @@
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/tags/tag_model/selected_tag_state.dart';
+import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../env.dart';
 
 class TagEditor extends StatefulWidget {
-  final List<String> selectedEntryTags;
+  final List<Tag> selectedEntryTags;
   final Log log;
+  final VoidCallback onSave;
 
-  const TagEditor({Key key, @required this.selectedEntryTags, @required this.log}) : super(key: key);
+  const TagEditor({Key key, @required this.selectedEntryTags, @required this.log, @required this.onSave}) : super(key: key);
 
   @override
   _TagEditorState createState() => _TagEditorState();
@@ -22,7 +25,7 @@ class TagEditor extends StatefulWidget {
 class _TagEditorState extends State<TagEditor> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  List<String> _selectedEntryTags;
+  List<Tag> _newEntryTags;
   Log _log;
 
   Tag _selectedTag;
@@ -31,7 +34,7 @@ class _TagEditorState extends State<TagEditor> {
   @override
   void initState() {
     super.initState();
-    _selectedEntryTags = widget?.selectedEntryTags;
+    _newEntryTags = [];
     _log = widget?.log;
     _controller.addListener(() {
       final text = _controller.text;
@@ -50,12 +53,13 @@ class _TagEditorState extends State<TagEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectState<SelectedTagState>(
+    return ConnectState<TagState>(
         where: notIdentical,
-        map: (state) => state.selectedTagState,
+        map: (state) => state.tagState,
         builder: (tagState) {
-          _selectedTag = tagState.selectedTag.value;
+          _selectedTag = tagState.selectedTag.isSome ? tagState.selectedTag.value : Tag();
           return Row(
+            mainAxisSize: MainAxisSize.max,
             children: [
               Text(
                 '#',
@@ -64,37 +68,37 @@ class _TagEditorState extends State<TagEditor> {
                   fontSize: EMOJI_SIZE,
                 ),
               ),
-              TextFormField(
-                key: _formKey,
-                decoration: InputDecoration(hintText: 'Tag your transaction'),
-                controller: _controller,
-                keyboardType: TextInputType.text,
-                validator: (name) {
-                  Pattern pattern = r'^[A-Za-z0-9]+(?:[_-][A-Za-z0-9]+)*$';
-                  RegExp regex = new RegExp(pattern);
-                  if (!regex.hasMatch(name))
-                    return 'Invalid tag';
-                  else
-                    return null;
-                },
+              Expanded(
+                child: TextFormField(
+                  key: _formKey,
+                  decoration: InputDecoration(hintText: 'Tag your transaction'),
+                  controller: _controller,
+                  keyboardType: TextInputType.text,
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
+
+                  onChanged: (text) {
+                    setState(() {
+                    });
+                  },
+
+                ),
               ),
               IconButton(
                   icon: _selectedTag.id != null ? Icon(Icons.add) : Icon(Icons.check),
-                  onPressed: () {
-                    //can be used to edit
-                    //TODO modify this to use selected tag State?
-                    if (_formKey.currentState.validate()) {
-                      _selectedTag = _selectedTag.copyWith(name: _controller.text);
-                      if (_selectedTag.id == null) {
-                        newTag = true;
-                      }
-                      Env.logsFetcher.updateLog(_log.addEditLogTags(log: _log, tag: _selectedTag));
-                      if (!_selectedEntryTags.contains(_selectedTag.id) && newTag) {
-                        _selectedEntryTags.add(_selectedTag.id);
-                        Env.store.dispatch(UpdateSelectedEntry(tagIDs: _selectedEntryTags));
-                      }
-                      _controller.clear();
+                  onPressed: _controller.text.isEmpty ? null : () {
+                    //can be used to edit, needs modifications...a lot
+
+                    _selectedTag = _selectedTag.copyWith(name: _controller.text);
+                    _controller.clear();
+                    if(_selectedTag.id == null) {
+                      newTag = true;
+                      _newEntryTags.add(_selectedTag);
+                      Env.store.dispatch(UpdateTagState(selectedTag: Maybe.some(_selectedTag), newTags: _newEntryTags));
+                      widget.onSave();
                     }
+
+
+
                   }),
             ],
           );

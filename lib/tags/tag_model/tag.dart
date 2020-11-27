@@ -20,7 +20,7 @@ class Tag extends Equatable {
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, frequency: $logFrequency}';
+    return 'Tag {id: $id, name: $name, frequency: $logFrequency}';
   }
 
   @override

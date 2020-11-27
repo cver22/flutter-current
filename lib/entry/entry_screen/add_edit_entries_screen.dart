@@ -1,4 +1,5 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
+import 'package:expenses/app/splash_screen.dart';
 import 'package:expenses/entry/entry_screen/entries_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
@@ -8,18 +9,21 @@ import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
+import 'package:expenses/tags/tags_ui/tag_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:date_time_picker/date_time_picker.dart';
+import 'package:uuid/uuid.dart';
+import 'package:expenses/utils/maybe.dart';
 
 //TODO change back to stateful widget to utilize focus node
 class AddEditEntriesScreen extends StatelessWidget {
   AddEditEntriesScreen({Key key}) : super(key: key);
 
-  void _submit({@required MyEntry entry}) {
+  void _submit({@required MyEntry entry, @required Log log}) {
     print('saving entry $entry');
     if (entry.id != null &&
         entry !=
@@ -32,7 +36,14 @@ class AddEditEntriesScreen extends StatelessWidget {
     } else if (entry.id == null) {
       Env.entriesFetcher.addEntry(entry);
     }
+
     Get.back();
+    List<Tag> logTags = log.tags;
+    Env.store.state.tagState.newTags.forEach((tag) {logTags.add(tag.copyWith(id: Uuid().v4())); });
+    Env.logsFetcher.updateLog(log.copyWith(tags: logTags));
+    Env.store.dispatch(ClearSelectedEntry());
+    Env.store.dispatch(UpdateTagState(newTags: [], selectedTag: Maybe.none()));
+
   }
 
   @override
@@ -44,42 +55,50 @@ class AddEditEntriesScreen extends StatelessWidget {
         map: (state) => state.entriesState,
         builder: (entriesState) {
           //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
-          _entry = Env.store.state.entriesState.selectedEntry.value;
-          _log = Env.store.state.logsState.logs[_entry.logId];
+          if(Env.store.state.entriesState.selectedEntry.isSome) {
 
-          print('Rendering AddEditEntriesScreen');
-          print('entry $_entry');
+            _entry = Env.store.state.entriesState.selectedEntry.value;
+            _log = Env.store.state.logsState.logs[_entry.logId];
 
-          return Scaffold(
-            appBar: AppBar(
-              title: Text('Entry'),
-              actions: <Widget>[
-                IconButton(
-                  icon: Icon(
-                    Icons.check,
-                    color: Colors.white,
+            print('Rendering AddEditEntriesScreen');
+            print('entry $_entry');
+
+            return Scaffold(
+              appBar: AppBar(
+                title: Text('Entry'),
+                actions: <Widget>[
+                  IconButton(
+                    icon: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      if (_entry?.amount != null) _submit(entry: _entry, log: _log);
+                    },
                   ),
-                  onPressed: () {
-                    if (_entry?.amount != null) _submit(entry: _entry);
-                  },
-                ),
-                _entry?.id == null
-                    ? Container()
-                    : PopupMenuButton<String>(
-                        onSelected: handleClick,
-                        itemBuilder: (BuildContext context) {
-                          return {'Delete Entry'}.map((String choice) {
-                            return PopupMenuItem<String>(
-                              value: choice,
-                              child: Text(choice),
-                            );
-                          }).toList();
-                        },
-                      ),
-              ],
-            ),
-            body: _buildContents(context: context, entriesState: entriesState, log: _log, entry: _entry),
-          );
+                  _entry?.id == null
+                      ? Container()
+                      : PopupMenuButton<String>(
+                    onSelected: handleClick,
+                    itemBuilder: (BuildContext context) {
+                      return {'Delete Entry'}.map((String choice) {
+                        return PopupMenuItem<String>(
+                          value: choice,
+                          child: Text(choice),
+                        );
+                      }).toList();
+                    },
+                  ),
+                ],
+              ),
+              body: _buildContents(context: context, entriesState: entriesState, log: _log, entry: _entry),
+            );
+          } else {
+            //TODO change to saving entry screen
+            return SplashScreen();
+          }
+
+
         });
   }
 
@@ -150,6 +169,7 @@ class AddEditEntriesScreen extends StatelessWidget {
         entry?.logId == null ? Container() : _categoryButton(log: log, entry: entry),
         entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
         _commentFormField(entry: entry),
+        TagPicker(),
       ],
     );
   }
