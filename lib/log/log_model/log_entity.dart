@@ -85,7 +85,7 @@ class LogEntity extends Equatable {
               key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       active: snap.data[ACTIVE],
       archive: snap.data[ARCHIVE],
-      tags: (snap.data[TAG] as Map<String, dynamic>).map(
+      tags: (snap.data[TAGS] as Map<String, dynamic>).map(
               (key, value) => MapEntry(
               key, Tag.fromEntity(TagEntity.fromJson(value)))),
     );
@@ -101,7 +101,7 @@ class LogEntity extends Equatable {
       SUBCATEGORIES: subcategories
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       ACTIVE: active,
-      TAG: tags
+      TAGS: tags
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
     };
   }

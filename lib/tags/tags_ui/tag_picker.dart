@@ -1,10 +1,11 @@
-import 'package:expenses/entry/entry_model/entries_state.dart';
+import 'package:expenses/entry/entry_model/entry_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_collection.dart';
 import 'package:expenses/tags/tags_ui/tag_editor.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
@@ -21,25 +22,25 @@ class _TagPickerState extends State<TagPicker> {
   Map<String, int> _categoryAllTags = {};
   MyEntry _entry;
   Log _log;
-  //TODO change this to function as a stateless widget driven by tagState, will need to dump the entry tags into the state tags at the beginning
+
+  //TODO change this to function as a stateless widget driven by entryState, will need to dump the entry tags into the state tags at the beginning
   //TODO possible inherent problem with this may be the duplication of tags in the state
   //TODO can likely handle editing of log tags by collecting them in a state of edited tags and doing a dump of them when navigating back from the entry editor
 
   @override
   Widget build(BuildContext context) {
-    return ConnectState<EntriesState>(
+    return ConnectState<EntryState>(
         where: notIdentical,
-        map: (state) => state.entriesState,
-        builder: (entriesState) {
+        map: (state) => state.entryState,
+        builder: (entryState) {
           int maxTags = 10;
-          _entry = entriesState.selectedEntry.value;
-          _tagListBuilders(maxTags);
+          _entry = entryState.selectedEntry.value;
+          _tagListBuilders(maxTags: maxTags, entryState: entryState);
 
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TagEditor(
-                selectedEntryTags: _selectedEntryTags,
                 log: _log,
                 onSave: () {
                   setState(() {});
@@ -53,16 +54,18 @@ class _TagPickerState extends State<TagPicker> {
                     TagCollection(
                       tags: _selectedEntryTags,
                       entry: _entry,
-                      log: _log,
+                      entryState: entryState,
                       collectionName: 'Entry Tags',
+                      tagCollectionType: TagCollectionType.entry,
                     ),
                     //currently selected tags
                     _categoryRecentTags.isNotEmpty
                         ? TagCollection(
                             tags: _categoryRecentTags,
                             entry: _entry,
-                            log: _log,
+                            entryState: entryState,
                             collectionName: 'Category Recent',
+                            tagCollectionType: TagCollectionType.category,
                           )
                         : Container(),
                     //category recent tag collection
@@ -70,8 +73,9 @@ class _TagPickerState extends State<TagPicker> {
                         ? TagCollection(
                             tags: _logRecentTags,
                             entry: _entry,
-                            log: _log,
+                            entryState: entryState,
                             collectionName: 'Log Recent',
+                            tagCollectionType: TagCollectionType.log,
                           )
                         : Container(),
                     //log recent tag collection
@@ -83,12 +87,12 @@ class _TagPickerState extends State<TagPicker> {
         });
   }
 
-  void _tagListBuilders(int maxTags) {
+  void _tagListBuilders({@required EntryState entryState, int maxTags}) {
     //builds their respective preliminary tag lists if the entry has a log and a category
     if (_entry?.logId != null) {
       _log = Env.store.state.logsState.logs.values.firstWhere((e) => e.id == _entry.logId);
 
-      _logAllTags = _log.tags;
+      _logAllTags = entryState.logTagList;
 
       if (_entry?.categoryId != null) {
         print('set category tags');
@@ -109,16 +113,24 @@ class _TagPickerState extends State<TagPicker> {
 
       _logAllTags.sort((a, b) => a.logFrequency.compareTo(b.logFrequency));
       _logAllTags = _logAllTags.reversed.toList();
-      int i = 0;
-      while (i < maxTags && i < _logAllTags.length) {
-        //if the tag isn't in the log top 10, add it to the recent log tag list
-        if (_categoryAllTags.isNotEmpty && !_categoryAllTags.containsKey(_logAllTags[i].id)) {
-          _logRecentTags.add(_logAllTags[i]);
-          i++;
-        } else if (_categoryAllTags.isEmpty) {
-          //if there is no category selected yet, all top ten log tags get added to the recent log tag list
-          _logRecentTags.add(_logAllTags[i]);
-          i++;
+      int tagCount = 0;
+      int index = 0;
+      _logRecentTags.clear();
+      //TODO need to check if the tags are present in the entry first
+      Map<String, Tag> selectedEntryMap = Map.fromIterable(_selectedEntryTags, key: (e) => e.id, value: (e) => e);
+
+      while (tagCount < maxTags) {
+        //if the tag isn't in the category top 10, add it to the recent log tag list
+        if (!_categoryAllTags.containsKey(_logAllTags[index].id) &&
+            !selectedEntryMap.containsKey(_logAllTags[index].id)) {
+          //add to log list
+
+          _logRecentTags.add(_logAllTags[index]);
+          tagCount++;
+        }
+        index++;
+        if (index >= _logAllTags.length) {
+          break;
         }
       }
     }
@@ -126,6 +138,7 @@ class _TagPickerState extends State<TagPicker> {
 
   void _buildCategoryRecentTagList() {
     if (_categoryAllTags.isNotEmpty) {
+      _categoryRecentTags.clear();
       List<String> keys = _categoryAllTags.keys.toList();
       keys.sort((k1, k2) {
         //compares frequency of one tag vs another from the category map
@@ -145,21 +158,15 @@ class _TagPickerState extends State<TagPicker> {
 
   void _buildEntryTagList() {
     List<String> entryTagIDs = _entry?.tagIDs == null ? null : _entry.tagIDs;
-    print('the entry tags are ${entryTagIDs}');
+    print('the entry tags are $entryTagIDs');
+    _selectedEntryTags.clear();
     if (entryTagIDs != null && entryTagIDs.isNotEmpty) {
       for (int i = 0; i < entryTagIDs.length; i++) {
-        print('the log tags are ${_log.tags}');
-
-        _selectedEntryTags.add(_log.tags.firstWhere((e) => e.id == entryTagIDs[i]));
+        _selectedEntryTags.add(_logAllTags.firstWhere((e) => e.id == entryTagIDs[i]));
       }
     } else {
       _selectedEntryTags = [];
     }
-
-    Env.store.state.tagState.newTags.forEach((newTag) {
-      _selectedEntryTags.add(newTag);
-    });
-    print('the selected entry tags are ${_selectedEntryTags}');
   }
 }
 

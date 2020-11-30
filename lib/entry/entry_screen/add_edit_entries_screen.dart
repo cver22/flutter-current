@@ -1,30 +1,30 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/app/splash_screen.dart';
+import 'package:expenses/entry/entry_model/entry_state.dart';
 import 'package:expenses/entry/entry_screen/entries_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
-import 'package:expenses/entry/entry_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
+
 import 'package:expenses/tags/tags_ui/tag_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:uuid/uuid.dart';
-import 'package:expenses/utils/maybe.dart';
 
+//TODO need to modify back button to dump states
 //TODO change back to stateful widget to utilize focus node
 class AddEditEntriesScreen extends StatelessWidget {
   AddEditEntriesScreen({Key key}) : super(key: key);
 
-  void _submit({@required MyEntry entry, @required Log log}) {
-    print('saving entry $entry');
+  void _submit({@required EntryState entryState, @required MyEntry entry, @required Log log}) {
+    Env.store.dispatch(UpdateEntryState(savingEntry: true));
+
     if (entry.id != null &&
         entry !=
             Env.store.state.entriesState.entries.entries
@@ -38,75 +38,74 @@ class AddEditEntriesScreen extends StatelessWidget {
     }
 
     Get.back();
-    List<Tag> logTags = log.tags;
-    Env.store.state.tagState.newTags.forEach((tag) {logTags.add(tag.copyWith(id: Uuid().v4())); });
-    Env.logsFetcher.updateLog(log.copyWith(tags: logTags));
-    Env.store.dispatch(ClearSelectedEntry());
-    Env.store.dispatch(UpdateTagState(newTags: [], selectedTag: Maybe.none()));
 
+    Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.entryState.logTagList));
+
+    Env.store.dispatch(ClearEntryState());
   }
 
   @override
   Widget build(BuildContext context) {
     MyEntry _entry;
     Log _log;
-    return ConnectState<EntriesState>(
+    return ConnectState<EntryState>(
         where: notIdentical,
-        map: (state) => state.entriesState,
-        builder: (entriesState) {
+        map: (state) => state.entryState,
+        builder: (entryState) {
           //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
-          if(Env.store.state.entriesState.selectedEntry.isSome) {
-
-            _entry = Env.store.state.entriesState.selectedEntry.value;
+          if (!entryState.savingEntry && entryState.selectedEntry.isSome) {
+            _entry = entryState.selectedEntry.value;
             _log = Env.store.state.logsState.logs[_entry.logId];
 
             print('Rendering AddEditEntriesScreen');
             print('entry $_entry');
 
-            return Scaffold(
-              appBar: AppBar(
-                title: Text('Entry'),
-                actions: <Widget>[
-                  IconButton(
-                    icon: Icon(
-                      Icons.check,
-                      color: Colors.white,
+            return WillPopScope(
+              onWillPop: () async => false,
+              child: Scaffold(
+                appBar: AppBar(
+                  title: Text('Entry'),
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => closeEntryScreen(),
+                  ),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.check,
+                        color: Colors.white,
+                      ),
+                      onPressed: () {
+                        if (_entry?.amount != null) _submit(entryState: entryState, entry: _entry, log: _log);
+                      },
                     ),
-                    onPressed: () {
-                      if (_entry?.amount != null) _submit(entry: _entry, log: _log);
-                    },
-                  ),
-                  _entry?.id == null
-                      ? Container()
-                      : PopupMenuButton<String>(
-                    onSelected: handleClick,
-                    itemBuilder: (BuildContext context) {
-                      return {'Delete Entry'}.map((String choice) {
-                        return PopupMenuItem<String>(
-                          value: choice,
-                          child: Text(choice),
-                        );
-                      }).toList();
-                    },
-                  ),
-                ],
+                    _entry?.id == null
+                        ? Container()
+                        : PopupMenuButton<String>(
+                            onSelected: handleClick,
+                            itemBuilder: (BuildContext context) {
+                              return {'Delete Entry'}.map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                          ),
+                  ],
+                ),
+                body: _buildContents(context: context, entryState: entryState, log: _log, entry: _entry),
               ),
-              body: _buildContents(context: context, entriesState: entriesState, log: _log, entry: _entry),
             );
           } else {
             //TODO change to saving entry screen
             return SplashScreen();
           }
-
-
         });
   }
 
   Widget _buildContents(
-      {@required BuildContext context,
-      @required EntriesState entriesState,
-      @required Log log,
-      @required MyEntry entry}) {
+      {@required BuildContext context, @required EntryState entryState, @required Log log, @required MyEntry entry}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -116,7 +115,7 @@ class AddEditEntriesScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildForm(context: context, entriesState: entriesState, log: log, entry: entry),
+                _buildForm(context: context, entryState: entryState, log: log, entry: entry),
               ],
             ),
           ),
@@ -126,10 +125,7 @@ class AddEditEntriesScreen extends StatelessWidget {
   }
 
   Widget _buildForm(
-      {@required BuildContext context,
-      @required EntriesState entriesState,
-      @required Log log,
-      @required MyEntry entry}) {
+      {@required BuildContext context, @required EntryState entryState, @required Log log, @required MyEntry entry}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -137,7 +133,7 @@ class AddEditEntriesScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
             Text('Log: '),
-            _logNameDropDown(entriesState: entriesState),
+            _logNameDropDown(entryState: entryState),
           ],
         ),
         Row(
@@ -148,7 +144,8 @@ class AddEditEntriesScreen extends StatelessWidget {
                 returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
             Expanded(
               child: TextFormField(
-                autofocus: true,
+                autofocus: entry.id == null ? true : false,
+                //auto focus on adding the value if the entry is new
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
                 initialValue: entry?.amount?.toStringAsFixed(2) ?? null,
@@ -224,20 +221,25 @@ class AddEditEntriesScreen extends StatelessWidget {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Entry':
-        Env.entriesFetcher.deleteEntry(Env.store.state.entriesState.selectedEntry.value);
-        Get.back();
+        Env.entriesFetcher.deleteEntry(Env.store.state.entryState.selectedEntry.value);
+        closeEntryScreen();
         break;
     }
   }
 
+  void closeEntryScreen() {
+    Get.back();
+    Env.store.dispatch(ClearEntryState());
+  }
+
   //TODO similar code used here and in settings - refactor to use same widget and pass required functions only
-  Widget _logNameDropDown({@required EntriesState entriesState}) {
+  Widget _logNameDropDown({@required EntryState entryState}) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
       List<Log> _logs = Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
 
       return DropdownButton<Log>(
         //TODO order preference logs and set default to first log if not navigating from the log itself
-        value: Env.store.state.logsState.logs[entriesState.selectedEntry.value.logId],
+        value: Env.store.state.logsState.logs[entryState.selectedEntry.value.logId],
         onChanged: (Log log) {
           Env.store.dispatch(ChangeEntryLog(log: log));
         },

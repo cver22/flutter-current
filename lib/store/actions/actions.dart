@@ -2,6 +2,7 @@ import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/entry/entry_model/entries_state.dart';
+import 'package:expenses/entry/entry_model/entry_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -10,7 +11,6 @@ import 'package:expenses/login_register/login_register_model/login_reg_state.dar
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/validators.dart';
 import 'package:meta/meta.dart';
@@ -26,7 +26,7 @@ part 'entries_actions.dart';
 
 part 'settings_actions.dart';
 
-part 'tag_actions.dart';
+part 'entry_actions.dart';
 
 abstract class Action {
   AppState updateState(AppState appState);

@@ -1,7 +1,9 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/my_entry_entity.dart';
 import 'package:expenses/log/log_model/log.dart';
+
 import 'package:flutter/foundation.dart';
+
 
 @immutable
 class MyEntry extends Equatable with ChangeNotifier {
@@ -17,7 +19,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.amount,
       this.comment,
       this.dateTime,
-      this.tagIDs });
+      this.tagIDs});
 
   final String id;
   final String logId;
@@ -69,7 +71,6 @@ class MyEntry extends Equatable with ChangeNotifier {
       _category = null;
       _subcategory = null;
       _tagIDs = null;
-
     }
 
     return MyEntry(
@@ -108,6 +109,27 @@ class MyEntry extends Equatable with ChangeNotifier {
       tagIDs: this.tagIDs,
     );
   }
+/*
+  MyEntry copyWithSelectedEntryTagList({MyEntry entry}) {
+    //makes changes to the entry tag list if changes were made
+    //TODO method to remove tag from list
+    List<Tag> _selectedEntryTags = Env.store.state.entryState.logTagList;
+    
+    if (_selectedEntryTags.length > 0) {
+      List<String> entryTagIds = [];
+
+      _selectedEntryTags.forEach((addEditTag) {
+        if ((entryTagIds.singleWhere((entryTagId) => entryTagId == addEditTag.id, orElse: () => null)) != null) {
+          //do nothing, the tag is already in the list
+        } else {}
+        entryTagIds.add(addEditTag.id);
+      });
+
+      return entry.copyWith(tagIDs: entryTagIds);
+    } else {
+      return entry;
+    }
+  }*/
 
   @override
   List<Object> get props => [id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs];
@@ -131,8 +153,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: amount,
       comment: comment,
       dateTime: dateTime,
-      tagIDs: Map<String, String>.fromIterable(tagIDs,
-          key: (e) => e, value: (e) => e),
+      tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
     );
   }
 
@@ -148,8 +169,6 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: entity.comment,
       dateTime: entity.dateTime,
       tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
-
     );
   }
-
 }

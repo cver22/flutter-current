@@ -25,12 +25,17 @@ class AddEditLogScreen extends StatelessWidget {
       Env.logsFetcher.addLog(log);
     }
 
+    closeAddEditLogScreen();
+  }
+
+  void closeAddEditLogScreen() {
     Get.back();
+    Env.store.dispatch(ClearSelectedLog());
   }
 
   @override
   Widget build(BuildContext context) {
-    Log _log = Log(currency: 'ca');
+    Log _log = Log(currency: 'ca', tags: []);
     String _currency;
     String _name;
     return ConnectState<LogsState>(
@@ -42,35 +47,42 @@ class AddEditLogScreen extends StatelessWidget {
         }
         _currency = _log?.currency; //TODO change to home currency as default
         _name = _log?.logName ?? null;
-        return Scaffold(
-          appBar: AppBar(
-            title: Text('Log'),
-            actions: <Widget>[
-              IconButton(
-                icon: Icon(
-                  Icons.check,
-                  color: Colors.white,
-                ),
-                onPressed: () {
-                  if (_name != null && _name != '') _submit();
-                },
+        return WillPopScope(
+          onWillPop: () async => false,
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text('Log'),
+              leading: IconButton(
+                icon: Icon(Icons.arrow_back),
+                onPressed: () => closeAddEditLogScreen(),
               ),
-              _log.id == null
-                  ? Container()
-                  : PopupMenuButton<String>(
-                      onSelected: handleClick,
-                      itemBuilder: (BuildContext context) {
-                        return {'Delete Log'}.map((String choice) {
-                          return PopupMenuItem<String>(
-                            value: choice,
-                            child: Text(choice),
-                          );
-                        }).toList();
-                      },
-                    ),
-            ],
+              actions: <Widget>[
+                IconButton(
+                  icon: Icon(
+                    Icons.check,
+                    color: Colors.white,
+                  ),
+                  onPressed: () {
+                    if (_name != null && _name != '') _submit();
+                  },
+                ),
+                _log.id == null
+                    ? Container()
+                    : PopupMenuButton<String>(
+                        onSelected: handleClick,
+                        itemBuilder: (BuildContext context) {
+                          return {'Delete Log'}.map((String choice) {
+                            return PopupMenuItem<String>(
+                              value: choice,
+                              child: Text(choice),
+                            );
+                          }).toList();
+                        },
+                      ),
+              ],
+            ),
+            body: _buildContents(context: context, log: _log, currency: _currency),
           ),
-          body: _buildContents(context: context, log: _log, currency: _currency),
         );
       },
     );

@@ -1,25 +1,77 @@
+import 'package:expenses/entry/entry_model/entry_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
-import 'package:expenses/log/log_model/log.dart';
+
+import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_chip.dart';
+import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/material.dart';
+
+import '../../env.dart';
 
 class TagCollection extends StatelessWidget {
   final List<Tag> tags;
   final MyEntry entry;
-  final Log log;
+  final EntryState entryState;
+
   final String collectionName;
+  final TagCollectionType tagCollectionType;
 
   const TagCollection(
-      {Key key, @required this.tags, @required this.entry, @required this.log, @required this.collectionName})
+      {Key key,
+      @required this.tags,
+      @required this.entry,
+      @required this.collectionName,
+      @required this.tagCollectionType, @required this.entryState})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> tagChips = [];
-    tags.forEach((e) {
+    List<String> entryTagIds = [];
+    List<Tag>  logTagList = entryState.logTagList;
+
+    bool tagAlreadyListed = false;
+
+
+    tags.forEach((thisTag) {
       tagChips.add(TagChip(
-        name: e.name,
+        name: thisTag.name,
+        onPressed: () => {
+          entryTagIds = entry.tagIDs,
+          if (tagCollectionType == TagCollectionType.entry)
+            {
+              logTagList.removeWhere((element) => element.id == thisTag.id),
+              logTagList.add(thisTag.decrement(tag: thisTag)),
+
+
+              entryTagIds.remove(thisTag.id),
+              Env.store.dispatch(UpdateEntryState(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList))
+
+            }
+          else
+            {
+              entryTagIds.forEach((element) {
+                if (element == thisTag.id) {
+                  tagAlreadyListed = true;
+                }
+              }),
+              if (!tagAlreadyListed)
+                {
+                  //adds tag to the entry list if its not already on there
+                  logTagList.removeWhere((element) => element.id == thisTag.id),
+                  logTagList.add(thisTag.increment(tag: thisTag)),
+
+                  entryTagIds.add(thisTag.id),
+                  Env.store.dispatch(UpdateEntryState(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList))
+                }
+              else
+                {
+                  tagAlreadyListed = false,
+                }
+            }
+        },
       ));
     });
     return Column(

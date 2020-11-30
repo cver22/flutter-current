@@ -5,6 +5,7 @@ import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/log/log_ui/log_list_tile.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
@@ -26,7 +27,7 @@ class LogsScreen extends StatelessWidget {
             print('Log name ${element.logName} is active: ${element.active}');
           });
 
-          if (logsState.isLoading == true && Env.store.state.entriesState.selectedEntry.isNone) {
+          if (logsState.isLoading == true && Env.store.state.entryState.selectedEntry.isNone) {
             return LoadingIndicator(loadingMessage: 'Loading your logs...');
           } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
             //TODO create archive bool to show logs that have been archived and not visible
@@ -41,7 +42,7 @@ class LogsScreen extends StatelessWidget {
                 children: <Widget>[
                   buildListView(_logs),
                   SizedBox(height: 20.0),
-                  addLogButton(context),
+                  addLogButton(context: context, logsState: logsState),
                 ],
               ),
             );
@@ -51,7 +52,7 @@ class LogsScreen extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
-                    addLogButton(context),
+                    addLogButton(context: context, logsState: logsState),
                     SizedBox(height: 20.0),
                     EmptyContent(),
                   ]),
@@ -74,7 +75,7 @@ class LogsScreen extends StatelessWidget {
     );
   }
 
-  Widget addLogButton(BuildContext context) {
+  Widget addLogButton({BuildContext context, LogsState logsState}) {
     return RaisedButton(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(30.0),
@@ -82,6 +83,7 @@ class LogsScreen extends StatelessWidget {
       child: Text('Add Log'),
       elevation: 2.0,
       onPressed: () => {
+        Env.store.dispatch(ClearSelectedLog()),
         Get.toNamed(ExpenseRoutes.addEditLog),
       },
     );

@@ -8,9 +8,9 @@ class Tag extends Equatable {
   final String name;
   final int logFrequency;
 
-  Tag({this.id, this.name, this.logFrequency = 0 });
+  Tag({this.id, this.name, this.logFrequency = 0});
 
-  Tag copyWith({String id, String name}) {
+  Tag copyWith({String id, String name, int logFrequency}) {
     return Tag(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -27,11 +27,7 @@ class Tag extends Equatable {
   List<Object> get props => [id, name, logFrequency];
 
   TagEntity toEntity() {
-    return TagEntity(
-      id: id,
-      name: name,
-      logFrequency: logFrequency
-    );
+    return TagEntity(id: id, name: name, logFrequency: logFrequency);
   }
 
   static Tag fromEntity(TagEntity entity) {
@@ -40,5 +36,18 @@ class Tag extends Equatable {
       name: entity.name,
       logFrequency: entity.logFrequency,
     );
+  }
+
+  Tag increment({Tag tag}) {
+    return tag.copyWith(logFrequency: tag.logFrequency + 1);
+  }
+
+  Tag decrement({Tag tag}) {
+    if(tag.logFrequency >= 1) {
+      return tag.copyWith(logFrequency: tag.logFrequency - 1);
+    } else {
+      return tag;
+    }
+
   }
 }

@@ -1,10 +1,11 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/entry/entry_model/entries_state.dart';
+import 'package:expenses/entry/entry_model/entry_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/tags/tag_model/tag_state.dart';
+
 
 import 'package:meta/meta.dart';
 
@@ -15,7 +16,7 @@ class AppState extends Equatable {
   final LogsState logsState;
   final EntriesState entriesState;
   final SettingsState settingsState;
-  final TagState tagState;
+  final EntryState entryState;
 
   AppState(
       {@required this.authState,
@@ -23,7 +24,7 @@ class AppState extends Equatable {
       @required this.logsState,
       @required this.entriesState,
       @required this.settingsState,
-      @required this.tagState});
+      @required this.entryState});
 
   AppState copyWith({
     AuthState authState,
@@ -31,7 +32,7 @@ class AppState extends Equatable {
     LogsState logsState,
     EntriesState entriesState,
     SettingsState settingsState,
-    TagState tagState,
+    EntryState entryState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -39,7 +40,7 @@ class AppState extends Equatable {
       logsState: logsState ?? this.logsState,
       entriesState: entriesState ?? this.entriesState,
       settingsState: settingsState ?? this.settingsState,
-      tagState: tagState ?? this.tagState,
+      entryState: entryState ?? this.entryState,
     );
   }
 
@@ -50,7 +51,7 @@ class AppState extends Equatable {
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
       settingsState: SettingsState.initial(),
-      tagState: TagState.initial(),
+      entryState: EntryState.initial(),
     );
   }
 
@@ -59,5 +60,5 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState, tagState];
+      [authState, loginRegState, logsState, entriesState, settingsState, entryState];
 }

@@ -47,7 +47,6 @@ class Log extends Equatable {
     List<MySubcategory> subcategories,
     Map<String, dynamic> members,
     List<Tag> tags,
-
   }) {
     return Log(
       uid: uid ?? this.uid,
@@ -63,16 +62,14 @@ class Log extends Equatable {
     );
   }
 
-
-
   Log addEditLogCategories({Log log, MyCategory category}) {
     List<MyCategory> categories = log.categories;
 
     //update category if it already exists
     //otherwise add category to the list
-    if(category?.id != null) {
+    if (category?.id != null) {
       categories[categories.indexWhere((e) => e.id == category.id)] = category;
-    }else {
+    } else {
       categories.add(category.copyWith(id: Uuid().v4()));
     }
     return log.copyWith(categories: categories);
@@ -83,24 +80,46 @@ class Log extends Equatable {
 
     //update subcategory if it already exists
     //otherwise add subcategory to the list
-    if(subcategory?.id != null) {
+    if (subcategory?.id != null) {
       subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
-    }else {
+    } else {
       subcategories.add(subcategory.copyWith(id: Uuid().v4()));
     }
-
 
     return log.copyWith(subcategories: subcategories);
   }
 
-  Log addEditLogTags({Log log, Tag tag}) {
+
+
+  /*Log addEditLogTagList({Log log, List<Tag> selectedEntryLogs}) {
+    //makes changes to the log tag list if changes were made
+    //TODO, need a method to reduce the frequency if a tag is removed from the entry
+    if (selectedEntryLogs.length > 0) {
+      List<Tag> logTags = log.tags;
+
+      selectedEntryLogs.forEach((addEditTag) {
+        if ((logTags.singleWhere((logTag) => logTag.id == addEditTag.id, orElse: () => null)) != null) {
+          logTags.remove(logTags); //removes existing tag with the specified id
+        }
+
+        //replaces existing removed tg or adds tag with initial increment
+        logTags.add(addEditTag.copyWith(logFrequency: addEditTag.logFrequency + 1));
+      });
+
+      return log.copyWith(tags: logTags);
+    } else {
+      return log;
+    }
+  }*/
+
+  Log addEditLogTag({Log log, Tag tag}) {
     List<Tag> tags = log.tags;
 
     //update tag if it already exists
     //otherwise add tag to the list
-    if(tag?.id != null) {
+    if (tag?.id != null) {
       tags[tags.indexWhere((e) => e.id == tag.id)] = tag;
-    }else {
+    } else {
       tags.add(tag.copyWith(id: Uuid().v4()));
     }
     return log.copyWith(tags: tags);
@@ -130,19 +149,19 @@ class Log extends Equatable {
 
   LogEntity toEntity() {
     return LogEntity(
-        uid: uid,
-        id: id,
-        logName: logName,
-        currency: currency,
-        categories: Map<String, MyCategory>.fromIterable(categories,
-            key: (e) => categories.indexOf(e).toString(), value: (e) => e),
-        subcategories: Map<String, MySubcategory>.fromIterable(subcategories,
-            key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
-        active: active,
-        archive: archive,
-        members: members,
-    tags: Map<String, Tag>.fromIterable(tags,
-        key: (e) => tags.indexOf(e).toString(), value: (e) => e), );
+      uid: uid,
+      id: id,
+      logName: logName,
+      currency: currency,
+      categories: Map<String, MyCategory>.fromIterable(categories,
+          key: (e) => categories.indexOf(e).toString(), value: (e) => e),
+      subcategories: Map<String, MySubcategory>.fromIterable(subcategories,
+          key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
+      active: active,
+      archive: archive,
+      members: members,
+      tags: Map<String, Tag>.fromIterable(tags, key: (e) => tags.indexOf(e).toString(), value: (e) => e),
+    );
   }
 
   static Log fromEntity(LogEntity entity) {

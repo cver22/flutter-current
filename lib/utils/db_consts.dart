@@ -15,6 +15,7 @@ const String ICON_FONT_FAMILY = 'iconFontFamily';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
 enum CategoryOrSubcategory {category, subcategory}
 enum SettingsLogEntry {settings, log, entry}
+enum TagCollectionType {entry, category, log}
 
 //Log constants
 const String LOGS_COLLECTION = 'logs';

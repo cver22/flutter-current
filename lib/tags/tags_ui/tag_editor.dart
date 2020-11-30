@@ -1,22 +1,23 @@
+import 'package:expenses/entry/entry_model/entry_state.dart';
+
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/maybe.dart';
+
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../env.dart';
 
 class TagEditor extends StatefulWidget {
-  final List<Tag> selectedEntryTags;
   final Log log;
   final VoidCallback onSave;
 
-  const TagEditor({Key key, @required this.selectedEntryTags, @required this.log, @required this.onSave}) : super(key: key);
+  const TagEditor({Key key, @required this.log, @required this.onSave}) : super(key: key);
 
   @override
   _TagEditorState createState() => _TagEditorState();
@@ -25,17 +26,11 @@ class TagEditor extends StatefulWidget {
 class _TagEditorState extends State<TagEditor> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  List<Tag> _newEntryTags;
-  Log _log;
-
   Tag _selectedTag;
-  bool newTag = false;
 
   @override
   void initState() {
     super.initState();
-    _newEntryTags = [];
-    _log = widget?.log;
     _controller.addListener(() {
       final text = _controller.text;
       _controller.value = _controller.value.copyWith(
@@ -53,11 +48,11 @@ class _TagEditorState extends State<TagEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectState<TagState>(
+    return ConnectState<EntryState>(
         where: notIdentical,
-        map: (state) => state.tagState,
-        builder: (tagState) {
-          _selectedTag = tagState.selectedTag.isSome ? tagState.selectedTag.value : Tag();
+        map: (state) => state.entryState,
+        builder: (entryState) {
+          _selectedTag = entryState.selectedTag.isSome ? entryState.selectedTag.value : Tag();
           return Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -75,31 +70,35 @@ class _TagEditorState extends State<TagEditor> {
                   controller: _controller,
                   keyboardType: TextInputType.text,
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
-
                   onChanged: (text) {
-                    setState(() {
-                    });
+                    setState(() {});
                   },
-
                 ),
               ),
               IconButton(
-                  icon: _selectedTag.id != null ? Icon(Icons.add) : Icon(Icons.check),
-                  onPressed: _controller.text.isEmpty ? null : () {
-                    //can be used to edit, needs modifications...a lot
+                  icon: _selectedTag.id == null ? Icon(Icons.add) : Icon(Icons.check),
+                  onPressed: _controller.text.isEmpty
+                      ? null
+                      : () {
+                          //can be used to edit, needs modifications...a lot
 
-                    _selectedTag = _selectedTag.copyWith(name: _controller.text);
-                    _controller.clear();
-                    if(_selectedTag.id == null) {
-                      newTag = true;
-                      _newEntryTags.add(_selectedTag);
-                      Env.store.dispatch(UpdateTagState(selectedTag: Maybe.some(_selectedTag), newTags: _newEntryTags));
-                      widget.onSave();
-                    }
+                          _selectedTag = _selectedTag.copyWith(name: _controller.text);
+                          _controller.clear();
+                          if (_selectedTag.id == null) {
 
+                            _selectedTag = _selectedTag.copyWith(id: Uuid().v4(), logFrequency: 1);
 
+                            List<Tag> logTagList = Env.store.state.entryState.logTagList;
 
-                  }),
+                            logTagList.add(_selectedTag);
+                            Env.store.dispatch(UpdateEntryState(logTagList: logTagList));
+
+                            List<String> tagIds = entryState.selectedEntry.value.tagIDs;
+                            tagIds.add(_selectedTag.id);
+                            Env.store.dispatch(UpdateSelectedEntry(tagIDs: tagIds));
+                            widget.onSave();
+                          }
+                        }),
             ],
           );
         });

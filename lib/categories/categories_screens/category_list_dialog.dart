@@ -75,7 +75,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
                     ? _log.subcategories
                     : _log.subcategories
                         .where((element) =>
-                            element.parentCategoryId == Env.store.state.entriesState.selectedEntry.value.categoryId)
+                            element.parentCategoryId == Env.store.state.entryState.selectedEntry.value.categoryId)
                         .toList();
               }
             } else {
@@ -301,7 +301,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
           Get.dialog(
             CategoryListDialog(
               categoryOrSubcategory: CategoryOrSubcategory.category,
-              log: Env.store.state.logsState.logs[Env.store.state.entriesState.selectedEntry.value.logId],
+              log: Env.store.state.logsState.logs[Env.store.state.entryState.selectedEntry.value.logId],
               key: ExpenseKeys.categoriesDialog,
               settingsLogEntry: SettingsLogEntry.entry,
             ),
@@ -528,7 +528,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO default function
 
         //TODO create delete function
-        initialParent: Env.store.state.entriesState.selectedEntry.value.categoryId,
+        initialParent: Env.store.state.entryState.selectedEntry.value.categoryId,
         subcategory: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
@@ -537,7 +537,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
 
   Future<dynamic> _addNew() {
     if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
-      MyCategory newCategory = MyCategory();
+      MyCategory newCategory = MyCategory(name: null);
       switch (_settingsLogEntry) {
         case SettingsLogEntry.settings:
           return _settingsAddEditCategory(newCategory);
@@ -554,7 +554,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
           break;
       }
     } else {
-      MySubcategory newSubcategory = MySubcategory();
+      MySubcategory newSubcategory = MySubcategory(name: null, parentCategoryId: null);
       switch (_settingsLogEntry) {
         case SettingsLogEntry.settings:
           return _settingsAddEditSubcategory(newSubcategory);
