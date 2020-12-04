@@ -23,9 +23,6 @@ class LogsScreen extends StatelessWidget {
         map: (state) => state.logsState,
         builder: (logsState) {
           print('Rendering Logs Screen');
-          logsState.logs.values.forEach((element) {
-            print('Log name ${element.logName} is active: ${element.active}');
-          });
 
           if (logsState.isLoading == true && Env.store.state.entryState.selectedEntry.isNone) {
             return LoadingIndicator(loadingMessage: 'Loading your logs...');

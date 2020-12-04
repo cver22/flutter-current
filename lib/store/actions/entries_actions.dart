@@ -12,6 +12,7 @@ AppState _updateEntries(
   void updateInPlace(Map<String, MyEntry> entries),
 ) {
   Map<String, MyEntry> cloneMap = Map.from(appState.entriesState.entries);
+  cloneMap.removeWhere((key, value) => value.active == false);
   updateInPlace(cloneMap);
   return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entries: cloneMap));
 }
@@ -19,14 +20,14 @@ AppState _updateEntries(
 class SetEntriesLoading implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(entriesState: appState.entriesState.copyWith(isLoading: true));
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: true));
   }
 }
 
 class SetEntriesLoaded implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(entriesState: appState.entriesState.copyWith(isLoading: false));
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: false));
   }
 }
 

@@ -46,19 +46,20 @@ class AddEditEntriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MyEntry _entry;
-    Log _log;
+
     return ConnectState<EntryState>(
         where: notIdentical,
         map: (state) => state.entryState,
         builder: (entryState) {
           //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
-          if (!entryState.savingEntry && entryState.selectedEntry.isSome) {
-            _entry = entryState.selectedEntry.value;
-            _log = Env.store.state.logsState.logs[_entry.logId];
+          if (true/*!entryState.savingEntry && entryState.selectedEntry.isSome*/) {
+            MyEntry entry;
+            Log log;
+            entry = entryState.selectedEntry.value;
+            log = Env.store.state.logsState.logs[entry.logId];
 
             print('Rendering AddEditEntriesScreen');
-            print('entry $_entry');
+            print('entry $entry');
 
             return WillPopScope(
               onWillPop: () async => false,
@@ -76,10 +77,10 @@ class AddEditEntriesScreen extends StatelessWidget {
                         color: Colors.white,
                       ),
                       onPressed: () {
-                        if (_entry?.amount != null) _submit(entryState: entryState, entry: _entry, log: _log);
+                        if (entry?.amount != null) _submit(entryState: entryState, entry: entry, log: log);
                       },
                     ),
-                    _entry?.id == null
+                    entry?.id == null
                         ? Container()
                         : PopupMenuButton<String>(
                             onSelected: handleClick,
@@ -94,7 +95,7 @@ class AddEditEntriesScreen extends StatelessWidget {
                           ),
                   ],
                 ),
-                body: _buildContents(context: context, entryState: entryState, log: _log, entry: _entry),
+                body: _buildContents(context: context, entryState: entryState, log: log, entry: entry),
               ),
             );
           } else {

@@ -23,17 +23,17 @@ class TagCollection extends StatelessWidget {
       @required this.tags,
       @required this.entry,
       @required this.collectionName,
-      @required this.tagCollectionType, @required this.entryState})
+      @required this.tagCollectionType,
+      @required this.entryState})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<Widget> tagChips = [];
     List<String> entryTagIds = [];
-    List<Tag>  logTagList = entryState.logTagList;
+    List<Tag> logTagList = entryState.logTagList;
 
     bool tagAlreadyListed = false;
-
 
     tags.forEach((thisTag) {
       tagChips.add(TagChip(
@@ -44,11 +44,11 @@ class TagCollection extends StatelessWidget {
             {
               logTagList.removeWhere((element) => element.id == thisTag.id),
               logTagList.add(thisTag.decrement(tag: thisTag)),
-
-
               entryTagIds.remove(thisTag.id),
-              Env.store.dispatch(UpdateEntryState(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList))
-
+              Env.store.dispatch(UpdateEntryState(
+                  selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
+              /*Env.store.dispatch(DecrementCategoryTagFrequency(
+                  categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
             }
           else
             {
@@ -64,7 +64,10 @@ class TagCollection extends StatelessWidget {
                   logTagList.add(thisTag.increment(tag: thisTag)),
 
                   entryTagIds.add(thisTag.id),
-                  Env.store.dispatch(UpdateEntryState(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList))
+                  Env.store.dispatch(UpdateEntryState(
+                      selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
+                  /*Env.store.dispatch(IncrementCategoryTagFrequency(
+                      categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
                 }
               else
                 {

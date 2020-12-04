@@ -1,7 +1,9 @@
 part of 'actions.dart';
 
-AppState _updateEntryState(AppState appState,
-    EntryState update(EntryState entryState),) {
+AppState _updateEntryState(
+  AppState appState,
+  EntryState update(EntryState entryState),
+) {
   return appState.copyWith(entryState: update(appState.entryState));
 }
 
@@ -9,19 +11,20 @@ class UpdateEntryState implements Action {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag;
   final List<Tag> logTagList;
+  final List<MyCategory> logCategoryList;
   final bool savingEntry;
 
-  UpdateEntryState({this.selectedEntry, this.selectedTag, this.logTagList, this.savingEntry});
+  UpdateEntryState({this.selectedEntry, this.selectedTag, this.logTagList, this.logCategoryList, this.savingEntry});
 
   @override
   AppState updateState(AppState appState) {
     return _updateEntryState(
         appState,
-            (entryState) =>
-            entryState.copyWith(
+        (entryState) => entryState.copyWith(
               selectedEntry: selectedEntry,
               selectedTag: selectedTag,
               logTagList: logTagList,
+              logCategoryList: logCategoryList,
               savingEntry: savingEntry,
             ));
   }
@@ -39,7 +42,9 @@ class SetNewSelectedEntry implements Action {
     _entry = _entry.copyWith(logId: _log.id, currency: _log.currency, dateTime: DateTime.now(), tagIDs: []);
     print('this is my new entry $_entry');
     return _updateEntryState(
-        appState, (entryState) => entryState.copyWith(selectedEntry: Maybe.some(_entry), logTagList: _log.tags));
+        appState,
+        (entryState) => entryState.copyWith(
+            selectedEntry: Maybe.some(_entry), logTagList: _log.tags, logCategoryList: _log.categories));
   }
 }
 
@@ -52,11 +57,11 @@ class SelectEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = Env.store.state.entriesState.entries[entryId];
 
-    return _updateEntryState(appState,
-            (entryState) =>
-            entryState.copyWith(selectedEntry: Maybe.some(entry), logTagList: Env.store.state.logsState.logs.values
-                .firstWhere((element) => element.id == entry.logId)
-                .tags));
+    return _updateEntryState(
+        appState,
+        (entryState) => entryState.copyWith(
+            selectedEntry: Maybe.some(entry),
+            logTagList: Env.store.state.logsState.logs.values.firstWhere((element) => element.id == entry.logId).tags));
   }
 }
 
@@ -86,38 +91,38 @@ class UpdateSelectedEntry implements Action {
   final DateTime dateTime;
   final List<String> tagIDs;
 
-  UpdateSelectedEntry({this.id,
-    this.logId,
-    this.currency,
-    this.active,
-    this.category,
-    this.subcategory,
-    this.amount,
-    this.comment,
-    this.dateTime,
-    this.tagIDs});
+  UpdateSelectedEntry(
+      {this.id,
+      this.logId,
+      this.currency,
+      this.active,
+      this.category,
+      this.subcategory,
+      this.amount,
+      this.comment,
+      this.dateTime,
+      this.tagIDs});
 
   @override
   AppState updateState(AppState appState) {
     return _updateEntryState(
       appState,
-          (entryState) =>
-          entryState.copyWith(
-            selectedEntry: Maybe.some(
-              entryState.selectedEntry.value.copyWith(
-                id: id,
-                logId: logId,
-                currency: currency,
-                active: active,
-                categoryId: category,
-                subcategoryId: subcategory,
-                amount: amount,
-                comment: comment,
-                dateTime: dateTime,
-                tagIDs: tagIDs,
-              ),
-            ),
+      (entryState) => entryState.copyWith(
+        selectedEntry: Maybe.some(
+          entryState.selectedEntry.value.copyWith(
+            id: id,
+            logId: logId,
+            currency: currency,
+            active: active,
+            categoryId: category,
+            subcategoryId: subcategory,
+            amount: amount,
+            comment: comment,
+            dateTime: dateTime,
+            tagIDs: tagIDs,
           ),
+        ),
+      ),
     );
   }
 }
@@ -131,12 +136,11 @@ class ChangeEntryLog implements Action {
   AppState updateState(AppState appState) {
     return _updateEntryState(
       appState,
-          (entryState) =>
-          entryState.copyWith(
-            selectedEntry: Maybe.some(
-              entryState.selectedEntry.value.changeLog(log: log),
-            ),
-          ),
+      (entryState) => entryState.copyWith(
+        selectedEntry: Maybe.some(
+          entryState.selectedEntry.value.changeLog(log: log),
+        ),
+      ),
     );
   }
 }
@@ -150,12 +154,101 @@ class ChangeEntryCategories implements Action {
   AppState updateState(AppState appState) {
     return _updateEntryState(
       appState,
-          (entryState) =>
-          entryState.copyWith(
-            selectedEntry: Maybe.some(
-              entryState.selectedEntry.value.changeCategories(category: category),
-            ),
-          ),
+      (entryState) => entryState.copyWith(
+        selectedEntry: Maybe.some(
+          entryState.selectedEntry.value.changeCategories(category: category),
+        ),
+      ),
+    );
+  }
+}
+
+class IncrementCategoryTagFrequency implements Action {
+  final String categoryId;
+  final String tagId;
+
+  IncrementCategoryTagFrequency({@required this.categoryId, @required this.tagId});
+
+  @override
+  AppState updateState(AppState appState) {
+    List<MyCategory> categories = Env.store.state.entryState.logCategoryList;
+    int index = categories.lastIndexWhere((e) => e.id == categoryId);
+    MyCategory category = categories[index];
+    int tagFrequency = 0;
+
+    categories.removeAt(index);
+    if (category.tagIdFrequency?.isEmpty ?? true) {
+      category = category.copyWith(tagIdFrequency: {});
+    }
+
+
+
+    if (category?.tagIdFrequency?.containsKey(tagId) != null) {
+      tagFrequency = category?.tagIdFrequency[tagId];
+    }
+
+    category.tagIdFrequency.update(
+      tagId,
+      (value) => tagFrequency++,
+      ifAbsent: () => 1,
+    );
+    category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
+
+    if (index >= categories.length) {
+      categories.add(category);
+    } else {
+      categories.insert(index, category);
+    }
+
+    return _updateEntryState(
+      appState,
+      (entryState) => entryState.copyWith(logCategoryList: categories),
+    );
+  }
+}
+
+class DecrementCategoryTagFrequency implements Action {
+  final String categoryId;
+  final String tagId;
+
+  DecrementCategoryTagFrequency({@required this.categoryId, @required this.tagId});
+
+  @override
+  AppState updateState(AppState appState) {
+    List<MyCategory> categories = Env.store.state.entryState.logCategoryList;
+    int index = categories.lastIndexWhere((e) => e.id == categoryId);
+    MyCategory category = categories[index];
+    categories.removeAt(index);
+
+    if (category.tagIdFrequency == null) {
+      category = category.copyWith(tagIdFrequency: Map<String, int>());
+    }
+
+    int tagFrequency = 0;
+
+    if (category?.tagIdFrequency?.containsKey(tagId) != null) {
+      tagFrequency = category?.tagIdFrequency[tagId];
+    }
+
+    //only decrements and replaces the category tag frequency if the tag is used at least once elsewhere
+    if (tagFrequency > 1) {
+      category.tagIdFrequency.update(
+        tagId,
+        (value) => tagFrequency--,
+        ifAbsent: () => 0,
+      );
+      category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
+    } //TODO how to remove the tag if its less than 1
+
+    if (index >= categories.length) {
+      categories.add(category);
+    } else {
+      categories.insert(index, category);
+    }
+
+    return _updateEntryState(
+      appState,
+      (entryState) => entryState.copyWith(logCategoryList: categories),
     );
   }
 }

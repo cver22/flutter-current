@@ -16,7 +16,7 @@ class LogEntity extends Equatable {
   final String id;
   final String logName;
   final String currency;
-  final bool active;
+
   final bool archive;
   final Map<String, MyCategory> categories;
   final Map<String, MySubcategory> subcategories;
@@ -30,45 +30,21 @@ class LogEntity extends Equatable {
       this.currency,
       this.categories,
       this.subcategories,
-      this.active,
+
         this.archive,
       this.members,
       this.tags});
 
-  //DEPRECATED
-  //for use in other database types
-  /*Map<String, Object> toJson() {
-    return {
-      UID: uid,
-      ID: id,
-      LOG_NAME: logName,
-      CURRENCY_NAME: currency,
-      ACTIVE: active,
-      MEMBER_ROLES_MAP: members,
-    };
-  }*/
 
   @override
   List<Object> get props =>
-      [uid, id, logName, currency, categories, subcategories, active, archive, members, tags];
+      [uid, id, logName, currency, categories, subcategories, archive, members, tags];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, $SUBCATEGORIES: $subcategories, active: $active, archive: $archive, members: $members, tags: $tags}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, $SUBCATEGORIES: $subcategories, archive: $archive, members: $members, tags: $tags}';
   }
 
-  //DEPRECATED
-  //for use in other database types
-  /*static LogEntity fromJson(Map<String, Object> json) {
-    return LogEntity(
-      uid: json[UID] as String,
-      id: json[ID] as String,
-      logName: json[LOG_NAME] as String,
-      currency: json[CURRENCY_NAME] as String,
-      active: json[ACTIVE] as bool,
-      members: json[MEMBER_ROLES_MAP] as Map<String, dynamic>,
-    );
-  }*/
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
 
@@ -83,7 +59,7 @@ class LogEntity extends Equatable {
       subcategories: (snap.data[SUBCATEGORIES] as Map<String, dynamic>).map(
               (key, value) => MapEntry(
               key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
-      active: snap.data[ACTIVE],
+
       archive: snap.data[ARCHIVE],
       tags: (snap.data[TAGS] as Map<String, dynamic>).map(
               (key, value) => MapEntry(
@@ -100,7 +76,7 @@ class LogEntity extends Equatable {
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       SUBCATEGORIES: subcategories
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
-      ACTIVE: active,
+
       TAGS: tags
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
     };

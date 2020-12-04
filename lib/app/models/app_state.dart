@@ -6,7 +6,6 @@ import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 
-
 import 'package:meta/meta.dart';
 
 @immutable

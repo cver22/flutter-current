@@ -20,7 +20,6 @@ class Log extends Equatable {
       this.currency,
       this.categories,
       this.subcategories,
-      this.active = true,
       this.archive = false,
       this.members,
       this.tags});
@@ -29,7 +28,6 @@ class Log extends Equatable {
   final String id;
   final String logName;
   final String currency;
-  final bool active;
   final bool archive;
   final List<MyCategory> categories;
   final List<MySubcategory> subcategories;
@@ -41,7 +39,6 @@ class Log extends Equatable {
     String id,
     String logName,
     String currency,
-    bool active,
     bool archive,
     List<MyCategory> categories,
     List<MySubcategory> subcategories,
@@ -53,7 +50,6 @@ class Log extends Equatable {
       id: id ?? this.id,
       logName: logName ?? this.logName,
       currency: currency ?? this.currency,
-      active: active ?? this.active,
       archive: archive ?? this.archive,
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
@@ -140,11 +136,11 @@ class Log extends Equatable {
   }
 
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, active, archive, members, tags];
+  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, members, tags];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories,  $SUBCATEGORIES: $subcategories, active: $active, archive: $archive, members: $members, tags: $tags}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories,  $SUBCATEGORIES: $subcategories, archive: $archive, members: $members, tags: $tags}';
   }
 
   LogEntity toEntity() {
@@ -157,7 +153,6 @@ class Log extends Equatable {
           key: (e) => categories.indexOf(e).toString(), value: (e) => e),
       subcategories: Map<String, MySubcategory>.fromIterable(subcategories,
           key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
-      active: active,
       archive: archive,
       members: members,
       tags: Map<String, Tag>.fromIterable(tags, key: (e) => tags.indexOf(e).toString(), value: (e) => e),
@@ -172,7 +167,6 @@ class Log extends Equatable {
       currency: entity.currency,
       categories: entity.categories.entries.map((e) => e.value).toList(),
       subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
-      active: entity.active,
       archive: entity.archive,
       members: entity.members,
       tags: entity.tags.entries.map((e) => e.value).toList(),

@@ -1,3 +1,4 @@
+import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/entry/entry_model/entry_state.dart';
 
 import 'package:expenses/log/log_model/log.dart';
@@ -88,10 +89,11 @@ class _TagEditorState extends State<TagEditor> {
 
                             _selectedTag = _selectedTag.copyWith(id: Uuid().v4(), logFrequency: 1);
 
-                            List<Tag> logTagList = Env.store.state.entryState.logTagList;
+                            List<Tag> logTagList = entryState.logTagList;
 
                             logTagList.add(_selectedTag);
                             Env.store.dispatch(UpdateEntryState(logTagList: logTagList));
+                            Env.store.dispatch(IncrementCategoryTagFrequency(categoryId: entryState.selectedEntry.value.categoryId, tagId: _selectedTag.id));
 
                             List<String> tagIds = entryState.selectedEntry.value.tagIDs;
                             tagIds.add(_selectedTag.id);

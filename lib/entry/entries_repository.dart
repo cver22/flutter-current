@@ -9,7 +9,9 @@ abstract class EntriesRepository {
 
   Stream<List<MyEntry>> loadEntries(User user);
 
-  Future<void> updateEntry(User user, MyEntry entry);
+  Future<void> updateEntry(MyEntry entry);
+
+  void deleteEntry(MyEntry entry);
 }
 
 class FirebaseEntriesRepository implements EntriesRepository {
@@ -23,13 +25,18 @@ class FirebaseEntriesRepository implements EntriesRepository {
   //TODO need to filter by contains UID
   @override
   Stream<List<MyEntry>> loadEntries(User user) {
-    return entriesCollection.where(ACTIVE, isEqualTo: true).snapshots().map((snapshot) {
+    return entriesCollection.snapshots().map((snapshot) {
       return snapshot.documents.map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc))).toList();
     });
   }
 
   @override
-  Future<void> updateEntry(User user, MyEntry update) {
+  Future<void> updateEntry(MyEntry update) {
     return entriesCollection.document(update.id).updateData(update.toEntity().toDocument());
+  }
+
+  @override
+  void deleteEntry(MyEntry entry) {
+    entriesCollection.document(entry.id).delete();
   }
 }

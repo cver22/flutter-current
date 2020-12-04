@@ -10,12 +10,12 @@ class MyCategory extends Equatable {
   final String emojiChar;
   final Map<String,int> tagIdFrequency;
 
-  MyCategory({this.id, @required this.name, this.isDefault = false, this.emojiChar, this.tagIdFrequency});
+  MyCategory({this.id, @required this.name, this.isDefault = false, this.emojiChar, this.tagIdFrequency = const {}});
 
   @override
-  List<Object> get props => [id, name, isDefault, emojiChar, this.tagIdFrequency];
+  List<Object> get props => [id, name, isDefault, emojiChar, tagIdFrequency];
 
-  MyCategory copyWith({String id, String name, bool isDefault, String emojiChar}) {
+  MyCategory copyWith({String id, String name, bool isDefault, String emojiChar, Map<String,int> tagIdFrequency}) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
@@ -36,7 +36,7 @@ class MyCategory extends Equatable {
       name: name,
       isDefault: isDefault,
       emojiChar: emojiChar,
-      tagIdFrequency: tagIdFrequency, // TODO Fix this
+      tagIdFrequency: tagIdFrequency,
     );
   }
 

@@ -21,9 +21,7 @@ class EntriesFetcher {
   Future<void> loadEntries() async {
     _store.dispatch(SetEntriesLoading());
     _entriesSubscription?.cancel();
-    _entriesSubscription = _entriesRepository
-        .loadEntries(_store.state.authState.user.value)
-        .listen(
+    _entriesSubscription = _entriesRepository.loadEntries(_store.state.authState.user.value).listen(
           (entries) => _store.dispatch(SetEntries(entryList: entries)),
         );
     _store.dispatch(SetEntriesLoaded());
@@ -31,8 +29,7 @@ class EntriesFetcher {
 
   Future<void> addEntry(MyEntry entry) async {
     try {
-      _entriesRepository.addNewEntry(
-          entry.copyWith(id: Uuid().v4(), dateTime: DateTime.now()));
+      _entriesRepository.addNewEntry(entry.copyWith(id: Uuid().v4(), dateTime: DateTime.now()));
     } catch (e) {
       print(e.toString());
     }
@@ -40,18 +37,15 @@ class EntriesFetcher {
 
   Future<void> updateEntry(MyEntry entry) async {
     try {
-      _entriesRepository.updateEntry(_store.state.authState.user.value, entry);
+      _entriesRepository.updateEntry(entry);
     } catch (e) {
       print(e.toString());
     }
   }
 
   Future<void> deleteEntry(MyEntry entry) async {
-
     try {
-      _entriesRepository.updateEntry(
-          _store.state.authState.user.value, entry.copyWith(active: false));
-
+      _entriesRepository.deleteEntry(entry);
     } catch (e) {
       print(e.toString());
     }

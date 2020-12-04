@@ -17,15 +17,8 @@ class AddEditLogScreen extends StatelessWidget {
 
   void _submit() {
     print('submit pressed');
-    Log log = Env.store.state.logsState.selectedLog.value;
-
-    if (log.id != null) {
-      Env.logsFetcher.updateLog(log);
-    } else {
-      Env.logsFetcher.addLog(log);
-    }
-
-    closeAddEditLogScreen();
+    Env.store.dispatch(AddUpdateLog());
+    Get.back();
   }
 
   void closeAddEditLogScreen() {
@@ -128,9 +121,10 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   void handleClick(String value) {
+    //TODO, I don't like how this work, I would prefer to just pass the log to it
     switch (value) {
       case 'Delete Log':
-        Env.logsFetcher.deleteLog(Env.store.state.logsState.selectedLog.value);
+        Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
         Get.back();
         break;
     }

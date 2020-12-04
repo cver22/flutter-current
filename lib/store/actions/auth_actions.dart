@@ -1,5 +1,7 @@
 part of 'actions.dart';
 
+//TODO update to use private functions similar to other actions
+
 class UpdateAuthStatus implements Action {
   final Maybe<User> user;
   final bool isLoading;

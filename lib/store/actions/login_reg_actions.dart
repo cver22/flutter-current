@@ -1,5 +1,7 @@
 part of 'actions.dart';
 
+//TODO modify to utilize a private function similar to the others
+
 class UpdateLoginRegState implements Action {
   final LoginRegState loginRegState;
 

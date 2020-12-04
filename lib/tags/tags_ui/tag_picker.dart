@@ -154,6 +154,7 @@ class _TagPickerState extends State<TagPicker> {
         _categoryRecentTags.add(_logAllTags.firstWhere((e) => e.id == keys[i]));
       }
     }
+    print('category tags: $_categoryRecentTags');
   }
 
   void _buildEntryTagList() {

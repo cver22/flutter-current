@@ -1,7 +1,5 @@
 part of 'actions.dart';
 
-//TODO update all actions to utilize private functions?
-
 AppState _updateLogState(
   AppState appState,
   LogsState update(LogsState logsState),
@@ -21,14 +19,14 @@ AppState _updateLogs(
 class SetLogsLoading implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(logsState: appState.logsState.copyWith(isLoading: true));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(isLoading: true));
   }
 }
 
 class SetLogsLoaded implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(logsState: appState.logsState.copyWith(isLoading: false));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(isLoading: false));
   }
 }
 
@@ -77,110 +75,53 @@ class SetLogs implements Action {
     });
   }
 }
-//Deprecated in favour of fetcher
-/*AppState _updateSingleLog(
-  AppState appState,
-  String logId,
-  Log update(Log log),
-) {
-  return _updateLogs(appState, (logs) => logs..[logId] = update(logs[logId]));
-}*/
 
-/*class MarkArchiveLog implements Action {
-  final String logId;
-  final String archive;
-
-  MarkArchiveLog({this.logId, this.archive});
-
-  @override
+class AddUpdateLog implements Action {
   AppState updateState(AppState appState) {
-    return _updateSingleLog(
-        appState, logId, (log) => log.copyWith(archive: !archive));
-  }
-}*/
+    Log addedUpdatedLog = appState.logsState.selectedLog.value;
+    LogsState logsState = appState.logsState;
 
-//Deprecated
-/*class UpdateLog implements Action {
-  final String id;
-  final String logName;
-  final String currency;
-  final List<MyCategory> categories;
-  final List<MySubcategory> subcategories;
-  final Map<String, dynamic> members;
+    if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
+      Env.logsFetcher.updateLog(addedUpdatedLog);
+      logsState.logs.update(
+        addedUpdatedLog.id,
+        (value) => addedUpdatedLog,
+        ifAbsent: () => addedUpdatedLog,
+      );
+    } else {
+      addedUpdatedLog = addedUpdatedLog.copyWith(
+          uid: appState.authState.user.value.id,
+          categories: appState.settingsState.settings.value.defaultCategories,
+          subcategories: appState.settingsState.settings.value.defaultSubcategories,
+          tags: []);
+      Env.logsFetcher.addLog(addedUpdatedLog);
 
-  UpdateLog(
-      {this.id,
-      this.logName,
-      this.currency,
-      this.categories,
-      this.subcategories,
-      this.members});
+      //TODO, does not update the state locally for new logs, may want to consider that, lst time I ended up with temporary duplicates
+    }
 
-  @override
-  AppState updateState(AppState appState) {
-    return _updateSingleLog(
-        appState,
-        id,
-        (log) => log.copyWith(
-              id: id,
-              logName: logName,
-              currency: currency,
-              categories: categories,
-              subcategories: subcategories,
-              members: members,
-            ));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
   }
 }
 
-class AddLog implements Action {
-  final String uid;
-  final String logName;
-  final String currency;
-  final List<MyCategory> categories;
-  final List<MySubcategory> subcategories;
-  final Map<String, dynamic> members;
+class DeleteLog implements Action {
+  final Log log;
 
-  AddLog(
-      {this.uid,
-      this.logName,
-      this.currency,
-      this.categories,
-      this.subcategories,
-      this.members});
+  DeleteLog({this.log});
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogs(
-        appState,
-        (log) => Log(
-              uid: uid,
-              id: Uuid().v4(),
-              logName: logName,
-              currency: currency,
-              categories: categories,
-              subcategories: subcategories,
-              members: members,
-            ));
-  }
-}*/
+    LogsState updatedLogsState = appState.logsState;
+    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
 
-//Deprecated
-/*class SelectLog implements Action {
-  final String logId;
+    //ensures the default log is updated if the current log is default and deleted
+    if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
+      Env.store.dispatch(UpdateSettings(
+          settings: Maybe.some(appState.settingsState.settings.value
+              .copyWith(defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id))));
+    }
+    //TODO likely need a method to resent the default to nothing, else statement for the above
+    Env.logsFetcher.deleteLog(log);
 
-  SelectLog({this.logId});
-
-  @override
-  AppState updateState(AppState appState) {
-    return _updateLogState(appState,
-        (logsState) => logsState.copyWith(selectedLogId: Maybe.some(logId)));
+    return _updateLogState(appState, (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()));
   }
 }
-
-class ClearSelectedLog implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    return _updateLogState(appState,
-        (logsState) => logsState.copyWith(selectedLogId: Maybe.none()));
-  }
-}*/
