@@ -1,4 +1,4 @@
-import 'package:expenses/entry/entry_model/entry_state.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 
 import 'package:expenses/store/actions/actions.dart';
@@ -13,7 +13,7 @@ import '../../env.dart';
 class TagCollection extends StatelessWidget {
   final List<Tag> tags;
   final MyEntry entry;
-  final EntryState entryState;
+  final SingleEntryState entryState;
 
   final String collectionName;
   final TagCollectionType tagCollectionType;

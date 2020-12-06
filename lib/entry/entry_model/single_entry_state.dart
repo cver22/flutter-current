@@ -6,7 +6,7 @@ import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-class EntryState extends Equatable {
+class SingleEntryState extends Equatable {
 
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
@@ -14,10 +14,10 @@ class EntryState extends Equatable {
   final List<MyCategory> logCategoryList; // collection of all log categories for updating;
   final bool savingEntry;
 
-  EntryState( {this.selectedTag, this.logTagList, this.selectedEntry, this.logCategoryList, this.savingEntry});
+  SingleEntryState( {this.selectedTag, this.logTagList, this.selectedEntry, this.logCategoryList, this.savingEntry});
 
-  factory EntryState.initial() {
-    return EntryState(
+  factory SingleEntryState.initial() {
+    return SingleEntryState(
 
       selectedEntry: Maybe.none(),
       selectedTag: Maybe.none(),
@@ -28,7 +28,7 @@ class EntryState extends Equatable {
     );
   }
 
-  EntryState copyWith({
+  SingleEntryState copyWith({
 
     Maybe<MyEntry> selectedEntry,
     Maybe<Tag> selectedTag,
@@ -37,7 +37,7 @@ class EntryState extends Equatable {
     bool savingEntry,
 
   }) {
-    return EntryState(
+    return SingleEntryState(
 
       selectedEntry: selectedEntry ?? this.selectedEntry,
       selectedTag: selectedTag ?? this.selectedTag,

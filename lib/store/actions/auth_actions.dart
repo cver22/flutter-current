@@ -1,32 +1,40 @@
 part of 'actions.dart';
 
-//TODO update to use private functions similar to other actions
+AppState _updateAuthState(
+  AppState appState,
+  AuthState update(AuthState authState),
+) {
+  return appState.copyWith(authState: update(appState.authState));
+}
 
-class UpdateAuthStatus implements Action {
-  final Maybe<User> user;
-  final bool isLoading;
+class AuthFailure implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateAuthState(appState, (authState) => AuthState.initial());
+  }
+}
 
-  UpdateAuthStatus({this.user, this.isLoading});
+class AuthSuccess implements Action {
+  final User user;
+
+  AuthSuccess({@required this.user});
 
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(
-        authState: appState.authState.copyWith(user: user, isLoading: isLoading));
+    return _updateAuthState(appState, (authState) => authState.copyWith(user: Maybe.some(user), isLoading: false));
   }
 }
 
 class SignOutState implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(
-        authState: AuthState.initial(), loginState: LoginRegState.initial(), logsState: LogsState.initial(), entriesState: EntriesState.initial());
-    //TODO reset all states to initial
+    return AppState.initial();
   }
 }
 
 class LoadingUser implements Action {
   @override
   AppState updateState(AppState appState) {
-    return appState.copyWith(authState: appState.authState.copyWith(isLoading: true));
+    return _updateAuthState(appState, (authState) => authState.copyWith(isLoading: true));
   }
 }

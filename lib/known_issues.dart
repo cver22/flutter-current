@@ -1,4 +1,4 @@
-//TODO deleting of logs does not make them go away
+      //TODO KNOWN ISSUES
 //TODO deleting of logs should also delete any of their entries, otherwise there is a loading error in entry ties
 //TODO looping issue where saving a tag, rebuilds the log state in the back ground, what needs to happen is the log screen is not rebuilt because the selectedEntry is not empty
 //TODO selected entry needs to be cleared when saving, but that caused a loop, need to utilize the isLoading state in entries state
@@ -7,7 +7,7 @@
 
 
 
-// General TODO
+      //TODO General
 //TODO re-ordrerable list for categories - this may be solveable by creating category/subcategory state for manipulation and then eventually savings
 //TODO change entry log so that all entries are in a single file for a single log, will reduce firestore costs
 // to reduce costs, look at storing the entry sets by month or year to allow for enough data per document without chance of hitting the limit
@@ -16,10 +16,11 @@
 //TODO category tags needs implementation
 //TODO load entries by most recent
 //TODO organize and filter entries in various ways
+//TODO deleting a log deletes all of its entries, will be easier to implement when I start using a ledger for each year in a log
+//TODO how to put an empty map in a JSON so the array doesn't initiate empty
 
 
 
 
-
-//TODO START HERE TOMORROW
-//how to put an empty map in a JSON so the array doesn't initiate empty
+    //TODO START HERE
+//work on entry submission and move the logic to actions

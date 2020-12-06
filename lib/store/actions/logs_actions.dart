@@ -81,16 +81,21 @@ class AddUpdateLog implements Action {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
     LogsState logsState = appState.logsState;
 
+    //check is the log currently exists
     if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
+      //update an existing log
       Env.logsFetcher.updateLog(addedUpdatedLog);
+
       logsState.logs.update(
         addedUpdatedLog.id,
         (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
     } else {
+      //create a new log, does not save locally to state
       addedUpdatedLog = addedUpdatedLog.copyWith(
           uid: appState.authState.user.value.id,
+          id: Uuid().v4(),
           categories: appState.settingsState.settings.value.defaultCategories,
           subcategories: appState.settingsState.settings.value.defaultSubcategories,
           tags: []);
@@ -113,13 +118,15 @@ class DeleteLog implements Action {
     LogsState updatedLogsState = appState.logsState;
     updatedLogsState.logs.removeWhere((key, value) => key == log.id);
 
+    //this may not be a legal action, not sure if I can trigger an acting within an action
     //ensures the default log is updated if the current log is default and deleted
     if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
       Env.store.dispatch(UpdateSettings(
           settings: Maybe.some(appState.settingsState.settings.value
               .copyWith(defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id))));
     }
-    //TODO likely need a method to resent the default to nothing, else statement for the above
+
+    //TODO likely need a method to reset the default to nothing, else statement for the above
     Env.logsFetcher.deleteLog(log);
 
     return _updateLogState(appState, (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()));

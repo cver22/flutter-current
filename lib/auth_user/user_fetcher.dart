@@ -4,7 +4,7 @@ import 'package:expenses/login_register/login_register_model/login_or_register.d
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
-import 'package:expenses/utils/maybe.dart';
+
 import 'package:meta/meta.dart';
 
 class UserFetcher {
@@ -20,34 +20,30 @@ class UserFetcher {
 //  FirebaseUserRepository get repo => _userRepository;
 
   _getCurrentUser(LoginRegState loginRegState) async {
-    print('firing start app');
     final isSignedIn = await _userRepository.isSignedIn();
     if (isSignedIn) {
-      final Maybe<User> user = Maybe.some(await _userRepository.getUser());
-      _store.dispatch(UpdateAuthStatus(user: user, isLoading: false));
-      _store.dispatch(
-          UpdateLoginRegState(loginRegState: loginRegState.success()));
+      final User user = await _userRepository.getUser();
+      _store.dispatch(AuthSuccess(user: user));
+      _store.dispatch(LoginRegSuccess());
       print('User authenticated: $user');
     } else {
-      _store.dispatch(UpdateAuthStatus(user: Maybe.none(), isLoading: false));
+      _store.dispatch(AuthFailure());
       print('User is not authenticated');
     }
   }
 
   _setLoadingAndSubmitting(LoginRegState loginRegState) {
-    _store.dispatch(
-        UpdateLoginRegState(loginRegState: loginRegState.submitting()));
-    _store.dispatch(UpdateAuthStatus(isLoading: true));
+    _store.dispatch(LoginRegSubmitting());
+    _store.dispatch(LoadingUser());
   }
 
   _loginRegisterFail(LoginRegState loginRegState) {
-    _store.dispatch(UpdateAuthStatus(user: Maybe.none(), isLoading: false));
-    _store
-        .dispatch(UpdateLoginRegState(loginRegState: loginRegState.failure()));
+    _store.dispatch(AuthFailure());
+    _store.dispatch(LoginRegFailure());
   }
 
   Future<void> startApp() async {
-    _store.dispatch(UpdateAuthStatus(isLoading: true));
+    _store.dispatch(LoadingUser());
     _getCurrentUser(_store.state.loginRegState);
   }
 
@@ -67,13 +63,11 @@ class UserFetcher {
     }
   }
 
-  Future<void> signInOrRegisterWithCredentials(
-      {String email, String password, LoginRegState loginRegState}) async {
+  Future<void> signInOrRegisterWithCredentials({String email, String password, LoginRegState loginRegState}) async {
     _setLoadingAndSubmitting(loginRegState);
     try {
       if (loginRegState.loginOrRegister == LoginOrRegister.login) {
-        await _userRepository.signInWithCredentials(
-            email: email, password: password);
+        await _userRepository.signInWithCredentials(email: email, password: password);
       } else if (loginRegState.loginOrRegister == LoginOrRegister.register) {
         await _userRepository.signUp(email: email, password: password);
       }

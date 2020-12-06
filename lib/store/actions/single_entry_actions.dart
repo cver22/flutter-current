@@ -2,9 +2,9 @@ part of 'actions.dart';
 
 AppState _updateEntryState(
   AppState appState,
-  EntryState update(EntryState entryState),
+  SingleEntryState update(SingleEntryState entryState),
 ) {
-  return appState.copyWith(entryState: update(appState.entryState));
+  return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
 class UpdateEntryState implements Action {
@@ -75,7 +75,7 @@ class ClearSelectedEntry implements Action {
 class ClearEntryState implements Action {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(appState, (entryState) => EntryState.initial());
+    return _updateEntryState(appState, (entryState) => SingleEntryState.initial());
   }
 }
 
@@ -171,7 +171,7 @@ class IncrementCategoryTagFrequency implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    List<MyCategory> categories = Env.store.state.entryState.logCategoryList;
+    List<MyCategory> categories = Env.store.state.singleEntryState.logCategoryList;
     int index = categories.lastIndexWhere((e) => e.id == categoryId);
     MyCategory category = categories[index];
     int tagFrequency = 0;
@@ -215,7 +215,7 @@ class DecrementCategoryTagFrequency implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    List<MyCategory> categories = Env.store.state.entryState.logCategoryList;
+    List<MyCategory> categories = Env.store.state.singleEntryState.logCategoryList;
     int index = categories.lastIndexWhere((e) => e.id == categoryId);
     MyCategory category = categories[index];
     categories.removeAt(index);

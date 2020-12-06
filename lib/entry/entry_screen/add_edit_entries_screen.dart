@@ -1,6 +1,6 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/app/splash_screen.dart';
-import 'package:expenses/entry/entry_model/entry_state.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_screen/entries_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
@@ -22,7 +22,7 @@ import 'package:get/get.dart';
 class AddEditEntriesScreen extends StatelessWidget {
   AddEditEntriesScreen({Key key}) : super(key: key);
 
-  void _submit({@required EntryState entryState, @required MyEntry entry, @required Log log}) {
+  void _submit({@required SingleEntryState entryState, @required MyEntry entry, @required Log log}) {
     Env.store.dispatch(UpdateEntryState(savingEntry: true));
 
     if (entry.id != null &&
@@ -39,7 +39,7 @@ class AddEditEntriesScreen extends StatelessWidget {
 
     Get.back();
 
-    Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.entryState.logTagList));
+    Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.singleEntryState.logTagList));
 
     Env.store.dispatch(ClearEntryState());
   }
@@ -47,9 +47,9 @@ class AddEditEntriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return ConnectState<EntryState>(
+    return ConnectState<SingleEntryState>(
         where: notIdentical,
-        map: (state) => state.entryState,
+        map: (state) => state.singleEntryState,
         builder: (entryState) {
           //TODO error on saving from existing entry, likely a rebuild error due to rebuilding before popping, probably use a future delay to handle
           if (true/*!entryState.savingEntry && entryState.selectedEntry.isSome*/) {
@@ -106,7 +106,7 @@ class AddEditEntriesScreen extends StatelessWidget {
   }
 
   Widget _buildContents(
-      {@required BuildContext context, @required EntryState entryState, @required Log log, @required MyEntry entry}) {
+      {@required BuildContext context, @required SingleEntryState entryState, @required Log log, @required MyEntry entry}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -126,7 +126,7 @@ class AddEditEntriesScreen extends StatelessWidget {
   }
 
   Widget _buildForm(
-      {@required BuildContext context, @required EntryState entryState, @required Log log, @required MyEntry entry}) {
+      {@required BuildContext context, @required SingleEntryState entryState, @required Log log, @required MyEntry entry}) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -222,7 +222,7 @@ class AddEditEntriesScreen extends StatelessWidget {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Entry':
-        Env.entriesFetcher.deleteEntry(Env.store.state.entryState.selectedEntry.value);
+        Env.entriesFetcher.deleteEntry(Env.store.state.singleEntryState.selectedEntry.value);
         closeEntryScreen();
         break;
     }
@@ -234,7 +234,7 @@ class AddEditEntriesScreen extends StatelessWidget {
   }
 
   //TODO similar code used here and in settings - refactor to use same widget and pass required functions only
-  Widget _logNameDropDown({@required EntryState entryState}) {
+  Widget _logNameDropDown({@required SingleEntryState entryState}) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
       List<Log> _logs = Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
 

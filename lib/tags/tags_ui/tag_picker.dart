@@ -1,4 +1,4 @@
-import 'package:expenses/entry/entry_model/entry_state.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -29,9 +29,9 @@ class _TagPickerState extends State<TagPicker> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectState<EntryState>(
+    return ConnectState<SingleEntryState>(
         where: notIdentical,
-        map: (state) => state.entryState,
+        map: (state) => state.singleEntryState,
         builder: (entryState) {
           int maxTags = 10;
           _entry = entryState.selectedEntry.value;
@@ -87,7 +87,7 @@ class _TagPickerState extends State<TagPicker> {
         });
   }
 
-  void _tagListBuilders({@required EntryState entryState, int maxTags}) {
+  void _tagListBuilders({@required SingleEntryState entryState, int maxTags}) {
     //builds their respective preliminary tag lists if the entry has a log and a category
     if (_entry?.logId != null) {
       _log = Env.store.state.logsState.logs.values.firstWhere((e) => e.id == _entry.logId);

@@ -1,5 +1,5 @@
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/entry/entry_model/entry_state.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
@@ -49,9 +49,9 @@ class _TagEditorState extends State<TagEditor> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectState<EntryState>(
+    return ConnectState<SingleEntryState>(
         where: notIdentical,
-        map: (state) => state.entryState,
+        map: (state) => state.singleEntryState,
         builder: (entryState) {
           _selectedTag = entryState.selectedTag.isSome ? entryState.selectedTag.value : Tag();
           return Row(

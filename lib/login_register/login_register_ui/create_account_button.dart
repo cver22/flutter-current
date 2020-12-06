@@ -15,15 +15,8 @@ class CreateAccountButton extends StatelessWidget {
     return FlatButton(
       child: loginState.loginOrRegister == LoginOrRegister.login ? Text('Create an Account') : Text('Go to Login'),
       onPressed: () {
-        Env.store.dispatch(UpdateLoginRegState(
-            loginRegState: loginState.copyWith(
-                loginOrRegister: _changeLoginRegister(loginState))));
+        Env.store.dispatch(LoginOrCreateUser());
       },
     );
-  }
-
-  LoginOrRegister _changeLoginRegister(LoginRegState loginState) {
-    //switches function of ui and logic
-    return loginState.loginOrRegister == LoginOrRegister.login ? LoginOrRegister.register : LoginOrRegister.login;
   }
 }

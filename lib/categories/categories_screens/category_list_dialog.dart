@@ -75,7 +75,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
                     ? _log.subcategories
                     : _log.subcategories
                         .where((element) =>
-                            element.parentCategoryId == Env.store.state.entryState.selectedEntry.value.categoryId)
+                            element.parentCategoryId == Env.store.state.singleEntryState.selectedEntry.value.categoryId)
                         .toList();
               }
             } else {
@@ -301,7 +301,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
           Get.dialog(
             CategoryListDialog(
               categoryOrSubcategory: CategoryOrSubcategory.category,
-              log: Env.store.state.logsState.logs[Env.store.state.entryState.selectedEntry.value.logId],
+              log: Env.store.state.logsState.logs[Env.store.state.singleEntryState.selectedEntry.value.logId],
               key: ExpenseKeys.categoriesDialog,
               settingsLogEntry: SettingsLogEntry.entry,
             ),
@@ -528,7 +528,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO default function
 
         //TODO create delete function
-        initialParent: Env.store.state.entryState.selectedEntry.value.categoryId,
+        initialParent: Env.store.state.singleEntryState.selectedEntry.value.categoryId,
         subcategory: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),

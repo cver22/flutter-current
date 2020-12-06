@@ -24,7 +24,7 @@ class LogsScreen extends StatelessWidget {
         builder: (logsState) {
           print('Rendering Logs Screen');
 
-          if (logsState.isLoading == true && Env.store.state.entryState.selectedEntry.isNone) {
+          if (logsState.isLoading == true && Env.store.state.singleEntryState.selectedEntry.isNone) {
             return LoadingIndicator(loadingMessage: 'Loading your logs...');
           } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
             //TODO create archive bool to show logs that have been archived and not visible

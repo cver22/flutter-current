@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/entry/entry_model/entries_state.dart';
-import 'package:expenses/entry/entry_model/entry_state.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
@@ -15,7 +15,7 @@ class AppState extends Equatable {
   final LogsState logsState;
   final EntriesState entriesState;
   final SettingsState settingsState;
-  final EntryState entryState;
+  final SingleEntryState singleEntryState;
 
   AppState(
       {@required this.authState,
@@ -23,7 +23,7 @@ class AppState extends Equatable {
       @required this.logsState,
       @required this.entriesState,
       @required this.settingsState,
-      @required this.entryState});
+      @required this.singleEntryState});
 
   AppState copyWith({
     AuthState authState,
@@ -31,7 +31,7 @@ class AppState extends Equatable {
     LogsState logsState,
     EntriesState entriesState,
     SettingsState settingsState,
-    EntryState entryState,
+    SingleEntryState singleEntryState,
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -39,7 +39,7 @@ class AppState extends Equatable {
       logsState: logsState ?? this.logsState,
       entriesState: entriesState ?? this.entriesState,
       settingsState: settingsState ?? this.settingsState,
-      entryState: entryState ?? this.entryState,
+      singleEntryState: singleEntryState ?? this.singleEntryState,
     );
   }
 
@@ -50,7 +50,7 @@ class AppState extends Equatable {
       logsState: LogsState.initial(),
       entriesState: EntriesState.initial(),
       settingsState: SettingsState.initial(),
-      entryState: EntryState.initial(),
+      singleEntryState: SingleEntryState.initial(),
     );
   }
 
@@ -59,5 +59,5 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState, entryState];
+      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState];
 }
