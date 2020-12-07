@@ -7,17 +7,16 @@ class MySubcategory extends MyCategory {
   final String parentCategoryId;
 
   MySubcategory({id, name, isDefault, emojiChar, @required this.parentCategoryId})
-      : super(id: id, name: name, isDefault: isDefault, emojiChar: emojiChar);
+      : super(id: id, name: name, emojiChar: emojiChar);
 
   @override
-  List<Object> get props => [parentCategoryId, id, name, isDefault, emojiChar];
+  List<Object> get props => [parentCategoryId, id, name, emojiChar];
 
   @override
   MySubcategory copyWith({
     String parentCategoryId,
     String id,
     String name,
-    bool isDefault,
     String emojiChar,
     Map<String,int> tagIdFrequency, //unused override
   }) {
@@ -25,14 +24,13 @@ class MySubcategory extends MyCategory {
       parentCategoryId: parentCategoryId ?? this.parentCategoryId,
       id: id ?? this.id,
       name: name ?? this.name,
-      isDefault: isDefault ?? this.isDefault,
       emojiChar: emojiChar ?? this.emojiChar,
     );
   }
 
   @override
   String toString() {
-    return 'MySubcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, isDefault $isDefault, emojiChar: $emojiChar}';
+    return 'MySubcategory {parentCategoryId: $parentCategoryId, id: $id, name: $name, emojiChar: $emojiChar}';
   }
 
 
@@ -42,7 +40,6 @@ class MySubcategory extends MyCategory {
       parentCategoryId: parentCategoryId,
       id: id,
       name: name,
-      isDefault: isDefault,
       emojiChar: emojiChar,
     );
   }
@@ -53,7 +50,6 @@ class MySubcategory extends MyCategory {
       parentCategoryId: entity.parentCategoryId,
       id: entity.id,
       name: entity.name,
-      isDefault: entity.isDefault,
       emojiChar: entity.emojiChar,
     );
   }

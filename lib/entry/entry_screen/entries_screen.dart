@@ -21,14 +21,15 @@ class EntriesScreen extends StatelessWidget {
     Env.entriesFetcher.loadEntries();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+
+        //TODO abstract this away from the ui
         //TODO deactivate add entries button if there is no default log
         //TODO pass default log or retrieve from state
         onPressed: () {
           String defaultLogId = Env.store.state.settingsState.settings.value.defaultLogId;
-          Map logs = Env.store.state.logsState.logs;
-          if (defaultLogId != null && logs.containsKey(defaultLogId)) {
+          if (defaultLogId != null && Env.store.state.logsState.logs.containsKey(defaultLogId)) {
             //sets logId for selected entry to defaultLogId for new entry when navigating from FAB
-            Env.store.dispatch(SetNewSelectedEntry(logId: Env.store.state.settingsState.settings.value.defaultLogId));
+            Env.store.dispatch(SetNewSelectedEntry(logId: defaultLogId));
             Get.toNamed(ExpenseRoutes.addEditEntries);
 
           } else {
@@ -49,7 +50,7 @@ class EntriesScreen extends StatelessWidget {
           print('Entries State: $entriesState');
 
           if (entriesState.isLoading == true) {
-            return LoadingIndicator(loadingMessage: 'Loading your entries...');
+            return ModalLoadingIndicator(loadingMessage: 'Loading your entries...');
           } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
 
 

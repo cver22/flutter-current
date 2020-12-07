@@ -29,7 +29,7 @@ class EntriesFetcher {
 
   Future<void> addEntry(MyEntry entry) async {
     try {
-      _entriesRepository.addNewEntry(entry.copyWith(id: Uuid().v4(), dateTime: DateTime.now()));
+      _entriesRepository.addNewEntry(entry);
     } catch (e) {
       print(e.toString());
     }

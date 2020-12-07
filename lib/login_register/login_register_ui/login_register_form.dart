@@ -12,8 +12,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:expenses/utils/expense_routes.dart';
 
-
-
 class LoginRegisterForm extends StatefulWidget {
   @override
   _LoginRegisterFormState createState() => _LoginRegisterFormState();
@@ -23,8 +21,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  bool get isPopulated =>
-      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+  bool get isPopulated => _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
   bool isLogin(LoginRegState state) {
     return state.loginOrRegister == LoginOrRegister.login;
@@ -51,10 +48,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
           print('Login status: ${state.loginStatus}');
           print('LoginOrRegister: ${state.loginOrRegister}');
 
-          if(Env.store.state.authState.user.isSome){
+          if (Env.store.state.authState.user.isSome) {
             Future.delayed(Duration.zero, () {
               Get.toNamed(ExpenseRoutes.home);
-
             });
           }
 
@@ -67,8 +63,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child:
-                            Image.asset('assets/flutter_logo.png', height: 200),
+                        child: Image.asset('assets/flutter_logo.png', height: 200),
                       ),
                       TextFormField(
                         controller: _emailController,
@@ -95,9 +90,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                         autocorrect: false,
                         //TODO delay password validation
                         validator: (_) {
-                          return !state.isPasswordValid
-                              ? 'Minimum 10 characters'
-                              : null;
+                          return !state.isPasswordValid ? 'Minimum 10 characters' : null;
                         },
                       ),
                       Padding(
@@ -105,9 +98,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                         child: Column(
                           children: <Widget>[
                             LoginRegisterButton(
-                              onPressed: isLoginButtonEnabled(state)
-                                  ? () => _onFormSubmitted(state, context)
-                                  : null,
+                              onPressed: isLoginButtonEnabled(state) ? () => _onFormSubmitted(state, context) : null,
                               name: isLogin(state) ? 'Login' : 'Register',
                             ),
                             GoogleLoginButton(
@@ -122,12 +113,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                   ),
                 ),
               ),
-
-              if (state.isSubmitting == true) Stack(children: [
-                Opacity(opacity: 0.5,child: ModalBarrier(dismissible: false, color: Colors.grey)),
-                LoadingIndicator(loadingMessage: state.loginOrRegister == LoginOrRegister.login ? 'Logging In' : 'Registering'),
-
-              ],) else Container(),
+              ModalLoadingIndicator(
+                  loadingMessage: state.loginOrRegister == LoginOrRegister.login ? 'Logging In' : 'Registering',
+                  activate: state.isSubmitting)
             ],
           );
         });

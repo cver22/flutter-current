@@ -53,11 +53,9 @@ class AddEditLogScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.check,
-                    color: Colors.white,
+                    color: canSave(_name) ? Colors.white : Colors.grey,
                   ),
-                  onPressed: () {
-                    if (_name != null && _name != '') _submit();
-                  },
+                  onPressed: canSave(_name) ? () => _submit() : null,
                 ),
                 _log.id == null
                     ? Container()
@@ -80,6 +78,8 @@ class AddEditLogScreen extends StatelessWidget {
       },
     );
   }
+
+  bool canSave(String _name) => _name != null && _name != '';
 
   Widget _buildContents({@required BuildContext context, @required Log log, @required String currency}) {
     return SingleChildScrollView(

@@ -9,19 +9,18 @@ part 'my_category_entity.g.dart';
 class MyCategoryEntity extends Equatable {
   final String id;
   final String name;
-  final bool isDefault;
   final String emojiChar;
   final Map<String, int> tagIdFrequency;
 
   const MyCategoryEntity(
-      {this.id, this.name, this.isDefault = false, this.emojiChar, this.tagIdFrequency});
+      {this.id, this.name, this.emojiChar, this.tagIdFrequency});
 
   @override
-  List<Object> get props => [id, name, isDefault, emojiChar, tagIdFrequency];
+  List<Object> get props => [id, name, emojiChar, tagIdFrequency];
 
   @override
   String toString() {
-    return 'MyCategoryEntity {id: $id, name: $name, isDefault: $isDefault, emojiChar $emojiChar tagIdFrequency: $tagIdFrequency}';
+    return 'MyCategoryEntity {id: $id, name: $name, emojiChar $emojiChar tagIdFrequency: $tagIdFrequency}';
   }
 
   factory MyCategoryEntity.fromJson(Map<String, dynamic> json) =>

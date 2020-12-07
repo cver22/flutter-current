@@ -4,7 +4,7 @@ import 'package:expenses/categories/categories_model/my_subcategory/my_subcatego
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-part '../../settings/settings_model/settings_entity.g.dart';
+part 'settings_entity.g.dart';
 
 @immutable
 @JsonSerializable()

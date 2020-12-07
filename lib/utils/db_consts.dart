@@ -10,9 +10,8 @@ const String SUBCATEGORY = 'subcategory';
 const String CATEGORIES = 'categories';
 const String SUBCATEGORIES = 'subcategories';
 const String NAME = 'name';
-const String ICON_CODE_POINT = 'iconCodePoint';
-const String ICON_FONT_FAMILY = 'iconFontFamily';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
+const String DEFAULT_CATEGORY = 'defaultCategory';
 enum CategoryOrSubcategory {category, subcategory}
 enum SettingsLogEntry {settings, log, entry}
 enum TagCollectionType {entry, category, log}

@@ -27,7 +27,7 @@ class TagEditor extends StatefulWidget {
 class _TagEditorState extends State<TagEditor> {
   final _controller = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  Tag _selectedTag;
+  Tag selectedTag;
 
   @override
   void initState() {
@@ -52,8 +52,8 @@ class _TagEditorState extends State<TagEditor> {
     return ConnectState<SingleEntryState>(
         where: notIdentical,
         map: (state) => state.singleEntryState,
-        builder: (entryState) {
-          _selectedTag = entryState.selectedTag.isSome ? entryState.selectedTag.value : Tag();
+        builder: (singleEntryState) {
+          selectedTag = singleEntryState.selectedTag.isSome ? singleEntryState.selectedTag.value : Tag();
           return Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -77,29 +77,22 @@ class _TagEditorState extends State<TagEditor> {
                 ),
               ),
               IconButton(
-                  icon: _selectedTag.id == null ? Icon(Icons.add) : Icon(Icons.check),
+                  icon: selectedTag.id == null
+                      ? Icon(
+                          Icons.add,
+                          color: _controller.text.isEmpty ? Colors.grey : Colors.black,
+                        )
+                      : Icon(Icons.check),
                   onPressed: _controller.text.isEmpty
                       ? null
                       : () {
                           //can be used to edit, needs modifications...a lot
 
-                          _selectedTag = _selectedTag.copyWith(name: _controller.text);
+
+
+                          Env.store.dispatch(AddNewTagToEntry(newTag: selectedTag.copyWith(name: _controller.text)));
                           _controller.clear();
-                          if (_selectedTag.id == null) {
-
-                            _selectedTag = _selectedTag.copyWith(id: Uuid().v4(), logFrequency: 1);
-
-                            List<Tag> logTagList = entryState.logTagList;
-
-                            logTagList.add(_selectedTag);
-                            Env.store.dispatch(UpdateEntryState(logTagList: logTagList));
-                            Env.store.dispatch(IncrementCategoryTagFrequency(categoryId: entryState.selectedEntry.value.categoryId, tagId: _selectedTag.id));
-
-                            List<String> tagIds = entryState.selectedEntry.value.tagIDs;
-                            tagIds.add(_selectedTag.id);
-                            Env.store.dispatch(UpdateSelectedEntry(tagIDs: tagIds));
-                            widget.onSave();
-                          }
+                          widget.onSave();
                         }),
             ],
           );

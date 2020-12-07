@@ -23,4 +23,4 @@
 
 
     //TODO START HERE
-//work on entry submission and move the logic to actions
+//setup default category and logs for settings and the FAB

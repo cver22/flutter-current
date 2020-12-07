@@ -1,24 +1,25 @@
 part of 'actions.dart';
 
-AppState _updateEntryState(
+AppState _updateSingleEntryState(
   AppState appState,
-  SingleEntryState update(SingleEntryState entryState),
+  SingleEntryState update(SingleEntryState singleEntryState),
 ) {
   return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
-class UpdateEntryState implements Action {
+class UpdateSingleEntryState implements Action {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag;
   final List<Tag> logTagList;
   final List<MyCategory> logCategoryList;
   final bool savingEntry;
 
-  UpdateEntryState({this.selectedEntry, this.selectedTag, this.logTagList, this.logCategoryList, this.savingEntry});
+  UpdateSingleEntryState(
+      {this.selectedEntry, this.selectedTag, this.logTagList, this.logCategoryList, this.savingEntry});
 
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(
+    return _updateSingleEntryState(
         appState,
         (entryState) => entryState.copyWith(
               selectedEntry: selectedEntry,
@@ -31,51 +32,90 @@ class UpdateEntryState implements Action {
 }
 
 class SetNewSelectedEntry implements Action {
+  //sets new entry and resets all entry data not yet available
   final String logId;
 
   SetNewSelectedEntry({@required this.logId});
 
   @override
   AppState updateState(AppState appState) {
-    MyEntry _entry = MyEntry();
-    Log _log = Env.store.state.logsState.logs[logId];
-    _entry = _entry.copyWith(logId: _log.id, currency: _log.currency, dateTime: DateTime.now(), tagIDs: []);
-    print('this is my new entry $_entry');
-    return _updateEntryState(
+    MyEntry entry = MyEntry();
+    Log log = appState.logsState.logs[logId];
+    entry = entry.copyWith(logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: []);
+    print('this is my new entry $entry');
+    return _updateSingleEntryState(
         appState,
         (entryState) => entryState.copyWith(
-            selectedEntry: Maybe.some(_entry), logTagList: _log.tags, logCategoryList: _log.categories));
+            selectedEntry: Maybe.some(entry),
+            selectedTag: Maybe.none(),
+            logTagList: log.tags,
+            logCategoryList: log.categories,
+            savingEntry: false));
   }
 }
 
 class SelectEntry implements Action {
+  //sets selected entry and resets all entry data not yet available
   final String entryId;
 
   SelectEntry({@required this.entryId});
 
   @override
   AppState updateState(AppState appState) {
-    MyEntry entry = Env.store.state.entriesState.entries[entryId];
+    MyEntry entry = appState.entriesState.entries[entryId];
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
 
-    return _updateEntryState(
+    return _updateSingleEntryState(
         appState,
         (entryState) => entryState.copyWith(
             selectedEntry: Maybe.some(entry),
-            logTagList: Env.store.state.logsState.logs.values.firstWhere((element) => element.id == entry.logId).tags));
+            selectedTag: Maybe.none(),
+            logTagList: log.tags,
+            logCategoryList: log.categories,
+            savingEntry: false));
   }
 }
 
-class ClearSelectedEntry implements Action {
+class AddUpdateSingleEntry implements Action {
+  //submits new entry to the entries list and the clear the singleEntryState
+  final MyEntry entry;
+  final Log log;
+
+  AddUpdateSingleEntry({this.entry, this.log});
+
+  AppState updateState(AppState appState) {
+    Env.store.dispatch(SingleEntryProcessing());
+
+    if (entry.id != null &&
+        entry !=
+            appState.entriesState.entries.entries
+                .map((e) => e.value)
+                .toList()
+                .firstWhere((element) => element.id == entry.id)) {
+      //update entry if id is not null and thus already exists an the entry has been modified
+      Env.entriesFetcher.updateEntry(entry);
+    } else if (entry.id == null) {
+      Env.entriesFetcher.addEntry(entry.copyWith(id: Uuid().v4(), dateTime: DateTime.now()));
+    }
+
+    //updates log with updated tag list
+    Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.singleEntryState.logTagList));
+
+    return _updateSingleEntryState(appState, (singleEntryState) => SingleEntryState.initial());
+  }
+}
+
+class SingleEntryProcessing implements Action {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(appState, (entryState) => entryState.copyWith(selectedEntry: Maybe.none()));
+    return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState.copyWith(savingEntry: true));
   }
 }
 
 class ClearEntryState implements Action {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(appState, (entryState) => SingleEntryState.initial());
+    return _updateSingleEntryState(appState, (entryState) => SingleEntryState.initial());
   }
 }
 
@@ -105,7 +145,7 @@ class UpdateSelectedEntry implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(
+    return _updateSingleEntryState(
       appState,
       (entryState) => entryState.copyWith(
         selectedEntry: Maybe.some(
@@ -134,7 +174,7 @@ class ChangeEntryLog implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(
+    return _updateSingleEntryState(
       appState,
       (entryState) => entryState.copyWith(
         selectedEntry: Maybe.some(
@@ -152,7 +192,7 @@ class ChangeEntryCategories implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateEntryState(
+    return _updateSingleEntryState(
       appState,
       (entryState) => entryState.copyWith(
         selectedEntry: Maybe.some(
@@ -160,6 +200,48 @@ class ChangeEntryCategories implements Action {
         ),
       ),
     );
+  }
+}
+
+class AddNewTagToEntry implements Action {
+  final Tag newTag;
+
+  AddNewTagToEntry({@required this.newTag});
+
+  @override
+  AppState updateState(AppState appState) {
+    Tag updatedTag = newTag; //TODO - update the editor to utilize the selectedTagState and pull from there
+    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
+    List<Tag> logTagList = appState.singleEntryState.logTagList;
+    MyEntry currentEntry = appState.singleEntryState.selectedEntry.value;
+
+    if (updatedTag.id == null) {
+      updatedTag = updatedTag.copyWith(id: Uuid().v4(), logFrequency: 1);
+
+      logTagList.add(updatedTag);
+
+      currentEntry.tagIDs.add(updatedTag.id);
+
+      if (currentEntry.categoryId != null) {
+        MyCategory currentCategory = categories.firstWhere((e) => e.id == currentEntry.categoryId);
+        categories.remove(currentCategory);
+        Map<String, int> categoryTagIdFrequency = currentCategory.tagIdFrequency;
+        if (categoryTagIdFrequency?.isEmpty ?? true) {
+          categoryTagIdFrequency = {};
+        }
+
+        categoryTagIdFrequency[updatedTag.id] = 1;
+        categories.add(currentCategory.copyWith(tagIdFrequency: categoryTagIdFrequency));
+      }
+    }
+
+    return _updateSingleEntryState(
+        appState,
+        (entryState) => entryState.copyWith(
+            selectedEntry: Maybe.some(currentEntry),
+            selectedTag: Maybe.none(),
+            logCategoryList: categories,
+            logTagList: logTagList));
   }
 }
 
@@ -172,35 +254,37 @@ class IncrementCategoryTagFrequency implements Action {
   @override
   AppState updateState(AppState appState) {
     List<MyCategory> categories = Env.store.state.singleEntryState.logCategoryList;
-    int index = categories.lastIndexWhere((e) => e.id == categoryId);
-    MyCategory category = categories[index];
-    int tagFrequency = 0;
 
-    categories.removeAt(index);
-    if (category.tagIdFrequency?.isEmpty ?? true) {
-      category = category.copyWith(tagIdFrequency: {});
+    if (appState.singleEntryState.selectedEntry.value?.categoryId != null) {
+      int index = categories.lastIndexWhere((e) => e.id == categoryId);
+      MyCategory category = categories[index];
+      int tagFrequency = 0;
+      //TODO experiences an error when the first tag is added
+
+      categories.removeAt(index);
+      if (category.tagIdFrequency?.isEmpty ?? true) {
+        category = category.copyWith(tagIdFrequency: {});
+      }
+
+      if (category?.tagIdFrequency?.containsKey(tagId) != null) {
+        tagFrequency = category?.tagIdFrequency[tagId];
+      }
+
+      category.tagIdFrequency.update(
+        tagId,
+        (value) => tagFrequency++,
+        ifAbsent: () => 1,
+      );
+      print('increment tagfrequency: $tagFrequency');
+      category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
+
+      if (index >= categories.length) {
+        categories.add(category);
+      } else {
+        categories.insert(index, category);
+      }
     }
-
-
-
-    if (category?.tagIdFrequency?.containsKey(tagId) != null) {
-      tagFrequency = category?.tagIdFrequency[tagId];
-    }
-
-    category.tagIdFrequency.update(
-      tagId,
-      (value) => tagFrequency++,
-      ifAbsent: () => 1,
-    );
-    category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
-
-    if (index >= categories.length) {
-      categories.add(category);
-    } else {
-      categories.insert(index, category);
-    }
-
-    return _updateEntryState(
+    return _updateSingleEntryState(
       appState,
       (entryState) => entryState.copyWith(logCategoryList: categories),
     );
@@ -216,39 +300,60 @@ class DecrementCategoryTagFrequency implements Action {
   @override
   AppState updateState(AppState appState) {
     List<MyCategory> categories = Env.store.state.singleEntryState.logCategoryList;
-    int index = categories.lastIndexWhere((e) => e.id == categoryId);
-    MyCategory category = categories[index];
-    categories.removeAt(index);
+    if (appState.singleEntryState.selectedEntry.value?.categoryId != null) {
+      int index = categories.lastIndexWhere((e) => e.id == categoryId);
+      MyCategory category = categories[index];
+      categories.removeAt(index);
 
-    if (category.tagIdFrequency == null) {
-      category = category.copyWith(tagIdFrequency: Map<String, int>());
+      if (category.tagIdFrequency == null) {
+        category = category.copyWith(tagIdFrequency: Map<String, int>());
+      }
+
+      int tagFrequency = 0;
+
+      if (category?.tagIdFrequency?.containsKey(tagId) != null) {
+        tagFrequency = category?.tagIdFrequency[tagId];
+      }
+
+      print('tag frequency $tagFrequency');
+      //only decrements and replaces the category tag frequency if the tag is used at least once elsewhere
+      if (tagFrequency >= 1) {
+        category.tagIdFrequency.update(
+          tagId,
+          (value) => tagFrequency--,
+          ifAbsent: () => 0,
+        );
+        category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
+      }
+      print('removing tag');
+      category.tagIdFrequency.removeWhere((key, value) => value < 1);
+      //TODO how to remove the tag if its less than 1
+
+      if (index >= categories.length) {
+        categories.add(category);
+      } else {
+        categories.insert(index, category);
+      }
     }
-
-    int tagFrequency = 0;
-
-    if (category?.tagIdFrequency?.containsKey(tagId) != null) {
-      tagFrequency = category?.tagIdFrequency[tagId];
-    }
-
-    //only decrements and replaces the category tag frequency if the tag is used at least once elsewhere
-    if (tagFrequency > 1) {
-      category.tagIdFrequency.update(
-        tagId,
-        (value) => tagFrequency--,
-        ifAbsent: () => 0,
-      );
-      category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
-    } //TODO how to remove the tag if its less than 1
-
-    if (index >= categories.length) {
-      categories.add(category);
-    } else {
-      categories.insert(index, category);
-    }
-
-    return _updateEntryState(
+    return _updateSingleEntryState(
       appState,
       (entryState) => entryState.copyWith(logCategoryList: categories),
     );
+  }
+}
+
+class DeleteEntry implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    Env.store.dispatch(SingleEntryProcessing());
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    EntriesState updatedEntriesState = appState.entriesState;
+    updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
+
+    Env.entriesFetcher.deleteEntry(entry);
+    Env.store.dispatch(ClearEntryState());
+    //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
+
+    return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
   }
 }

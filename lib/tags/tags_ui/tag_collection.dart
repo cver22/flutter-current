@@ -1,6 +1,5 @@
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
-
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_chip.dart';
@@ -45,10 +44,10 @@ class TagCollection extends StatelessWidget {
               logTagList.removeWhere((element) => element.id == thisTag.id),
               logTagList.add(thisTag.decrement(tag: thisTag)),
               entryTagIds.remove(thisTag.id),
-              Env.store.dispatch(UpdateEntryState(
+              Env.store.dispatch(UpdateSingleEntryState(
                   selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
-              /*Env.store.dispatch(DecrementCategoryTagFrequency(
-                  categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
+              Env.store.dispatch(DecrementCategoryTagFrequency(
+                  categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),
             }
           else
             {
@@ -64,10 +63,10 @@ class TagCollection extends StatelessWidget {
                   logTagList.add(thisTag.increment(tag: thisTag)),
 
                   entryTagIds.add(thisTag.id),
-                  Env.store.dispatch(UpdateEntryState(
+                  Env.store.dispatch(UpdateSingleEntryState(
                       selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
-                  /*Env.store.dispatch(IncrementCategoryTagFrequency(
-                      categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
+                  Env.store.dispatch(IncrementCategoryTagFrequency(
+                      categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),
                 }
               else
                 {

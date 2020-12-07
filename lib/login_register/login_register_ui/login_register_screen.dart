@@ -1,15 +1,11 @@
-import 'package:expenses/auth_user/models/auth_state.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/login_register/login_register_ui/login_register_form.dart';
-
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:get/get_core/get_core.dart';
+
 
 class LoginRegisterScreen extends StatelessWidget {
   const LoginRegisterScreen({Key key}) : super(key: key);

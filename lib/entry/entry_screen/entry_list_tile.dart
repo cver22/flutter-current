@@ -29,7 +29,6 @@ class EntryListTile extends StatelessWidget {
       subtitle: Text(categoriesSubcategoriesTags(log)),
       trailing: Text('\$ ${entry?.amount?.toStringAsFixed(2)}'),
       onTap: () => {
-        Env.store.dispatch(ClearSelectedEntry()),
         Env.store.dispatch(SelectEntry(entryId: entry.id)),
         Get.toNamed(ExpenseRoutes.addEditEntries),
       },

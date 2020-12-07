@@ -16,21 +16,19 @@ class MySubcategoryEntity extends MyCategoryEntity {
     name,
     iconCodePoint,
     iconFontFamily,
-    isDefault,
     this.parentCategoryId,
     emojiChar,
   }) : super(
             name: name,
             id: id,
-            isDefault: isDefault,
             emojiChar: emojiChar);
 
   @override
-  List<Object> get props => [id, name, parentCategoryId, isDefault, emojiChar];
+  List<Object> get props => [id, name, parentCategoryId, emojiChar];
 
   @override
   String toString() {
-    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $PARENT_CATEGORY_ID: $parentCategoryId, isDefault: $isDefault, emojiChar: $emojiChar}';
+    return 'MySubcategoryEntity {$ID: $id, $NAME: $name, $PARENT_CATEGORY_ID: $parentCategoryId, emojiChar: $emojiChar}';
   }
 
   @override

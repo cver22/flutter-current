@@ -6,20 +6,18 @@ import 'package:flutter/material.dart';
 class MyCategory extends Equatable {
   final String id;
   final String name;
-  final bool isDefault;
   final String emojiChar;
   final Map<String,int> tagIdFrequency;
 
-  MyCategory({this.id, @required this.name, this.isDefault = false, this.emojiChar, this.tagIdFrequency = const {}});
+  MyCategory({this.id, @required this.name, this.emojiChar, this.tagIdFrequency = const {}});
 
   @override
-  List<Object> get props => [id, name, isDefault, emojiChar, tagIdFrequency];
+  List<Object> get props => [id, name, emojiChar, tagIdFrequency];
 
-  MyCategory copyWith({String id, String name, bool isDefault, String emojiChar, Map<String,int> tagIdFrequency}) {
+  MyCategory copyWith({String id, String name, String emojiChar, Map<String,int> tagIdFrequency}) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
-      isDefault: isDefault ?? this.isDefault,
       emojiChar: emojiChar ?? this.emojiChar,
       tagIdFrequency: tagIdFrequency ?? this.tagIdFrequency,
     );
@@ -27,14 +25,13 @@ class MyCategory extends Equatable {
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, isDefault: $isDefault, emojiChar: $emojiChar, tagIdFrequency: $tagIdFrequency}';
+    return 'MyCategory {id: $id, name: $name, emojiChar: $emojiChar, tagIdFrequency: $tagIdFrequency}';
   }
 
   MyCategoryEntity toEntity() {
     return MyCategoryEntity(
       id: id,
       name: name,
-      isDefault: isDefault,
       emojiChar: emojiChar,
       tagIdFrequency: tagIdFrequency,
     );
@@ -44,7 +41,6 @@ class MyCategory extends Equatable {
     return MyCategory(
       id: entity.id,
       name: entity.name,
-      isDefault: entity.isDefault,
       emojiChar: entity.emojiChar,
       tagIdFrequency: entity.tagIdFrequency,
       //TODO start here

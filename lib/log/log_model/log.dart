@@ -4,6 +4,7 @@ import 'package:expenses/categories/categories_model/my_subcategory/my_subcatego
 import 'package:expenses/log/log_model/log_entity.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,6 +22,7 @@ class Log extends Equatable {
       this.categories,
       this.subcategories,
       this.archive = false,
+        this.defaultCategory,
       this.members,
       this.tags});
 
@@ -29,6 +31,7 @@ class Log extends Equatable {
   final String logName;
   final String currency;
   final bool archive;
+  final String defaultCategory;
   final List<MyCategory> categories;
   final List<MySubcategory> subcategories;
   final Map<String, dynamic> members;
@@ -40,6 +43,7 @@ class Log extends Equatable {
     String logName,
     String currency,
     bool archive,
+    String defaultCategory,
     List<MyCategory> categories,
     List<MySubcategory> subcategories,
     Map<String, dynamic> members,
@@ -51,6 +55,7 @@ class Log extends Equatable {
       logName: logName ?? this.logName,
       currency: currency ?? this.currency,
       archive: archive ?? this.archive,
+      defaultCategory: defaultCategory ?? this.defaultCategory,
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       members: members ?? this.members,
@@ -86,28 +91,6 @@ class Log extends Equatable {
   }
 
 
-
-  /*Log addEditLogTagList({Log log, List<Tag> selectedEntryLogs}) {
-    //makes changes to the log tag list if changes were made
-    //TODO, need a method to reduce the frequency if a tag is removed from the entry
-    if (selectedEntryLogs.length > 0) {
-      List<Tag> logTags = log.tags;
-
-      selectedEntryLogs.forEach((addEditTag) {
-        if ((logTags.singleWhere((logTag) => logTag.id == addEditTag.id, orElse: () => null)) != null) {
-          logTags.remove(logTags); //removes existing tag with the specified id
-        }
-
-        //replaces existing removed tg or adds tag with initial increment
-        logTags.add(addEditTag.copyWith(logFrequency: addEditTag.logFrequency + 1));
-      });
-
-      return log.copyWith(tags: logTags);
-    } else {
-      return log;
-    }
-  }*/
-
   Log addEditLogTag({Log log, Tag tag}) {
     List<Tag> tags = log.tags;
 
@@ -121,7 +104,7 @@ class Log extends Equatable {
     return log.copyWith(tags: tags);
   }
 
-  Log setCategoryDefault({Log log, MyCategory category}) {
+  /*Log setCategoryDefault({Log log, MyCategory category}) {
     List<MyCategory> categories = log.categories;
 
     categories.forEach((element) {
@@ -133,14 +116,14 @@ class Log extends Equatable {
       }
     });
     return log.copyWith(categories: categories);
-  }
+  }*/
 
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, members, tags];
+  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, members, tags];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories,  $SUBCATEGORIES: $subcategories, archive: $archive, members: $members, tags: $tags}';
+    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories,  $SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $members, tags: $tags}';
   }
 
   LogEntity toEntity() {
@@ -154,6 +137,7 @@ class Log extends Equatable {
       subcategories: Map<String, MySubcategory>.fromIterable(subcategories,
           key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
       archive: archive,
+      defaultCategory: defaultCategory,
       members: members,
       tags: Map<String, Tag>.fromIterable(tags, key: (e) => tags.indexOf(e).toString(), value: (e) => e),
     );
@@ -168,6 +152,7 @@ class Log extends Equatable {
       categories: entity.categories.entries.map((e) => e.value).toList(),
       subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
       archive: entity.archive,
+      defaultCategory: entity.defaultCategory,
       members: entity.members,
       tags: entity.tags.entries.map((e) => e.value).toList(),
     );

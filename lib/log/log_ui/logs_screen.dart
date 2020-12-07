@@ -25,7 +25,7 @@ class LogsScreen extends StatelessWidget {
           print('Rendering Logs Screen');
 
           if (logsState.isLoading == true && Env.store.state.singleEntryState.selectedEntry.isNone) {
-            return LoadingIndicator(loadingMessage: 'Loading your logs...');
+            return ModalLoadingIndicator(loadingMessage: 'Loading your logs...', activate: true);
           } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
             //TODO create archive bool to show logs that have been archived and not visible
             //TODO can I move this logic to the state object and render this widget stateless?

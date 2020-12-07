@@ -118,7 +118,7 @@ class DeleteLog implements Action {
     LogsState updatedLogsState = appState.logsState;
     updatedLogsState.logs.removeWhere((key, value) => key == log.id);
 
-    //this may not be a legal action, not sure if I can trigger an acting within an action
+    //TODO this may not be a legal action, not sure if I can trigger an acting within an action
     //ensures the default log is updated if the current log is default and deleted
     if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
       Env.store.dispatch(UpdateSettings(
