@@ -29,50 +29,12 @@ class TagCollection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Widget> tagChips = [];
-    List<String> entryTagIds = [];
-    List<Tag> logTagList = entryState.logTagList;
-
-    bool tagAlreadyListed = false;
 
     tags.forEach((thisTag) {
       tagChips.add(TagChip(
         name: thisTag.name,
         onPressed: () => {
-          entryTagIds = entry.tagIDs,
-          if (tagCollectionType == TagCollectionType.entry)
-            {
-              logTagList.removeWhere((element) => element.id == thisTag.id),
-              logTagList.add(thisTag.decrement(tag: thisTag)),
-              entryTagIds.remove(thisTag.id),
-              Env.store.dispatch(UpdateSingleEntryState(
-                  selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
-              /*Env.store.dispatch(DecrementCategoryTagFrequency(
-                  categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
-            }
-          else
-            {
-              entryTagIds.forEach((element) {
-                if (element == thisTag.id) {
-                  tagAlreadyListed = true;
-                }
-              }),
-              if (!tagAlreadyListed)
-                {
-                  //adds tag to the entry list if its not already on there
-                  logTagList.removeWhere((element) => element.id == thisTag.id),
-                  logTagList.add(thisTag.increment(tag: thisTag)),
-
-                  entryTagIds.add(thisTag.id),
-                  Env.store.dispatch(UpdateSingleEntryState(
-                      selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
-                  /*Env.store.dispatch(IncrementCategoryTagFrequency(
-                      categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
-                }
-              else
-                {
-                  tagAlreadyListed = false,
-                }
-            }
+          Env.store.dispatch(AddOrRemoveEntryTag(tag: thisTag)),
         },
       ));
     });

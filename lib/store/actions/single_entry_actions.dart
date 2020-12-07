@@ -244,116 +244,145 @@ class AddNewTagToEntry implements Action {
             logTagList: logTagList));
   }
 }
-/*
-class IncrementCategoryTagFrequency implements Action {
-  final String categoryId;
-  final String tagId;
 
-  IncrementCategoryTagFrequency({@required this.categoryId, @required this.tagId});
+class AddOrRemoveEntryTag implements Action {
+  final Tag tag;
+
+  AddOrRemoveEntryTag({@required this.tag});
 
   @override
   AppState updateState(AppState appState) {
-    List<MyCategory> categories = Env.store.state.singleEntryState.logCategoryList;
+    List<Tag> logTagList = appState.singleEntryState.logTagList;
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    List<String> entryTagIds = entry.tagIDs;
+    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
+    bool entryHasTag = false;
+    MyCategory category;
+    Map<String, int> tagIdFrequency = {};
 
-    if (appState.singleEntryState.selectedEntry.value?.categoryId != null) {
-      int index = categories.lastIndexWhere((e) => e.id == categoryId);
-      MyCategory category = categories[index];
-      int tagFrequency = 0;
-      //TODO experiences an error when the first tag is added
-
-      categories.removeAt(index);
-      if (category.tagIdFrequency?.isEmpty ?? true) {
-        category = category.copyWith(tagIdFrequency: {});
+    //determines if the tag is in the entry or in another list
+    entryTagIds.forEach((element) {
+      if (element == tag.id) {
+        entryHasTag = true;
       }
+    });
 
-      if (category?.tagIdFrequency?.containsKey(tagId) != null) {
-        tagFrequency = category?.tagIdFrequency[tagId];
+    logTagList.removeWhere((element) => element.id == tag.id);
+    if (entryHasTag) {
+      //decrement the use of the tag on the log
+      logTagList.add(tag.decrement(tag: tag));
+
+      //remove the tag from the entry tag list
+      entryTagIds.remove(tag.id);
+
+      //if the categoryId is present decrement the use of the tag for this category
+      if (entry?.categoryId != null) {
+        categories = _updateCategoriesWithFrequency(
+            tagIdFrequency: _decrementTagIdFrequency(categories: categories, entry: entry, tagId: tag.id),
+            category: category,
+            categories: categories);
       }
+    } else {
+      //increment the use of the tag on the log
+      logTagList.add(tag.increment(tag: tag));
 
-      category.tagIdFrequency.update(
-        tagId,
-        (value) => tagFrequency++,
-        ifAbsent: () => 1,
-      );
-      print('increment tagfrequency: $tagFrequency');
-      category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
+      //add the tag to the entry tag list
+      entryTagIds.add(tag.id);
 
-      if (index >= categories.length) {
-        categories.add(category);
-      } else {
-        categories.insert(index, category);
+      //if the categoryId is present increment the use of the tag for this category
+      if (entry?.categoryId != null) {
+        category = categories.firstWhere((e) => e.id == entry.categoryId);
+        tagIdFrequency = category.tagIdFrequency;
+        tagIdFrequency.update(
+          tag.id,
+          (value) => value++,
+          ifAbsent: () => 1,
+        );
+
+        categories =
+            _updateCategoriesWithFrequency(tagIdFrequency: tagIdFrequency, category: category, categories: categories);
       }
     }
+
     return _updateSingleEntryState(
-      appState,
-      (entryState) => entryState.copyWith(logCategoryList: categories),
-    );
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+            selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)),
+            logTagList: logTagList,
+            logCategoryList: categories));
   }
 }
-
-class DecrementCategoryTagFrequency implements Action {
-  final String categoryId;
-  final String tagId;
-
-  DecrementCategoryTagFrequency({@required this.categoryId, @required this.tagId});
-
-  @override
-  AppState updateState(AppState appState) {
-    List<MyCategory> categories = Env.store.state.singleEntryState.logCategoryList;
-    if (appState.singleEntryState.selectedEntry.value?.categoryId != null) {
-      int index = categories.lastIndexWhere((e) => e.id == categoryId);
-      MyCategory category = categories[index];
-      categories.removeAt(index);
-
-      if (category.tagIdFrequency == null) {
-        category = category.copyWith(tagIdFrequency: Map<String, int>());
-      }
-
-      int tagFrequency = 0;
-
-      if (category?.tagIdFrequency?.containsKey(tagId) != null) {
-        tagFrequency = category?.tagIdFrequency[tagId];
-      }
-
-      print('tag frequency $tagFrequency');
-      //only decrements and replaces the category tag frequency if the tag is used at least once elsewhere
-      if (tagFrequency >= 1) {
-        category.tagIdFrequency.update(
-          tagId,
-          (value) => tagFrequency--,
-          ifAbsent: () => 0,
-        );
-        category = category.copyWith(tagIdFrequency: category.tagIdFrequency);
-      }
-      print('removing tag');
-      category.tagIdFrequency.removeWhere((key, value) => value < 1);
-      //TODO how to remove the tag if its less than 1
-
-      if (index >= categories.length) {
-        categories.add(category);
-      } else {
-        categories.insert(index, category);
-      }
-    }
-    return _updateSingleEntryState(
-      appState,
-      (entryState) => entryState.copyWith(logCategoryList: categories),
-    );
-  }
-}*/
 
 class DeleteEntry implements Action {
   @override
   AppState updateState(AppState appState) {
     Env.store.dispatch(SingleEntryProcessing());
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
+    List<Tag> logTagList = appState.singleEntryState.logTagList;
     EntriesState updatedEntriesState = appState.entriesState;
     updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
 
+    Map<String, int> tagIdFrequency = {};
+    entry.tagIDs.forEach((tagId) {
+      //updates log list of tags
+      Tag tag = logTagList.firstWhere((e) => e.id == tagId);
+      logTagList.removeWhere((element) => element.id == tagId);
+      logTagList.add(tag.decrement(tag: tag));
+
+      //updates category list of tags
+      if (entry?.categoryId != null) {
+        MyCategory category = categories.firstWhere((e) => e.id == entry.categoryId);
+        tagIdFrequency = _decrementTagIdFrequency(entry: entry, categories: categories, tagId: tagId);
+        categories =
+            _updateCategoriesWithFrequency(tagIdFrequency: tagIdFrequency, category: category, categories: categories);
+      }
+    });
+
     Env.entriesFetcher.deleteEntry(entry);
-    Env.store.dispatch(ClearEntryState());
+    Env.logsFetcher.updateLog(appState.logsState.logs[entry.logId].copyWith(tags: logTagList, categories: categories));
+
+
     //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
+    Env.store.dispatch(ClearEntryState());
 
     return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
   }
+}
+
+Map<String, int> _decrementTagIdFrequency(
+    {@required MyEntry entry, @required List<MyCategory> categories, @required String tagId}) {
+  MyCategory category = categories.firstWhere((e) => e.id == entry.categoryId);
+  Map<String, int> tagIdFrequency = category.tagIdFrequency;
+
+  //decrement if used elsewhere, remove otherwise
+  if (tagIdFrequency[tagId] > 1) {
+    tagIdFrequency.update(
+      tagId,
+      (value) => value--,
+      ifAbsent: () => 1,
+    );
+  } else {
+    tagIdFrequency.remove(tagId);
+  }
+
+  return tagIdFrequency;
+}
+
+List<MyCategory> _updateCategoriesWithFrequency(
+    {@required Map<String, int> tagIdFrequency, @required MyCategory category, @required List<MyCategory> categories}) {
+  int categoryIndex = categories.indexOf(category);
+  categories.removeAt(categoryIndex);
+
+  //add tagIdFrequency back to the category
+  category = category.copyWith(tagIdFrequency: tagIdFrequency);
+
+  //add category back to categories
+  if (categoryIndex >= categories.length) {
+    categories.add(category);
+  } else {
+    categories.insert(categoryIndex, category);
+  }
+
+  return categories;
 }

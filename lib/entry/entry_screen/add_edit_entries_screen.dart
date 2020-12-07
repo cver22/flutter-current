@@ -14,6 +14,7 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 //TODO change back to stateful widget to utilize focus node or add to single entry state?
@@ -137,6 +138,7 @@ class AddEditEntriesScreen extends StatelessWidget {
                 //auto focus on adding the value if the entry is new
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(hintText: 'Amount'),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d*"))],
                 initialValue: entry?.amount?.toStringAsFixed(2) ?? null,
                 onChanged: (value) => Env.store.dispatch(
                   UpdateSelectedEntry(
