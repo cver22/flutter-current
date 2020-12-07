@@ -244,7 +244,7 @@ class AddNewTagToEntry implements Action {
             logTagList: logTagList));
   }
 }
-
+/*
 class IncrementCategoryTagFrequency implements Action {
   final String categoryId;
   final String tagId;
@@ -340,7 +340,7 @@ class DecrementCategoryTagFrequency implements Action {
       (entryState) => entryState.copyWith(logCategoryList: categories),
     );
   }
-}
+}*/
 
 class DeleteEntry implements Action {
   @override

@@ -34,6 +34,7 @@ class AddEditEntriesScreen extends StatelessWidget {
         map: (state) => state.singleEntryState,
         builder: (singleEntryState) {
           print('Rendering AddEditEntriesScreen');
+          print('singleEntryState: $singleEntryState');
 
           if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
             entry = singleEntryState.selectedEntry.value;
@@ -41,11 +42,11 @@ class AddEditEntriesScreen extends StatelessWidget {
           Log log;
           log = Env.store.state.logsState.logs[entry.logId];
 
-          return Stack(
-            children: [
-              WillPopScope(
-                onWillPop: () async => false,
-                child: Scaffold(
+          return WillPopScope(
+            onWillPop: () async => false, //TODO need to implement will pop?
+            child: Stack(
+              children: [
+                Scaffold(
                   appBar: AppBar(
                     title: Text('Entry'),
                     leading: IconButton(
@@ -79,9 +80,9 @@ class AddEditEntriesScreen extends StatelessWidget {
                   ),
                   body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
                 ),
-              ),
-              ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.savingEntry),
-            ],
+                ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.savingEntry),
+              ],
+            ),
           );
         });
   }
@@ -216,9 +217,11 @@ class AddEditEntriesScreen extends StatelessWidget {
   }
 
   void closeEntryScreen() {
+
     Env.store.dispatch(SingleEntryProcessing());
-    Get.back();
     Env.store.dispatch(ClearEntryState());
+    Get.back();
+
   }
 
   //TODO similar code used here and in settings - refactor to use same widget and pass required functions only

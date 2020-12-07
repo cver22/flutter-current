@@ -40,6 +40,7 @@ class _TagPickerState extends State<TagPicker> {
           if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
             currentSingleEntryState = singleEntryState;
             entry = currentSingleEntryState.selectedEntry.value;
+            print('logTag are ${currentSingleEntryState.logTagList}');
           }
 
           tagListBuilders(maxTags: maxTags, entryState: currentSingleEntryState);
@@ -49,9 +50,6 @@ class _TagPickerState extends State<TagPicker> {
             children: [
               TagEditor(
                 log: _log,
-                onSave: () {
-                  setState(() {});
-                },
               ),
 
               SingleChildScrollView(

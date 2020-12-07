@@ -2,7 +2,7 @@
 //TODO deleting of logs should also delete any of their entries, otherwise there is a loading error in entry ties
 //TODO looping issue where saving a tag, rebuilds the log state in the back ground, what needs to happen is the log screen is not rebuilt because the selectedEntry is not empty
 //TODO selected entry needs to be cleared when saving, but that caused a loop, need to utilize the isLoading state in entries state
-
+//TODO going back from entry does not clear the logTags from the singleEntryState logTagList
 
 
 

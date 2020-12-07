@@ -46,8 +46,8 @@ class TagCollection extends StatelessWidget {
               entryTagIds.remove(thisTag.id),
               Env.store.dispatch(UpdateSingleEntryState(
                   selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
-              Env.store.dispatch(DecrementCategoryTagFrequency(
-                  categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),
+              /*Env.store.dispatch(DecrementCategoryTagFrequency(
+                  categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
             }
           else
             {
@@ -65,8 +65,8 @@ class TagCollection extends StatelessWidget {
                   entryTagIds.add(thisTag.id),
                   Env.store.dispatch(UpdateSingleEntryState(
                       selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), logTagList: logTagList)),
-                  Env.store.dispatch(IncrementCategoryTagFrequency(
-                      categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),
+                  /*Env.store.dispatch(IncrementCategoryTagFrequency(
+                      categoryId: entryState.selectedEntry.value.categoryId, tagId: thisTag.id)),*/
                 }
               else
                 {

@@ -21,8 +21,8 @@ class SingleEntryState extends Equatable {
 
       selectedEntry: Maybe.none(),
       selectedTag: Maybe.none(),
-      logTagList: [],
-      logCategoryList: [],
+      logTagList: List<Tag>(),
+      logCategoryList: List<MyCategory>(),
       savingEntry: false,
 
     );
