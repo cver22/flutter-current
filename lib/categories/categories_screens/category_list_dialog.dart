@@ -537,7 +537,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
 
   Future<dynamic> _addNew() {
     if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
-      MyCategory newCategory = MyCategory(name: null, tagIdFrequency: {});
+      MyCategory newCategory = MyCategory(name: null);
       switch (_settingsLogEntry) {
         case SettingsLogEntry.settings:
           return _settingsAddEditCategory(newCategory);

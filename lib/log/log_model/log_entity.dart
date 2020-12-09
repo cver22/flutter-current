@@ -4,8 +4,6 @@ import 'package:expenses/categories/categories_model/my_category/my_category.dar
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tag_model/tag_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
@@ -20,7 +18,6 @@ class LogEntity extends Equatable {
   final Map<String, MyCategory> categories;
   final Map<String, MySubcategory> subcategories;
   final Map<String, dynamic> members;
-  final Map<String, Tag> tags;
 
   const LogEntity(
       {this.uid,
@@ -31,16 +28,15 @@ class LogEntity extends Equatable {
       this.subcategories,
       this.archive,
         this.defaultCategory,
-      this.members,
-      this.tags});
+      this.members});
 
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, members, tags];
+  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, members];
 
   @override
   String toString() {
     return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, '
-        '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $members, tags: $tags}';
+        '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $members}';
   }
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
@@ -55,20 +51,18 @@ class LogEntity extends Equatable {
           .map((key, value) => MapEntry(key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       archive: snap.data[ARCHIVE],
       defaultCategory: snap.data[DEFAULT_CATEGORY],
-      tags: (snap.data[TAGS] as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, Tag.fromEntity(TagEntity.fromJson(value)))),
     );
   }
 
   Map<String, Object> toDocument() {
     return {
       UID: uid,
+      ID: id,
       LOG_NAME: logName,
       CURRENCY_NAME: currency,
       CATEGORIES: categories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       SUBCATEGORIES: subcategories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       DEFAULT_CATEGORY: defaultCategory,
-      TAGS: tags.map((key, value) => MapEntry(key, value.toEntity().toJson())),
     };
   }
 }

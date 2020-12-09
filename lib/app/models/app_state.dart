@@ -5,6 +5,7 @@ import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
+import 'package:expenses/tags/tag_model/tag_state.dart';
 
 import 'package:meta/meta.dart';
 
@@ -16,6 +17,7 @@ class AppState extends Equatable {
   final EntriesState entriesState;
   final SettingsState settingsState;
   final SingleEntryState singleEntryState;
+  final TagState tagState;
 
   AppState(
       {@required this.authState,
@@ -23,7 +25,8 @@ class AppState extends Equatable {
       @required this.logsState,
       @required this.entriesState,
       @required this.settingsState,
-      @required this.singleEntryState});
+      @required this.singleEntryState,
+      @required this.tagState});
 
   AppState copyWith({
     AuthState authState,
@@ -32,6 +35,7 @@ class AppState extends Equatable {
     EntriesState entriesState,
     SettingsState settingsState,
     SingleEntryState singleEntryState,
+    TagState tagState
   }) {
     return AppState(
       authState: authState ?? this.authState,
@@ -40,6 +44,7 @@ class AppState extends Equatable {
       entriesState: entriesState ?? this.entriesState,
       settingsState: settingsState ?? this.settingsState,
       singleEntryState: singleEntryState ?? this.singleEntryState,
+      tagState: tagState ?? this.tagState,
     );
   }
 
@@ -51,6 +56,7 @@ class AppState extends Equatable {
       entriesState: EntriesState.initial(),
       settingsState: SettingsState.initial(),
       singleEntryState: SingleEntryState.initial(),
+      tagState: TagState.initial(),
     );
   }
 
@@ -59,5 +65,5 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState];
+      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState, tagState];
 }

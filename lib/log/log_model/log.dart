@@ -2,9 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/log/log_model/log_entity.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
 
@@ -23,8 +21,7 @@ class Log extends Equatable {
       this.subcategories,
       this.archive = false,
         this.defaultCategory,
-      this.members,
-      this.tags});
+      this.members});
 
   final String uid;
   final String id;
@@ -35,7 +32,6 @@ class Log extends Equatable {
   final List<MyCategory> categories;
   final List<MySubcategory> subcategories;
   final Map<String, dynamic> members;
-  final List<Tag> tags;
 
   Log copyWith({
     String uid,
@@ -47,7 +43,6 @@ class Log extends Equatable {
     List<MyCategory> categories,
     List<MySubcategory> subcategories,
     Map<String, dynamic> members,
-    List<Tag> tags,
   }) {
     return Log(
       uid: uid ?? this.uid,
@@ -59,7 +54,6 @@ class Log extends Equatable {
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       members: members ?? this.members,
-      tags: tags ?? this.tags,
     );
   }
 
@@ -91,39 +85,13 @@ class Log extends Equatable {
   }
 
 
-  Log addEditLogTag({Log log, Tag tag}) {
-    List<Tag> tags = log.tags;
-
-    //update tag if it already exists
-    //otherwise add tag to the list
-    if (tag?.id != null) {
-      tags[tags.indexWhere((e) => e.id == tag.id)] = tag;
-    } else {
-      tags.add(tag.copyWith(id: Uuid().v4()));
-    }
-    return log.copyWith(tags: tags);
-  }
-
-  /*Log setCategoryDefault({Log log, MyCategory category}) {
-    List<MyCategory> categories = log.categories;
-
-    categories.forEach((element) {
-      int index = categories.indexOf(element);
-      if (element.id == category.id) {
-        categories[index] = element.copyWith(isDefault: true);
-      } else {
-        categories[index] = (element.copyWith(isDefault: false));
-      }
-    });
-    return log.copyWith(categories: categories);
-  }*/
-
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, members, tags];
+  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, members, ];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories,  $SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $members, tags: $tags}';
+    return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $logName, currency: $currency, $CATEGORIES: $categories,  '
+        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $members}';
   }
 
   LogEntity toEntity() {
@@ -139,7 +107,6 @@ class Log extends Equatable {
       archive: archive,
       defaultCategory: defaultCategory,
       members: members,
-      tags: Map<String, Tag>.fromIterable(tags, key: (e) => tags.indexOf(e).toString(), value: (e) => e),
     );
   }
 
@@ -154,7 +121,6 @@ class Log extends Equatable {
       archive: entity.archive,
       defaultCategory: entity.defaultCategory,
       members: entity.members,
-      tags: entity.tags.entries.map((e) => e.value).toList(),
     );
   }
 }

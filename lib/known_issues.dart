@@ -9,17 +9,18 @@
 
       //TODO General
 //TODO re-ordrerable list for categories - this may be solveable by creating category/subcategory state for manipulation and then eventually savings
-//TODO change entry log so that all entries are in a single file for a single log, will reduce firestore costs
-// to reduce costs, look at storing the entry sets by month or year to allow for enough data per document without chance of hitting the limit
 //TODO edit tags
 //TODO methods to do combined updating of states such as the entry and log state at the same time for some reason?
 //TODO organize and filter entries in various ways
 //TODO deleting a log deletes all of its entries, will be easier to implement when I start using a ledger for each year in a log
 //TODO how to put an empty map in a JSON so the array doesn't initiate empty
-      // TODO record of total log expenditure by month
+      //TODO record of total log expenditure by month
+      //TODO i'm currently creating my own UUID for all my tags, logs, and such, but not using them??
 
 
 
 
     //TODO START HERE
-//setup default category and logs for settings and the FAB
+
+      //setup tag picker to handle the new data tag/category data structure
+      //setup tag actions to handle add, increment, decrement

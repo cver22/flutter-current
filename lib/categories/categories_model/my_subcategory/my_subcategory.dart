@@ -18,7 +18,6 @@ class MySubcategory extends MyCategory {
     String id,
     String name,
     String emojiChar,
-    Map<String,int> tagIdFrequency, //unused override
   }) {
     return MySubcategory(
       parentCategoryId: parentCategoryId ?? this.parentCategoryId,

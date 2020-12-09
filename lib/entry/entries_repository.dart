@@ -15,17 +15,18 @@ abstract class EntriesRepository {
 }
 
 class FirebaseEntriesRepository implements EntriesRepository {
-  final entriesCollection = Firestore.instance.collection('entries');
+  final entriesCollection = Firestore.instance.collection(ENTRY_COLLECTION);
 
   @override
   Future<void> addNewEntry(MyEntry entry) {
-    return entriesCollection.add(entry.toEntity().toDocument());
+    return entriesCollection.document(entry.id).setData(entry.toEntity().toDocument());
   }
 
   //TODO need to filter by contains UID
   @override
   Stream<List<MyEntry>> loadEntries(User user) {
     return entriesCollection.snapshots().map((snapshot) {
+     // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
       return snapshot.documents.map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc))).toList();
     });
   }

@@ -41,6 +41,7 @@ class SetNewSelectedEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = MyEntry();
     Log log = appState.logsState.logs[logId];
+    List<Tag> tagList = appState.tagState.tags.values.where((e) => e.logId == logId).toList();
     entry = entry.copyWith(logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: []);
     print('this is my new entry $entry');
     return _updateSingleEntryState(
@@ -48,7 +49,7 @@ class SetNewSelectedEntry implements Action {
         (entryState) => entryState.copyWith(
             selectedEntry: Maybe.some(entry),
             selectedTag: Maybe.none(),
-            logTagList: log.tags,
+            logTagList: tagList,
             logCategoryList: log.categories,
             savingEntry: false));
   }
@@ -64,13 +65,14 @@ class SelectEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = appState.entriesState.entries[entryId];
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    List<Tag> tagList = appState.tagState.tags.values.where((e) => e.logId == log.id).toList();
 
     return _updateSingleEntryState(
         appState,
         (entryState) => entryState.copyWith(
             selectedEntry: Maybe.some(entry),
             selectedTag: Maybe.none(),
-            logTagList: log.tags,
+            logTagList: tagList,
             logCategoryList: log.categories,
             savingEntry: false));
   }
@@ -99,7 +101,7 @@ class AddUpdateSingleEntry implements Action {
     }
 
     //updates log with updated tag list
-    Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.singleEntryState.logTagList));
+    //Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.singleEntryState.logTagList));
 
     return _updateSingleEntryState(appState, (singleEntryState) => SingleEntryState.initial());
   }
@@ -129,7 +131,6 @@ class UpdateSelectedEntry implements Action {
   final double amount;
   final String comment;
   final DateTime dateTime;
-  final List<String> tagIDs;
 
   UpdateSelectedEntry(
       {this.id,
@@ -140,8 +141,7 @@ class UpdateSelectedEntry implements Action {
       this.subcategory,
       this.amount,
       this.comment,
-      this.dateTime,
-      this.tagIDs});
+      this.dateTime});
 
   @override
   AppState updateState(AppState appState) {
@@ -159,7 +159,6 @@ class UpdateSelectedEntry implements Action {
             amount: amount,
             comment: comment,
             dateTime: dateTime,
-            tagIDs: tagIDs,
           ),
         ),
       ),
@@ -284,7 +283,7 @@ class AddOrRemoveEntryTag implements Action {
       }
     } else {
       //increment the use of the tag on the log
-      logTagList.add(tag.increment(tag: tag));
+      logTagList.add(tag.incrementTagFrequencies(tag: tag));
 
       //add the tag to the entry tag list
       entryTagIds.add(tag.id);

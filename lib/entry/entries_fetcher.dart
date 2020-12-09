@@ -5,7 +5,6 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:meta/meta.dart';
-import 'package:uuid/uuid.dart';
 
 class EntriesFetcher {
   final AppStore _store;

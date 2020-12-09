@@ -97,8 +97,7 @@ class AddUpdateLog implements Action {
           uid: appState.authState.user.value.id,
           id: Uuid().v4(),
           categories: appState.settingsState.settings.value.defaultCategories,
-          subcategories: appState.settingsState.settings.value.defaultSubcategories,
-          tags: []);
+          subcategories: appState.settingsState.settings.value.defaultSubcategories);
       Env.logsFetcher.addLog(addedUpdatedLog);
 
       //TODO, does not update the state locally for new logs, may want to consider that, lst time I ended up with temporary duplicates
@@ -128,6 +127,10 @@ class DeleteLog implements Action {
 
     //TODO likely need a method to reset the default to nothing, else statement for the above
     Env.logsFetcher.deleteLog(log);
+
+    //TODO refer to tag and entry lists to batch delete all of them
+
+
 
     return _updateLogState(appState, (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()));
   }

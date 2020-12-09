@@ -7,25 +7,24 @@ class MyCategory extends Equatable {
   final String id;
   final String name;
   final String emojiChar;
-  final Map<String,int> tagIdFrequency;
 
-  MyCategory({this.id, @required this.name, this.emojiChar, this.tagIdFrequency = const {}});
+
+  MyCategory({this.id, @required this.name, this.emojiChar});
 
   @override
-  List<Object> get props => [id, name, emojiChar, tagIdFrequency];
+  List<Object> get props => [id, name, emojiChar];
 
-  MyCategory copyWith({String id, String name, String emojiChar, Map<String,int> tagIdFrequency}) {
+  MyCategory copyWith({String id, String name, String emojiChar}) {
     return MyCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       emojiChar: emojiChar ?? this.emojiChar,
-      tagIdFrequency: tagIdFrequency ?? this.tagIdFrequency,
     );
   }
 
   @override
   String toString() {
-    return 'MyCategory {id: $id, name: $name, emojiChar: $emojiChar, tagIdFrequency: $tagIdFrequency}';
+    return 'MyCategory {id: $id, name: $name, emojiChar: $emojiChar}';
   }
 
   MyCategoryEntity toEntity() {
@@ -33,7 +32,6 @@ class MyCategory extends Equatable {
       id: id,
       name: name,
       emojiChar: emojiChar,
-      tagIdFrequency: tagIdFrequency,
     );
   }
 
@@ -42,8 +40,6 @@ class MyCategory extends Equatable {
       id: entity.id,
       name: entity.name,
       emojiChar: entity.emojiChar,
-      tagIdFrequency: entity.tagIdFrequency,
-      //TODO start here
     );
   }
 }

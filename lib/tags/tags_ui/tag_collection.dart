@@ -4,7 +4,6 @@ import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_chip.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/material.dart';
 
 import '../../env.dart';

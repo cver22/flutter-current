@@ -1,5 +1,4 @@
 import 'dart:collection';
-
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 

@@ -28,7 +28,7 @@ class AddEditLogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Log _log = Log(currency: 'ca', tags: []);
+    Log _log = Log(currency: 'ca');
     String _currency;
     String _name;
     return ConnectState<LogsState>(

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/my_entry_entity.dart';
 import 'package:expenses/log/log_model/log.dart';
+import 'package:expenses/utils/db_consts.dart';
 
 import 'package:flutter/foundation.dart';
 
@@ -10,7 +11,8 @@ class MyEntry extends Equatable with ChangeNotifier {
   //TODO entry members map
 
   MyEntry(
-      {this.id,
+      {this.uid,
+        this.id,
       this.logId,
       this.currency,
       this.active = true,
@@ -21,6 +23,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.dateTime,
       this.tagIDs});
 
+  final String uid;
   final String id;
   final String logId;
   final String currency;
@@ -33,6 +36,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   final List<String> tagIDs;
 
   MyEntry copyWith({
+    String uid,
     String id,
     String logId,
     String currency,
@@ -45,6 +49,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     List<String> tagIDs,
   }) {
     return MyEntry(
+      uid: uid ?? this.uid,
       id: id ?? this.id,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
@@ -74,6 +79,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     }
 
     return MyEntry(
+      uid: this.uid,
       id: this.id,
       logId: _logId ?? this.logId,
       currency: _currency ?? this.currency,
@@ -97,6 +103,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     }
 
     return MyEntry(
+      uid: this.uid,
       id: this.id,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
@@ -132,18 +139,19 @@ class MyEntry extends Equatable with ChangeNotifier {
   }*/
 
   @override
-  List<Object> get props => [id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs];
+  List<Object> get props => [uid, id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs];
 
   @override
   String toString() {
-    return 'Entry {id: $id, logId: $logId, '
-        'currency: $currency, active: $active, category: $categoryId, '
-        'subcategory: $subcategoryId, amount: $amount, comment: $comment, '
-        'dateTime: $dateTime, tagIDs: $tagIDs}';
+    return 'Entry {$UID: $uid, id: $id, $LOG_ID: $logId, '
+        'currency: $currency, $ACTIVE: $active, $CATEGORY: $categoryId, '
+        '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, $COMMENT: $comment, '
+        '$DATE_TIME: $dateTime, tagIDs: $tagIDs}';
   }
 
   MyEntryEntity toEntity() {
     return MyEntryEntity(
+      uid: uid,
       id: id,
       logId: logId,
       currency: currency,
@@ -159,6 +167,7 @@ class MyEntry extends Equatable with ChangeNotifier {
 
   static MyEntry fromEntity(MyEntryEntity entity) {
     return MyEntry(
+      uid: entity.uid,
       id: entity.id,
       logId: entity.logId,
       currency: entity.currency,

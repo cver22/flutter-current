@@ -17,7 +17,7 @@ enum SettingsLogEntry {settings, log, entry}
 enum TagCollectionType {entry, category, log}
 
 //Log constants
-const String LOGS_COLLECTION = 'logs';
+const String LOG_COLLECTION = 'logs';
 const String ENTRIES = 'entries';
 const String LOG_NAME = 'logName';
 const String MEMBER_ROLES_MAP = 'rolesList';
@@ -25,8 +25,10 @@ const String MEMBERS_DATA = 'membersData';
 const String OWNER_OR_WRITER = 'ownerOrWriter';
 const String OWNER = 'owner';
 const String WRITER = 'write';
+const String ENTRY_SET_IDS = 'entrySetIds';
 
 //Entry constants
+const String ENTRY_COLLECTION = 'entries';
 const String LOG_ID = 'logId';
 const String ENTRY_NAME = 'entryName';
 const String ENTRY_MEMBERS = 'entryMembers';
@@ -36,14 +38,17 @@ const String COMMENT = 'comment';
 const String LOCATION = 'location';
 const String DATE_TIME = 'dateTime';
 
+
 //Entry members constants
 const String AMOUNT_MY_CURRENCY = 'amountInMyCurrency';
 
 
 //Tags constants
+const String TAG_COLLECTION = 'tags';
 const String TAGS = 'tags';
 const String TAG = 'tag';
-const String TAG_FREQUENCY = 'tagFrequencyByCategoryAndSubcategory';
+const String TAG_LOG_FREQUENCY = 'tagLogFrequency';
+const String TAG_CATEGORY_FREQUENCY = 'tagCategoryFrequency';
 const String PAID = 'paid';
 const String SPENT = 'spent';
 
