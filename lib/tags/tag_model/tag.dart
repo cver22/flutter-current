@@ -14,7 +14,7 @@ class Tag extends Equatable {
 
   Tag({this.uid, this.logId, this.id, this.name, this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}});
 
-  Tag copyWith({String id, String name, int logFrequency}) {
+  Tag copyWith({String uid, String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency}) {
     return Tag(
       uid: uid ?? this.uid,
       logId: logId ?? this.logId,
@@ -55,17 +55,16 @@ class Tag extends Equatable {
     );
   }
 
-  Tag incrementTagFrequencies({Tag tag, String category}) {
-    if (category != null) {}
+  Tag incrementTagLogFrequency() {
 
-    return tag.copyWith(logFrequency: tag.tagLogFrequency + 1);
+    return this.copyWith(logFrequency: this.tagLogFrequency + 1);
   }
 
-  Tag decrement({Tag tag}) {
-    if (tag.tagLogFrequency >= 1) {
-      return tag.copyWith(logFrequency: tag.tagLogFrequency - 1);
+  Tag decrementTagLogFrequency() {
+    if (this.tagLogFrequency >= 1) {
+      return this.copyWith(logFrequency: this.tagLogFrequency - 1);
     } else {
-      return tag;
+      return this;
     }
   }
 }

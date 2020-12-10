@@ -105,8 +105,8 @@ class MyEntry extends Equatable with ChangeNotifier {
     return MyEntry(
       uid: this.uid,
       id: this.id,
-      logId: logId ?? this.logId,
-      currency: currency ?? this.currency,
+      logId: this.logId,
+      currency: this.currency,
       active: this.active,
       categoryId: category,
       subcategoryId: _subcategory,

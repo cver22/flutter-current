@@ -15,12 +15,11 @@
 //TODO deleting a log deletes all of its entries, will be easier to implement when I start using a ledger for each year in a log
 //TODO how to put an empty map in a JSON so the array doesn't initiate empty
       //TODO record of total log expenditure by month
-      //TODO i'm currently creating my own UUID for all my tags, logs, and such, but not using them??
+
 
 
 
 
     //TODO START HERE
 
-      //setup tag picker to handle the new data tag/category data structure
-      //setup tag actions to handle add, increment, decrement
+//build category tag display

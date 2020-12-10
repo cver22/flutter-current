@@ -86,7 +86,7 @@ class _TagEditorState extends State<TagEditor> {
                       : () {
                           //can be used to edit, needs modifications...a lot
 
-                          Env.store.dispatch(AddNewTagToEntry(newTag: selectedTag.copyWith(name: _controller.text)));
+                          Env.store.dispatch(AddNewTagToEntry(tag: selectedTag.copyWith(name: _controller.text)));
                           _controller.clear();
 
                         }),

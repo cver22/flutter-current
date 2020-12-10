@@ -20,7 +20,7 @@ class _TagPickerState extends State<TagPicker> {
   List<Tag> logAllTags = [], selectedEntryTags = [], categoryRecentTags = [], logRecentTags = [], categoryAllTags = [];
 
   MyEntry entry;
-  Log _log;
+  Log log;
   SingleEntryState currentSingleEntryState;
 
   //TODO change this to function as a stateless widget driven by entryState, will need to dump the entry tags into the state tags at the beginning
@@ -39,7 +39,7 @@ class _TagPickerState extends State<TagPicker> {
           if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
             currentSingleEntryState = singleEntryState;
             entry = currentSingleEntryState.selectedEntry.value;
-            print('logTag are ${currentSingleEntryState.logTagList}');
+            print('logTag are ${currentSingleEntryState.tags}');
           }
 
           tagListBuilders(maxTags: maxTags, entryState: currentSingleEntryState);
@@ -48,7 +48,7 @@ class _TagPickerState extends State<TagPicker> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               TagEditor(
-                log: _log,
+                log: log,
               ),
 
               SingleChildScrollView(
@@ -95,15 +95,19 @@ class _TagPickerState extends State<TagPicker> {
     Map<String, Tag> categoryTagMap = {};
     //builds their respective preliminary tag lists if the entry has a log and a category
     if (entry?.logId != null) {
-      _log = Env.store.state.logsState.logs.values.firstWhere((e) => e.id == entry.logId);
+      log = Env.store.state.logsState.logs.values.firstWhere((e) => e.id == entry.logId);
+      print('log is $log');
 
-      logAllTags = entryState.logTagList;
+      logAllTags = entryState.tags.values.where((e) => e.logId == log.id).toList();
+      print('all log tags $logAllTags');
 
       if (entry?.categoryId != null) {
-
         //if category is selected, get all tags associated with that category
-        categoryAllTags = entryState.logTagList.where((e) => e.tagCategoryFrequency.containsKey(entry.categoryId)).toList();
-        categoryTagMap = Map.fromIterable(categoryAllTags, key: (e) => e.id, value: (e) => e);
+        entryState.tags.forEach((key, value) {
+          if (value.tagCategoryFrequency.containsKey(entry.categoryId)) {
+            categoryTagMap.putIfAbsent(key, () => value);
+          }
+        });
       }
     }
 
@@ -113,7 +117,8 @@ class _TagPickerState extends State<TagPicker> {
     _buildLogRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryTagMap: categoryTagMap);
   }
 
-  void _buildLogRecentTagList({@required int maxTags, @required Map<String, Tag> selectedEntryMap, @required Map<String, Tag> categoryTagMap}) {
+  void _buildLogRecentTagList(
+      {@required int maxTags, @required Map<String, Tag> selectedEntryMap, @required Map<String, Tag> categoryTagMap}) {
     if (logAllTags.isNotEmpty) {
       //adds logs tags to the tags list until max tags is reached
 
@@ -125,8 +130,7 @@ class _TagPickerState extends State<TagPicker> {
 
       while (tagCount < maxTags) {
         //if the tag isn't in the category top 10, add it to the recent log tag list
-        if (!categoryTagMap.containsKey(logAllTags[index].id) &&
-            !selectedEntryMap.containsKey(logAllTags[index].id)) {
+        if (!categoryTagMap.containsKey(logAllTags[index].id) && !selectedEntryMap.containsKey(logAllTags[index].id)) {
           //add to log list
 
           logRecentTags.add(logAllTags[index]);
@@ -140,9 +144,10 @@ class _TagPickerState extends State<TagPicker> {
     }
   }
 
-  void _buildCategoryRecentTagList({@required int maxTags, @required Map<String, Tag> selectedEntryMap, @required Map<String, Tag> categoryTagMap}) {
+  void _buildCategoryRecentTagList(
+      {@required int maxTags, @required Map<String, Tag> selectedEntryMap, @required Map<String, Tag> categoryTagMap}) {
     //TODO figure out how to build the recent category tag list
-   /* if (categoryTagMap.isNotEmpty) {
+    /* if (categoryTagMap.isNotEmpty) {
       categoryRecentTags.clear();
       List<String> recentCategoryKeys = categoryTagMap.keys.toList();
       recentCategoryKeys.sort((k1, k2) {

@@ -92,10 +92,9 @@ class AddUpdateLog implements Action {
         ifAbsent: () => addedUpdatedLog,
       );
     } else {
-      //create a new log, does not save locally to state
+      //create a new log, does not save locally to state as there is no id yet
       addedUpdatedLog = addedUpdatedLog.copyWith(
           uid: appState.authState.user.value.id,
-          id: Uuid().v4(),
           categories: appState.settingsState.settings.value.defaultCategories,
           subcategories: appState.settingsState.settings.value.defaultSubcategories);
       Env.logsFetcher.addLog(addedUpdatedLog);
