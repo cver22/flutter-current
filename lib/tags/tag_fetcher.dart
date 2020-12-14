@@ -42,6 +42,24 @@ class TagFetcher {
     }
   }
 
+  Future<void> batchAddUpdate({List<Tag> addedTags, List<Tag> updatedTags}) async {
+    if (addedTags.isNotEmpty) {
+      try {
+        _tagRepository.batchAddTags(addedTags: addedTags);
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+
+    if (updatedTags.isNotEmpty) {
+      try {
+        _tagRepository.batchUpdateTags(updatedTags: updatedTags);
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
   Future<void> deleteTag(Tag tag) async {
     try {
       _tagRepository.deleteTag(tag);

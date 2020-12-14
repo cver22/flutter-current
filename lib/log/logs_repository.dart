@@ -30,7 +30,6 @@ class FirebaseLogsRepository implements LogsRepository {
     return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
 
       var snapshots = snapshot.documents.map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc))).toList();
-      FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize();
 
       return snapshots;
     });

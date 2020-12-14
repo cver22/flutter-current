@@ -39,8 +39,7 @@ class SingleEntryState extends Equatable {
     bool savingEntry,
 
   }) {
-    print('new tags $tags');
-    print('this tags ${this.tags}');
+
     return SingleEntryState(
 
       selectedEntry: selectedEntry ?? this.selectedEntry,

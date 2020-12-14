@@ -40,12 +40,11 @@ class SetNewSelectedEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = MyEntry();
     Log log = appState.logsState.logs[logId];
-    Map<String, Tag> tags = appState.tagState.tags..removeWhere((key, value) => value.logId != log.id);
+    Map<String, Tag> tags = Map.from(appState.tagState.tags..removeWhere((key, value) => value.logId != log.id));
     entry = entry.copyWith(logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: []);
-    print('this is my new entry $entry');
     return _updateSingleEntryState(
         appState,
-        (entryState) => entryState.copyWith(
+        (singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe.some(entry),
             selectedTag: Maybe.none(),
             tags: tags,
@@ -68,7 +67,7 @@ class SelectEntry implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (entryState) => entryState.copyWith(
+        (singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe.some(entry),
             selectedTag: Maybe.none(),
             tags: tags,
@@ -96,11 +95,11 @@ class AddUpdateSingleEntry implements Action {
       //update entry if id is not null and thus already exists an the entry has been modified
       Env.entriesFetcher.updateEntry(entry);
     } else if (entry.id == null) {
-      Env.entriesFetcher.addEntry(entry.copyWith(id: Uuid().v4(), dateTime: DateTime.now()));
+      //save new entry using the user id to help minimize chance of duplication of entry ids in the database
+      Env.entriesFetcher
+          .addEntry(entry.copyWith(id: '${appState.authState.user.value.id}-${Uuid().v4()}', dateTime: DateTime.now()));
     }
-
-    //updates log with updated tag list
-    //Env.logsFetcher.updateLog(log.copyWith(tags: Env.store.state.singleEntryState.logTagList));
+    Env.store.dispatch(AddUpdateTags());
 
     return _updateSingleEntryState(appState, (singleEntryState) => SingleEntryState.initial());
   }
@@ -145,23 +144,19 @@ class UpdateSelectedEntry implements Action {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(
-      appState,
-      (entryState) => entryState.copyWith(
-        selectedEntry: Maybe.some(
-          entryState.selectedEntry.value.copyWith(
-            id: id,
-            logId: logId,
-            currency: currency,
-            active: active,
-            categoryId: category,
-            subcategoryId: subcategory,
-            amount: amount,
-            comment: comment,
-            dateTime: dateTime,
-          ),
-        ),
-      ),
-    );
+        appState,
+        (entryState) => entryState.copyWith(
+                selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(
+              id: id,
+              logId: logId,
+              currency: currency,
+              active: active,
+              categoryId: category,
+              subcategoryId: subcategory,
+              amount: amount,
+              comment: comment,
+              dateTime: dateTime,
+            ))));
   }
 }
 
@@ -175,13 +170,11 @@ class ChangeEntryLog implements Action {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(
-      appState,
-      (entryState) => entryState.copyWith(
-        selectedEntry: Maybe.some(
-          entryState.selectedEntry.value.changeLog(log: log),
-        ),
-      ),
-    );
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+                selectedEntry: Maybe.some(
+              singleEntryState.selectedEntry.value.changeLog(log: log),
+            )));
   }
 }
 
@@ -195,13 +188,11 @@ class ChangeEntryCategories implements Action {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(
-      appState,
-      (entryState) => entryState.copyWith(
-        selectedEntry: Maybe.some(
-          entryState.selectedEntry.value.changeCategories(category: category),
-        ),
-      ),
-    );
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+                selectedEntry: Maybe.some(
+              singleEntryState.selectedEntry.value.changeCategories(category: category),
+            )));
   }
 }
 
@@ -212,22 +203,26 @@ class AddNewTagToEntry implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    Tag updatedTag = tag; //TODO - update the editor to utilize the selectedTagState and pull from there
-    List<MyCategory> categories = appState.logsState.logs.values
-        .firstWhere((e) => e.id == appState.singleEntryState.selectedEntry.value.logId)
-        .categories;
-    Map<String, Tag> tags = appState.singleEntryState.tags;
+
+    Tag addedUpdatedTag = tag; //TODO - update the editor to utilize the selectedTagState and pull from there
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
 
-    if (updatedTag.id == null) {
-      updatedTag = updatedTag.copyWith(id: Uuid().v4(), logId: entry.logId, logFrequency: 1);
+    if (addedUpdatedTag.id == null) {
+      //save new tag using the user id to help minimize chance of duplication of entry ids in the database
+      Map<String, int> tagCategoryFrequency = {};
 
-      entry.tagIDs.add(updatedTag.id);
+      addedUpdatedTag = addedUpdatedTag.copyWith(uid: appState.authState.user.value.id,
+          id: '${Uuid().v4()}-${appState.authState.user.value.id}', logId: entry.logId, logFrequency: 1);
 
-      updatedTag = _incrementCategoryFrequency(entry, updatedTag);
+      entry.tagIDs.add(addedUpdatedTag.id);
 
-      tags.update(updatedTag.id, (value) => updatedTag, ifAbsent: () => updatedTag);
+      addedUpdatedTag = _incrementCategoryFrequency(entry, addedUpdatedTag);
+      print('this is the updated tag $addedUpdatedTag');
+
+      tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
+
 
     return _updateSingleEntryState(
         appState,
@@ -247,7 +242,6 @@ class AddOrRemoveEntryTag implements Action {
     Map<String, Tag> tags = appState.singleEntryState.tags;
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     List<String> entryTagIds = entry.tagIDs;
-    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
     bool entryHasTag = false;
 
     //determines if the tag is in the entry or in another list
@@ -286,7 +280,7 @@ class AddOrRemoveEntryTag implements Action {
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags, logCategoryList: categories));
+            selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags));
   }
 }
 
@@ -337,16 +331,13 @@ Tag _incrementCategoryFrequency(MyEntry entry, Tag updatedTag) {
 }
 
 Tag _decrementCategoryFrequency(MyEntry entry, Tag updatedTag) {
-
   if (entry?.categoryId != null) {
     Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
 
-
     //subtracts frequency to tag for the category if present, adds it otherwise
-    tagCategoryFrequency.update(entry.categoryId, (value) => value - 1 , ifAbsent: () => 0);
+    tagCategoryFrequency.update(entry.categoryId, (value) => value - 1, ifAbsent: () => 0);
     tagCategoryFrequency.removeWhere(
         (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
-
 
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
   }

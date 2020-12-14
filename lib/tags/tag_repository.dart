@@ -12,20 +12,24 @@ abstract class TagRepository {
   Future<void> updateTag(Tag tag);
 
   void deleteTag(Tag tag);
+
+  Future<void> batchUpdateTags({List<Tag> updatedTags}) {}
+
+  Future<void> batchAddTags({List<Tag> addedTags}) {}
 }
 
 class FirebaseTagRepository implements TagRepository {
-  final tagCollection = Firestore.instance.collection(TAG_COLLECTION);
+  Firestore db = Firestore.instance;
 
   @override
   Future<void> addNewTag(Tag tag) {
-    return tagCollection.add(tag.toEntity().toJson());
+    return db.collection(TAG_COLLECTION).add(tag.toEntity().toJson());
   }
 
   //TODO need to filter by UID for groups
   @override
   Stream<List<Tag>> loadTags(User user) {
-    return tagCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
+    return db.collection(TAG_COLLECTION).where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
       var snapshots = snapshot.documents.map((doc) => Tag.fromEntity(TagEntity.fromSnapshot(doc))).toList();
 
       return snapshots;
@@ -34,11 +38,36 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> updateTag(Tag tag) {
-    return tagCollection.document(tag.id).updateData(tag.toEntity().toJson());
+    return db.collection(TAG_COLLECTION).document(tag.id).updateData(tag.toEntity().toJson());
   }
 
   @override
   void deleteTag(Tag tag) {
-    tagCollection.document(tag.id).delete();
+    db.collection(TAG_COLLECTION).document(tag.id).delete();
+  }
+
+  @override
+  Future<void> batchAddTags({List<Tag> addedTags}) {
+    WriteBatch batch = db.batch();
+
+    addedTags.forEach((tag) {
+      batch.setData(db.collection(TAG_COLLECTION).document(tag.id), tag.toEntity().toJson());
+    });
+
+//TODO maybe add a whenComplete to this?
+    return batch.commit();
+  }
+
+  @override
+  Future<void> batchUpdateTags({List<Tag> updatedTags}) {
+    print('running batch update tags');
+    WriteBatch batch = db.batch();
+
+    updatedTags.forEach((tag) {
+      batch.updateData(db.collection(TAG_COLLECTION).document(), {tag.id: tag.toEntity().toJson()});
+    });
+
+//TODO maybe add a whenComplete to this?
+    return batch.commit();
   }
 }

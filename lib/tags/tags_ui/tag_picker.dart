@@ -17,7 +17,7 @@ class TagPicker extends StatefulWidget {
 }
 
 class _TagPickerState extends State<TagPicker> {
-  List<Tag> logAllTags = [], selectedEntryTags = [], categoryRecentTags = [], logRecentTags = [], categoryAllTags = [];
+  List<Tag> logAllTags = [], selectedEntryTags = [], categoryRecentTags = [], logRecentTags = [];
 
   MyEntry entry;
   Log log;
@@ -33,13 +33,13 @@ class _TagPickerState extends State<TagPicker> {
         where: notIdentical,
         map: (state) => state.singleEntryState,
         builder: (singleEntryState) {
+          print('rendering tag picker');
           int maxTags = 10;
 
           //ensures the visible entry isn't reset while the entry is saving
           if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
             currentSingleEntryState = singleEntryState;
             entry = currentSingleEntryState.selectedEntry.value;
-            print('logTag are ${currentSingleEntryState.tags}');
           }
 
           tagListBuilders(maxTags: maxTags, entryState: currentSingleEntryState);
@@ -92,20 +92,23 @@ class _TagPickerState extends State<TagPicker> {
   }
 
   void tagListBuilders({@required SingleEntryState entryState, int maxTags}) {
-    Map<String, Tag> categoryTagMap = {};
+    Map<String, Tag> categoryTagMap = {}; //all tags for the category
+    Map<String, int> categoryAllTags = {}; // tag frequency for the category
     //builds their respective preliminary tag lists if the entry has a log and a category
     if (entry?.logId != null) {
       log = Env.store.state.logsState.logs.values.firstWhere((e) => e.id == entry.logId);
-      print('log is $log');
 
       logAllTags = entryState.tags.values.where((e) => e.logId == log.id).toList();
-      print('all log tags $logAllTags');
 
       if (entry?.categoryId != null) {
         //if category is selected, get all tags associated with that category
         entryState.tags.forEach((key, value) {
           if (value.tagCategoryFrequency.containsKey(entry.categoryId)) {
             categoryTagMap.putIfAbsent(key, () => value);
+            categoryAllTags.putIfAbsent(
+                key,
+                () =>
+                    value.tagCategoryFrequency.entries.firstWhere((element) => element.key == entry.categoryId).value);
           }
         });
       }
@@ -113,7 +116,7 @@ class _TagPickerState extends State<TagPicker> {
 
     _buildEntryTagList();
     Map<String, Tag> selectedEntryMap = Map.fromIterable(selectedEntryTags, key: (e) => e.id, value: (e) => e);
-    _buildCategoryRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryTagMap: categoryTagMap);
+    _buildCategoryRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryAllTags: categoryAllTags);
     _buildLogRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryTagMap: categoryTagMap);
   }
 
@@ -145,14 +148,16 @@ class _TagPickerState extends State<TagPicker> {
   }
 
   void _buildCategoryRecentTagList(
-      {@required int maxTags, @required Map<String, Tag> selectedEntryMap, @required Map<String, Tag> categoryTagMap}) {
+      {@required int maxTags,
+      @required Map<String, Tag> selectedEntryMap,
+      @required Map<String, int> categoryAllTags}) {
     //TODO figure out how to build the recent category tag list
-    /* if (categoryTagMap.isNotEmpty) {
+    if (categoryAllTags.isNotEmpty) {
       categoryRecentTags.clear();
-      List<String> recentCategoryKeys = categoryTagMap.keys.toList();
+      List<String> recentCategoryKeys = categoryAllTags.keys.toList();
       recentCategoryKeys.sort((k1, k2) {
         //compares frequency of one tag vs another from the category map
-        if (categoryAllTags[k1]. > categoryAllTags[k2]) return -1;
+        if (categoryAllTags[k1] > categoryAllTags[k2]) return -1;
         if (categoryAllTags[k1] < categoryAllTags[k2]) return 1;
         return 0;
       });
@@ -160,7 +165,6 @@ class _TagPickerState extends State<TagPicker> {
       recentCategoryKeys = recentCategoryKeys.reversed.toList();
       int tagCount = 0;
       int index = 0;
-
 
       //passes tags to the recent category tag list until max tags are reached
       while (tagCount < maxTags) {
@@ -179,7 +183,7 @@ class _TagPickerState extends State<TagPicker> {
     } else {
       //no tags present, reset the list
       categoryRecentTags = [];
-    }*/
+    }
   }
 
   void _buildEntryTagList() {
@@ -194,6 +198,3 @@ class _TagPickerState extends State<TagPicker> {
     }
   }
 }
-
-//TODO tag editor
-//TODO tag creator

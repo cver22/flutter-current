@@ -22,4 +22,4 @@
 
     //TODO START HERE
 
-//build category tag display
+//iterate over tags when category is added or changed

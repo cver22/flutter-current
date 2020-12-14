@@ -38,7 +38,7 @@ class TagEntity extends Equatable {
       name: snap.data[NAME],
       tagLogFrequency: snap.data[TAG_LOG_FREQUENCY],
       tagCategoryFrequency:
-          (snap.data[TAG_CATEGORY_FREQUENCY] as Map<String, int>).map((key, value) => MapEntry(key, value)),
+          (snap.data[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
     );
   }
 }
