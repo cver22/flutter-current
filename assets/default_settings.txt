@@ -4,20 +4,17 @@
       "id": "noCategory",
       "name": " No Category",
       "emojiChar": "🔴",
-      "isDefault": true,
-      "tagIdFrequency": "{}"
+      "isDefault": true
     },
     {
       "id": "home",
       "name": "Home",
       "emojiChar": "🏠"
-      "tagIdFrequency": "{}"
     },
     {
       "id": "transportation",
       "name": "Transportation",
       "emojiChar": "🚀"
-      "tagIdFrequency": "{}"
     }
   ],
   "defaultSubcategoryEntities": [

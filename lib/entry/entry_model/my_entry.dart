@@ -1,6 +1,9 @@
+import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/my_entry_entity.dart';
 import 'package:expenses/log/log_model/log.dart';
+import 'package:expenses/member/member_model/member.dart';
 import 'package:expenses/utils/db_consts.dart';
 
 import 'package:flutter/foundation.dart';
@@ -21,7 +24,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.amount,
       this.comment,
       this.dateTime,
-      this.tagIDs});
+      this.tagIDs,
+      this.members = const {}});
 
   final String uid;
   final String id;
@@ -34,72 +38,49 @@ class MyEntry extends Equatable with ChangeNotifier {
   final String comment;
   final DateTime dateTime;
   final List<String> tagIDs;
-
-  MyEntry copyWith({
-    String uid,
-    String id,
-    String logId,
-    String currency,
-    bool active,
-    String categoryId,
-    String subcategoryId,
-    double amount,
-    String comment,
-    DateTime dateTime,
-    List<String> tagIDs,
-  }) {
-    return MyEntry(
-      uid: uid ?? this.uid,
-      id: id ?? this.id,
-      logId: logId ?? this.logId,
-      currency: currency ?? this.currency,
-      active: active ?? this.active,
-      categoryId: categoryId ?? this.categoryId,
-      subcategoryId: subcategoryId ?? this.subcategoryId,
-      amount: amount ?? this.amount,
-      comment: comment ?? this.comment,
-      dateTime: dateTime ?? this.dateTime,
-      tagIDs: tagIDs ?? this.tagIDs,
-    );
-  }
+  final Map<String, Member> members;
 
   MyEntry changeLog({Log log}) {
-    String _logId = this.logId;
-    String _category = this.categoryId;
-    String _subcategory = this.subcategoryId;
-    String _currency = this.currency;
-    List<String> _tagIDs = this.tagIDs;
+    String logId = this.logId;
+    String category = this.categoryId;
+    String subcategory = this.subcategoryId;
+    String currency = this.currency;
+    List<String> tagIDs = this.tagIDs;
+    Map<String, Member> members = this.members;
 
     if (log.id != this.logId) {
-      _logId = log.id;
-      _currency = log.currency;
-      _category = null;
-      _subcategory = null;
-      _tagIDs = null;
+      logId = log.id;
+      currency = log.currency;
+      category = null;
+      subcategory = null;
+      tagIDs = null;
+      members.clear();
+
     }
 
     return MyEntry(
       uid: this.uid,
       id: this.id,
-      logId: _logId ?? this.logId,
-      currency: _currency ?? this.currency,
+      logId: logId ?? this.logId,
+      currency: currency ?? this.currency,
       active: this.active,
-      categoryId: _category,
-      subcategoryId: _subcategory,
+      categoryId: category,
+      subcategoryId: subcategory,
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,
-      tagIDs: _tagIDs,
+      tagIDs: tagIDs,
+      members: members
     );
   }
 
   MyEntry changeCategories({
     String category,
   }) {
-    //safety checks if category has changed and thus erases the selected subcategory
-    String _subcategory;
+    //safety checks if category has changed and thus nulls the selected subcategory
+    String subcategory;
     if (category == this.categoryId) {
-      _subcategory = this.subcategoryId;
+      subcategory = this.subcategoryId;
     }
 
     return MyEntry(
@@ -109,44 +90,24 @@ class MyEntry extends Equatable with ChangeNotifier {
       currency: this.currency,
       active: this.active,
       categoryId: category,
-      subcategoryId: _subcategory,
+      subcategoryId: subcategory,
       amount: this.amount,
       comment: this.comment,
       dateTime: this.dateTime,
       tagIDs: this.tagIDs,
+      members: this.members,
     );
   }
-/*
-  MyEntry copyWithSelectedEntryTagList({MyEntry entry}) {
-    //makes changes to the entry tag list if changes were made
-    //TODO method to remove tag from list
-    List<Tag> _selectedEntryTags = Env.store.state.entryState.logTagList;
-    
-    if (_selectedEntryTags.length > 0) {
-      List<String> entryTagIds = [];
-
-      _selectedEntryTags.forEach((addEditTag) {
-        if ((entryTagIds.singleWhere((entryTagId) => entryTagId == addEditTag.id, orElse: () => null)) != null) {
-          //do nothing, the tag is already in the list
-        } else {}
-        entryTagIds.add(addEditTag.id);
-      });
-
-      return entry.copyWith(tagIDs: entryTagIds);
-    } else {
-      return entry;
-    }
-  }*/
 
   @override
-  List<Object> get props => [uid, id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs];
+  List<Object> get props => [uid, id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, members];
 
   @override
   String toString() {
     return 'Entry {$UID: $uid, id: $id, $LOG_ID: $logId, '
         'currency: $currency, $ACTIVE: $active, $CATEGORY: $categoryId, '
         '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, $COMMENT: $comment, '
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs}';
+        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $members}';
   }
 
   MyEntryEntity toEntity() {
@@ -162,6 +123,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: comment,
       dateTime: dateTime,
       tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
+      members: members,
     );
   }
 
@@ -178,6 +140,52 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: entity.comment,
       dateTime: entity.dateTime,
       tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
+      members: entity.members,
+    );
+  }
+
+  MyEntry copyWith({
+    String uid,
+    String id,
+    String logId,
+    String currency,
+    bool active,
+    String categoryId,
+    String subcategoryId,
+    double amount,
+    String comment,
+    DateTime dateTime,
+    List<String> tagIDs,
+    Map<String, Member> members,
+  }) {
+    if ((uid == null || identical(uid, this.uid)) &&
+        (id == null || identical(id, this.id)) &&
+        (logId == null || identical(logId, this.logId)) &&
+        (currency == null || identical(currency, this.currency)) &&
+        (active == null || identical(active, this.active)) &&
+        (categoryId == null || identical(categoryId, this.categoryId)) &&
+        (subcategoryId == null || identical(subcategoryId, this.subcategoryId)) &&
+        (amount == null || identical(amount, this.amount)) &&
+        (comment == null || identical(comment, this.comment)) &&
+        (dateTime == null || identical(dateTime, this.dateTime)) &&
+        (tagIDs == null || identical(tagIDs, this.tagIDs)) &&
+        (members == null || identical(members, this.members))) {
+      return this;
+    }
+
+    return new MyEntry(
+      uid: uid ?? this.uid,
+      id: id ?? this.id,
+      logId: logId ?? this.logId,
+      currency: currency ?? this.currency,
+      active: active ?? this.active,
+      categoryId: categoryId ?? this.categoryId,
+      subcategoryId: subcategoryId ?? this.subcategoryId,
+      amount: amount ?? this.amount,
+      comment: comment ?? this.comment,
+      dateTime: dateTime ?? this.dateTime,
+      tagIDs: tagIDs ?? this.tagIDs,
+      members: members ?? this.members,
     );
   }
 }

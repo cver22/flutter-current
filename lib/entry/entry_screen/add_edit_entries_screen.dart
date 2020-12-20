@@ -35,7 +35,6 @@ class AddEditEntriesScreen extends StatelessWidget {
         map: (state) => state.singleEntryState,
         builder: (singleEntryState) {
           print('Rendering AddEditEntriesScreen');
-          print('singleEntryState: $singleEntryState');
 
           if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
             entry = singleEntryState.selectedEntry.value;

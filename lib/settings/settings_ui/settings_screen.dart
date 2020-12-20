@@ -30,11 +30,28 @@ class SettingsScreen extends StatelessWidget {
             body: SingleChildScrollView(
               child: Column(
                 children: <Widget>[
-                  _logNameDropDown(settingsState: settingsState),
-                  MyCurrencyPicker(
-                      currency: settingsState.settings.value.homeCurrency,
-                      returnCurrency: (currency) => Env.store.dispatch(UpdateSettings(
-                          settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
+                  Row(
+              mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('Default Log:'),
+                      SizedBox(width: 10),
+                      _logNameDropDown(settingsState: settingsState),
+                    ],
+                  ),
+                  Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text('Default Currency:'),
+                      SizedBox(width: 10),
+                      MyCurrencyPicker(
+                          currency: settingsState.settings.value.homeCurrency,
+                          returnCurrency: (currency) => Env.store.dispatch(UpdateSettings(
+                              settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
+                    ],
+                  ),
+                  SizedBox(height: 10),
                   _categoryButton(settingsState: settingsState, context: context),
                   _subcategoryButton(settingsState: settingsState, context: context),
                   SizedBox(

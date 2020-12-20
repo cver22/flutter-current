@@ -40,7 +40,7 @@ class SetNewSelectedEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = MyEntry();
     Log log = appState.logsState.logs[logId];
-    Map<String, Tag> tags = Map.from(appState.tagState.tags..removeWhere((key, value) => value.logId != log.id));
+    Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     entry = entry.copyWith(logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: []);
     return _updateSingleEntryState(
         appState,
@@ -63,7 +63,7 @@ class SelectEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = appState.entriesState.entries[entryId];
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    Map<String, Tag> tags = appState.tagState.tags..removeWhere((key, value) => value.logId != log.id);
+    Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
 
     return _updateSingleEntryState(
         appState,
@@ -165,33 +165,58 @@ class ChangeEntryLog implements Action {
 
   ChangeEntryLog({@required this.log});
 
-  //TODO should also change tag frequency
-
   @override
   AppState updateState(AppState appState) {
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
-                selectedEntry: Maybe.some(
-              singleEntryState.selectedEntry.value.changeLog(log: log),
-            )));
+    if (log.id == appState.singleEntryState.selectedEntry.value.logId) {
+      return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState);
+    } else {
+      Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
+
+      return _updateSingleEntryState(
+          appState,
+          (singleEntryState) => singleEntryState.copyWith(
+              tags: tags,
+              selectedTag: Maybe.none(),
+              logCategoryList: log.categories,
+              selectedEntry: Maybe.some(
+                singleEntryState.selectedEntry.value.changeLog(log: log).copyWith(tagIDs: List<String>()),
+              )));
+    }
   }
 }
 
 class ChangeEntryCategories implements Action {
-  final String category;
+  final String newCategory;
 
-  ChangeEntryCategories({@required this.category});
-
-  //TODO should also change tag frequency
+  ChangeEntryCategories({@required this.newCategory});
 
   @override
   AppState updateState(AppState appState) {
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    String oldCategoryId = entry.categoryId;
+
+
+    entry.tagIDs.forEach((tagId) {
+      Tag tag = tags[tagId];
+
+      if (oldCategoryId != null) {
+        //decrements only if there was a previous category
+        tag = _decrementCategoryFrequency(categoryId: oldCategoryId, updatedTag: tag);
+      }
+
+      tag = _incrementCategoryFrequency(categoryId: newCategory, updatedTag: tag);
+
+      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+
+    });
+
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-                selectedEntry: Maybe.some(
-              singleEntryState.selectedEntry.value.changeCategories(category: category),
+            tags: tags,
+            selectedEntry: Maybe.some(
+              entry.changeCategories(category: newCategory),
             )));
   }
 }
@@ -203,26 +228,26 @@ class AddNewTagToEntry implements Action {
 
   @override
   AppState updateState(AppState appState) {
-
     Tag addedUpdatedTag = tag; //TODO - update the editor to utilize the selectedTagState and pull from there
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
 
     if (addedUpdatedTag.id == null) {
       //save new tag using the user id to help minimize chance of duplication of entry ids in the database
-      Map<String, int> tagCategoryFrequency = {};
 
-      addedUpdatedTag = addedUpdatedTag.copyWith(uid: appState.authState.user.value.id,
-          id: '${Uuid().v4()}-${appState.authState.user.value.id}', logId: entry.logId, logFrequency: 1);
+      addedUpdatedTag = addedUpdatedTag.copyWith(
+          uid: appState.authState.user.value.id,
+          id: '${Uuid().v4()}-${appState.authState.user.value.id}',
+          logId: entry.logId,
+          logFrequency: 1);
 
       entry.tagIDs.add(addedUpdatedTag.id);
 
-      addedUpdatedTag = _incrementCategoryFrequency(entry, addedUpdatedTag);
+      addedUpdatedTag = _incrementCategoryFrequency(updatedTag: addedUpdatedTag, categoryId: entry?.categoryId);
       print('this is the updated tag $addedUpdatedTag');
 
       tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
-
 
     return _updateSingleEntryState(
         appState,
@@ -239,7 +264,7 @@ class AddOrRemoveEntryTag implements Action {
   @override
   AppState updateState(AppState appState) {
     Tag updatedTag = tag;
-    Map<String, Tag> tags = appState.singleEntryState.tags;
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     List<String> entryTagIds = entry.tagIDs;
     bool entryHasTag = false;
@@ -254,11 +279,7 @@ class AddOrRemoveEntryTag implements Action {
     if (entryHasTag) {
       //remove tag from entry if present
 
-      //decrement use of tag for this category
-      updatedTag = _decrementCategoryFrequency(entry, updatedTag);
-
-      //decrement use of tag for this log
-      updatedTag = updatedTag.decrementTagLogFrequency();
+      updatedTag = _decrementCategoryAndLogFrequency(updatedTag: updatedTag, categoryId: entry?.categoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.remove(tag.id);
@@ -266,10 +287,7 @@ class AddOrRemoveEntryTag implements Action {
       //add tag to entry if not present
 
       //increment use of tag for this category
-      updatedTag = _incrementCategoryFrequency(entry, updatedTag);
-
-      //increment use of tag for this log
-      updatedTag = updatedTag.incrementTagLogFrequency();
+      updatedTag = _incrementCategoryAndLogFrequency(updatedTag: updatedTag, categoryId: entry?.categoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.add(tag.id);
@@ -279,8 +297,8 @@ class AddOrRemoveEntryTag implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags));
+        (singleEntryState) =>
+            singleEntryState.copyWith(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags));
   }
 }
 
@@ -298,11 +316,8 @@ class DeleteEntry implements Action {
       //updates log list of tags
       Tag tag = tags[tagId];
 
-      //decrement use of tag for this category
-      tag = _decrementCategoryFrequency(entry, tag);
-
-      //decrement use of this tag for this log
-      tag = tag.decrementTagLogFrequency();
+      //decrement use of tag for this category and log
+      tag = _decrementCategoryAndLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
 
       tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
     });
@@ -319,27 +334,54 @@ class DeleteEntry implements Action {
   }
 }
 
-Tag _incrementCategoryFrequency(MyEntry entry, Tag updatedTag) {
-  if (entry?.categoryId != null) {
+Tag _incrementCategoryFrequency({@required String categoryId, @required Tag updatedTag}) {
+  if (categoryId != null) {
     Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
 
     //adds frequency to tag for the category if present, adds it otherwise
-    tagCategoryFrequency.update(entry.categoryId, (value) => value + 1, ifAbsent: () => 1);
+    tagCategoryFrequency.update(categoryId, (value) => value + 1, ifAbsent: () => 1);
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
+
   }
   return updatedTag;
 }
 
-Tag _decrementCategoryFrequency(MyEntry entry, Tag updatedTag) {
-  if (entry?.categoryId != null) {
+Tag _incrementCategoryAndLogFrequency({@required Tag updatedTag, @required String categoryId}) {
+  //increment use of tag for this category
+
+  updatedTag = _incrementCategoryFrequency(categoryId: categoryId, updatedTag: updatedTag);
+
+  //increment use of tag for this log
+  updatedTag = updatedTag.incrementTagLogFrequency();
+
+
+  return updatedTag;
+}
+
+Tag _decrementCategoryFrequency({@required String categoryId, @required Tag updatedTag}) {
+  if (categoryId != null) {
     Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
 
+
     //subtracts frequency to tag for the category if present, adds it otherwise
-    tagCategoryFrequency.update(entry.categoryId, (value) => value - 1, ifAbsent: () => 0);
+    tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
     tagCategoryFrequency.removeWhere(
         (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
 
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
+
   }
+  return updatedTag;
+}
+
+Tag _decrementCategoryAndLogFrequency({@required Tag updatedTag, @required String categoryId}) {
+  //decrement use of tag for this category
+
+  updatedTag = _decrementCategoryFrequency(categoryId: categoryId, updatedTag: updatedTag);
+
+  //decrement use of tag for this log
+  updatedTag = updatedTag.decrementTagLogFrequency();
+
+
   return updatedTag;
 }

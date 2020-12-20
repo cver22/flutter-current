@@ -288,7 +288,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   }
 
   Future<dynamic> _entrySelectCategory(MyCategory category) {
-    Env.store.dispatch(ChangeEntryCategories(category: category.id));
+    Env.store.dispatch(ChangeEntryCategories(newCategory: category.id));
     Get.back();
     return Get.dialog(
       CategoryListDialog(

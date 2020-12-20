@@ -4,6 +4,8 @@ import 'package:expenses/categories/categories_model/my_category/my_category.dar
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
+import 'package:expenses/member/member_model/log_member.dart';
+import 'package:expenses/member/member_model/log_member_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
@@ -17,7 +19,7 @@ class LogEntity extends Equatable {
   final String defaultCategory;
   final Map<String, MyCategory> categories;
   final Map<String, MySubcategory> subcategories;
-  final Map<String, dynamic> members;
+  final Map<String, LogMember> members;
 
   const LogEntity(
       {this.uid,
@@ -51,6 +53,8 @@ class LogEntity extends Equatable {
           .map((key, value) => MapEntry(key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
       archive: snap.data[ARCHIVE],
       defaultCategory: snap.data[DEFAULT_CATEGORY],
+      members: (snap.data[MEMBERS] as Map<String, dynamic>)
+          .map((key, value) => MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
     );
   }
 
@@ -61,7 +65,9 @@ class LogEntity extends Equatable {
       CURRENCY_NAME: currency,
       CATEGORIES: categories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       SUBCATEGORIES: subcategories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      ARCHIVE: archive,
       DEFAULT_CATEGORY: defaultCategory,
+      MEMBERS: members.map((key, value) => MapEntry(key, value.toEntity().toJson())),
     };
   }
 }

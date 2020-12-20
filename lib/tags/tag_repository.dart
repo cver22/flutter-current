@@ -60,11 +60,10 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> batchUpdateTags({List<Tag> updatedTags}) {
-    print('running batch update tags');
     WriteBatch batch = db.batch();
 
     updatedTags.forEach((tag) {
-      batch.updateData(db.collection(TAG_COLLECTION).document(), {tag.id: tag.toEntity().toJson()});
+      batch.updateData(db.collection(TAG_COLLECTION).document(tag.id), {tag.id: tag.toEntity().toJson()});
     });
 
 //TODO maybe add a whenComplete to this?

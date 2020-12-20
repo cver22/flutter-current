@@ -24,7 +24,6 @@ class _TagPickerState extends State<TagPicker> {
   SingleEntryState currentSingleEntryState;
 
   //TODO change this to function as a stateless widget driven by entryState, will need to dump the entry tags into the state tags at the beginning
-  //TODO possible inherent problem with this may be the duplication of tags in the state
   //TODO can likely handle editing of log tags by collecting them in a state of edited tags and doing a dump of them when navigating back from the entry editor
 
   @override
@@ -117,11 +116,13 @@ class _TagPickerState extends State<TagPicker> {
     _buildEntryTagList();
     Map<String, Tag> selectedEntryMap = Map.fromIterable(selectedEntryTags, key: (e) => e.id, value: (e) => e);
     _buildCategoryRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryAllTags: categoryAllTags);
-    _buildLogRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryTagMap: categoryTagMap);
+    _buildLogRecentTagList(maxTags: maxTags, selectedEntryMap: selectedEntryMap, categoryAllTags: categoryAllTags);
   }
 
   void _buildLogRecentTagList(
-      {@required int maxTags, @required Map<String, Tag> selectedEntryMap, @required Map<String, Tag> categoryTagMap}) {
+      {@required int maxTags,
+      @required Map<String, Tag> selectedEntryMap,
+      @required Map<String, int> categoryAllTags}) {
     if (logAllTags.isNotEmpty) {
       //adds logs tags to the tags list until max tags is reached
 
@@ -133,7 +134,8 @@ class _TagPickerState extends State<TagPicker> {
 
       while (tagCount < maxTags) {
         //if the tag isn't in the category top 10, add it to the recent log tag list
-        if (!categoryTagMap.containsKey(logAllTags[index].id) && !selectedEntryMap.containsKey(logAllTags[index].id)) {
+        //TODO this method currently prevents the listing of any category tag in the log tag section, even if its not one of the top 10, should that be the case?
+        if (!categoryAllTags.containsKey(logAllTags[index].id) && !selectedEntryMap.containsKey(logAllTags[index].id)) {
           //add to log list
 
           logRecentTags.add(logAllTags[index]);
@@ -191,7 +193,12 @@ class _TagPickerState extends State<TagPicker> {
     selectedEntryTags.clear();
     if (entryTagIDs != null && entryTagIDs.isNotEmpty) {
       for (int i = 0; i < entryTagIDs.length; i++) {
-        selectedEntryTags.add(logAllTags.firstWhere((e) => e.id == entryTagIDs[i]));
+        //if the tag is lost somehow, do not try to display the tag
+        //TODO should this also remove a lost tag?
+        Tag tag = logAllTags?.firstWhere((e) => e.id == entryTagIDs[i], orElse: () => null);
+        if (tag != null) {
+          selectedEntryTags.add(tag);
+        }
       }
     } else {
       selectedEntryTags = [];

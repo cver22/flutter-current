@@ -15,17 +15,20 @@ const String DEFAULT_CATEGORY = 'defaultCategory';
 enum CategoryOrSubcategory {category, subcategory}
 enum SettingsLogEntry {settings, log, entry}
 enum TagCollectionType {entry, category, log}
+//TODO implement filtering later
+//enum GroupBy {day, week, month, year}
+//enum FilterBy {none, all, category, subcategory, tag}
+
 
 //Log constants
 const String LOG_COLLECTION = 'logs';
 const String ENTRIES = 'entries';
 const String LOG_NAME = 'logName';
 const String MEMBER_ROLES_MAP = 'rolesList';
-const String MEMBERS_DATA = 'membersData';
+const String MEMBERS = 'members';
 const String OWNER_OR_WRITER = 'ownerOrWriter';
 const String OWNER = 'owner';
 const String WRITER = 'write';
-const String ENTRY_SET_IDS = 'entrySetIds';
 
 //Entry constants
 const String ENTRY_COLLECTION = 'entries';

@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class MySubcategory extends MyCategory {
   final String parentCategoryId;
 
-  MySubcategory({id, name, isDefault, emojiChar, @required this.parentCategoryId})
+  MySubcategory({id, name, emojiChar, @required this.parentCategoryId})
       : super(id: id, name: name, emojiChar: emojiChar);
 
   @override
