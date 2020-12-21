@@ -30,6 +30,8 @@ class UpdateSingleEntryState implements Action {
   }
 }
 
+/*SET OR SELECT ENTRY*/
+
 class SetNewSelectedEntry implements Action {
   //sets new entry and resets all entry data not yet available
   final String logId;
@@ -41,7 +43,11 @@ class SetNewSelectedEntry implements Action {
     MyEntry entry = MyEntry();
     Log log = appState.logsState.logs[logId];
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
-    entry = entry.copyWith(logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: []);
+    Map<String, Member> members = _setMembersList(log: log);
+
+    entry = entry.copyWith(
+        logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);
+
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
@@ -76,6 +82,8 @@ class SelectEntry implements Action {
   }
 }
 
+/*ADD UPDATE DELETE ENTRY*/
+
 class AddUpdateSingleEntry implements Action {
   //submits new entry to the entries list and the clear the singleEntryState
   final MyEntry entry;
@@ -105,6 +113,38 @@ class AddUpdateSingleEntry implements Action {
   }
 }
 
+class DeleteSelectedEntry implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    Env.store.dispatch(SingleEntryProcessing());
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
+    Map<String, Tag> tags = appState.singleEntryState.tags;
+    EntriesState updatedEntriesState = appState.entriesState;
+    updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
+
+    entry.tagIDs.forEach((tagId) {
+      //updates log list of tags
+      Tag tag = tags[tagId];
+
+      //decrement use of tag for this category and log
+      tag = _decrementCategoryAndLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
+
+      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+    });
+
+    Env.entriesFetcher.deleteEntry(entry);
+
+    //TODO send to update all changed tags
+    //Map<String, Tag> stateTags = appState.tagState.tags;
+
+    //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
+    Env.store.dispatch(ClearEntryState());
+
+    return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
+  }
+}
+
 class SingleEntryProcessing implements Action {
   @override
   AppState updateState(AppState appState) {
@@ -118,6 +158,8 @@ class ClearEntryState implements Action {
     return _updateSingleEntryState(appState, (entryState) => SingleEntryState.initial());
   }
 }
+
+/*CHANGE ENTRY VALUES*/
 
 class UpdateSelectedEntry implements Action {
   final String id;
@@ -170,7 +212,10 @@ class ChangeEntryLog implements Action {
     if (log.id == appState.singleEntryState.selectedEntry.value.logId) {
       return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState);
     } else {
-      Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
+      Map<String, Tag> tags = Map.from(appState.tagState.tags)
+        ..removeWhere((key, value) => value.logId != log.id); //log changes tags change
+      Map<String, Member> members = _setMembersList(log: log); //log changes members change
+      //TODO changing the entry log is more complicated than this, first you actually need to update the log it came from, then the log its going to
 
       return _updateSingleEntryState(
           appState,
@@ -179,7 +224,9 @@ class ChangeEntryLog implements Action {
               selectedTag: Maybe.none(),
               logCategoryList: log.categories,
               selectedEntry: Maybe.some(
-                singleEntryState.selectedEntry.value.changeLog(log: log).copyWith(tagIDs: List<String>()),
+                singleEntryState.selectedEntry.value
+                    .changeLog(log: log)
+                    .copyWith(tagIDs: List<String>(), entryMembers: members),
               )));
     }
   }
@@ -196,7 +243,6 @@ class ChangeEntryCategories implements Action {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     String oldCategoryId = entry.categoryId;
 
-
     entry.tagIDs.forEach((tagId) {
       Tag tag = tags[tagId];
 
@@ -208,7 +254,6 @@ class ChangeEntryCategories implements Action {
       tag = _incrementCategoryFrequency(categoryId: newCategory, updatedTag: tag);
 
       tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
-
     });
 
     return _updateSingleEntryState(
@@ -220,6 +265,106 @@ class ChangeEntryCategories implements Action {
             )));
   }
 }
+
+/*MEMBER ACTIONS*/
+
+class UpdateMemberPaidAmount implements Action {
+  final double paidValue;
+  final EntryMember member;
+
+  UpdateMemberPaidAmount({@required this.paidValue, @required this.member});
+
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    double amount = 0.0;
+    Map<String, EntryMember> members = Map.from(entry.entryMembers);
+
+    //update amount paid by individual member
+    members.update(member.uid, (value) => member.copyWith(paid: paidValue));
+
+    //update amount paid by all members
+    members.forEach((key, value) {
+      amount = amount + value.paid;
+    });
+
+    members = _divideSpendingEvenly(amount: amount, members: members);
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(amount: amount, entryMembers: members)),
+            ));
+  }
+}
+
+class UpdateMemberSpentAmount implements Action {
+  //TODO need a method to distribute remaining funds amongst those spending
+  final double spentValue;
+  final EntryMember member;
+
+  UpdateMemberSpentAmount({@required this.spentValue, @required this.member});
+
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> members = Map.from(entry.entryMembers);
+
+    //update amount spent by individual member
+    members.update(member.uid, (value) => member.copyWith(spent: spentValue));
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+            ));
+  }
+}
+
+class ToggleMemberPaying implements Action {
+  //TODO will need a UI catch to prevent there from being no payers
+
+  final EntryMember member;
+
+  ToggleMemberPaying({@required this.member});
+
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> members = Map.from(entry.entryMembers);
+
+    //toggles member paying or not
+    members.update(member.uid, (value) => member.copyWith(paying: !member.paying));
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+            ));
+  }
+}
+
+class ToggleMemberSpending implements Action {
+  final EntryMember member;
+
+  ToggleMemberSpending({@required this.member});
+
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> members = Map.from(entry.entryMembers);
+
+    //toggles member paying or not
+    members.update(member.uid, (value) => member.copyWith(spending: !member.spending));
+
+    //redistributes expense based on revision of who is paying
+    members = _divideSpendingEvenly(amount: entry.amount, members: members);
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+            ));
+  }
+}
+
+/*TAGS SECTION*/
 
 class AddNewTagToEntry implements Action {
   final Tag tag;
@@ -302,38 +447,6 @@ class AddOrRemoveEntryTag implements Action {
   }
 }
 
-class DeleteEntry implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    Env.store.dispatch(SingleEntryProcessing());
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
-    Map<String, Tag> tags = appState.singleEntryState.tags;
-    EntriesState updatedEntriesState = appState.entriesState;
-    updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
-
-    entry.tagIDs.forEach((tagId) {
-      //updates log list of tags
-      Tag tag = tags[tagId];
-
-      //decrement use of tag for this category and log
-      tag = _decrementCategoryAndLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
-
-      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
-    });
-
-    Env.entriesFetcher.deleteEntry(entry);
-
-    //TODO send to update all changed tags
-    //Map<String, Tag> stateTags = appState.tagState.tags;
-
-    //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
-    Env.store.dispatch(ClearEntryState());
-
-    return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
-  }
-}
-
 Tag _incrementCategoryFrequency({@required String categoryId, @required Tag updatedTag}) {
   if (categoryId != null) {
     Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
@@ -341,7 +454,6 @@ Tag _incrementCategoryFrequency({@required String categoryId, @required Tag upda
     //adds frequency to tag for the category if present, adds it otherwise
     tagCategoryFrequency.update(categoryId, (value) => value + 1, ifAbsent: () => 1);
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
-
   }
   return updatedTag;
 }
@@ -354,7 +466,6 @@ Tag _incrementCategoryAndLogFrequency({@required Tag updatedTag, @required Strin
   //increment use of tag for this log
   updatedTag = updatedTag.incrementTagLogFrequency();
 
-
   return updatedTag;
 }
 
@@ -362,14 +473,12 @@ Tag _decrementCategoryFrequency({@required String categoryId, @required Tag upda
   if (categoryId != null) {
     Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
 
-
     //subtracts frequency to tag for the category if present, adds it otherwise
     tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
     tagCategoryFrequency.removeWhere(
         (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
 
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
-
   }
   return updatedTag;
 }
@@ -382,6 +491,36 @@ Tag _decrementCategoryAndLogFrequency({@required Tag updatedTag, @required Strin
   //decrement use of tag for this log
   updatedTag = updatedTag.decrementTagLogFrequency();
 
-
   return updatedTag;
+}
+
+Map<String, EntryMember> _divideSpendingEvenly({@required double amount, @required Map<String, EntryMember> members}) {
+  Map<String, EntryMember> functionMembers = Map.from(members);
+
+  //if members are spending, add the to the divisor
+  int numberOfMembers = 0;
+  functionMembers.forEach((key, value) {
+    if (value.spending == true) {
+      numberOfMembers += 1;
+    }
+  });
+
+  //re-adjust who spent based on the new total amount
+  functionMembers.forEach((key, value) {
+    functionMembers.update(key, (value) => value.copyWith(spent: amount / numberOfMembers));
+  });
+
+  return functionMembers;
+}
+
+Map<String, EntryMember> _setMembersList({@required Log log}) {
+  //adds the log members to the entry member list when creating a new entry of changing logs
+
+  Map<String, EntryMember> members = {};
+
+  log.logMembers.forEach((key, value) {
+    members.putIfAbsent(key, () => EntryMember(uid: value.uid, paying: value.role == OWNER ? true : false));
+  });
+
+  return members;
 }

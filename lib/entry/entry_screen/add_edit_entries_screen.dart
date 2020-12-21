@@ -121,8 +121,8 @@ class AddEditEntriesScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            Text('Log: '),
-            _logNameDropDown(entry: entry),
+            Text('Log: ${log.logName}'),
+            //_logNameDropDown(entry: entry),
           ],
         ),
         Row(
@@ -211,7 +211,7 @@ class AddEditEntriesScreen extends StatelessWidget {
   void handleClick(String value) {
     switch (value) {
       case 'Delete Entry':
-        Env.store.dispatch(DeleteEntry());
+        Env.store.dispatch(DeleteSelectedEntry());
         closeEntryScreen();
         break;
     }

@@ -16,6 +16,9 @@
       //TODO record of total log expenditure by month
       //TODO implement currency exchange rates
       //TODO entry can't save if the member paid/spent total doesn't equal the entry total, paid should default to the entry value
+      //TODO allow user to change password, change name, recover password
+      //TODO setting option for auto insert decimal
+      //TODO reoccurring expenses
 
 
 
@@ -24,3 +27,7 @@
     //TODO START HERE
 //member entry tiles, need to be able to edit the amount, will need an action for that as it needs to adjust all other values
 
+
+
+      //TODO ASK BORIS
+      //should I keep track of total amounts in the database or use live values calculated when pulling the data each time

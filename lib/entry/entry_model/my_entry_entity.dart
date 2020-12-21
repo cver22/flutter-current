@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:expenses/member/member_model/member.dart';
-import 'package:expenses/member/member_model/member_entity.dart';
+import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
+import 'package:expenses/member/member_model/entry_member_model/entry_member_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
@@ -18,7 +18,7 @@ class MyEntryEntity extends Equatable {
   final String comment;
   final DateTime dateTime;
   final Map<String, String> tagIDs;
-  final Map<String, Member> members;
+  final Map<String, EntryMember> entryMembers;
 
   const MyEntryEntity(
       {this.uid,
@@ -32,7 +32,7 @@ class MyEntryEntity extends Equatable {
       this.comment,
       this.dateTime,
       this.tagIDs,
-      this.members});
+      this.entryMembers});
 
   @override
   List<Object> get props => [
@@ -47,7 +47,7 @@ class MyEntryEntity extends Equatable {
         comment,
         dateTime,
         tagIDs,
-        members,
+        entryMembers,
       ];
 
   @override
@@ -55,7 +55,7 @@ class MyEntryEntity extends Equatable {
     return 'EntryEntity {$UID: $uid, $ID: $id, $LOG_ID: $logId, '
         'currency: $currency, $ACTIVE: $active, $CATEGORY: $category, '
         '$SUBCATEGORY: $subcategory, $AMOUNT: $amount, $COMMENT: $comment'
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $members)}';
+        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers)}';
   }
 
   static MyEntryEntity fromSnapshot(DocumentSnapshot snap) {
@@ -71,7 +71,7 @@ class MyEntryEntity extends Equatable {
       comment: snap.data[COMMENT],
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data[DATE_TIME]),
       tagIDs: (snap.data[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-      members: (snap.data[MEMBERS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, Member.fromEntity(MemberEntity.fromJson(value)))),
+      entryMembers: (snap.data[MEMBERS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }
 
@@ -79,7 +79,6 @@ class MyEntryEntity extends Equatable {
   Map<String, Object> toDocument() {
     return {
       UID: uid,
-      ID: id,
       LOG_ID: logId,
       CURRENCY_NAME: currency,
       ACTIVE: active,
@@ -89,7 +88,7 @@ class MyEntryEntity extends Equatable {
       COMMENT: comment,
       DATE_TIME: dateTime.millisecondsSinceEpoch,
       TAGS: tagIDs.map((key, value) => MapEntry(key, value)),
-      MEMBERS: members.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
     };
   }
 }

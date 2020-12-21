@@ -93,10 +93,17 @@ class AddUpdateLog implements Action {
       );
     } else {
       //create a new log, does not save locally to state as there is no id yet
+      Map<String, LogMember> members = {};
+      String uid = appState.authState.user.value.id;
+      members.putIfAbsent(uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName));
+
       addedUpdatedLog = addedUpdatedLog.copyWith(
-          uid: appState.authState.user.value.id,
-          categories: appState.settingsState.settings.value.defaultCategories,
-          subcategories: appState.settingsState.settings.value.defaultSubcategories);
+        uid: uid,
+        categories: appState.settingsState.settings.value.defaultCategories,
+        subcategories: appState.settingsState.settings.value.defaultSubcategories,
+        logMembers: members,
+      );
+
       Env.logsFetcher.addLog(addedUpdatedLog);
 
       //TODO, does not update the state locally for new logs, may want to consider that, lst time I ended up with temporary duplicates
@@ -128,8 +135,6 @@ class DeleteLog implements Action {
     Env.logsFetcher.deleteLog(log);
 
     //TODO refer to tag and entry lists to batch delete all of them
-
-
 
     return _updateLogState(appState, (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()));
   }

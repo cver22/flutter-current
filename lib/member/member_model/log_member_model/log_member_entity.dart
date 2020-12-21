@@ -22,30 +22,6 @@ class LogMemberEntity extends MemberEntity{
     return 'LogMemberEntity {$UID: $uid, $NAME: $name, paid: $paid, spent: $spent, role: $role}';
   }
 
-  LogMemberEntity copyWith({
-    String uid,
-    String name,
-    double paid,
-    double spent,
-    String role,
-  }) {
-    if ((uid == null || identical(uid, this.uid)) &&
-        (name == null || identical(name, this.name)) &&
-        (paid == null || identical(paid, this.paid)) &&
-        (spent == null || identical(spent, this.spent)) &&
-        (role == null || identical(role, this.role))) {
-      return this;
-    }
-
-    return new LogMemberEntity(
-      uid: uid ?? this.uid,
-      name: name ?? this.name,
-      paid: paid ?? this.paid,
-      spent: spent ?? this.spent,
-      role: role ?? this.role,
-    );
-  }
-
   factory LogMemberEntity.fromJson(Map<String, dynamic> json) =>
       _$LogMemberEntityFromJson(json);
 

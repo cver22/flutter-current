@@ -2,7 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/log/log_model/log_entity.dart';
-import 'package:expenses/member/member_model/log_member.dart';
+import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:uuid/uuid.dart';
@@ -22,7 +22,7 @@ class Log extends Equatable {
       this.subcategories,
       this.archive = false,
         this.defaultCategory,
-      this.members});
+      this.logMembers});
 
   final String uid;
   final String id;
@@ -32,7 +32,7 @@ class Log extends Equatable {
   final String defaultCategory;
   final List<MyCategory> categories;
   final List<MySubcategory> subcategories;
-  final Map<String, LogMember> members;
+  final Map<String, LogMember> logMembers;
 
   Log copyWith({
     String uid,
@@ -43,7 +43,7 @@ class Log extends Equatable {
     String defaultCategory,
     List<MyCategory> categories,
     List<MySubcategory> subcategories,
-    Map<String, LogMember> members,
+    Map<String, LogMember> logMembers,
   }) {
     return Log(
       uid: uid ?? this.uid,
@@ -54,10 +54,12 @@ class Log extends Equatable {
       defaultCategory: defaultCategory ?? this.defaultCategory,
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
-      members: members ?? this.members,
+      logMembers: logMembers ?? this.logMembers,
     );
   }
 
+
+  //TODO both of these should be move to the actions/logic section
   Log addEditLogCategories({Log log, MyCategory category}) {
     List<MyCategory> categories = log.categories;
 
@@ -87,12 +89,12 @@ class Log extends Equatable {
 
 
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, members, ];
+  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, logMembers, ];
 
   @override
   String toString() {
     return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $logName, currency: $currency, $CATEGORIES: $categories,  '
-        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $members}';
+        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers}';
   }
 
   LogEntity toEntity() {
@@ -107,7 +109,7 @@ class Log extends Equatable {
           key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
       archive: archive,
       defaultCategory: defaultCategory,
-      members: members,
+      logMembers: logMembers,
     );
   }
 
@@ -121,7 +123,7 @@ class Log extends Equatable {
       subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
       archive: entity.archive,
       defaultCategory: entity.defaultCategory,
-      members: entity.members,
+      logMembers: entity.logMembers,
     );
   }
 }

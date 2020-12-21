@@ -1,10 +1,10 @@
 import 'package:expenses/app/common_widgets/empty_content.dart';
+import 'package:expenses/entry/entry_screen/entries_screen_build_list_view.dart';
 import 'package:expenses/app/common_widgets/error_widget.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/entry/entry_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
-import 'package:expenses/entry/entry_screen/entry_list_tile.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -19,7 +19,7 @@ class EntriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<MyEntry> _entries = [];
+    List<MyEntry> entries = [];
     Env.entriesFetcher.loadEntries();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
@@ -53,9 +53,9 @@ class EntriesScreen extends StatelessWidget {
           if (entriesState.isLoading == true) {
             return ModalLoadingIndicator(loadingMessage: 'Loading your entries...', activate: true);
           } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
-            _entries = entriesState.entries.entries.map((e) => e.value).toList();
+            entries = entriesState.entries.entries.map((e) => e.value).toList();
 
-            return buildListView(_entries);
+            return EntriesScreenBuildListView(entries: entries);
           } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
             return EmptyContent();
           } else {
@@ -65,18 +65,5 @@ class EntriesScreen extends StatelessWidget {
         },
       ),
     );
-  }
-
-  Widget buildListView(List<MyEntry> _entries) {
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
-        itemCount: _entries.length,
-        itemBuilder: (BuildContext context, int index) {
-          final MyEntry _entry = _entries[index];
-          //TODO build filtered view options
-          return EntryListTile(entry: _entry);
-        });
   }
 }

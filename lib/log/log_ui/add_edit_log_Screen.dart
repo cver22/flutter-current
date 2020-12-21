@@ -121,7 +121,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   void handleClick(String value) {
-    //TODO, I don't like how this work, I would prefer to just pass the log to it
+    //TODO, I don't like how this works, I would prefer to just pass the log to it
     switch (value) {
       case 'Delete Log':
         Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));

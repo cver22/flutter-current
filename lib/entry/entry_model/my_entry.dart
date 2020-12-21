@@ -1,9 +1,8 @@
-import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/my_entry_entity.dart';
 import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/member/member_model/member.dart';
+import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/utils/db_consts.dart';
 
 import 'package:flutter/foundation.dart';
@@ -25,7 +24,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       this.comment,
       this.dateTime,
       this.tagIDs,
-      this.members = const {}});
+      this.entryMembers = const {}});
 
   final String uid;
   final String id;
@@ -38,7 +37,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   final String comment;
   final DateTime dateTime;
   final List<String> tagIDs;
-  final Map<String, Member> members;
+  final Map<String, EntryMember> entryMembers;
 
   MyEntry changeLog({Log log}) {
     String logId = this.logId;
@@ -46,7 +45,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     String subcategory = this.subcategoryId;
     String currency = this.currency;
     List<String> tagIDs = this.tagIDs;
-    Map<String, Member> members = this.members;
+    Map<String, EntryMember> entryMembers = this.entryMembers;
 
     if (log.id != this.logId) {
       logId = log.id;
@@ -54,7 +53,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       category = null;
       subcategory = null;
       tagIDs = null;
-      members.clear();
+      entryMembers.clear();
 
     }
 
@@ -70,7 +69,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: this.comment,
       dateTime: this.dateTime,
       tagIDs: tagIDs,
-      members: members
+      entryMembers: entryMembers
     );
   }
 
@@ -95,19 +94,19 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: this.comment,
       dateTime: this.dateTime,
       tagIDs: this.tagIDs,
-      members: this.members,
+      entryMembers: this.entryMembers,
     );
   }
 
   @override
-  List<Object> get props => [uid, id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, members];
+  List<Object> get props => [uid, id, logId, currency, active, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, entryMembers];
 
   @override
   String toString() {
     return 'Entry {$UID: $uid, id: $id, $LOG_ID: $logId, '
         'currency: $currency, $ACTIVE: $active, $CATEGORY: $categoryId, '
         '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, $COMMENT: $comment, '
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $members}';
+        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers}';
   }
 
   MyEntryEntity toEntity() {
@@ -123,7 +122,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: comment,
       dateTime: dateTime,
       tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
-      members: members,
+      entryMembers: entryMembers,
     );
   }
 
@@ -140,7 +139,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: entity.comment,
       dateTime: entity.dateTime,
       tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
-      members: entity.members,
+      entryMembers: entity.entryMembers,
     );
   }
 
@@ -156,7 +155,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     String comment,
     DateTime dateTime,
     List<String> tagIDs,
-    Map<String, Member> members,
+    Map<String, EntryMember> entryMembers,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (id == null || identical(id, this.id)) &&
@@ -169,7 +168,7 @@ class MyEntry extends Equatable with ChangeNotifier {
         (comment == null || identical(comment, this.comment)) &&
         (dateTime == null || identical(dateTime, this.dateTime)) &&
         (tagIDs == null || identical(tagIDs, this.tagIDs)) &&
-        (members == null || identical(members, this.members))) {
+        (entryMembers == null || identical(entryMembers, this.entryMembers))) {
       return this;
     }
 
@@ -185,7 +184,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: comment ?? this.comment,
       dateTime: dateTime ?? this.dateTime,
       tagIDs: tagIDs ?? this.tagIDs,
-      members: members ?? this.members,
+      entryMembers: entryMembers ?? this.entryMembers,
     );
   }
 }

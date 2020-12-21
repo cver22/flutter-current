@@ -1,13 +1,11 @@
 
 import 'package:equatable/equatable.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-part 'member_entity.g.dart';
 
 @immutable
-@JsonSerializable(explicitToJson: true)
+
 class MemberEntity extends Equatable{
 
   final String uid;
@@ -42,10 +40,5 @@ class MemberEntity extends Equatable{
       spent: spent ?? this.spent,
     );
   }
-
-  factory MemberEntity.fromJson(Map<String, dynamic> json) =>
-      _$MemberEntityFromJson(json);
-
-  Map<String, dynamic> toJson() => _$MemberEntityToJson(this);
 
 }

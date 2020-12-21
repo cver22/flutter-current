@@ -1,5 +1,4 @@
-
-import 'package:expenses/member/member_model/log_member_entity.dart';
+import 'package:expenses/member/member_model/log_member_model/log_member_entity.dart';
 import 'package:expenses/member/member_model/member.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:meta/meta.dart';
@@ -37,7 +36,7 @@ class LogMember extends Member{
       return this;
     }
 
-    return new LogMember(
+    return LogMember(
       uid: uid ?? this.uid,
       name: name ?? this.name,
       paid: paid ?? this.paid,

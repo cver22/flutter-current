@@ -40,10 +40,14 @@ const String AMOUNT = 'amount';
 const String COMMENT = 'comment';
 const String LOCATION = 'location';
 const String DATE_TIME = 'dateTime';
+enum PaidOrSpent {paid, spent}
 
 
-//Entry members constants
+//Members constants
 const String AMOUNT_MY_CURRENCY = 'amountInMyCurrency';
+const String PAID = 'paid';
+const String SPENT = 'spent';
+
 
 
 //Tags constants
@@ -52,8 +56,7 @@ const String TAGS = 'tags';
 const String TAG = 'tag';
 const String TAG_LOG_FREQUENCY = 'tagLogFrequency';
 const String TAG_CATEGORY_FREQUENCY = 'tagCategoryFrequency';
-const String PAID = 'paid';
-const String SPENT = 'spent';
+
 
 //Account constants
 const String PHOTO_URL = 'photoUrl';
