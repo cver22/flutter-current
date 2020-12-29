@@ -19,11 +19,11 @@ class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
   Widget build(BuildContext context) {
     _currency = widget.currency;
     return CurrencyPickerDropdown(
-      //TODO change to local currency based on phone
-      initialValue: _currency == null ? 'ca' : _currency,
+      //TODO change default local currency based on phone
+      initialValue: _currency == null ? CurrencyPickerUtils.getCountryByCurrencyCode('CAD').isoCode :CurrencyPickerUtils.getCountryByCurrencyCode(_currency).isoCode,
       itemBuilder: _buildDropdownItem,
       onValuePicked: (Country country) {
-        _currency = country.isoCode;
+        _currency = country.currencyCode;
         widget.returnCurrency(_currency);
       },
     );
@@ -36,7 +36,7 @@ class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
             SizedBox(
               width: 8.0,
             ),
-            Text("+${country.currencyCode}(${country.isoCode})"),
+            Text("${country.currencyCode}"),
           ],
         ),
       );

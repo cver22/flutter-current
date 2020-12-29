@@ -168,7 +168,7 @@ class UpdateSelectedEntry implements Action {
   final bool active;
   final String category;
   final String subcategory;
-  final double amount;
+  final int amount;
   final String comment;
   final DateTime dateTime;
 
@@ -269,25 +269,34 @@ class ChangeEntryCategories implements Action {
 /*MEMBER ACTIONS*/
 
 class UpdateMemberPaidAmount implements Action {
-  final double paidValue;
+  final int paidValue;
   final EntryMember member;
 
   UpdateMemberPaidAmount({@required this.paidValue, @required this.member});
 
   AppState updateState(AppState appState) {
+    print('triggered with value of: $paidValue');
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
-    double amount = 0.0;
+    int amount = 0;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    EntryMember member = this.member;
+
 
     //update amount paid by individual member
-    members.update(member.uid, (value) => member.copyWith(paid: paidValue));
+    member = member.copyWith(paid: paidValue);
+    members.update(member.uid, (value) => member);
 
     //update amount paid by all members
     members.forEach((key, value) {
       amount = amount + value.paid;
     });
 
-    members = _divideSpendingEvenly(amount: amount, members: members);
+    if (members.length > 1) {
+      members = _divideSpendingEvenly(amount: amount, members: members);
+    } else {
+      member = member.copyWith(spent: paidValue);
+      members.update(member.uid, (value) => member);
+    }
 
     return _updateSingleEntryState(
         appState,
@@ -299,7 +308,7 @@ class UpdateMemberPaidAmount implements Action {
 
 class UpdateMemberSpentAmount implements Action {
   //TODO need a method to distribute remaining funds amongst those spending
-  final double spentValue;
+  final int spentValue;
   final EntryMember member;
 
   UpdateMemberSpentAmount({@required this.spentValue, @required this.member});
@@ -307,9 +316,11 @@ class UpdateMemberSpentAmount implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    EntryMember member = this.member;
 
     //update amount spent by individual member
-    members.update(member.uid, (value) => member.copyWith(spent: spentValue));
+    member = member.copyWith(spent: spentValue);
+    members.update(member.uid, (value) => member);
 
     return _updateSingleEntryState(
         appState,
@@ -329,9 +340,11 @@ class ToggleMemberPaying implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    EntryMember member = this.member;
 
     //toggles member paying or not
-    members.update(member.uid, (value) => member.copyWith(paying: !member.paying));
+    member = member.copyWith(paying: !member.paying);
+    members.update(member.uid, (value) => member);
 
     return _updateSingleEntryState(
         appState,
@@ -349,9 +362,20 @@ class ToggleMemberSpending implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    EntryMember member = this.member;
 
-    //toggles member paying or not
-    members.update(member.uid, (value) => member.copyWith(spending: !member.spending));
+    //toggles member spending or not
+
+    int membersSpending = 0;
+    members.forEach((key, value) {
+      if (value.spending == true) {
+        membersSpending += 1;
+      }
+    });
+    if (membersSpending > 1) {
+      member = member.copyWith(spending: !member.spending, spent: 0);
+      members.update(member.uid, (value) => member);
+    }
 
     //redistributes expense based on revision of who is paying
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
@@ -494,23 +518,26 @@ Tag _decrementCategoryAndLogFrequency({@required Tag updatedTag, @required Strin
   return updatedTag;
 }
 
-Map<String, EntryMember> _divideSpendingEvenly({@required double amount, @required Map<String, EntryMember> members}) {
-  Map<String, EntryMember> functionMembers = Map.from(members);
+Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required Map<String, EntryMember> members}) {
+  Map<String, EntryMember> entryMembers = Map.from(members);
 
   //if members are spending, add the to the divisor
-  int numberOfMembers = 0;
-  functionMembers.forEach((key, value) {
+  int membersSpending = 0;
+  entryMembers.forEach((key, value) {
     if (value.spending == true) {
-      numberOfMembers += 1;
+      membersSpending += 1;
+    }
+  });
+  //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
+  //re-adjust who spent based on the new total amount
+  entryMembers.forEach((key, value) {
+    if (value.spending == true) {
+      entryMembers.update(
+          key, (value) => value.copyWith(spent: amount != 0 && amount != null ? amount / membersSpending : 0));
     }
   });
 
-  //re-adjust who spent based on the new total amount
-  functionMembers.forEach((key, value) {
-    functionMembers.update(key, (value) => value.copyWith(spent: amount / numberOfMembers));
-  });
-
-  return functionMembers;
+  return entryMembers;
 }
 
 Map<String, EntryMember> _setMembersList({@required Log log}) {

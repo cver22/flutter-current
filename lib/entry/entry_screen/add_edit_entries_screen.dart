@@ -7,15 +7,17 @@ import 'package:expenses/categories/categories_screens/category_list_dialog.dart
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
+import 'package:expenses/member/member_ui/entry_member_list.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tags_ui/tag_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
+import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
+
 
 //TODO change back to stateful widget to utilize focus node or add to single entry state?
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
@@ -115,6 +117,7 @@ class AddEditEntriesScreen extends StatelessWidget {
       @required SingleEntryState entryState,
       @required Log log,
       @required MyEntry entry}) {
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -131,25 +134,11 @@ class AddEditEntriesScreen extends StatelessWidget {
             MyCurrencyPicker(
                 currency: entry?.currency,
                 returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
-            Expanded(
-              child: TextFormField(
-                autofocus: entry.id == null ? true : false,
-                //auto focus on adding the value if the entry is new
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(hintText: 'Amount'),
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d*"))],
-                initialValue: entry?.amount?.toStringAsFixed(2) ?? null,
-                onChanged: (value) => Env.store.dispatch(
-                  UpdateSelectedEntry(
-                    amount: double.parse(value),
-                  ),
-                ),
-                //TODO need controllers
-              ),
-            ),
+            Text('Total: \$ ${formattedAmount(value: entry.amount)}'), //TODO utilize money package here
           ],
         ),
-        //CategoryPicker(entry: entriesState.selectedEntry.value),
+        EntryMembersListView(
+            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.paid),
         SizedBox(height: 10.0),
         EntriesDateButton(context: context, log: log, entry: entry),
         SizedBox(height: 10.0),
@@ -157,6 +146,11 @@ class AddEditEntriesScreen extends StatelessWidget {
         entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
         _commentFormField(entry: entry),
         TagPicker(),
+        //TODO use this when done resting
+        /*entry.entryMembers.length > 1 ? EntryMembersListView(
+            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent) : Container(),*/
+        EntryMembersListView(
+            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent), //TODO Remove this when done testing
       ],
     );
   }
@@ -218,14 +212,13 @@ class AddEditEntriesScreen extends StatelessWidget {
   }
 
   void closeEntryScreen() {
-
     Env.store.dispatch(SingleEntryProcessing());
     Env.store.dispatch(ClearEntryState());
     Get.back();
-
   }
 
-  //TODO similar code used here and in settings - refactor to use same widget and pass required functions only
+//currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues
+/*//TODO similar code used here and in settings - refactor to use same widget and pass required functions only
   Widget _logNameDropDown({@required MyEntry entry}) {
     if (Env.store.state.logsState.logs.isNotEmpty) {
       List<Log> _logs = Env.store.state.logsState.logs.entries.map((e) => e.value).toList();
@@ -249,5 +242,7 @@ class AddEditEntriesScreen extends StatelessWidget {
     } else {
       return Container();
     }
-  }
+  }*/
 }
+
+

@@ -1,9 +1,9 @@
-
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:expenses/utils/currency.dart';
 
 import '../../env.dart';
 
@@ -17,7 +17,7 @@ class EntryMemberListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double value = paidOrSpent == PaidOrSpent.paid ? member.paid : member.spent;
+    int value = paidOrSpent == PaidOrSpent.paid ? member.paid : member.spent;
 
     return ListTile(
         leading: Row(
@@ -31,22 +31,31 @@ class EntryMemberListTile extends StatelessWidget {
             Text(name),
           ],
         ),
-        trailing: TextFormField(
-          decoration: InputDecoration(hintText: paidOrSpent == PaidOrSpent.paid ? PAID : SPENT),
-          //TODO how to limit to 2 decimal places and only 1 decimal
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d*"))],
-          initialValue: value.toStringAsFixed(2) ?? null,
-          keyboardType: TextInputType.number,
-          onChanged: (value) => {
-            if (paidOrSpent == PaidOrSpent.paid)
-              {
-                Env.store.dispatch(UpdateMemberPaidAmount(paidValue: double.parse(value), member: member)),
-              }
-            else
-              {
-                Env.store.dispatch(UpdateMemberSpentAmount(spentValue: double.parse(value), member: member)),
-              }
-          },
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 10,
+              child: Text('\$'),
+            ),
+            Container(
+              width: 50.0,
+              child: TextFormField(
+                decoration: InputDecoration(hintText: paidOrSpent == PaidOrSpent.paid ? PAID : SPENT),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d{0,2}"))],
+                initialValue: formattedAmount(value: value) ?? '',
+                keyboardType: TextInputType.number,
+                onChanged: (newValue) {
+                  int intValue = parseNewValue(newValue: newValue);
+                  if (paidOrSpent == PaidOrSpent.paid) {
+                    Env.store.dispatch(UpdateMemberPaidAmount(paidValue: intValue, member: member));
+                  } else {
+                    Env.store.dispatch(UpdateMemberSpentAmount(spentValue: intValue, member: member));
+                  }
+                },
+              ),
+            ),
+          ],
         ));
   }
 

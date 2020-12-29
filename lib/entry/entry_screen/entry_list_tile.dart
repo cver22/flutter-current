@@ -15,24 +15,28 @@ class EntryListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Log log;
-    if (entry?.logId != null) {
-      log = Env.store.state.logsState.logs.values.firstWhere((element) => element?.id == entry?.logId);
-    }
 
-    return ListTile(
-      leading: Text(
-        '${displayChar(log)}',
-        textAlign: TextAlign.center,
-        style: TextStyle(fontSize: EMOJI_SIZE),
-      ),
-      title: entry?.comment != null ? Text(entry.comment) : Text(''),
-      subtitle: Text(categoriesSubcategoriesTags(log)),
-      trailing: Text('\$ ${entry?.amount?.toStringAsFixed(2)}'),
-      onTap: () => {
-        Env.store.dispatch(SelectEntry(entryId: entry.id)),
-        Get.toNamed(ExpenseRoutes.addEditEntries),
-      },
-    );
+    if (entry?.logId != null) {
+      log = Env.store.state.logsState.logs?.values?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
+    }
+    if (log != null) {
+      return ListTile(
+        leading: Text(
+          '${displayChar(log)}',
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: EMOJI_SIZE),
+        ),
+        title: entry?.comment != null ? Text(entry.comment) : Text(''),
+        subtitle: Text(categoriesSubcategoriesTags(log)),
+        trailing: Text('\$ ${entry?.amount}'), //TODO utilize money package here
+        onTap: () => {
+          Env.store.dispatch(SelectEntry(entryId: entry.id)),
+          Get.toNamed(ExpenseRoutes.addEditEntries),
+        },
+      );
+    } else {
+      return Container();
+    }
   }
 
   String displayChar(Log log) {

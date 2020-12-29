@@ -9,10 +9,10 @@ import 'package:meta/meta.dart';
 class Member extends Equatable{
 
   final String uid;
-  final double paid;
-  final double spent;
+  final int paid;
+  final int spent;
 
-  Member({@required this.uid, this.paid = 0.0, this.spent = 0.0});
+  Member({@required this.uid, this.paid = 0, this.spent = 0});
 
   @override
   List<Object> get props => [uid, paid, spent];

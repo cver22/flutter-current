@@ -14,7 +14,7 @@ class MyEntryEntity extends Equatable {
   final bool active;
   final String category;
   final String subcategory;
-  final double amount;
+  final int amount;
   final String comment;
   final DateTime dateTime;
   final Map<String, String> tagIDs;

@@ -22,8 +22,8 @@ class EntryMember extends Member {
 
   EntryMember copyWith({
     String uid,
-    double paid,
-    double spent,
+    int paid,
+    int spent,
     bool paying,
     bool spending,
 

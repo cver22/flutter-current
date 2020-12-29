@@ -4,13 +4,10 @@ import 'package:expenses/entry/entry_model/my_entry_entity.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/utils/db_consts.dart';
-
 import 'package:flutter/foundation.dart';
-
 
 @immutable
 class MyEntry extends Equatable with ChangeNotifier {
-  //TODO entry members map
 
   MyEntry(
       {this.uid,
@@ -33,7 +30,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   final bool active;
   final String categoryId;
   final String subcategoryId;
-  final double amount;
+  final int amount;
   final String comment;
   final DateTime dateTime;
   final List<String> tagIDs;
@@ -127,6 +124,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   }
 
   static MyEntry fromEntity(MyEntryEntity entity) {
+
     return MyEntry(
       uid: entity.uid,
       id: entity.id,
@@ -151,7 +149,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     bool active,
     String categoryId,
     String subcategoryId,
-    double amount,
+    int amount,
     String comment,
     DateTime dateTime,
     List<String> tagIDs,

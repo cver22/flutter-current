@@ -15,7 +15,7 @@ class LogListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(log.logName),
-      subtitle: Text(CurrencyPickerUtils.getCountryByIsoCode(log.currency).currencyCode),
+      subtitle: Text(log.currency),
       trailing: Icon(Icons.chevron_right),
       onTap: () => {
         Env.store.dispatch(SetNewSelectedEntry(

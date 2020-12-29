@@ -28,7 +28,7 @@ class AddEditLogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Log _log = Log(currency: 'ca');
+    Log _log = Log(currency: 'CAD');
     String _currency;
     String _name;
     return ConnectState<LogsState>(
@@ -101,7 +101,7 @@ class AddEditLogScreen extends StatelessWidget {
                         currency: currency,
                         returnCurrency: (currency) =>
                             Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
-                    : Text('Currency: ${CurrencyPickerUtils.getCountryByIsoCode(currency).currencyCode}'),
+                    : Text('Currency: $currency'),
               ],
             ),
           ),

@@ -24,8 +24,8 @@ class LogMember extends Member{
   LogMember copyWith({
     String uid,
     String name,
-    double paid,
-    double spent,
+    int paid,
+    int spent,
     String role,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&

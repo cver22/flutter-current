@@ -21,7 +21,7 @@ class Log extends Equatable {
       this.categories,
       this.subcategories,
       this.archive = false,
-        this.defaultCategory,
+      this.defaultCategory,
       this.logMembers});
 
   final String uid;
@@ -58,7 +58,6 @@ class Log extends Equatable {
     );
   }
 
-
   //TODO both of these should be move to the actions/logic section
   Log addEditLogCategories({Log log, MyCategory category}) {
     List<MyCategory> categories = log.categories;
@@ -87,9 +86,18 @@ class Log extends Equatable {
     return log.copyWith(subcategories: subcategories);
   }
 
-
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, logMembers, ];
+  List<Object> get props => [
+        uid,
+        id,
+        logName,
+        currency,
+        categories,
+        subcategories,
+        archive,
+        defaultCategory,
+        logMembers,
+      ];
 
   @override
   String toString() {

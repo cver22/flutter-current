@@ -11,7 +11,7 @@
 //TODO edit tags
 //TODO methods to do combined updating of states such as the entry and log state at the same time for some reason?
 //TODO organize and filter entries in various ways
-//TODO deleting a log deletes all of its entries and tags
+//TODO deleting a log deletes all of its entries and tags in the app and firestore
 //TODO how to put an empty map in a JSON so the array doesn't initiate empty
       //TODO record of total log expenditure by month
       //TODO implement currency exchange rates
@@ -19,13 +19,18 @@
       //TODO allow user to change password, change name, recover password
       //TODO setting option for auto insert decimal
       //TODO reoccurring expenses
+      //TODO don't show the currency on a log in the list if it is the default currency
+      //TODO find an api to get the currency exchange rate information
+      //TODO Settings are not being retrieved
 
 
 
 
 
     //TODO START HERE
-//member entry tiles, need to be able to edit the amount, will need an action for that as it needs to adjust all other values
+// change entry/log members to utilize the Money package
+      // will need to import log currency  for saving and retrieving the values from firestore, other option is to save the log currency on all entries so it can be used there
+      //one other option could be to inject it when retrieving the entity before its sent to the model
 
 
 
