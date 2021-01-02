@@ -12,7 +12,6 @@ AppState _updateEntries(
   void updateInPlace(Map<String, MyEntry> entries),
 ) {
   Map<String, MyEntry> cloneMap = Map.from(appState.entriesState.entries);
-  cloneMap.removeWhere((key, value) => value.active == false);
   updateInPlace(cloneMap);
   return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entries: cloneMap));
 }

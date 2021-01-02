@@ -2,6 +2,7 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,7 @@ class EntryListTile extends StatelessWidget {
         ),
         title: entry?.comment != null ? Text(entry.comment) : Text(''),
         subtitle: Text(categoriesSubcategoriesTags(log)),
-        trailing: Text('\$ ${entry?.amount}'), //TODO utilize money package here
+        trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'), //TODO utilize money package here
         onTap: () => {
           Env.store.dispatch(SelectEntry(entryId: entry.id)),
           Get.toNamed(ExpenseRoutes.addEditEntries),

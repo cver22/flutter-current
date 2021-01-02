@@ -70,11 +70,18 @@ class SelectEntry implements Action {
     MyEntry entry = appState.entriesState.entries[entryId];
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
+    Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
+    entryMembers.updateAll((key, value) => value.copyWith(
+          payingController: TextEditingController(text: formattedAmount(value: value?.paid)),
+          spendingController: TextEditingController(text: formattedAmount(value: value?.spent)),
+          payingFocusNode: FocusNode(),
+          spendingFocusNode: FocusNode(),
+        ));
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry),
+            selectedEntry: Maybe.some(entry.copyWith(entryMembers: entryMembers)),
             selectedTag: Maybe.none(),
             tags: tags,
             logCategoryList: log.categories,
@@ -82,7 +89,7 @@ class SelectEntry implements Action {
   }
 }
 
-/*ADD UPDATE DELETE ENTRY*/
+/*ADD UPDATE DELETE ENTRY SECTION*/
 
 class AddUpdateSingleEntry implements Action {
   //submits new entry to the entries list and the clear the singleEntryState
@@ -192,7 +199,6 @@ class UpdateSelectedEntry implements Action {
               id: id,
               logId: logId,
               currency: currency,
-              active: active,
               categoryId: category,
               subcategoryId: subcategory,
               amount: amount,
@@ -202,7 +208,7 @@ class UpdateSelectedEntry implements Action {
   }
 }
 
-class ChangeEntryLog implements Action {
+/*class ChangeEntryLog implements Action {
   final Log log;
 
   ChangeEntryLog({@required this.log});
@@ -230,7 +236,7 @@ class ChangeEntryLog implements Action {
               )));
     }
   }
-}
+}*/
 
 class ChangeEntryCategories implements Action {
   final String newCategory;
@@ -281,7 +287,6 @@ class UpdateMemberPaidAmount implements Action {
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
 
-
     //update amount paid by individual member
     member = member.copyWith(paid: paidValue);
     members.update(member.uid, (value) => member);
@@ -291,12 +296,7 @@ class UpdateMemberPaidAmount implements Action {
       amount = amount + value.paid;
     });
 
-    if (members.length > 1) {
-      members = _divideSpendingEvenly(amount: amount, members: members);
-    } else {
-      member = member.copyWith(spent: paidValue);
-      members.update(member.uid, (value) => member);
-    }
+    members = _divideSpendingEvenly(amount: amount, members: members);
 
     return _updateSingleEntryState(
         appState,
@@ -342,9 +342,20 @@ class ToggleMemberPaying implements Action {
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
 
-    //toggles member paying or not
-    member = member.copyWith(paying: !member.paying);
-    members.update(member.uid, (value) => member);
+    //count number of members paying
+    int membersPaying = 0;
+    members.forEach((key, value) {
+      if (value.paying == true) {
+        membersPaying += 1;
+      }
+    });
+
+    //if the selected payer is the last, they cannot be removed
+    if (membersPaying > 1) {
+      //toggles member paying or not
+      member = member.copyWith(paying: !member.paying, paid: 0);
+      members.update(member.uid, (value) => member);
+    }
 
     return _updateSingleEntryState(
         appState,
@@ -365,13 +376,14 @@ class ToggleMemberSpending implements Action {
     EntryMember member = this.member;
 
     //toggles member spending or not
-
     int membersSpending = 0;
     members.forEach((key, value) {
       if (value.spending == true) {
         membersSpending += 1;
       }
     });
+
+    //cannot uncheck member if they are the last spending
     if (membersSpending > 1) {
       member = member.copyWith(spending: !member.spending, spent: 0);
       members.update(member.uid, (value) => member);
@@ -520,21 +532,33 @@ Tag _decrementCategoryAndLogFrequency({@required Tag updatedTag, @required Strin
 
 Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required Map<String, EntryMember> members}) {
   Map<String, EntryMember> entryMembers = Map.from(members);
+  int membersSpending = 0;
+  int remainder = 0;
 
   //if members are spending, add the to the divisor
-  int membersSpending = 0;
   entryMembers.forEach((key, value) {
     if (value.spending == true) {
       membersSpending += 1;
     }
   });
+
+  remainder = amount.remainder(membersSpending);
+
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
   //re-adjust who spent based on the new total amount
   entryMembers.forEach((key, value) {
-    if (value.spending == true) {
-      entryMembers.update(
-          key, (value) => value.copyWith(spent: amount != 0 && amount != null ? amount / membersSpending : 0));
+    int memberSpentAmount = 0;
+    if (value.spending == true && amount != null && amount != 0) {
+      memberSpentAmount = (amount / membersSpending).truncate();
+
+      if (remainder > 0) {
+        memberSpentAmount += 1;
+        remainder--;
+      }
     }
+
+    value.spendingController.value = TextEditingValue(text: formattedAmount(value: memberSpentAmount));
+    entryMembers.update(key, (value) => value.copyWith(spent: memberSpentAmount));
   });
 
   return entryMembers;
@@ -546,7 +570,16 @@ Map<String, EntryMember> _setMembersList({@required Log log}) {
   Map<String, EntryMember> members = {};
 
   log.logMembers.forEach((key, value) {
-    members.putIfAbsent(key, () => EntryMember(uid: value.uid, paying: value.role == OWNER ? true : false));
+    members.putIfAbsent(
+        key,
+        () => EntryMember(
+              uid: value.uid,
+              paying: value.role == OWNER ? true : false,
+              payingController: TextEditingController(),
+              spendingController: TextEditingController(),
+              payingFocusNode: FocusNode(),
+              spendingFocusNode: FocusNode(),
+            ));
   });
 
   return members;

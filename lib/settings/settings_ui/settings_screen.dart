@@ -114,7 +114,8 @@ class SettingsScreen extends StatelessWidget {
         onChanged: (Log log) {
           _defaultLogId = log.id;
           _store.dispatch(
-              UpdateSettings(settings: Maybe.some(settingsState.settings.value.copyWith(defaultLogId: _defaultLogId))));
+            ChangeDefaultLog(log: log));
+
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(

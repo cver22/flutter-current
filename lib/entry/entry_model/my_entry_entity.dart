@@ -11,7 +11,6 @@ class MyEntryEntity extends Equatable {
   final String id;
   final String logId;
   final String currency;
-  final bool active;
   final String category;
   final String subcategory;
   final int amount;
@@ -25,7 +24,6 @@ class MyEntryEntity extends Equatable {
       this.id,
       this.logId,
       this.currency,
-      this.active,
       this.category,
       this.subcategory,
       this.amount,
@@ -40,7 +38,6 @@ class MyEntryEntity extends Equatable {
         id,
         logId,
         currency,
-        active,
         category,
         subcategory,
         amount,
@@ -53,7 +50,7 @@ class MyEntryEntity extends Equatable {
   @override
   String toString() {
     return 'EntryEntity {$UID: $uid, $ID: $id, $LOG_ID: $logId, '
-        'currency: $currency, $ACTIVE: $active, $CATEGORY: $category, '
+        'currency: $currency, $CATEGORY: $category, '
         '$SUBCATEGORY: $subcategory, $AMOUNT: $amount, $COMMENT: $comment'
         '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers)}';
   }
@@ -64,7 +61,6 @@ class MyEntryEntity extends Equatable {
       id: snap.documentID,
       logId: snap.data[LOG_ID],
       currency: snap.data[CURRENCY_NAME],
-      active: snap.data[ACTIVE],
       category: snap.data[CATEGORY],
       subcategory: snap.data[SUBCATEGORY],
       amount: snap.data[AMOUNT],
@@ -81,7 +77,6 @@ class MyEntryEntity extends Equatable {
       UID: uid,
       LOG_ID: logId,
       CURRENCY_NAME: currency,
-      ACTIVE: active,
       CATEGORY: category,
       SUBCATEGORY: subcategory,
       AMOUNT: amount,

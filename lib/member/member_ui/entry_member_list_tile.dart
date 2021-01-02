@@ -7,7 +7,7 @@ import 'package:expenses/utils/currency.dart';
 
 import '../../env.dart';
 
-class EntryMemberListTile extends StatelessWidget {
+class EntryMemberListTile extends StatefulWidget {
   final EntryMember member;
   final String name;
   final PaidOrSpent paidOrSpent;
@@ -16,41 +16,73 @@ class EntryMemberListTile extends StatelessWidget {
       : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    int value = paidOrSpent == PaidOrSpent.paid ? member.paid : member.spent;
+  _EntryMemberListTileState createState() => _EntryMemberListTileState();
+}
 
+class _EntryMemberListTileState extends State<EntryMemberListTile> {
+  TextEditingController _controller;
+  FocusNode _focusNode;
+
+  @override
+  void initState() {
+    EntryMember member = widget.member;
+
+    if (widget.paidOrSpent == PaidOrSpent.paid) {
+      _controller = member.payingController;
+      _focusNode = member.payingFocusNode;
+    } else {
+      _controller = member.spendingController;
+      _focusNode = member.spendingFocusNode;
+    }
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    _focusNode.dispose();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return ListTile(
         leading: Row(
           mainAxisAlignment: MainAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            paidOrSpent == PaidOrSpent.paid
-                ? _buildPayingCheckbox(member: member)
-                : _buildSpendingCheckbox(member: member),
+            widget.paidOrSpent == PaidOrSpent.paid
+                ? _buildPayingCheckbox(member: widget.member)
+                : _buildSpendingCheckbox(member: widget.member),
             SizedBox(width: 10.0),
-            Text(name),
+            Text(widget.name),
           ],
         ),
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
+            Text('\$ '),
             Container(
-              width: 10,
-              child: Text('\$'),
-            ),
-            Container(
-              width: 50.0,
+              width: 80.0,
               child: TextFormField(
-                decoration: InputDecoration(hintText: paidOrSpent == PaidOrSpent.paid ? PAID : SPENT),
-                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\d*\.?\d{0,2}"))],
-                initialValue: formattedAmount(value: value) ?? '',
+                controller: _controller,
+                focusNode: _focusNode,
+                decoration: InputDecoration(hintText: widget.paidOrSpent == PaidOrSpent.paid ? PAID : SPENT),
+                inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
                 keyboardType: TextInputType.number,
+                onTap: () {
+                  _focusNode.requestFocus();
+                  print(
+                      'spending focus node: ${widget.member.spendingFocusNode.hasFocus} and paying focus node: ${widget.member.payingFocusNode.hasFocus}');
+                },
+                //focus on this text field if it is tapped on
                 onChanged: (newValue) {
                   int intValue = parseNewValue(newValue: newValue);
-                  if (paidOrSpent == PaidOrSpent.paid) {
-                    Env.store.dispatch(UpdateMemberPaidAmount(paidValue: intValue, member: member));
+                  if (widget.paidOrSpent == PaidOrSpent.paid) {
+                    Env.store.dispatch(UpdateMemberPaidAmount(paidValue: intValue, member: widget.member));
                   } else {
-                    Env.store.dispatch(UpdateMemberSpentAmount(spentValue: intValue, member: member));
+                    Env.store.dispatch(UpdateMemberSpentAmount(spentValue: intValue, member: widget.member));
                   }
                 },
               ),
@@ -70,7 +102,7 @@ class EntryMemberListTile extends StatelessWidget {
 
   Checkbox _buildSpendingCheckbox({@required EntryMember member}) {
     return Checkbox(
-      value: member.paying,
+      value: member.spending,
       onChanged: (bool value) {
         Env.store.dispatch(ToggleMemberSpending(member: member));
       },

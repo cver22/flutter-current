@@ -43,7 +43,7 @@ class LogsFetcher {
     }
   }
 
-  Future<void> deleteLog(Log log) async {
+  Future<void> deleteLog({@required Log log}) async {
     try {
       _logsRepository.deleteLog(log);
     } catch (e) {

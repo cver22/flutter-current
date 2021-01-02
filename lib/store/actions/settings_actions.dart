@@ -25,3 +25,27 @@ class UpdateSettings implements Action {
             ));
   }
 }
+
+class ChangeDefaultLog implements Action {
+  final Log log;
+
+  ChangeDefaultLog({this.log});
+
+  @override
+  AppState updateState(AppState appState) {
+
+    Settings settings = appState.settingsState.settings.value;
+    Map<String, Log> logs = appState.logsState.logs;
+    if(log != null && logs.containsKey(log.id)) {
+      settings.copyWith(defaultLogId: log.id);
+    }
+
+    Env.settingsFetcher.writeAppSettings(settings);
+
+    return _updateSettingsState(
+        appState,
+            (settingsState) => settingsState.copyWith(
+          settings: Maybe.some(settings),
+        ));
+  }
+}

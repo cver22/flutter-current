@@ -68,6 +68,18 @@ class TagFetcher {
     }
   }
 
+  Future<void> batchDeleteTags({@required List<Tag> deletedTags}) async {
+    //log has been deleted, delete all associated tags
+
+    if (deletedTags.isNotEmpty) {
+      try {
+        _tagRepository.batchDeleteTags(deletedTags: deletedTags);
+      } catch (e) {
+        print(e.toString());
+      }
+    }
+  }
+
   //TODO where to close the subscription when exiting the app?
   Future<void> close() async {
     _tagSubscription?.cancel();

@@ -1,10 +1,11 @@
-import 'package:currency_pickers/utils/utils.dart';
+import 'package:camera/camera.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
+import 'package:expenses/member/member_ui/log_member_list.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -18,6 +19,7 @@ class AddEditLogScreen extends StatelessWidget {
   void _submit() {
     print('submit pressed');
     Env.store.dispatch(AddUpdateLog());
+
     Get.back();
   }
 
@@ -95,6 +97,25 @@ class AddEditLogScreen extends StatelessWidget {
                 SizedBox(height: 16.0),
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
                 log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
+                SizedBox(height: 16.0),
+                log.uid == null
+                    ? Container()
+                    : RaisedButton(
+                        elevation: RAISED_BUTTON_ELEVATION,
+                        shape:
+                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+                        child: Text('Add new log member'),
+                        onPressed: () async {
+                          List<CameraDescription> cameras = [];
+                          cameras = await availableCameras();
+                          //TODO navigate to the camera screen
+                        },
+                      ),
+                log.uid == null
+                    ? Container()
+                    : LogMemberList(
+                        logMembers: log.logMembers.values.toList(),
+                      ),
                 SizedBox(height: 16.0),
                 log.uid == null
                     ? MyCurrencyPicker(

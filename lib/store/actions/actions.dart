@@ -16,9 +16,11 @@ import 'package:expenses/member/member_model/member.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
+import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/validators.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
@@ -43,4 +45,69 @@ abstract class Action {
 
 }
 
-//TODO update all actions to utilize private functions
+AppState _updateAppState(AppState appState,
+    LogsState updateLogState(LogsState logsState),
+    EntriesState updateEntriesState(EntriesState entriesState),
+    TagState updateTagState(TagState tagState),
+    SettingsState updateSettingsState(SettingsState settingsState)) {
+  return appState.copyWith(logsState: updateLogState(appState.logsState),
+      entriesState: updateEntriesState(appState.entriesState),
+      tagState: updateTagState(appState.tagState),
+      settingsState: updateSettingsState(appState.settingsState));
+}
+
+class DeleteLog implements Action {
+  final Log log;
+
+  DeleteLog({this.log});
+
+  @override
+  AppState updateState(AppState appState) {
+    LogsState updatedLogsState = appState.logsState;
+    Settings settings = appState.settingsState.settings.value;
+    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
+
+    List<MyEntry> deletedEntriesList = [];
+    List<Tag> deletedTagsList = [];
+    Map<String, MyEntry> entriesMap = Map.from(appState.entriesState.entries);
+    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
+
+    entriesMap.forEach((key, entry) {
+      if (entry.logId == log.id) {
+        deletedEntriesList.add(entry);
+      }
+    });
+
+    entriesMap.removeWhere((key, entry) => entry.logId == log.id);
+
+    tagsMap.forEach((key, tag) {
+      if (tag.logId == log.id) {
+        deletedTagsList.add(tag);
+      }
+    });
+
+    tagsMap.removeWhere((key, tag) => tag.logId == log.id);
+
+    //TODO likely need a method to reset the default to nothing, else statement for the above
+    //ensures the default log is updated if the current log is default and deleted
+    if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
+      settings = settings.copyWith(defaultLogId: updatedLogsState.logs.values
+          .firstWhere((element) => element.id != log.id)
+          .id);
+
+    }
+
+
+    Env.entriesFetcher.batchDeleteEntries(deletedEntries: deletedEntriesList);
+    Env.tagFetcher.batchDeleteTags(deletedTags: deletedTagsList);
+    Env.logsFetcher.deleteLog(log: log);
+
+    return _updateAppState(
+      appState,
+          (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()),
+          (entriesState) => entriesState.copyWith(entries: entriesMap),
+          (tagState) => tagState.copyWith(tags: tagsMap),
+        (settingsState) => settingsState.copyWith(settings: Maybe.some(settings))
+    );
+  }
+}

@@ -9,9 +9,7 @@
       //TODO General
 //TODO re-ordrerable list for categories - this may be solveable by creating category/subcategory state for manipulation and then eventually savings
 //TODO edit tags
-//TODO methods to do combined updating of states such as the entry and log state at the same time for some reason?
 //TODO organize and filter entries in various ways
-//TODO deleting a log deletes all of its entries and tags in the app and firestore
 //TODO how to put an empty map in a JSON so the array doesn't initiate empty
       //TODO record of total log expenditure by month
       //TODO implement currency exchange rates
@@ -22,17 +20,21 @@
       //TODO don't show the currency on a log in the list if it is the default currency
       //TODO find an api to get the currency exchange rate information
       //TODO Settings are not being retrieved
+      //TODO deal with focusNode when i can add members
+      //TODO do I want to move to null safety?
+      //TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
+      //TODO remove all data handling from the models
+      //TODO how to track total spends
 
 
 
 
 
     //TODO START HERE
-// change entry/log members to utilize the Money package
-      // will need to import log currency  for saving and retrieving the values from firestore, other option is to save the log currency on all entries so it can be used there
-      //one other option could be to inject it when retrieving the entity before its sent to the model
+//add get to camera for the log screen
 
 
 
       //TODO ASK BORIS
       //should I keep track of total amounts in the database or use live values calculated when pulling the data each time
+      //is having methods in the models bad practice, should they be extracted to the action

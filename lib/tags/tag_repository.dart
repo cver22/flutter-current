@@ -11,11 +11,13 @@ abstract class TagRepository {
 
   Future<void> updateTag(Tag tag);
 
-  void deleteTag(Tag tag);
+  Future<void> deleteTag(Tag tag);
 
   Future<void> batchUpdateTags({List<Tag> updatedTags}) {}
 
   Future<void> batchAddTags({List<Tag> addedTags}) {}
+
+  Future<void> batchDeleteTags({List<Tag> deletedTags}) {}
 }
 
 class FirebaseTagRepository implements TagRepository {
@@ -42,8 +44,8 @@ class FirebaseTagRepository implements TagRepository {
   }
 
   @override
-  void deleteTag(Tag tag) {
-    db.collection(TAG_COLLECTION).document(tag.id).delete();
+  Future<void> deleteTag(Tag tag) {
+    return db.collection(TAG_COLLECTION).document(tag.id).delete();
   }
 
   @override
@@ -64,6 +66,18 @@ class FirebaseTagRepository implements TagRepository {
 
     updatedTags.forEach((tag) {
       batch.updateData(db.collection(TAG_COLLECTION).document(tag.id), {tag.id: tag.toEntity().toJson()});
+    });
+
+//TODO maybe add a whenComplete to this?
+    return batch.commit();
+  }
+
+  @override
+  Future<void> batchDeleteTags({List<Tag> deletedTags}) {
+    WriteBatch batch = db.batch();
+
+    deletedTags.forEach((tag) {
+      batch.delete(db.collection(TAG_COLLECTION).document(tag.id));
     });
 
 //TODO maybe add a whenComplete to this?

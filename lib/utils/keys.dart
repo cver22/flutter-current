@@ -38,6 +38,7 @@ class ExpenseKeys {
   // Logs Page
   static final logsScreen = const Key('__logsScreen__');
   static final addEditLogScreen = const Key('__addEditLogScreen__');
+  static final qrReader = const Key("__qrReader__");
 
   // Categories Dialogs
 static final categoriesDialog = const Key('__categoriesDialog___');

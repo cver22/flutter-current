@@ -18,7 +18,6 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 //TODO change back to stateful widget to utilize focus node or add to single entry state?
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
 class AddEditEntriesScreen extends StatelessWidget {
@@ -59,9 +58,9 @@ class AddEditEntriesScreen extends StatelessWidget {
                       IconButton(
                         icon: Icon(
                           Icons.check,
-                          color: entry?.amount != null ? Colors.white : Colors.grey,
+                          color: _canSubmit(entry: entry) ? Colors.white : Colors.grey,
                         ),
-                        onPressed: entry?.amount != null
+                        onPressed: _canSubmit(entry: entry)
                             ? () => {_submit(entryState: singleEntryState, entry: entry, log: log)}
                             : null,
                       ),
@@ -117,7 +116,6 @@ class AddEditEntriesScreen extends StatelessWidget {
       @required SingleEntryState entryState,
       @required Log log,
       @required MyEntry entry}) {
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
@@ -134,7 +132,8 @@ class AddEditEntriesScreen extends StatelessWidget {
             MyCurrencyPicker(
                 currency: entry?.currency,
                 returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
-            Text('Total: \$ ${formattedAmount(value: entry.amount)}'), //TODO utilize money package here
+            Text(
+                'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
         ),
         EntryMembersListView(
@@ -150,7 +149,8 @@ class AddEditEntriesScreen extends StatelessWidget {
         /*entry.entryMembers.length > 1 ? EntryMembersListView(
             members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent) : Container(),*/
         EntryMembersListView(
-            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent), //TODO Remove this when done testing
+            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent),
+        //TODO Remove this when done testing
       ],
     );
   }
@@ -217,6 +217,23 @@ class AddEditEntriesScreen extends StatelessWidget {
     Get.back();
   }
 
+  bool _canSubmit({MyEntry entry}) {
+    bool canSubmit = false;
+    if (entry?.amount != null && entry.amount != 0) {
+      int totalMemberSpend = 0;
+
+      entry.entryMembers.forEach((key, value) {
+        if (value.spending) {
+          totalMemberSpend += value.spent;
+        }
+      });
+      if (totalMemberSpend == entry.amount) {
+        canSubmit = true;
+      }
+    }
+    return canSubmit;
+  }
+
 //currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues
 /*//TODO similar code used here and in settings - refactor to use same widget and pass required functions only
   Widget _logNameDropDown({@required MyEntry entry}) {
@@ -244,5 +261,3 @@ class AddEditEntriesScreen extends StatelessWidget {
     }
   }*/
 }
-
-

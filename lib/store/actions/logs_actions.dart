@@ -86,6 +86,13 @@ class AddUpdateLog implements Action {
       //update an existing log
       Env.logsFetcher.updateLog(addedUpdatedLog);
 
+      //if there are new log members, add them to all transaction
+      if (logsState.logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
+        List<MyEntry> entries =
+            appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
+        Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
+      }
+
       logsState.logs.update(
         addedUpdatedLog.id,
         (value) => addedUpdatedLog,
@@ -113,29 +120,20 @@ class AddUpdateLog implements Action {
   }
 }
 
-class DeleteLog implements Action {
-  final Log log;
+class AddMemberToSelectedLog implements Action {
+  final String uid;
+  final String name;
 
-  DeleteLog({this.log});
+  AddMemberToSelectedLog({this.uid, this.name});
 
   @override
   AppState updateState(AppState appState) {
-    LogsState updatedLogsState = appState.logsState;
-    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
+    Log log = appState.logsState.selectedLog.value;
+    Map<String, LogMember> logMembers = Map.from(log.logMembers);
+    logMembers.putIfAbsent(uid, () => LogMember(uid: uid, name: name));
 
-    //TODO this may not be a legal action, not sure if I can trigger an acting within an action
-    //ensures the default log is updated if the current log is default and deleted
-    if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
-      Env.store.dispatch(UpdateSettings(
-          settings: Maybe.some(appState.settingsState.settings.value
-              .copyWith(defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id))));
-    }
+    log = log.copyWith(logMembers: logMembers);
 
-    //TODO likely need a method to reset the default to nothing, else statement for the above
-    Env.logsFetcher.deleteLog(log);
-
-    //TODO refer to tag and entry lists to batch delete all of them
-
-    return _updateLogState(appState, (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
   }
 }

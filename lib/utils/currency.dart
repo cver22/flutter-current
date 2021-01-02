@@ -1,11 +1,11 @@
 import 'package:meta/meta.dart';
 
-String formattedAmount({@required int value}) {
+String formattedAmount({@required int value, bool withSeparator = false}) {
   bool isNegative = false;
   int absValue = value?.abs();
   int smallUnits = 0;
   int bigUnits = 0;
-  String stringAmount = '';
+  String bigUnitsString = '';
 
   if (absValue != null && absValue > 99) {
     bigUnits = (absValue / 100).truncate();
@@ -17,9 +17,30 @@ String formattedAmount({@required int value}) {
   if (value != null && value < 0) {
     isNegative = !isNegative;
   }
-  print('the value is $value, bigUnits $bigUnits and smallUnits $smallUnits');
 
-  return '${isNegative ? '-' : ''}$bigUnits.${smallUnits.toString().padLeft(2, '0')}';
+  if (bigUnits == 0 && smallUnits == 0) {
+    return '';
+  }
+
+  //Adds separator to the string if big units is greater than 3
+  if (withSeparator && bigUnits.toString().length > 3) {
+    String oldString = bigUnits.toString();
+    int i = bigUnits.toString().length;
+    bigUnitsString = oldString.substring(i - 3, i);
+    oldString = oldString.substring(0, i - 3);
+    i -= 3;
+
+    while (i > 0) {
+      int j = i - 3 < 0 ? 0 : i - 3;
+      bigUnitsString = '${oldString.substring(j, i)},$bigUnitsString';
+      i = j;
+      print(bigUnitsString);
+    }
+  } else {
+    bigUnitsString = bigUnits.toString();
+  }
+
+  return '${isNegative ? '-' : ''}$bigUnitsString.${smallUnits.toString().padLeft(2, '0')}';
 }
 
 int parseNewValue({@required String newValue}) {

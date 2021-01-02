@@ -1,5 +1,9 @@
 
 //Shared constants
+import 'package:flutter/material.dart';
+
+const String APP = 'app';
+const String EXPENSE_APP = 'expenseApp';
 const String ID = 'id';
 const String UID = 'uid';
 const String ACTIVE = 'active'; //used to determine if a file is active or deleted
@@ -66,5 +70,7 @@ const String MEMBER_NAME = 'memberName';
 
 //UI constants
 const double EMOJI_SIZE = 22.0;
+const double RAISED_BUTTON_ELEVATION = 3.0;
+const double RAISED_BUTTON_CIRCULAR_RADIUS = 5.0;
 
 
