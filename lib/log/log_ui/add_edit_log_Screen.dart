@@ -1,4 +1,3 @@
-import 'package:camera/camera.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
@@ -6,6 +5,7 @@ import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/member/member_ui/log_member_list.dart';
+import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -105,10 +105,8 @@ class AddEditLogScreen extends StatelessWidget {
                         shape:
                             RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
                         child: Text('Add new log member'),
-                        onPressed: () async {
-                          List<CameraDescription> cameras = [];
-                          cameras = await availableCameras();
-                          //TODO navigate to the camera screen
+                        onPressed: () {
+                          Get.to(QRReader());
                         },
                       ),
                 log.uid == null

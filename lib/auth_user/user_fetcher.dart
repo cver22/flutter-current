@@ -78,4 +78,9 @@ class UserFetcher {
       _loginRegisterFail(loginRegState);
     }
   }
+
+  Future<void> updateDisplayName({@required String displayName}) async {
+    User user = await _userRepository.updateUserProfile(displayName: displayName);
+    _store.dispatch(AuthSuccess(user: user));
+  }
 }

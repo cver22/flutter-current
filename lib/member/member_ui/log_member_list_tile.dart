@@ -8,7 +8,7 @@ class LogMemberListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: Text(name),
+      leading: Text(name ?? 'Name missing'),
     );
   }
 }

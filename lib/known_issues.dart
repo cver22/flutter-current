@@ -1,5 +1,4 @@
       //TODO KNOWN ISSUES
-//TODO deleting of logs should also delete any of their entries, otherwise there is a loading error in entry ties
 //TODO selected entry needs to be cleared when saving, but that caused a loop, need to utilize the isLoading state in entries state
 //TODO going back from entry does not clear the logTags from the singleEntryState logTagList
 
@@ -13,8 +12,7 @@
 //TODO how to put an empty map in a JSON so the array doesn't initiate empty
       //TODO record of total log expenditure by month
       //TODO implement currency exchange rates
-      //TODO entry can't save if the member paid/spent total doesn't equal the entry total, paid should default to the entry value
-      //TODO allow user to change password, change name, recover password
+      //TODO allow user to change password, recover password
       //TODO setting option for auto insert decimal
       //TODO reoccurring expenses
       //TODO don't show the currency on a log in the list if it is the default currency
@@ -25,14 +23,13 @@
       //TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
       //TODO remove all data handling from the models
       //TODO how to track total spends
-
-
+      //TODO set a default name
 
 
 
     //TODO START HERE
-//add get to camera for the log screen
-
+//setup user order for log and entry members? or is there another way to handle it?
+      //setup members list for all logs, tags, and entries, required to be able to retrieve the data
 
 
       //TODO ASK BORIS

@@ -137,3 +137,23 @@ class AddMemberToSelectedLog implements Action {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
   }
 }
+
+class UpdateLogMember implements Action {
+
+  @override
+  AppState updateState(AppState appState) {
+    User user = appState.authState.user.value;
+    String uid = user.id;
+    String displayName = user.displayName;
+    Map<String, Log> logs = Map.from(appState.logsState.logs);
+
+    appState.logsState.logs.forEach((key, log) {
+      Map<String, LogMember> logMembers = Map.from(log.logMembers);
+      logMembers.update(uid, (logMember) => logMember.copyWith(name: displayName));
+      logs.update(key, (value) => value.copyWith(logMembers: logMembers)); //updates the log locally
+      Env.logsFetcher.updateLog(logs[key]); //update log in the database
+    });
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
+  }
+}

@@ -27,7 +27,7 @@ class FirebaseLogsRepository implements LogsRepository {
   //TODO need to filter by UID for groups
   @override
   Stream<List<Log>> loadLogs(User user) {
-    return logsCollection.where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
+    return logsCollection.where('membersList', arrayContains: user.id).snapshots().map((snapshot) {
 
       var snapshots = snapshot.documents.map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc))).toList();
 

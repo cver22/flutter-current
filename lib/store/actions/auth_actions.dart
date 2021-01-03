@@ -38,3 +38,14 @@ class LoadingUser implements Action {
     return _updateAuthState(appState, (authState) => authState.copyWith(isLoading: true));
   }
 }
+
+class UpdateDisplayName implements Action {
+  final String displayName;
+
+  UpdateDisplayName({@required this.displayName});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateAuthState(appState, (authState) => authState.copyWith(user: Maybe.some(authState.user.value.copyWith(displayName: displayName))));
+  }
+}

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:meta/meta.dart';
 
 //TODO implement error checking
 
@@ -17,6 +18,8 @@ abstract class UserRepository {
   Future<bool> isSignedIn();
 
   Future<User> getUser();
+
+  Future<User> updateUserProfile({@required String displayName});
 }
 
 class FirebaseUserRepository implements UserRepository {
@@ -30,25 +33,21 @@ class FirebaseUserRepository implements UserRepository {
   @override
   Future<FirebaseUser> signInWithGoogle() async {
     final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.getCredential(
-        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+    final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+    final AuthCredential credential =
+        GoogleAuthProvider.getCredential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
     await _firebaseAuth.signInWithCredential(credential);
     return _firebaseAuth.currentUser();
   }
 
   @override
   Future<void> signInWithCredentials({String email, String password}) {
-    return _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
+    return _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   @override
   Future<void> signUp({String email, String password}) async {
-
-    var auth = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
+    var auth = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
     auth.toString();
 
     return auth;
@@ -72,10 +71,18 @@ class FirebaseUserRepository implements UserRepository {
   Future<User> getUser() async {
     FirebaseUser user = await _firebaseAuth.currentUser();
 
-    return User(
-        id: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoUrl: user.photoUrl);
+    return User(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoUrl);
+  }
+
+  @override
+  Future<User> updateUserProfile({@required String displayName}) async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+    UserUpdateInfo userUpdateInfo = UserUpdateInfo();
+    userUpdateInfo.displayName = displayName;
+    user.updateProfile(userUpdateInfo);
+    await user.reload();
+    user = await _firebaseAuth.currentUser();
+
+    return User(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoUrl);
   }
 }

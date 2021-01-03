@@ -291,10 +291,14 @@ class UpdateMemberPaidAmount implements Action {
     member = member.copyWith(paid: paidValue);
     members.update(member.uid, (value) => member);
 
-    //update amount paid by all members
+    //update total amount paid by all members
     members.forEach((key, value) {
-      amount = amount + value.paid;
+      if (value.paid != null) {
+        amount = amount + value.paid;
+      }
     });
+
+    print('the amount is: $amount');
 
     members = _divideSpendingEvenly(amount: amount, members: members);
 
@@ -351,11 +355,14 @@ class ToggleMemberPaying implements Action {
     });
 
     //if the selected payer is the last, they cannot be removed
-    if (membersPaying > 1) {
+    if (membersPaying > 1 || member.paying == false) {
       //toggles member paying or not
       member = member.copyWith(paying: !member.paying, paid: 0);
       members.update(member.uid, (value) => member);
     }
+
+    //redistributes expense based on revision of who is paying
+    members = _divideSpendingEvenly(amount: entry.amount, members: members);
 
     return _updateSingleEntryState(
         appState,
@@ -384,7 +391,7 @@ class ToggleMemberSpending implements Action {
     });
 
     //cannot uncheck member if they are the last spending
-    if (membersSpending > 1) {
+    if (membersSpending > 1 || member.spending == false) {
       member = member.copyWith(spending: !member.spending, spent: 0);
       members.update(member.uid, (value) => member);
     }

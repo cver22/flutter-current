@@ -18,4 +18,23 @@ class User extends Equatable {
     return 'UserEntity{id: $id, displayName: $displayName, email: $email, photoUrl: $photoUrl}';
   }
 
+  User copyWith({
+    String displayName,
+    String email,
+    String photoUrl,
+  }) {
+    if ((id == null || identical(id, this.id)) &&
+        (displayName == null || identical(displayName, this.displayName)) &&
+        (email == null || identical(email, this.email)) &&
+        (photoUrl == null || identical(photoUrl, this.photoUrl))) {
+      return this;
+    }
+
+    return new User(
+      id: id ?? this.id,
+      displayName: displayName ?? this.displayName,
+      email: email ?? this.email,
+      photoUrl: photoUrl ?? this.photoUrl,
+    );
+  }
 }
