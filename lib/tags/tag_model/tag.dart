@@ -11,10 +11,11 @@ class Tag extends Equatable {
   final String name;
   final int tagLogFrequency;
   final Map<String, int> tagCategoryFrequency;
+  final List<String> memberList;
 
-  Tag({this.uid, this.logId, this.id, this.name, this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}});
+  Tag({this.uid, this.logId, this.id, this.name, this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}, this.memberList = const []});
 
-  Tag copyWith({String uid, String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency}) {
+  Tag copyWith({String uid, String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency, List<String> memberList}) {
     return Tag(
       uid: uid ?? this.uid,
       logId: logId ?? this.logId,
@@ -22,16 +23,17 @@ class Tag extends Equatable {
       name: name ?? this.name,
       tagLogFrequency: logFrequency ?? this.tagLogFrequency,
       tagCategoryFrequency: tagCategoryFrequency ?? this.tagCategoryFrequency,
+      memberList: memberList ?? this.memberList,
     );
   }
 
   @override
   String toString() {
-    return 'Tag {$UID: $uid, $LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency}';
+    return 'Tag {$UID: $uid, $LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
   @override
-  List<Object> get props => [uid, logId, id, name, tagLogFrequency, tagCategoryFrequency];
+  List<Object> get props => [uid, logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   TagEntity toEntity() {
     return TagEntity(
@@ -41,6 +43,7 @@ class Tag extends Equatable {
       name: name,
       tagLogFrequency: tagLogFrequency,
       tagCategoryFrequency: tagCategoryFrequency,
+      memberList: memberList,
     );
   }
 
@@ -52,6 +55,7 @@ class Tag extends Equatable {
       name: entity.name,
       tagLogFrequency: entity.tagLogFrequency,
       tagCategoryFrequency: entity.tagCategoryFrequency,
+      memberList: entity.memberList,
     );
   }
 

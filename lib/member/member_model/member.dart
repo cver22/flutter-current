@@ -11,15 +11,16 @@ class Member extends Equatable{
   final String uid;
   final int paid;
   final int spent;
+  final int order;
 
-  Member({@required this.uid, this.paid = 0, this.spent = 0});
+  Member({@required this.uid, this.paid = 0, this.spent = 0, this.order});
 
   @override
-  List<Object> get props => [uid, paid, spent];
+  List<Object> get props => [uid, paid, spent, order];
 
   @override
   String toString() {
-    return 'LogMember {$UID: $uid, paid: $paid, spent: $spent, }';
+    return 'LogMember {$UID: $uid, $PAID: $paid, $SPENT: $spent, $ORDER: $order}';
   }
 
 
@@ -28,6 +29,7 @@ class Member extends Equatable{
       uid: uid,
       paid: paid,
       spent: spent,
+      order: order,
     );
   }
 
@@ -36,6 +38,7 @@ class Member extends Equatable{
       uid: entity.uid,
       paid: entity.paid,
       spent: entity.spent,
+      order: entity.order,
     );
   }
 }

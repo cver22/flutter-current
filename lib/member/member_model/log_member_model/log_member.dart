@@ -10,14 +10,14 @@ class LogMember extends Member{
   final String name;
   final String role;
 
-  LogMember({uid, paid, spent, this.name, this.role = WRITER}): super (uid: uid, paid: paid, spent: spent);
+  LogMember({uid, paid, spent, order, this.name, this.role = WRITER}): super (uid: uid, paid: paid, spent: spent, order: order);
 
   @override
-  List<Object> get props => [uid, name, paid, spent, role];
+  List<Object> get props => [uid, name, paid, spent, role, order];
 
   @override
   String toString() {
-    return 'LogMember {$UID: $uid, $NAME: $name, paid: $paid, spent: $spent, role: $role}';
+    return 'LogMember {$UID: $uid, $NAME: $name, $PAID: $paid, $SPENT: $spent, role: $role}';
   }
 
 
@@ -27,12 +27,14 @@ class LogMember extends Member{
     int paid,
     int spent,
     String role,
+    int order,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (name == null || identical(name, this.name)) &&
         (paid == null || identical(paid, this.paid)) &&
         (spent == null || identical(spent, this.spent)) &&
-        (role == null || identical(role, this.role))) {
+        (role == null || identical(role, this.role)) &&
+        (order == null || identical(order, this.order))) {
       return this;
     }
 
@@ -42,6 +44,7 @@ class LogMember extends Member{
       paid: paid ?? this.paid,
       spent: spent ?? this.spent,
       role: role ?? this.role,
+        order: order ?? this.order,
     );
   }
 
@@ -52,6 +55,7 @@ class LogMember extends Member{
       paid: paid,
       spent: spent,
       role: role,
+      order: order,
     );
   }
 
@@ -62,6 +66,7 @@ class LogMember extends Member{
       paid: entity.paid,
       spent: entity.spent,
       role: entity.role,
+      order: entity.order,
 
     );
   }

@@ -17,22 +17,23 @@ class EntryMember extends Member {
     uid,
     paid,
     spent,
+    order,
     this.paying = false,
     this.spending = true,
     this.payingController,
     this.spendingController,
     this.payingFocusNode,
     this.spendingFocusNode,
-  }) : super(uid: uid, paid: paid, spent: spent);
+  }) : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
-  List<Object> get props => [uid, paid, spent, paying, spending];
+  List<Object> get props => [uid, paid, spent, paying, spending, order];
 
   @override
   String toString() {
     return 'EntryMember {$UID: $uid, paid: $paid, spent: $spent, paying: $paying, spending: $spending, '
         'payingController: $payingController, spendingController: $spendingController, '
-        'payingFocusNode: $payingFocusNode, spendingFocusNode: $spendingFocusNode}';
+        'payingFocusNode: $payingFocusNode, spendingFocusNode: $spendingFocusNode, $ORDER: $order}';
   }
 
   EntryMemberEntity toEntity() {
@@ -42,6 +43,7 @@ class EntryMember extends Member {
       spent: spent,
       paying: paying,
       spending: spending,
+      order: order,
     );
   }
 
@@ -52,6 +54,7 @@ class EntryMember extends Member {
       spent: entity.spent,
       paying: entity.paying,
       spending: entity.spending,
+      order: entity.order,
     );
   }
 
@@ -59,6 +62,7 @@ class EntryMember extends Member {
     String uid,
     int paid,
     int spent,
+    int order,
     bool paying,
     bool spending,
     TextEditingController payingController,
@@ -74,7 +78,8 @@ class EntryMember extends Member {
         (payingController == null || identical(payingController, this.payingController)) &&
         (spendingController == null || identical(spendingController, this.spendingController)) &&
         (payingFocusNode == null || identical(payingFocusNode, this.payingFocusNode)) &&
-        (spendingFocusNode == null || identical(spendingFocusNode, this.spendingFocusNode))) {
+        (spendingFocusNode == null || identical(spendingFocusNode, this.spendingFocusNode)) &&
+        (order == null || identical(order, this.order))) {
       return this;
     }
 
@@ -82,6 +87,7 @@ class EntryMember extends Member {
       uid: uid ?? this.uid,
       paid: paid ?? this.paid,
       spent: spent ?? this.spent,
+      order: order ?? this.order,
       paying: paying ?? this.paying,
       spending: spending ?? this.spending,
       payingController: payingController ?? this.payingController,

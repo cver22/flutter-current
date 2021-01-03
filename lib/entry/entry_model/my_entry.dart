@@ -87,6 +87,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       dateTime: dateTime,
       tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
       entryMembers: entryMembers,
+      memberList: entryMembers.keys.toList(),
     );
   }
 

@@ -118,6 +118,7 @@ class Log extends Equatable {
       archive: archive,
       defaultCategory: defaultCategory,
       logMembers: logMembers,
+      memberList: logMembers.keys.toList(),
     );
   }
 

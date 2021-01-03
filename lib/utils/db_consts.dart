@@ -30,9 +30,11 @@ const String ENTRIES = 'entries';
 const String LOG_NAME = 'logName';
 const String MEMBER_ROLES_MAP = 'rolesList';
 const String MEMBERS = 'members';
+const String MEMBER_LIST = 'memberList';
 const String OWNER_OR_WRITER = 'ownerOrWriter';
 const String OWNER = 'owner';
 const String WRITER = 'write';
+const String ORDER = 'order';
 
 //Entry constants
 const String ENTRY_COLLECTION = 'entries';

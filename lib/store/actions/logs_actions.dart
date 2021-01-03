@@ -102,7 +102,7 @@ class AddUpdateLog implements Action {
       //create a new log, does not save locally to state as there is no id yet
       Map<String, LogMember> members = {};
       String uid = appState.authState.user.value.id;
-      members.putIfAbsent(uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName));
+      members.putIfAbsent(uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0));
 
       addedUpdatedLog = addedUpdatedLog.copyWith(
         uid: uid,
@@ -130,7 +130,8 @@ class AddMemberToSelectedLog implements Action {
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
     Map<String, LogMember> logMembers = Map.from(log.logMembers);
-    logMembers.putIfAbsent(uid, () => LogMember(uid: uid, name: name));
+    //orders added log member as next in the order
+    logMembers.putIfAbsent(uid, () => LogMember(uid: uid, name: name, order: logMembers.length));
 
     log = log.copyWith(logMembers: logMembers);
 

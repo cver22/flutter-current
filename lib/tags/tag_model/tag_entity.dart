@@ -15,15 +15,17 @@ class TagEntity extends Equatable {
   final String name;
   final int tagLogFrequency;
   final Map<String, int> tagCategoryFrequency;
+  final List<String> memberList;
 
-  const TagEntity({this.uid, this.logId, this.id, this.name, this.tagLogFrequency, this.tagCategoryFrequency});
+  const TagEntity({this.uid, this.logId, this.id, this.name, this.tagLogFrequency, this.tagCategoryFrequency, this.memberList});
 
   @override
-  List<Object> get props => [uid, logId, id, name, tagLogFrequency, tagCategoryFrequency];
+  List<Object> get props => [uid, logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   @override
   String toString() {
-    return 'MyTagEntity {$UID: $uid, $LOG_ID: $logId, $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency}';
+    return 'MyTagEntity {$UID: $uid, $LOG_ID: $logId, $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, '
+        '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
   factory TagEntity.fromJson(Map<String, dynamic> json) => _$TagEntityFromJson(json);
@@ -39,6 +41,7 @@ class TagEntity extends Equatable {
       tagLogFrequency: snap.data[TAG_LOG_FREQUENCY],
       tagCategoryFrequency:
           (snap.data[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      memberList: snap.data[MEMBER_LIST]
     );
   }
 }

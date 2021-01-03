@@ -20,6 +20,7 @@ class LogEntity extends Equatable {
   final Map<String, MyCategory> categories;
   final Map<String, MySubcategory> subcategories;
   final Map<String, LogMember> logMembers;
+  final List<String> memberList;
 
   const LogEntity(
       {this.uid,
@@ -29,16 +30,18 @@ class LogEntity extends Equatable {
       this.categories,
       this.subcategories,
       this.archive,
-        this.defaultCategory,
-      this.logMembers});
+      this.defaultCategory,
+      this.logMembers,
+      this.memberList});
 
   @override
-  List<Object> get props => [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, logMembers];
+  List<Object> get props =>
+      [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, logMembers, memberList];
 
   @override
   String toString() {
     return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, '
-        '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $logMembers}';
+        '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $logMembers, memberList: $memberList}';
   }
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
@@ -68,6 +71,7 @@ class LogEntity extends Equatable {
       ARCHIVE: archive,
       DEFAULT_CATEGORY: defaultCategory,
       MEMBERS: logMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      MEMBER_LIST: memberList,
     };
   }
 }

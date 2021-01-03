@@ -281,7 +281,6 @@ class UpdateMemberPaidAmount implements Action {
   UpdateMemberPaidAmount({@required this.paidValue, @required this.member});
 
   AppState updateState(AppState appState) {
-    print('triggered with value of: $paidValue');
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     int amount = 0;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
@@ -293,12 +292,10 @@ class UpdateMemberPaidAmount implements Action {
 
     //update total amount paid by all members
     members.forEach((key, value) {
-      if (value.paid != null) {
+      if (value.paid != null && value.paying) {
         amount = amount + value.paid;
       }
     });
-
-    print('the amount is: $amount');
 
     members = _divideSpendingEvenly(amount: amount, members: members);
 
@@ -311,7 +308,6 @@ class UpdateMemberPaidAmount implements Action {
 }
 
 class UpdateMemberSpentAmount implements Action {
-  //TODO need a method to distribute remaining funds amongst those spending
   final int spentValue;
   final EntryMember member;
 
@@ -335,8 +331,6 @@ class UpdateMemberSpentAmount implements Action {
 }
 
 class ToggleMemberPaying implements Action {
-  //TODO will need a UI catch to prevent there from being no payers
-
   final EntryMember member;
 
   ToggleMemberPaying({@required this.member});
@@ -345,6 +339,7 @@ class ToggleMemberPaying implements Action {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
+    int amount = 0;
 
     //count number of members paying
     int membersPaying = 0;
@@ -357,17 +352,23 @@ class ToggleMemberPaying implements Action {
     //if the selected payer is the last, they cannot be removed
     if (membersPaying > 1 || member.paying == false) {
       //toggles member paying or not
-      member = member.copyWith(paying: !member.paying, paid: 0);
+      member = member.copyWith(paying: !member.paying);
       members.update(member.uid, (value) => member);
     }
 
+    members.forEach((key, value) {
+      if (value.paid != null && value.paying) {
+        amount = amount + value.paid;
+      }
+    });
+
     //redistributes expense based on revision of who is paying
-    members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    members = _divideSpendingEvenly(amount: amount, members: members);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members, amount: amount)),
             ));
   }
 }
@@ -424,15 +425,16 @@ class AddNewTagToEntry implements Action {
       //save new tag using the user id to help minimize chance of duplication of entry ids in the database
 
       addedUpdatedTag = addedUpdatedTag.copyWith(
-          uid: appState.authState.user.value.id,
-          id: '${Uuid().v4()}-${appState.authState.user.value.id}',
-          logId: entry.logId,
-          logFrequency: 1);
+        uid: appState.authState.user.value.id,
+        id: '${Uuid().v4()}-${appState.authState.user.value.id}',
+        logId: entry.logId,
+        logFrequency: 1,
+        memberList: entry.entryMembers.keys.toList(),
+      );
 
       entry.tagIDs.add(addedUpdatedTag.id);
 
       addedUpdatedTag = _incrementCategoryFrequency(updatedTag: addedUpdatedTag, categoryId: entry?.categoryId);
-      print('this is the updated tag $addedUpdatedTag');
 
       tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
@@ -549,7 +551,9 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
     }
   });
 
-  remainder = amount.remainder(membersSpending);
+  if (amount != null) {
+    remainder = amount.remainder(membersSpending);
+  }
 
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
   //re-adjust who spent based on the new total amount

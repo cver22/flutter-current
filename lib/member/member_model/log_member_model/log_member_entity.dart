@@ -12,14 +12,15 @@ class LogMemberEntity extends MemberEntity{
   final String name;
   final String role;
 
-  LogMemberEntity({uid, paid, spent, this.name, this.role = WRITER}): super (uid: uid, paid: paid, spent: spent);
+
+  LogMemberEntity({uid, paid, spent, order, this.name, this.role = WRITER}): super (uid: uid, paid: paid, spent: spent, order: order);
 
   @override
-  List<Object> get props => [uid, name, paid, spent, role];
+  List<Object> get props => [uid, name, paid, spent, role, order];
 
   @override
   String toString() {
-    return 'LogMemberEntity {$UID: $uid, $NAME: $name, paid: $paid, spent: $spent, role: $role}';
+    return 'LogMemberEntity {$UID: $uid, $NAME: $name, $PAID: $paid, $SPENT: $spent, role: $role, $ORDER: $order}';
   }
 
   factory LogMemberEntity.fromJson(Map<String, dynamic> json) =>

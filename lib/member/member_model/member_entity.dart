@@ -7,14 +7,15 @@ class MemberEntity extends Equatable {
   final String uid;
   final int paid;
   final int spent;
+  final int order;
 
-  MemberEntity({@required this.uid, this.paid = 0, this.spent = 0});
+  MemberEntity({@required this.uid, this.paid = 0, this.spent = 0, this.order});
 
   @override
-  List<Object> get props => [uid, paid, spent];
+  List<Object> get props => [uid, paid, spent, order];
 
   @override
   String toString() {
-    return 'LogMemberEntity {$UID: $uid, paid: $paid, spent: $spent}';
+    return 'MemberEntity {$UID: $uid, $PAID: $paid, $SPENT: $spent, $ORDER: $order}';
   }
 }

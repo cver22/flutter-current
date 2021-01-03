@@ -30,7 +30,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   //TODO need to filter by contains UID
   @override
   Stream<List<MyEntry>> loadEntries(User user) {
-    return db.collection(ENTRY_COLLECTION).snapshots().map((snapshot) {
+    return db.collection(ENTRY_COLLECTION).where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
       // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
       return snapshot.documents.map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc))).toList();
     });

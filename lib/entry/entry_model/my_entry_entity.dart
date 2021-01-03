@@ -18,6 +18,7 @@ class MyEntryEntity extends Equatable {
   final DateTime dateTime;
   final Map<String, String> tagIDs;
   final Map<String, EntryMember> entryMembers;
+  final List<String> memberList;
 
   const MyEntryEntity(
       {this.uid,
@@ -30,7 +31,8 @@ class MyEntryEntity extends Equatable {
       this.comment,
       this.dateTime,
       this.tagIDs,
-      this.entryMembers});
+      this.entryMembers,
+      this.memberList});
 
   @override
   List<Object> get props => [
@@ -45,6 +47,7 @@ class MyEntryEntity extends Equatable {
         dateTime,
         tagIDs,
         entryMembers,
+    memberList,
       ];
 
   @override
@@ -52,7 +55,7 @@ class MyEntryEntity extends Equatable {
     return 'EntryEntity {$UID: $uid, $ID: $id, $LOG_ID: $logId, '
         'currency: $currency, $CATEGORY: $category, '
         '$SUBCATEGORY: $subcategory, $AMOUNT: $amount, $COMMENT: $comment'
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers)}';
+        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, memberList: $memberList)}';
   }
 
   static MyEntryEntity fromSnapshot(DocumentSnapshot snap) {
@@ -84,6 +87,7 @@ class MyEntryEntity extends Equatable {
       DATE_TIME: dateTime.millisecondsSinceEpoch,
       TAGS: tagIDs.map((key, value) => MapEntry(key, value)),
       MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      MEMBER_LIST: memberList
     };
   }
 }

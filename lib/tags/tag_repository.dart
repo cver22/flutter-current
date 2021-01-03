@@ -31,7 +31,7 @@ class FirebaseTagRepository implements TagRepository {
   //TODO need to filter by UID for groups
   @override
   Stream<List<Tag>> loadTags(User user) {
-    return db.collection(TAG_COLLECTION).where(UID, isEqualTo: user.id).snapshots().map((snapshot) {
+    return db.collection(TAG_COLLECTION).where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
       var snapshots = snapshot.documents.map((doc) => Tag.fromEntity(TagEntity.fromSnapshot(doc))).toList();
 
       return snapshots;

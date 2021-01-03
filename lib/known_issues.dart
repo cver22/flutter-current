@@ -17,19 +17,20 @@
       //TODO reoccurring expenses
       //TODO don't show the currency on a log in the list if it is the default currency
       //TODO find an api to get the currency exchange rate information
-      //TODO Settings are not being retrieved
-      //TODO deal with focusNode when i can add members
+      //TODO Settings are not being retrieved? JSON error?
+      //TODO deal with focusNode when i can add members and also modify paid amounts
       //TODO do I want to move to null safety?
       //TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
       //TODO remove all data handling from the models
       //TODO how to track total spends
-      //TODO set a default name
+      //TODO set a default name for users
+      //TODO spent - distribute to others methods
 
 
 
     //TODO START HERE
 //setup user order for log and entry members? or is there another way to handle it?
-      //setup members list for all logs, tags, and entries, required to be able to retrieve the data
+
 
 
       //TODO ASK BORIS
