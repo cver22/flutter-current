@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:expenses/utils/currency.dart';
 
-import '../../env.dart';
+import '../../../env.dart';
 
 class EntryMemberListTile extends StatefulWidget {
   final EntryMember member;
@@ -56,7 +56,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                 ? _buildPayingCheckbox(member: widget.member)
                 : _buildSpendingCheckbox(member: widget.member),
             SizedBox(width: 10.0),
-            Text(widget.name),
+            Text(widget?.name ?? 'Please enter a name in account'),
           ],
         ),
         trailing: Row(
@@ -73,6 +73,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                 keyboardType: TextInputType.number,
                 onTap: () {
                   _focusNode.requestFocus();
+                  print('this focusNode HasFocus: ${_focusNode.hasFocus}');
                   print(
                       'spending focus node: ${widget.member.spendingFocusNode.hasFocus} and paying focus node: ${widget.member.payingFocusNode.hasFocus}');
                 },

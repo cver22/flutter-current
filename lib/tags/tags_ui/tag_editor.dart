@@ -1,4 +1,3 @@
-
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
@@ -9,12 +8,10 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 import '../../env.dart';
 
 class TagEditor extends StatefulWidget {
   final Log log;
-
 
   const TagEditor({Key key, @required this.log}) : super(key: key);
 
@@ -52,6 +49,10 @@ class _TagEditorState extends State<TagEditor> {
         map: (state) => state.singleEntryState,
         builder: (singleEntryState) {
           selectedTag = singleEntryState.selectedTag.isSome ? singleEntryState.selectedTag.value : Tag();
+          //TODO this rebuilds everytime, how to make that not happen?
+          if (selectedTag?.name != null) {
+            _controller.value = TextEditingValue(text: selectedTag.name);
+          }
           return Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -70,7 +71,9 @@ class _TagEditorState extends State<TagEditor> {
                   keyboardType: TextInputType.text,
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
                   onChanged: (text) {
-                    setState(() {});
+                    if(selectedTag.id == null){
+                      setState(() {});
+                    }
                   },
                 ),
               ),
@@ -84,11 +87,9 @@ class _TagEditorState extends State<TagEditor> {
                   onPressed: _controller.text.isEmpty
                       ? null
                       : () {
-                          //can be used to edit, needs modifications...a lot
-
-                          Env.store.dispatch(AddNewTagToEntry(tag: selectedTag.copyWith(name: _controller.text)));
+                          //passes the new or updated tag to actions to add or update as required
+                          Env.store.dispatch(AddUpdateTagFromEntryScreen(tag: selectedTag.copyWith(name: _controller.text)));
                           _controller.clear();
-
                         }),
             ],
           );

@@ -21,18 +21,24 @@
       //TODO deal with focusNode when i can add members and also modify paid amounts
       //TODO do I want to move to null safety?
       //TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
-      //TODO remove all data handling from the models
+      //TODO remove all data handling from the models?
       //TODO how to track total spends
-      //TODO set a default name for users
       //TODO spent - distribute to others methods
+      //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
+      // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
+      //TODO change all data models to Maybe
 
 
 
     //TODO START HERE
-//setup user order for log and entry members? or is there another way to handle it?
-
+//how to make a popupmenu work on a chip, may need to find its position first
 
 
       //TODO ASK BORIS
       //should I keep track of total amounts in the database or use live values calculated when pulling the data each time
-      //is having methods in the models bad practice, should they be extracted to the action
+      //is having methods in the models bad practice, should they be extracted to the action - if it can be in an action, move it there
+
+
+
+      //flutter pub run build_runner build
+      //flutter packages pub run build_runner build --delete-conflicting-outputs

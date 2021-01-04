@@ -7,7 +7,6 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class MyEntryEntity extends Equatable {
-  final String uid;
   final String id;
   final String logId;
   final String currency;
@@ -21,8 +20,7 @@ class MyEntryEntity extends Equatable {
   final List<String> memberList;
 
   const MyEntryEntity(
-      {this.uid,
-      this.id,
+      {this.id,
       this.logId,
       this.currency,
       this.category,
@@ -36,7 +34,6 @@ class MyEntryEntity extends Equatable {
 
   @override
   List<Object> get props => [
-        uid,
         id,
         logId,
         currency,
@@ -52,7 +49,7 @@ class MyEntryEntity extends Equatable {
 
   @override
   String toString() {
-    return 'EntryEntity {$UID: $uid, $ID: $id, $LOG_ID: $logId, '
+    return 'EntryEntity {$ID: $id, $LOG_ID: $logId, '
         'currency: $currency, $CATEGORY: $category, '
         '$SUBCATEGORY: $subcategory, $AMOUNT: $amount, $COMMENT: $comment'
         '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, memberList: $memberList)}';
@@ -60,7 +57,6 @@ class MyEntryEntity extends Equatable {
 
   static MyEntryEntity fromSnapshot(DocumentSnapshot snap) {
     return MyEntryEntity(
-      uid: snap.data[UID],
       id: snap.documentID,
       logId: snap.data[LOG_ID],
       currency: snap.data[CURRENCY_NAME],
@@ -77,7 +73,6 @@ class MyEntryEntity extends Equatable {
 
   Map<String, Object> toDocument() {
     return {
-      UID: uid,
       LOG_ID: logId,
       CURRENCY_NAME: currency,
       CATEGORY: category,

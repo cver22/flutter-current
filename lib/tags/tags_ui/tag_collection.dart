@@ -33,7 +33,34 @@ class TagCollection extends StatelessWidget {
       tagChips.add(TagChip(
         name: thisTag.name,
         onPressed: () => {
-          Env.store.dispatch(AddOrRemoveEntryTag(tag: thisTag)),
+          Env.store.dispatch(SelectDeselectEntryTag(tag: thisTag)),
+        },
+        onMenu: () => {
+          showMenu(
+            context: context,
+            position: null,
+            items: <PopupMenuEntry>[
+              PopupMenuItem(
+                value: 'edit',
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.edit_outlined),
+                    Text('Edit'),
+                  ],
+                ),
+              ),
+              PopupMenuItem(
+                value: 'delete',
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.delete_outline),
+                    Text('Delete'),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Env.store.dispatch(EditTagFromEntryScreen(tag: thisTag)),
         },
       ));
     });
@@ -50,6 +77,5 @@ class TagCollection extends StatelessWidget {
   }
 
 //TODO maybe filter by what is typed
-//TODO use tag state to pass onEdit to the selector
 
 }

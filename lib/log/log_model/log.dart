@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
@@ -123,6 +125,17 @@ class Log extends Equatable {
   }
 
   static Log fromEntity(LogEntity entity) {
+    //reorder the log members as per the user's preference prior to passing to the log
+    LinkedHashMap<String, LogMember> logMemberHashMap = LinkedHashMap();
+
+    for (int i = 0; i < entity.logMembers.length; i++) {
+      entity.logMembers.forEach((key, value) {
+        if (value.order == i) {
+          logMemberHashMap.putIfAbsent(key, () => value);
+        }
+      });
+    }
+
     return Log(
       uid: entity.uid,
       id: entity.id,
@@ -132,7 +145,7 @@ class Log extends Equatable {
       subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
       archive: entity.archive,
       defaultCategory: entity.defaultCategory,
-      logMembers: entity.logMembers,
+      logMembers: logMemberHashMap,
     );
   }
 }

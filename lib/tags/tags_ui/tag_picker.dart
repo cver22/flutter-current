@@ -32,7 +32,7 @@ class _TagPickerState extends State<TagPicker> {
         where: notIdentical,
         map: (state) => state.singleEntryState,
         builder: (singleEntryState) {
-          print('rendering tag picker');
+          print('Rendering tag picker');
           int maxTags = 10;
 
           //ensures the visible entry isn't reset while the entry is saving

@@ -25,7 +25,6 @@ import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 
-
 part 'auth_actions.dart';
 
 part 'login_reg_actions.dart';
@@ -42,21 +41,23 @@ part 'tag_actions.dart';
 
 abstract class Action {
   AppState updateState(AppState appState);
-
 }
 
-AppState _updateAppState(AppState appState,
+AppState _updateLogEntriesTagSettingState(
+    AppState appState,
     LogsState updateLogState(LogsState logsState),
     EntriesState updateEntriesState(EntriesState entriesState),
     TagState updateTagState(TagState tagState),
     SettingsState updateSettingsState(SettingsState settingsState)) {
-  return appState.copyWith(logsState: updateLogState(appState.logsState),
+  return appState.copyWith(
+      logsState: updateLogState(appState.logsState),
       entriesState: updateEntriesState(appState.entriesState),
       tagState: updateTagState(appState.tagState),
       settingsState: updateSettingsState(appState.settingsState));
 }
 
 class DeleteLog implements Action {
+  //This action updates multiple states simultaneously
   final Log log;
 
   DeleteLog({this.log});
@@ -91,23 +92,47 @@ class DeleteLog implements Action {
     //TODO likely need a method to reset the default to nothing, else statement for the above
     //ensures the default log is updated if the current log is default and deleted
     if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
-      settings = settings.copyWith(defaultLogId: updatedLogsState.logs.values
-          .firstWhere((element) => element.id != log.id)
-          .id);
-
+      settings = settings.copyWith(
+          defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id);
     }
-
 
     Env.entriesFetcher.batchDeleteEntries(deletedEntries: deletedEntriesList);
     Env.tagFetcher.batchDeleteTags(deletedTags: deletedTagsList);
     Env.logsFetcher.deleteLog(log: log);
 
-    return _updateAppState(
-      appState,
-          (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()),
-          (entriesState) => entriesState.copyWith(entries: entriesMap),
-          (tagState) => tagState.copyWith(tags: tagsMap),
-        (settingsState) => settingsState.copyWith(settings: Maybe.some(settings))
-    );
+    return _updateLogEntriesTagSettingState(
+        appState,
+        (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()),
+        (entriesState) => entriesState.copyWith(entries: entriesMap),
+        (tagState) => tagState.copyWith(tags: tagsMap),
+        (settingsState) => settingsState.copyWith(settings: Maybe.some(settings)));
+  }
+}
+
+AppState _updateTagSingleEntryState(
+  AppState appState,
+  TagState updateTagState(TagState tagState),
+  SingleEntryState update(SingleEntryState singleEntryState),
+) {
+  return appState.copyWith(
+      tagState: updateTagState(appState.tagState), singleEntryState: update(appState.singleEntryState));
+}
+
+class DeleteTagFromEntryScreen implements Action {
+  final Tag tag;
+
+  DeleteTagFromEntryScreen({@required this.tag});
+
+  @override
+  AppState updateState(AppState appState) {
+    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
+    Map<String, Tag> entryTagsMap = Map.from(appState.singleEntryState.tags);
+    tagsMap.removeWhere((key, value) => key == tag.id);
+    entryTagsMap.removeWhere((key, value) => key == tag.id);
+
+    Env.tagFetcher.deleteTag(tag);
+
+    return _updateTagSingleEntryState(appState, (tagState) => tagState.copyWith(tags: tagsMap),
+        (singleEntryState) => singleEntryState.copyWith(tags: entryTagsMap));
   }
 }

@@ -410,10 +410,23 @@ class ToggleMemberSpending implements Action {
 
 /*TAGS SECTION*/
 
-class AddNewTagToEntry implements Action {
+class EditTagFromEntryScreen implements Action {
   final Tag tag;
 
-  AddNewTagToEntry({@required this.tag});
+  EditTagFromEntryScreen({@required this.tag});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateSingleEntryState(
+        appState, (singleEntryState) => singleEntryState.copyWith(selectedTag: Maybe.some(tag)));
+  }
+}
+
+
+class AddUpdateTagFromEntryScreen implements Action {
+  final Tag tag;
+
+  AddUpdateTagFromEntryScreen({@required this.tag});
 
   @override
   AppState updateState(AppState appState) {
@@ -425,7 +438,6 @@ class AddNewTagToEntry implements Action {
       //save new tag using the user id to help minimize chance of duplication of entry ids in the database
 
       addedUpdatedTag = addedUpdatedTag.copyWith(
-        uid: appState.authState.user.value.id,
         id: '${Uuid().v4()}-${appState.authState.user.value.id}',
         logId: entry.logId,
         logFrequency: 1,
@@ -435,9 +447,9 @@ class AddNewTagToEntry implements Action {
       entry.tagIDs.add(addedUpdatedTag.id);
 
       addedUpdatedTag = _incrementCategoryFrequency(updatedTag: addedUpdatedTag, categoryId: entry?.categoryId);
-
-      tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
+    //updates existing tag or add it
+    tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
 
     return _updateSingleEntryState(
         appState,
@@ -446,14 +458,14 @@ class AddNewTagToEntry implements Action {
   }
 }
 
-class AddOrRemoveEntryTag implements Action {
+class SelectDeselectEntryTag implements Action {
   final Tag tag;
 
-  AddOrRemoveEntryTag({@required this.tag});
+  SelectDeselectEntryTag({@required this.tag});
 
   @override
   AppState updateState(AppState appState) {
-    Tag updatedTag = tag;
+    Tag selectedDeselectedTag = tag;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     List<String> entryTagIds = entry.tagIDs;
@@ -469,7 +481,8 @@ class AddOrRemoveEntryTag implements Action {
     if (entryHasTag) {
       //remove tag from entry if present
 
-      updatedTag = _decrementCategoryAndLogFrequency(updatedTag: updatedTag, categoryId: entry?.categoryId);
+      selectedDeselectedTag =
+          _decrementCategoryAndLogFrequency(updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.remove(tag.id);
@@ -477,13 +490,14 @@ class AddOrRemoveEntryTag implements Action {
       //add tag to entry if not present
 
       //increment use of tag for this category
-      updatedTag = _incrementCategoryAndLogFrequency(updatedTag: updatedTag, categoryId: entry?.categoryId);
+      selectedDeselectedTag =
+          _incrementCategoryAndLogFrequency(updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.add(tag.id);
     }
 
-    tags.update(updatedTag.id, (value) => updatedTag, ifAbsent: () => updatedTag);
+    tags.update(selectedDeselectedTag.id, (value) => selectedDeselectedTag, ifAbsent: () => selectedDeselectedTag);
 
     return _updateSingleEntryState(
         appState,

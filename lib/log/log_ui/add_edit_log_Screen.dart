@@ -4,7 +4,7 @@ import 'package:expenses/categories/categories_screens/category_list_dialog.dart
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
-import 'package:expenses/member/member_ui/log_member_list.dart';
+import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_simple_list.dart';
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -111,7 +111,7 @@ class AddEditLogScreen extends StatelessWidget {
                       ),
                 log.uid == null
                     ? Container()
-                    : LogMemberList(
+                    : LogMemberSimpleList(
                         logMembers: log.logMembers.values.toList(),
                       ),
                 SizedBox(height: 16.0),

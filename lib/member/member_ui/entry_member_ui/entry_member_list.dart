@@ -1,6 +1,6 @@
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/member/member_ui/entry_member_list_tile.dart';
+import 'package:expenses/member/member_ui/entry_member_ui/entry_member_list_tile.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 

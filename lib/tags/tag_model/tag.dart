@@ -5,7 +5,6 @@ import 'package:meta/meta.dart';
 
 @immutable
 class Tag extends Equatable {
-  final String uid;
   final String logId;
   final String id;
   final String name;
@@ -13,11 +12,10 @@ class Tag extends Equatable {
   final Map<String, int> tagCategoryFrequency;
   final List<String> memberList;
 
-  Tag({this.uid, this.logId, this.id, this.name, this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}, this.memberList = const []});
+  Tag({this.logId, this.id, this.name, this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}, this.memberList = const []});
 
-  Tag copyWith({String uid, String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency, List<String> memberList}) {
+  Tag copyWith({String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency, List<String> memberList}) {
     return Tag(
-      uid: uid ?? this.uid,
       logId: logId ?? this.logId,
       id: id ?? this.id,
       name: name ?? this.name,
@@ -29,15 +27,14 @@ class Tag extends Equatable {
 
   @override
   String toString() {
-    return 'Tag {$UID: $uid, $LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
+    return 'Tag {$LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
   @override
-  List<Object> get props => [uid, logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   TagEntity toEntity() {
     return TagEntity(
-      uid: uid,
       logId: logId,
       id: id,
       name: name,
@@ -49,7 +46,6 @@ class Tag extends Equatable {
 
   static Tag fromEntity(TagEntity entity) {
     return Tag(
-      uid: entity.uid,
       logId: entity.logId,
       id: entity.id,
       name: entity.name,

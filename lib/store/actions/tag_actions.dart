@@ -51,8 +51,8 @@ class AddUpdateTags implements Action {
   AppState updateState(AppState appState) {
     List<Tag> tagsToAddToDatabase = [];
     List<Tag> tagsToUpdateInDatabase = [];
-    Map<String, Tag> addedUpdatedTags = appState.singleEntryState.tags;
-    Map<String, Tag> masterTagList = appState.tagState.tags;
+    Map<String, Tag> addedUpdatedTags = Map.from(appState.singleEntryState.tags);
+    Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
 
     addedUpdatedTags.forEach((key, tag) {
       if (!masterTagList.containsKey(key)) {
@@ -66,6 +66,8 @@ class AddUpdateTags implements Action {
         tagsToUpdateInDatabase.add(tag); //updates list of tags that will be sent to database
       }
     });
+    //TODO, start here, why doesn't the tag get updated in the database
+    //TODO - look at firebase data, something strange happened, there are two levels on information....???
 
     Env.tagFetcher.batchAddUpdate(addedTags: tagsToAddToDatabase, updatedTags: tagsToUpdateInDatabase);
 

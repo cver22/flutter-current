@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/my_entry_entity.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
@@ -7,7 +9,6 @@ import 'package:flutter/foundation.dart';
 @immutable
 class MyEntry extends Equatable with ChangeNotifier {
   MyEntry({
-    this.uid,
     this.id,
     this.logId,
     this.currency,
@@ -22,7 +23,6 @@ class MyEntry extends Equatable with ChangeNotifier {
     this.previousEntryMembers = const {},
   });
 
-  final String uid;
   final String id;
   final String logId;
   final String currency;
@@ -46,29 +46,27 @@ class MyEntry extends Equatable with ChangeNotifier {
     }
 
     return MyEntry(
-      uid: this.uid,
-      id: this.id,
-      logId: this.logId,
-      currency: this.currency,
-      categoryId: category,
-      subcategoryId: subcategory,
-      amount: this.amount,
-      previousAmount: this.previousAmount,
-      comment: this.comment,
-      dateTime: this.dateTime,
-      tagIDs: this.tagIDs,
-      entryMembers: this.entryMembers,
-      previousEntryMembers: this.previousEntryMembers
-    );
+        id: this.id,
+        logId: this.logId,
+        currency: this.currency,
+        categoryId: category,
+        subcategoryId: subcategory,
+        amount: this.amount,
+        previousAmount: this.previousAmount,
+        comment: this.comment,
+        dateTime: this.dateTime,
+        tagIDs: this.tagIDs,
+        entryMembers: this.entryMembers,
+        previousEntryMembers: this.previousEntryMembers);
   }
 
   @override
   List<Object> get props =>
-      [uid, id, logId, currency, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, entryMembers];
+      [id, logId, currency, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, entryMembers];
 
   @override
   String toString() {
-    return 'Entry {$UID: $uid, id: $id, $LOG_ID: $logId, '
+    return 'Entry {id: $id, $LOG_ID: $logId, '
         'currency: $currency, $CATEGORY: $categoryId, '
         '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, previousAmount: $previousAmount, $COMMENT: $comment, '
         '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, previousEntryMembers: $previousEntryMembers}';
@@ -76,7 +74,6 @@ class MyEntry extends Equatable with ChangeNotifier {
 
   MyEntryEntity toEntity() {
     return MyEntryEntity(
-      uid: uid,
       id: id,
       logId: logId,
       currency: currency,
@@ -92,8 +89,17 @@ class MyEntry extends Equatable with ChangeNotifier {
   }
 
   static MyEntry fromEntity(MyEntryEntity entity) {
+    //re-order the entry members as per user preference prior to passing to the entry
+    LinkedHashMap<String, EntryMember> entryMembersLinkedMap = LinkedHashMap();
+
+    for (int i = 0; i < entity.entryMembers.length; i++) {
+      entity.entryMembers.forEach((key, value) {
+        if (value.order == i) {
+          entryMembersLinkedMap.putIfAbsent(key, () => value);
+        }
+      });
+    }
     return MyEntry(
-      uid: entity.uid,
       id: entity.id,
       logId: entity.logId,
       currency: entity.currency,
@@ -103,12 +109,11 @@ class MyEntry extends Equatable with ChangeNotifier {
       comment: entity.comment,
       dateTime: entity.dateTime,
       tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
-      entryMembers: entity.entryMembers,
+      entryMembers: entryMembersLinkedMap,
     );
   }
 
   MyEntry copyWith({
-    String uid,
     String id,
     String logId,
     String currency,
@@ -122,8 +127,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     Map<String, EntryMember> entryMembers,
     Map<String, EntryMember> previousEntryMembers,
   }) {
-    if ((uid == null || identical(uid, this.uid)) &&
-        (id == null || identical(id, this.id)) &&
+    if ((id == null || identical(id, this.id)) &&
         (logId == null || identical(logId, this.logId)) &&
         (currency == null || identical(currency, this.currency)) &&
         (categoryId == null || identical(categoryId, this.categoryId)) &&
@@ -139,7 +143,6 @@ class MyEntry extends Equatable with ChangeNotifier {
     }
 
     return new MyEntry(
-      uid: uid ?? this.uid,
       id: id ?? this.id,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,

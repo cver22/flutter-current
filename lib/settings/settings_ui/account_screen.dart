@@ -90,7 +90,7 @@ class _AccountScreenState extends State<AccountScreen> {
                               )
                             : Text(user.displayName != null && user.displayName.length > 0
                                 ? user.displayName
-                                : 'Name missing'),
+                                : 'Please enter a name'),
                         SizedBox(width: 5.0),
                         editDisplayName
                             ? IconButton(
