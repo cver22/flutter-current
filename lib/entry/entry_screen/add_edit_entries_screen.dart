@@ -136,8 +136,7 @@ class AddEditEntriesScreen extends StatelessWidget {
                 'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
         ),
-        EntryMembersListView(
-            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.paid),
+        EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log),
         SizedBox(height: 10.0),
         EntriesDateButton(context: context, log: log, entry: entry),
         SizedBox(height: 10.0),
@@ -145,12 +144,6 @@ class AddEditEntriesScreen extends StatelessWidget {
         entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
         _commentFormField(entry: entry),
         TagPicker(),
-        //TODO use this when done resting
-        /*entry.entryMembers.length > 1 ? EntryMembersListView(
-            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent) : Container(),*/
-        EntryMembersListView(
-            members: entryState.selectedEntry.value.entryMembers, log: log, paidOrSpent: PaidOrSpent.spent),
-        //TODO Remove this when done testing
       ],
     );
   }
