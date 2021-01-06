@@ -417,6 +417,7 @@ class EditTagFromEntryScreen implements Action {
 
   @override
   AppState updateState(AppState appState) {
+    print('triggered edit tag');
     return _updateSingleEntryState(
         appState, (singleEntryState) => singleEntryState.copyWith(selectedTag: Maybe.some(tag)));
   }

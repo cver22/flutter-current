@@ -5,6 +5,7 @@ import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_chip.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../env.dart';
 
@@ -27,6 +28,7 @@ class TagCollection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     List<Widget> tagChips = [];
 
     tags.forEach((thisTag) {
@@ -35,32 +37,11 @@ class TagCollection extends StatelessWidget {
         onPressed: () => {
           Env.store.dispatch(SelectDeselectEntryTag(tag: thisTag)),
         },
-        onMenu: () => {
-          showMenu(
-            context: context,
-            position: null,
-            items: <PopupMenuEntry>[
-              PopupMenuItem(
-                value: 'edit',
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.edit_outlined),
-                    Text('Edit'),
-                  ],
-                ),
-              ),
-              PopupMenuItem(
-                value: 'delete',
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.delete_outline),
-                    Text('Delete'),
-                  ],
-                ),
-              ),
-            ],
-          ),
+        onEdit: () => {
           Env.store.dispatch(EditTagFromEntryScreen(tag: thisTag)),
+        },
+        onDelete: () => {
+          Env.store.dispatch(DeleteTagFromEntryScreen(tag: thisTag)),
         },
       ));
     });
