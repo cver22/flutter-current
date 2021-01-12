@@ -5,3 +5,4 @@ bool notIdentical(Object lhs, Object rhs) {
 bool notEqual(Object lhs, Object rhs) {
   return lhs != rhs;
 }
+

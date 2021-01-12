@@ -20,7 +20,6 @@ class EntriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<MyEntry> entries = [];
-    Env.entriesFetcher.loadEntries();
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {

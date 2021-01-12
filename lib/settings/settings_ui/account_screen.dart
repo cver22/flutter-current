@@ -82,6 +82,7 @@ class _AccountScreenState extends State<AccountScreen> {
                             ? Container(
                                 width: 100.0,
                                 child: TextField(
+                                  autofocus: true,
                                   controller: _displayNameController,
                                   decoration: InputDecoration(labelText: 'User Name:'),
                                   keyboardType: TextInputType.text,

@@ -33,19 +33,14 @@ class ChangeDefaultLog implements Action {
 
   @override
   AppState updateState(AppState appState) {
-
     Settings settings = appState.settingsState.settings.value;
     Map<String, Log> logs = appState.logsState.logs;
-    if(log != null && logs.containsKey(log.id)) {
-      settings.copyWith(defaultLogId: log.id);
+    if (log != null && logs.containsKey(log.id)) {
+      settings = settings.copyWith(defaultLogId: log.id);
     }
 
     Env.settingsFetcher.writeAppSettings(settings);
 
-    return _updateSettingsState(
-        appState,
-            (settingsState) => settingsState.copyWith(
-          settings: Maybe.some(settings),
-        ));
+    return _updateSettingsState(appState, (settingsState) => settingsState.copyWith(settings: Maybe.some(settings)));
   }
 }

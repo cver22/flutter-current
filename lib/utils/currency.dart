@@ -1,6 +1,6 @@
 import 'package:meta/meta.dart';
 
-String formattedAmount({@required int value, bool withSeparator = false}) {
+String formattedAmount({@required int value, bool withSeparator = false, bool emptyReturnZeroed = false}) {
   bool isNegative = false;
   int absValue = value?.abs();
   int smallUnits = 0;
@@ -19,7 +19,7 @@ String formattedAmount({@required int value, bool withSeparator = false}) {
   }
 
   if (bigUnits == 0 && smallUnits == 0) {
-    return '';
+    return emptyReturnZeroed ? '0.00' : '';
   }
 
   //Adds separator to the string if big units is greater than 3

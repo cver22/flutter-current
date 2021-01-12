@@ -1,16 +1,12 @@
 part of 'actions.dart';
 
-AppState _updateLogState(
-  AppState appState,
-  LogsState update(LogsState logsState),
-) {
+AppState _updateLogState(AppState appState,
+    LogsState update(LogsState logsState),) {
   return appState.copyWith(logsState: update(appState.logsState));
 }
 
-AppState _updateLogs(
-  AppState appState,
-  void updateInPlace(Map<String, Log> logs),
-) {
+AppState _updateLogs(AppState appState,
+    void updateInPlace(Map<String, Log> logs),) {
   Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
   updateInPlace(cloneMap);
   return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
@@ -69,7 +65,7 @@ class SetLogs implements Action {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
         logList.map(
-          (log) => MapEntry(log.id, log),
+              (log) => MapEntry(log.id, log),
         ),
       );
     });
@@ -89,20 +85,21 @@ class AddUpdateLog implements Action {
       //if there are new log members, add them to all transaction
       if (logsState.logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
         List<MyEntry> entries =
-            appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
+        appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
       }
 
       logsState.logs.update(
         addedUpdatedLog.id,
-        (value) => addedUpdatedLog,
+            (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
     } else {
       //create a new log, does not save locally to state as there is no id yet
       Map<String, LogMember> members = {};
       String uid = appState.authState.user.value.id;
-      members.putIfAbsent(uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0));
+      members.putIfAbsent(
+          uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0));
 
       addedUpdatedLog = addedUpdatedLog.copyWith(
         uid: uid,
@@ -139,6 +136,7 @@ class AddMemberToSelectedLog implements Action {
   }
 }
 
+//used for name changes
 class UpdateLogMember implements Action {
 
   @override
@@ -150,10 +148,26 @@ class UpdateLogMember implements Action {
 
     appState.logsState.logs.forEach((key, log) {
       Map<String, LogMember> logMembers = Map.from(log.logMembers);
+      print('logMembers: $logMembers');
       logMembers.update(uid, (logMember) => logMember.copyWith(name: displayName));
       logs.update(key, (value) => value.copyWith(logMembers: logMembers)); //updates the log locally
       Env.logsFetcher.updateLog(logs[key]); //update log in the database
     });
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
+  }
+}
+
+class UpdateLogTotals implements Action {
+
+  @override
+  AppState updateState(AppState appState) {
+    List<MyEntry> entries = appState.entriesState.entries.values.toList();
+
+    Map<String, Log> logs = Map.from(appState.logsState.logs);
+
+    logs.updateAll((key, log) => _updateLogMemberTotals(entries: List.from(entries), log: log));
+
 
     return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
   }

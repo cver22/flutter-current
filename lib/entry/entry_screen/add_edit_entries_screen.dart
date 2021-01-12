@@ -7,7 +7,7 @@ import 'package:expenses/categories/categories_screens/category_list_dialog.dart
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
-import 'file:///D:/version-control/flutter/expenses/lib/member/member_ui/entry_member_ui/entry_member_list.dart';
+import 'package:expenses/member/member_ui/entry_member_ui/entry_member_list.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tags_ui/tag_picker.dart';
@@ -23,8 +23,8 @@ import 'package:get/get.dart';
 class AddEditEntriesScreen extends StatelessWidget {
   AddEditEntriesScreen({Key key}) : super(key: key);
 
-  void _submit({@required SingleEntryState entryState, @required MyEntry entry, @required Log log}) {
-    Env.store.dispatch(AddUpdateSingleEntry(entry: entry, log: log));
+  void _submit({@required MyEntry entry}) {
+    Env.store.dispatch(AddUpdateSingleEntryAndTags(entry: entry));
     Get.back();
   }
 
@@ -48,37 +48,7 @@ class AddEditEntriesScreen extends StatelessWidget {
             child: Stack(
               children: [
                 Scaffold(
-                  appBar: AppBar(
-                    title: Text('Entry'),
-                    leading: IconButton(
-                      icon: Icon(Icons.arrow_back),
-                      onPressed: () => closeEntryScreen(),
-                    ),
-                    actions: <Widget>[
-                      IconButton(
-                        icon: Icon(
-                          Icons.check,
-                          color: _canSubmit(entry: entry) ? Colors.white : Colors.grey,
-                        ),
-                        onPressed: _canSubmit(entry: entry)
-                            ? () => {_submit(entryState: singleEntryState, entry: entry, log: log)}
-                            : null,
-                      ),
-                      entry?.id == null
-                          ? Container()
-                          : PopupMenuButton<String>(
-                              onSelected: handleClick,
-                              itemBuilder: (BuildContext context) {
-                                return {'Delete Entry'}.map((String choice) {
-                                  return PopupMenuItem<String>(
-                                    value: choice,
-                                    child: Text(choice),
-                                  );
-                                }).toList();
-                              },
-                            ),
-                    ],
-                  ),
+                  appBar: _buildAppBar(entry, singleEntryState, log),
                   body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
                 ),
                 ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.savingEntry),
@@ -88,24 +58,51 @@ class AddEditEntriesScreen extends StatelessWidget {
         });
   }
 
+  AppBar _buildAppBar(MyEntry entry, SingleEntryState singleEntryState, Log log) {
+    return AppBar(
+                  title: Text('Entry'),
+                  leading: IconButton(
+                    icon: Icon(Icons.arrow_back),
+                    onPressed: () => closeEntryScreen(),
+                  ),
+                  actions: <Widget>[
+                    IconButton(
+                      icon: Icon(
+                        Icons.check,
+                        color: _canSubmit(entry: entry) ? Colors.white : Colors.grey,
+                      ),
+                      onPressed: _canSubmit(entry: entry)
+                          ? () => {_submit(entry: entry)}
+                          : null,
+                    ),
+                    entry?.id == null
+                        ? Container()
+                        : PopupMenuButton<String>(
+                            onSelected: handleClick,
+                            itemBuilder: (BuildContext context) {
+                              return {'Delete Entry'}.map((String choice) {
+                                return PopupMenuItem<String>(
+                                  value: choice,
+                                  child: Text(choice),
+                                );
+                              }).toList();
+                            },
+                          ),
+                  ],
+                );
+  }
+
   Widget _buildContents(
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
       @required MyEntry entry}) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Card(
-          child: Padding(
-            padding: EdgeInsets.all(16.0),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: <Widget>[
-                _buildForm(context: context, entryState: entryState, log: log, entry: entry),
-              ],
-            ),
-          ),
+      child: Card(
+        margin: EdgeInsets.all(8.0),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+          child: _buildForm(context: context, entryState: entryState, log: log, entry: entry),
         ),
       ),
     );
@@ -117,12 +114,13 @@ class AddEditEntriesScreen extends StatelessWidget {
       @required Log log,
       @required MyEntry entry}) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            Text('Log: ${log.logName}'),
+            Text('Log: ${log.name}'),
             //_logNameDropDown(entry: entry),
           ],
         ),
@@ -136,6 +134,7 @@ class AddEditEntriesScreen extends StatelessWidget {
                 'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
         ),
+        SizedBox(height: 10),
         EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log),
         SizedBox(height: 10.0),
         EntriesDateButton(context: context, log: log, entry: entry),

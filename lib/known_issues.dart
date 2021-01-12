@@ -25,14 +25,19 @@
       //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
       // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
       //TODO change all data models to Maybe
+      //TODO give each person an emoji Icon option
+      //TODO entries safety check before loading if their category has been deleted, show no category
+      //TODO remove subcategory class and utilize only the category class, parentCategory either null or valid
+
+
 
       //TODO important issues *************************
       //TODO deal with focusNode when i can add members and also modify paid amounts
 
 
     //TODO START HERE
-//make editing dialog for existing tags
-      // paying/spending greys out when unchecked
+
+
 
 
       //TODO ASK BORIS

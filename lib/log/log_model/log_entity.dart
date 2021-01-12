@@ -13,7 +13,7 @@ import 'package:flutter/foundation.dart';
 class LogEntity extends Equatable {
   final String uid;
   final String id;
-  final String logName;
+  final String name;
   final String currency;
   final bool archive;
   final String defaultCategory;
@@ -25,7 +25,7 @@ class LogEntity extends Equatable {
   const LogEntity(
       {this.uid,
       this.id,
-      this.logName,
+      this.name,
       this.currency,
       this.categories,
       this.subcategories,
@@ -36,11 +36,11 @@ class LogEntity extends Equatable {
 
   @override
   List<Object> get props =>
-      [uid, id, logName, currency, categories, subcategories, archive, defaultCategory, logMembers, memberList];
+      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, memberList];
 
   @override
   String toString() {
-    return 'Log {uid: $uid, id: $id, logName: $logName, currency: $currency, categories: $categories, '
+    return 'Log {uid: $uid, id: $id, logName: $name, currency: $currency, categories: $categories, '
         '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $logMembers, memberList: $memberList}';
   }
 
@@ -48,7 +48,7 @@ class LogEntity extends Equatable {
     return LogEntity(
       uid: snap.data[UID],
       id: snap.documentID,
-      logName: snap.data[LOG_NAME],
+      name: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
       categories: (snap.data[CATEGORIES] as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
@@ -64,7 +64,7 @@ class LogEntity extends Equatable {
   Map<String, Object> toDocument() {
     return {
       UID: uid,
-      LOG_NAME: logName,
+      LOG_NAME: name,
       CURRENCY_NAME: currency,
       CATEGORIES: categories.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       SUBCATEGORIES: subcategories.map((key, value) => MapEntry(key, value.toEntity().toJson())),

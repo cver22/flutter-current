@@ -38,12 +38,14 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   CategoryOrSubcategory _categoryOrSubcategory;
   Log _log;
   Settings _settings;
+  String parentCateogryId;
 
   @override
   void initState() {
     _settingsLogEntry = widget?.settingsLogEntry;
     _categoryOrSubcategory = widget?.categoryOrSubcategory;
     _log = widget?.log;
+
     super.initState();
   }
 
@@ -59,6 +61,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
             _settings = Env.store.state.settingsState.settings.value;
             _categories = _settings.defaultCategories;
             _subcategories = _settings.defaultSubcategories;
+
             print('the current state is $state');
             return buildDialog(context);
           });
@@ -70,6 +73,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
             if (_log != null) {
               _categories = _log.categories;
 
+
               if (_categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
                 _subcategories = _settingsLogEntry == SettingsLogEntry.log
                     ? _log.subcategories
@@ -77,6 +81,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
                         .where((element) =>
                             element.parentCategoryId == Env.store.state.singleEntryState.selectedEntry.value.categoryId)
                         .toList();
+                parentCateogryId = _subcategories.first.parentCategoryId;
               }
             } else {
               print('An error has occurred in category_list_dialog at connect state');
@@ -89,9 +94,8 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
 
   Dialog buildDialog(BuildContext context) {
     return Dialog(
-      //TODO move to constants
-      elevation: 5.0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
+      elevation: DIALOG_ELEVATION,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
 
       child: Column(
         mainAxisSize: MainAxisSize.max,
@@ -112,7 +116,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
                 //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
                 style: TextStyle(fontSize: 20.0),
               ),
-              IconButton(
+              parentCateogryId != null && parentCateogryId == NO_CATEGORY ? IconButton(icon: Container(),) : IconButton(
                 icon: Icon(Icons.add),
                 //if no back action is passed, automatically set to pop context
                 onPressed: () => _addNew(),
@@ -140,7 +144,6 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   }
 
   void _onReorder(int oldIndex, int newIndex) {
-
     //TODO, rethink this
 
     List<MySubcategory> _allSubcategories = [];
@@ -271,12 +274,12 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         delete: (id) => {
           setState(() {
             List<MyCategory> categories = _settings.defaultCategories;
-            if (categories.length > 2) {
+            if (id != NO_CATEGORY) {
               categories = categories.where((element) => element.id != category.id).toList();
               Env.store
                   .dispatch(UpdateSettings(settings: Maybe.some(_settings.copyWith(defaultCategories: categories))));
             } else {
-              //TODO error message, must have at least one category
+              print('can\'t delete no category');
             }
           })
         },
@@ -325,11 +328,12 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO default function
         delete: (id) => {
           setState(() {
-            if (_categories.length > 2) {
+            if (id != NO_CATEGORY) {
               _categories = _categories.where((element) => element.id != category.id).toList();
               Env.logsFetcher.updateLog(_log.copyWith(categories: _categories));
             } else {
               //TODO error message, must have at least one category, can't delete defualt, cant delete no category
+              print('can\'t delete no category');
             }
           })
         },
@@ -442,9 +446,13 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO default function
         delete: (id) => {
           setState(() {
-            List<MySubcategory> subcategories = [];
-            subcategories = _log.subcategories.where((element) => element.id != subcategory.id).toList();
-            Env.logsFetcher.updateLog(_log.copyWith(subcategories: subcategories));
+            if (id != NO_SUBCATEGORY) {
+              List<MySubcategory> subcategories = [];
+              subcategories = _log.subcategories.where((element) => element.id != subcategory.id).toList();
+              Env.logsFetcher.updateLog(_log.copyWith(subcategories: subcategories));
+            } else {
+              print('can\'t delete noSubcategory');
+            }
           })
         },
         subcategory: subcategory,
@@ -475,11 +483,15 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         //TODO default function
         delete: (id) => {
           setState(() {
-            List<MySubcategory> subcategories = [];
-            subcategories = _settings.defaultSubcategories.where((element) => element.id != subcategory.id).toList();
-            Env.store.dispatch(
-                UpdateSettings(settings: Maybe.some(_settings.copyWith(defaultSubcategories: subcategories))));
-          })
+            if (id != NO_SUBCATEGORY) {
+              List<MySubcategory> subcategories = [];
+              subcategories = _settings.defaultSubcategories.where((element) => element.id != subcategory.id).toList();
+              Env.store.dispatch(
+                  UpdateSettings(settings: Maybe.some(_settings.copyWith(defaultSubcategories: subcategories))));
+            } else {
+              print('can\'t delete noSubcategory');
+            }
+          }),
         },
         subcategory: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,

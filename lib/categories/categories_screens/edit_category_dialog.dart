@@ -34,67 +34,69 @@ class EditCategoryDialog extends StatefulWidget {
 }
 
 class _EditCategoryDialogState extends State<EditCategoryDialog> {
-  CategoryOrSubcategory _categoryOrSubcategory;
-  MySubcategory _subcategory;
-  MyCategory _category;
-  TextEditingController _controller;
-  String _parentCategoryId;
-  String _name;
-  String _id;
-  List<MyCategory> _categories = [];
-  bool _newCategory;
-  bool _showEmojiGrid;
-  String _emojiChar;
-  MyCategory _selectedCategory;
+  CategoryOrSubcategory categoryOrSubcategory;
+  MySubcategory subcategory;
+  MyCategory category;
+  TextEditingController controller;
+  String parentCategoryId;
+  String name;
+  String id;
+  List<MyCategory> categories = [];
+  bool newCategory;
+  bool showEmojiGrid;
+  String emojiChar;
+  MyCategory selectedCategory;
 
   //TODO prevent NoCategory and NoSubcategory from being edited or deleted
 
   void initState() {
     super.initState();
-    _showEmojiGrid = false;
-    _categories = widget?.categories;
-    _categoryOrSubcategory = widget?.categoryOrSubcategory;
+    showEmojiGrid = false;
+    categories = widget?.categories;
+    categoryOrSubcategory = widget?.categoryOrSubcategory;
+    String exclamationMark = '\u{2757}'; // exclamation_mark
+    String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
 
-    if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
-      _category = widget?.category;
+    if (categoryOrSubcategory == CategoryOrSubcategory.category) {
+      category = widget?.category;
 
-      if (_category.name != null) {
-        _newCategory = false;
-        _emojiChar = _category.emojiChar ?? '\u{2757}'; // exclamation_mark
-        _name = _category?.name;
-        _id = _category?.id;
+      if (category.name != null) {
+        newCategory = false;
+        emojiChar = category.emojiChar ?? exclamationMark;
+        name = category?.name;
+        id = category?.id;
       } else {
-        _newCategory = true;
-        _showEmojiGrid = true;
-        _emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
-        _name = '';
+        newCategory = true;
+        showEmojiGrid = true;
+        emojiChar = heavyDollarSign;
+        name = '';
       }
     } else {
-      _subcategory = widget?.subcategory;
+      subcategory = widget?.subcategory;
 
-      if (_subcategory.name != null) {
-        _newCategory = false;
-        _emojiChar = _subcategory.emojiChar ?? '\u{2757}'; // exclamation_mark
-        _name = _subcategory?.name;
-        _id = _subcategory?.id;
-        _parentCategoryId = _subcategory?.parentCategoryId;
-        if (!_categories.any((element) => element.id == _parentCategoryId)) {
-          _parentCategoryId = _categories.first.id;
+      if (subcategory.name != null) {
+        newCategory = false;
+        emojiChar = subcategory.emojiChar ?? exclamationMark;
+        name = subcategory?.name;
+        id = subcategory?.id;
+        parentCategoryId = subcategory?.parentCategoryId;
+        if (!categories.any((element) => element.id == parentCategoryId)) {
+          parentCategoryId = categories.first.id;
         }
       } else {
-        _newCategory = true;
-        _showEmojiGrid = true;
-        _emojiChar = '\u{1F4B2}'; // heavy_dollar_sign
-        _name = '';
-        _parentCategoryId = widget?.initialParent ?? _categories.first.id;
+        newCategory = true;
+        showEmojiGrid = true;
+        emojiChar = heavyDollarSign;
+        name = '';
+        parentCategoryId = widget?.initialParent ?? categories.first.id;
       }
-      _selectedCategory = _categories?.firstWhere((e) => e.id == _parentCategoryId);
+      selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
     }
 
-    _controller = TextEditingController(text: _name);
-    _controller.addListener(() {
-      final textController = _controller.text;
-      _controller.value = _controller.value.copyWith(
+    controller = TextEditingController(text: name);
+    controller.addListener(() {
+      final textController = controller.text;
+      controller.value = controller.value.copyWith(
         text: textController,
         selection: TextSelection(baseOffset: textController.length, extentOffset: textController.length),
         composing: TextRange.empty,
@@ -104,14 +106,14 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   void dispose() {
-    _controller.dispose();
+    controller.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
-      title: Text(dialogTitle(_categoryOrSubcategory, _newCategory)),
+      title: Text(dialogTitle(categoryOrSubcategory, newCategory)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
@@ -121,30 +123,30 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                 flex: 1,
                 child: RaisedButton(
                   child: Text(
-                    _emojiChar,
+                    emojiChar,
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 22),
                   ),
                   onPressed: () => setState(() {
-                    _showEmojiGrid = true;
+                    showEmojiGrid = true;
                   }),
                 ),
               ),
               SizedBox(width: 20),
               Expanded(
                 flex: 5,
-                child: TextField(controller: _controller, decoration: InputDecoration(border: OutlineInputBorder())),
+                child: id == NO_CATEGORY || id == NO_SUBCATEGORY ? Text(name) : TextField(controller: controller, decoration: InputDecoration(border: OutlineInputBorder())),
               ),
             ],
           ),
-          _selectParentCategory(_selectedCategory),
+          _selectParentCategory(selectedCategory),
           SizedBox(height: 10),
-          _showEmojiGrid
+          showEmojiGrid
               ? Expanded(
                   child: EmojiPicker(
                       emojiSelection: (emoji) => {
                             setState(() {
-                              _emojiChar = emoji;
+                              emojiChar = emoji;
                             })
                           }),
                 )
@@ -154,11 +156,10 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            //TODO implement delete button , safety check the category isn't being used
-            FlatButton(
+            id == NO_CATEGORY || id == NO_SUBCATEGORY? Container() : FlatButton(
                 child: Text('Delete'),
                 onPressed: () => {
-                      widget?.delete(_id),
+                      widget?.delete(id),
                       Get.back(),
                     }),
             FlatButton(
@@ -187,10 +188,10 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               child: Text('Save'),
               onPressed: () => {
                 //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
-                if (_controller.text.length > 0)
+                if (controller.text.length > 0)
                   {
-                    print('${_controller.text}, $_emojiChar, $_parentCategoryId'),
-                    widget?.save(_controller.text, _emojiChar, _parentCategoryId),
+                    print('${controller.text}, $emojiChar, $parentCategoryId'),
+                    widget?.save(controller.text, emojiChar, parentCategoryId),
                     Get.back(),
                   }
                 else
@@ -206,15 +207,15 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   Widget _selectParentCategory(MyCategory initialCategory) {
-    return _categoryOrSubcategory == CategoryOrSubcategory.category
+    return categoryOrSubcategory == CategoryOrSubcategory.category
         ? Container()
         : Row(
             children: [
               Text('Parent Category: '),
               SizedBox(width: 10),
-              DropdownButton<MyCategory>(
+              id == NO_CATEGORY || id == NO_SUBCATEGORY ? Text(initialCategory.name): DropdownButton<MyCategory>(
                   value: initialCategory,
-                  items: _categories.map((MyCategory category) {
+                  items: categories.map((MyCategory category) {
                     return DropdownMenuItem<MyCategory>(
                       value: category,
                       child: Text(
@@ -246,8 +247,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
   void _onParentCategoryChanged(MyCategory category) {
     setState(() {
-      _parentCategoryId = category.id;
-      _selectedCategory = _categories?.firstWhere((e) => e.id == _parentCategoryId);
+      parentCategoryId = category.id;
+      selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
     });
   }
 }

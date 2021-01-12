@@ -71,24 +71,23 @@ class _TagEditorState extends State<TagEditor> {
                   keyboardType: TextInputType.text,
                   inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
                   onChanged: (text) {
-                    if(selectedTag.id == null){
+                    if (selectedTag.id == null) {
                       setState(() {});
                     }
                   },
                 ),
               ),
               IconButton(
-                  icon: selectedTag.id == null
-                      ? Icon(
-                          Icons.add,
-                          color: _controller.text.isEmpty ? Colors.grey : Colors.black,
-                        )
-                      : Icon(Icons.check),
+                  icon: Icon(
+                    Icons.add,
+                    color: _controller.text.isEmpty ? Colors.grey : Colors.black,
+                  ),
                   onPressed: _controller.text.isEmpty
                       ? null
                       : () {
                           //passes the new or updated tag to actions to add or update as required
-                          Env.store.dispatch(AddUpdateTagFromEntryScreen(tag: selectedTag.copyWith(name: _controller.text)));
+                          Env.store
+                              .dispatch(AddUpdateTagFromEntryScreen(tag: selectedTag.copyWith(name: _controller.text)));
                           _controller.clear();
                         }),
             ],

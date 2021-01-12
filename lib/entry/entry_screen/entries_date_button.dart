@@ -2,8 +2,8 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
-
 
 class EntriesDateButton extends StatelessWidget {
   const EntriesDateButton({
@@ -20,31 +20,9 @@ class EntriesDateButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     DateTime entryDate = entry?.dateTime;
-    List months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December'
-    ];
-    String amPm = 'AM';
-    int hour = entryDate?.hour?.toInt();
-    if (hour >= 12) {
-      hour = hour - 12;
-      amPm = 'PM';
-    }
-
-    String date =
-        '${months[entryDate.month - 1]} ${entryDate.day.toString()}, ${entryDate.year.toString()} $hour:${entryDate.minute.toString().padLeft(2, '0')} $amPm';
-
     DateTime newCombinedDateTime;
+
+    String date = _getDateString(entryDate: entryDate);
 
     return RaisedButton(
       elevation: 3.0,
@@ -68,4 +46,15 @@ class EntriesDateButton extends StatelessWidget {
       child: Text(date),
     );
   }
+}
+
+String _getDateString({DateTime entryDate}) {
+  String amPm = 'AM';
+  int hour = entryDate?.hour?.toInt();
+  if (hour >= 12) {
+    hour = hour - 12;
+    amPm = 'PM';
+  }
+
+  return '${MONTHS_LONG[entryDate.month - 1]} ${entryDate.day.toString()}, ${entryDate.year.toString()} $hour:${entryDate.minute.toString().padLeft(2, '0')} $amPm';
 }

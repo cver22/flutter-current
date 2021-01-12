@@ -61,13 +61,12 @@ class LogsScreen extends StatelessWidget {
         });
   }
 
-  Widget buildListView(List<Log> _logs) {
+  Widget buildListView(List<Log> logs) {
     return ListView.builder(
       shrinkWrap: true,
-      itemCount: _logs.length,
+      itemCount: logs.length,
       itemBuilder: (BuildContext context, int index) {
-        final Log _log = _logs[index];
-        return LogListTile(log: _log);
+        return LogListTile(log: logs[index]);
       },
     );
   }

@@ -18,47 +18,31 @@ class Log extends Equatable {
   Log(
       {this.uid,
       this.id,
-      this.logName,
+      this.name,
       this.currency,
       this.categories,
       this.subcategories,
       this.archive = false,
       this.defaultCategory,
-      this.logMembers});
+      this.logMembers,
+      this.thisMonthTotalPaid = 0,
+      this.lastMonthTotalPaid = 0,
+      this.sameMonthLastYearTotalPaid = 0,
+      this.averagePerDay = 0});
 
   final String uid;
   final String id;
-  final String logName;
+  final String name;
   final String currency;
   final bool archive;
   final String defaultCategory;
   final List<MyCategory> categories;
   final List<MySubcategory> subcategories;
   final Map<String, LogMember> logMembers;
-
-  Log copyWith({
-    String uid,
-    String id,
-    String logName,
-    String currency,
-    bool archive,
-    String defaultCategory,
-    List<MyCategory> categories,
-    List<MySubcategory> subcategories,
-    Map<String, LogMember> logMembers,
-  }) {
-    return Log(
-      uid: uid ?? this.uid,
-      id: id ?? this.id,
-      logName: logName ?? this.logName,
-      currency: currency ?? this.currency,
-      archive: archive ?? this.archive,
-      defaultCategory: defaultCategory ?? this.defaultCategory,
-      categories: categories ?? this.categories,
-      subcategories: subcategories ?? this.subcategories,
-      logMembers: logMembers ?? this.logMembers,
-    );
-  }
+  final int thisMonthTotalPaid;
+  final int lastMonthTotalPaid;
+  final int sameMonthLastYearTotalPaid;
+  final int averagePerDay;
 
   //TODO both of these should be move to the actions/logic section
   Log addEditLogCategories({Log log, MyCategory category}) {
@@ -89,29 +73,22 @@ class Log extends Equatable {
   }
 
   @override
-  List<Object> get props => [
-        uid,
-        id,
-        logName,
-        currency,
-        categories,
-        subcategories,
-        archive,
-        defaultCategory,
-        logMembers,
-      ];
+  List<Object> get props =>
+      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, thisMonthTotalPaid, lastMonthTotalPaid, sameMonthLastYearTotalPaid, averagePerDay];
 
   @override
   String toString() {
-    return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $logName, currency: $currency, $CATEGORIES: $categories,  '
-        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers}';
+    return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $name, currency: $currency, $CATEGORIES: $categories,  '
+        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers, '
+        'thisMonthTotalPaid: $thisMonthTotalPaid, lastMonthTotalPaid: $lastMonthTotalPaid, '
+        'sameMonthLastYearTotalPaid: $sameMonthLastYearTotalPaid}';
   }
 
   LogEntity toEntity() {
     return LogEntity(
       uid: uid,
       id: id,
-      logName: logName,
+      name: name,
       currency: currency,
       categories: Map<String, MyCategory>.fromIterable(categories,
           key: (e) => categories.indexOf(e).toString(), value: (e) => e),
@@ -139,7 +116,7 @@ class Log extends Equatable {
     return Log(
       uid: entity.uid,
       id: entity.id,
-      logName: entity.logName,
+      name: entity.name,
       currency: entity.currency,
       categories: entity.categories.entries.map((e) => e.value).toList(),
       subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
@@ -148,4 +125,55 @@ class Log extends Equatable {
       logMembers: logMemberHashMap,
     );
   }
+
+  Log copyWith({
+    String uid,
+    String id,
+    String name,
+    String currency,
+    bool archive,
+    String defaultCategory,
+    List<MyCategory> categories,
+    List<MySubcategory> subcategories,
+    Map<String, LogMember> logMembers,
+    int thisMonthTotalPaid,
+    int lastMonthTotalPaid,
+    int sameMonthLastYearTotalPaid,
+    int averagePerDay,
+  }) {
+    if ((uid == null || identical(uid, this.uid)) &&
+        (id == null || identical(id, this.id)) &&
+        (name == null || identical(name, this.name)) &&
+        (currency == null || identical(currency, this.currency)) &&
+        (archive == null || identical(archive, this.archive)) &&
+        (defaultCategory == null || identical(defaultCategory, this.defaultCategory)) &&
+        (categories == null || identical(categories, this.categories)) &&
+        (subcategories == null || identical(subcategories, this.subcategories)) &&
+        (logMembers == null || identical(logMembers, this.logMembers)) &&
+        (thisMonthTotalPaid == null || identical(thisMonthTotalPaid, this.thisMonthTotalPaid)) &&
+        (lastMonthTotalPaid == null || identical(lastMonthTotalPaid, this.lastMonthTotalPaid)) &&
+        (sameMonthLastYearTotalPaid == null ||
+            identical(sameMonthLastYearTotalPaid, this.sameMonthLastYearTotalPaid)) &&
+        (averagePerDay == null || identical(averagePerDay, this.averagePerDay))) {
+      return this;
+    }
+
+    return new Log(
+      uid: uid ?? this.uid,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      currency: currency ?? this.currency,
+      archive: archive ?? this.archive,
+      defaultCategory: defaultCategory ?? this.defaultCategory,
+      categories: categories ?? this.categories,
+      subcategories: subcategories ?? this.subcategories,
+      logMembers: logMembers ?? this.logMembers,
+      thisMonthTotalPaid: thisMonthTotalPaid ?? this.thisMonthTotalPaid,
+      lastMonthTotalPaid: lastMonthTotalPaid ?? this.lastMonthTotalPaid,
+      sameMonthLastYearTotalPaid: sameMonthLastYearTotalPaid ?? this.sameMonthLastYearTotalPaid,
+      averagePerDay: averagePerDay ?? this.averagePerDay,
+    );
+  }
+
+
 }

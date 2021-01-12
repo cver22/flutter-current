@@ -1,4 +1,3 @@
-
 //Shared constants
 import 'package:flutter/material.dart';
 
@@ -16,13 +15,12 @@ const String SUBCATEGORIES = 'subcategories';
 const String NAME = 'name';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
 const String DEFAULT_CATEGORY = 'defaultCategory';
-enum CategoryOrSubcategory {category, subcategory}
-enum SettingsLogEntry {settings, log, entry}
-enum TagCollectionType {entry, category, log}
+enum CategoryOrSubcategory { category, subcategory }
+enum SettingsLogEntry { settings, log, entry }
+enum TagCollectionType { entry, category, log }
 //TODO implement filtering later
 //enum GroupBy {day, week, month, year}
 //enum FilterBy {none, all, category, subcategory, tag}
-
 
 //Log constants
 const String LOG_COLLECTION = 'logs';
@@ -36,6 +34,10 @@ const String OWNER = 'owner';
 const String WRITER = 'write';
 const String ORDER = 'order';
 
+//Category constants
+const String NO_CATEGORY = 'noCategory';
+const String NO_SUBCATEGORY = 'noSubcategory';
+
 //Entry constants
 const String ENTRY_COLLECTION = 'entries';
 const String LOG_ID = 'logId';
@@ -46,15 +48,12 @@ const String AMOUNT = 'amount';
 const String COMMENT = 'comment';
 const String LOCATION = 'location';
 const String DATE_TIME = 'dateTime';
-enum PaidOrSpent {paid, spent}
-
+enum PaidOrSpent { paid, spent }
 
 //Members constants
 const String AMOUNT_MY_CURRENCY = 'amountInMyCurrency';
 const String PAID = 'paid';
 const String SPENT = 'spent';
-
-
 
 //Tags constants
 const String TAG_COLLECTION = 'tags';
@@ -63,16 +62,45 @@ const String TAG = 'tag';
 const String TAG_LOG_FREQUENCY = 'tagLogFrequency';
 const String TAG_CATEGORY_FREQUENCY = 'tagCategoryFrequency';
 
-
 //Account constants
 const String PHOTO_URL = 'photoUrl';
 const String EMAIL = 'email';
 const String MEMBER_NAME = 'memberName';
 
-
 //UI constants
 const double EMOJI_SIZE = 22.0;
 const double RAISED_BUTTON_ELEVATION = 3.0;
 const double RAISED_BUTTON_CIRCULAR_RADIUS = 5.0;
+const double DIALOG_ELEVATION = 5.0;
+const double DIALOG_BORDER_RADIUS = 10.0;
 
+//DATE constants
+const List MONTHS_LONG = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];
 
+const List MONTHS_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec'
+];

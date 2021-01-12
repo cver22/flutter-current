@@ -4,7 +4,7 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_collection.dart';
-import 'package:expenses/tags/tags_ui/tag_editor.dart';
+import 'package:expenses/tags/tags_ui/tag_creator.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
@@ -56,29 +56,20 @@ class _TagPickerState extends State<TagPicker> {
                   children: [
                     TagCollection(
                       tags: selectedEntryTags,
-                      entry: entry,
-                      entryState: currentSingleEntryState,
                       collectionName: 'Entry Tags',
-                      tagCollectionType: TagCollectionType.entry,
                     ),
                     //currently selected tags
                     categoryRecentTags.isNotEmpty
                         ? TagCollection(
                             tags: categoryRecentTags,
-                            entry: entry,
-                            entryState: currentSingleEntryState,
                             collectionName: 'Category Recent',
-                            tagCollectionType: TagCollectionType.category,
                           )
                         : Container(),
                     //category recent tag collection
                     logRecentTags.isNotEmpty
                         ? TagCollection(
                             tags: logRecentTags,
-                            entry: entry,
-                            entryState: currentSingleEntryState,
                             collectionName: 'Log Recent',
-                            tagCollectionType: TagCollectionType.log,
                           )
                         : Container(),
                     //log recent tag collection

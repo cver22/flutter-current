@@ -46,31 +46,3 @@ class SetTags implements Action {
     });
   }
 }
-
-class AddUpdateTags implements Action {
-  AppState updateState(AppState appState) {
-    List<Tag> tagsToAddToDatabase = [];
-    List<Tag> tagsToUpdateInDatabase = [];
-    Map<String, Tag> addedUpdatedTags = Map.from(appState.singleEntryState.tags);
-    Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
-
-    addedUpdatedTags.forEach((key, tag) {
-      if (!masterTagList.containsKey(key)) {
-        //tag doesn't exist and will be added
-
-        masterTagList.putIfAbsent(key, () => tag);
-        tagsToAddToDatabase.add(tag);
-      } else if (masterTagList.containsKey(key) && masterTagList[key] != tag) {
-        // if the tag exists and has changed, update it
-        masterTagList.update(key, (value) => tag); // update the local tag map
-        tagsToUpdateInDatabase.add(tag); //updates list of tags that will be sent to database
-      }
-    });
-    //TODO, start here, why doesn't the tag get updated in the database
-    //TODO - look at firebase data, something strange happened, there are two levels on information....???
-
-    Env.tagFetcher.batchAddUpdate(addedTags: tagsToAddToDatabase, updatedTags: tagsToUpdateInDatabase);
-
-    return _updateTagState(appState, (tagState) => tagState.copyWith(tags: masterTagList));
-  }
-}

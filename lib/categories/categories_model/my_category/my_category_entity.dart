@@ -10,17 +10,18 @@ class MyCategoryEntity extends Equatable {
   final String id;
   final String name;
   final String emojiChar;
-  final Map<String, int> tagIdFrequency;
+  final String parentCategoryId;
+
 
   const MyCategoryEntity(
-      {this.id, this.name, this.emojiChar, this.tagIdFrequency});
+      {this.id, this.name, this.emojiChar, this.parentCategoryId});
 
   @override
-  List<Object> get props => [id, name, emojiChar, tagIdFrequency];
+  List<Object> get props => [id, name, emojiChar, parentCategoryId];
 
   @override
   String toString() {
-    return 'MyCategoryEntity {id: $id, name: $name, emojiChar $emojiChar tagIdFrequency: $tagIdFrequency}';
+    return 'MyCategoryEntity {id: $id, name: $name, emojiChar $emojiChar parentCategoryId: $parentCategoryId}';
   }
 
   factory MyCategoryEntity.fromJson(Map<String, dynamic> json) =>

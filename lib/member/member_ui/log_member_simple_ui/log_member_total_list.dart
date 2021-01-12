@@ -1,13 +1,12 @@
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/member/member_ui/log_member_detailed_ui/log_member_detailed_list_tile.dart';
-
+import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list_tile.dart';
 
 import 'package:flutter/material.dart';
 
-class LogMemberDetailedList extends StatelessWidget {
+class LogMemberTotalList extends StatelessWidget {
   final List<LogMember> logMembers;
 
-  const LogMemberDetailedList({Key key, this.logMembers}) : super(key: key);
+  const LogMemberTotalList({Key key, this.logMembers}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +16,7 @@ class LogMemberDetailedList extends StatelessWidget {
         itemCount: logMembers.length,
         itemBuilder: (BuildContext context, int index) {
           final LogMember member = logMembers[index];
-          return LogMemberDetailedListTile(name: member.name);
+          return LogMemberTotalListTile(name: member.name);
         },);
   }
 }

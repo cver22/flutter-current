@@ -4,7 +4,7 @@ import 'package:expenses/categories/categories_screens/category_list_dialog.dart
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
-import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_simple_list.dart';
+import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list.dart';
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -41,7 +41,7 @@ class AddEditLogScreen extends StatelessWidget {
           _log = logsState.selectedLog.value;
         }
         _currency = _log?.currency; //TODO change to home currency as default
-        _name = _log?.logName ?? null;
+        _name = _log?.name ?? null;
         return WillPopScope(
           onWillPop: () async => false,
           child: Scaffold(
@@ -111,7 +111,7 @@ class AddEditLogScreen extends StatelessWidget {
                       ),
                 log.uid == null
                     ? Container()
-                    : LogMemberSimpleList(
+                    : LogMemberTotalList(
                         logMembers: log.logMembers.values.toList(),
                       ),
                 SizedBox(height: 16.0),
@@ -132,8 +132,8 @@ class AddEditLogScreen extends StatelessWidget {
   Widget _buildForm({@required Log log}) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
-      initialValue: log.logName,
-      onChanged: (value) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(logName: value))),
+      initialValue: log.name,
+      onChanged: (value) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: value))),
       //TODO validate name cannot be empty
       //TODO need controllers
     );

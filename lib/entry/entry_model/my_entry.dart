@@ -91,7 +91,6 @@ class MyEntry extends Equatable with ChangeNotifier {
   static MyEntry fromEntity(MyEntryEntity entity) {
     //re-order the entry members as per user preference prior to passing to the entry
     LinkedHashMap<String, EntryMember> entryMembersLinkedMap = LinkedHashMap();
-
     for (int i = 0; i < entity.entryMembers.length; i++) {
       entity.entryMembers.forEach((key, value) {
         if (value.order == i) {
@@ -99,6 +98,9 @@ class MyEntry extends Equatable with ChangeNotifier {
         }
       });
     }
+
+    entryMembersLinkedMap = entryMembersLinkedMap ?? entity.entryMembers; // ordering didn't work, pass the list anyway
+
     return MyEntry(
       id: entity.id,
       logId: entity.logId,
