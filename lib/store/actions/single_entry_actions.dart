@@ -37,15 +37,22 @@ class SetNewSelectedEntry implements Action {
   final String logId;
   final String memberId;
 
-  SetNewSelectedEntry({@required this.logId, this.memberId});
+  SetNewSelectedEntry({this.logId, this.memberId});
 
   @override
   AppState updateState(AppState appState) {
+    //TODO can probably abstract away to either settings model or to settings actions, i think model would be better, only update if needed
+
     MyEntry entry = MyEntry();
-    Log log = appState.logsState.logs[logId];
+    //if a log is not passed to the action it is assumed to have been triggered from the FAB and creates and entry for the default log
+    Log log = appState.logsState.logs[logId ?? appState.settingsState.settings.value?.defaultLogId ?? appState.logsState.logs.values.first.id];
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> members = _setMembersList(log: log);
-    members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
+    //sets the selected user as paying unless the action is triggered from the FAB
+    if(logId != null) {
+      members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
+    }
+
 
     entry = entry.copyWith(
         logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);

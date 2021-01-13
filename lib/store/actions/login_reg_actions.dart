@@ -4,7 +4,7 @@ AppState _updateLoginRegState(
   AppState appState,
   LoginRegState update(LoginRegState loginRegState),
 ) {
-  return appState.copyWith(loginState: update(appState.loginRegState));
+  return appState.copyWith(loginRegState: update(appState.loginRegState));
 }
 
 class LoginRegFailure implements Action {

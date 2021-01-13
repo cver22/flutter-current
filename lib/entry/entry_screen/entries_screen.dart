@@ -9,7 +9,6 @@ import 'package:expenses/env.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -23,21 +22,7 @@ class EntriesScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          //TODO can probably abstract away to either settings model or to settings actions, i think model would be better, only update if needed
-          AppState state = Env.store.state;
-          String defaultLogId = state.settingsState.settings.value.defaultLogId;
-          if (defaultLogId == null || !state.logsState.logs.containsKey(defaultLogId)) {
-            //if log is not present, sets the default log to the first on the log list and notifies the user
-            defaultLogId = state.logsState.logs.values.first.id;
-            Env.store.dispatch(UpdateSettings(
-                settings: Maybe.some(state.settingsState.settings.value.copyWith(defaultLogId: defaultLogId))));
-
-            Scaffold.of(context).showSnackBar(SnackBar(
-              content: Text("Log does not exist, default to first log"),
-            ));
-          }
-
-          Env.store.dispatch(SetNewSelectedEntry(logId: defaultLogId));
+          Env.store.dispatch(SetNewSelectedEntry());
           Get.toNamed(ExpenseRoutes.addEditEntries);
         },
         child: Icon(Icons.add),
@@ -47,7 +32,6 @@ class EntriesScreen extends StatelessWidget {
         map: (state) => state.entriesState,
         builder: (entriesState) {
           print('Rendering entries screen');
-          print('Entries State: $entriesState');
 
           if (entriesState.isLoading == true) {
             return ModalLoadingIndicator(loadingMessage: 'Loading your entries...', activate: true);

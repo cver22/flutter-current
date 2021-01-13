@@ -15,20 +15,17 @@ class Log extends Equatable {
   //TODO need default to last or home currency for entries in this log
   //TODO each log to have its own settings
 
-  Log(
-      {this.uid,
-      this.id,
-      this.name,
-      this.currency,
-      this.categories,
-      this.subcategories,
-      this.archive = false,
-      this.defaultCategory,
-      this.logMembers,
-      this.thisMonthTotalPaid = 0,
-      this.lastMonthTotalPaid = 0,
-      this.sameMonthLastYearTotalPaid = 0,
-      this.averagePerDay = 0});
+  Log({
+    this.uid,
+    this.id,
+    this.name,
+    this.currency,
+    this.categories,
+    this.subcategories,
+    this.archive = false,
+    this.defaultCategory,
+    this.logMembers,
+  });
 
   final String uid;
   final String id;
@@ -39,10 +36,6 @@ class Log extends Equatable {
   final List<MyCategory> categories;
   final List<MySubcategory> subcategories;
   final Map<String, LogMember> logMembers;
-  final int thisMonthTotalPaid;
-  final int lastMonthTotalPaid;
-  final int sameMonthLastYearTotalPaid;
-  final int averagePerDay;
 
   //TODO both of these should be move to the actions/logic section
   Log addEditLogCategories({Log log, MyCategory category}) {
@@ -73,15 +66,12 @@ class Log extends Equatable {
   }
 
   @override
-  List<Object> get props =>
-      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, thisMonthTotalPaid, lastMonthTotalPaid, sameMonthLastYearTotalPaid, averagePerDay];
+  List<Object> get props => [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers];
 
   @override
   String toString() {
     return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $name, currency: $currency, $CATEGORIES: $categories,  '
-        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers, '
-        'thisMonthTotalPaid: $thisMonthTotalPaid, lastMonthTotalPaid: $lastMonthTotalPaid, '
-        'sameMonthLastYearTotalPaid: $sameMonthLastYearTotalPaid}';
+        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers}';
   }
 
   LogEntity toEntity() {
@@ -102,7 +92,7 @@ class Log extends Equatable {
   }
 
   static Log fromEntity(LogEntity entity) {
-    //reorder the log members as per the user's preference prior to passing to the log
+//reorder the log members as per the user's preference prior to passing to the log
     LinkedHashMap<String, LogMember> logMemberHashMap = LinkedHashMap();
 
     for (int i = 0; i < entity.logMembers.length; i++) {
@@ -136,10 +126,6 @@ class Log extends Equatable {
     List<MyCategory> categories,
     List<MySubcategory> subcategories,
     Map<String, LogMember> logMembers,
-    int thisMonthTotalPaid,
-    int lastMonthTotalPaid,
-    int sameMonthLastYearTotalPaid,
-    int averagePerDay,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (id == null || identical(id, this.id)) &&
@@ -149,12 +135,7 @@ class Log extends Equatable {
         (defaultCategory == null || identical(defaultCategory, this.defaultCategory)) &&
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null || identical(subcategories, this.subcategories)) &&
-        (logMembers == null || identical(logMembers, this.logMembers)) &&
-        (thisMonthTotalPaid == null || identical(thisMonthTotalPaid, this.thisMonthTotalPaid)) &&
-        (lastMonthTotalPaid == null || identical(lastMonthTotalPaid, this.lastMonthTotalPaid)) &&
-        (sameMonthLastYearTotalPaid == null ||
-            identical(sameMonthLastYearTotalPaid, this.sameMonthLastYearTotalPaid)) &&
-        (averagePerDay == null || identical(averagePerDay, this.averagePerDay))) {
+        (logMembers == null || identical(logMembers, this.logMembers))) {
       return this;
     }
 
@@ -168,12 +149,6 @@ class Log extends Equatable {
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       logMembers: logMembers ?? this.logMembers,
-      thisMonthTotalPaid: thisMonthTotalPaid ?? this.thisMonthTotalPaid,
-      lastMonthTotalPaid: lastMonthTotalPaid ?? this.lastMonthTotalPaid,
-      sameMonthLastYearTotalPaid: sameMonthLastYearTotalPaid ?? this.sameMonthLastYearTotalPaid,
-      averagePerDay: averagePerDay ?? this.averagePerDay,
     );
   }
-
-
 }

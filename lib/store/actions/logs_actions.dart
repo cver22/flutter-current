@@ -1,12 +1,16 @@
 part of 'actions.dart';
 
-AppState _updateLogState(AppState appState,
-    LogsState update(LogsState logsState),) {
+AppState _updateLogState(
+  AppState appState,
+  LogsState update(LogsState logsState),
+) {
   return appState.copyWith(logsState: update(appState.logsState));
 }
 
-AppState _updateLogs(AppState appState,
-    void updateInPlace(Map<String, Log> logs),) {
+AppState _updateLogs(
+  AppState appState,
+  void updateInPlace(Map<String, Log> logs),
+) {
   Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
   updateInPlace(cloneMap);
   return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
@@ -65,7 +69,7 @@ class SetLogs implements Action {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
         logList.map(
-              (log) => MapEntry(log.id, log),
+          (log) => MapEntry(log.id, log),
         ),
       );
     });
@@ -75,7 +79,8 @@ class SetLogs implements Action {
 class AddUpdateLog implements Action {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
-    LogsState logsState = appState.logsState;
+    Map<String, Log> logs = Map.from(appState.logsState.logs);
+   // Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
 
     //check is the log currently exists
     if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
@@ -83,17 +88,18 @@ class AddUpdateLog implements Action {
       Env.logsFetcher.updateLog(addedUpdatedLog);
 
       //if there are new log members, add them to all transaction
-      if (logsState.logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
+      if (logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
         List<MyEntry> entries =
-        appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
+            appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
       }
 
-      logsState.logs.update(
+      logs.update(
         addedUpdatedLog.id,
-            (value) => addedUpdatedLog,
+        (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
+
     } else {
       //create a new log, does not save locally to state as there is no id yet
       Map<String, LogMember> members = {};
@@ -109,11 +115,11 @@ class AddUpdateLog implements Action {
       );
 
       Env.logsFetcher.addLog(addedUpdatedLog);
-
-      //TODO, does not update the state locally for new logs, may want to consider that, lst time I ended up with temporary duplicates
     }
 
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
+
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none(), logs: logs));
   }
 }
 
@@ -138,7 +144,6 @@ class AddMemberToSelectedLog implements Action {
 
 //used for name changes
 class UpdateLogMember implements Action {
-
   @override
   AppState updateState(AppState appState) {
     User user = appState.authState.user.value;
@@ -153,21 +158,6 @@ class UpdateLogMember implements Action {
       logs.update(key, (value) => value.copyWith(logMembers: logMembers)); //updates the log locally
       Env.logsFetcher.updateLog(logs[key]); //update log in the database
     });
-
-    return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
-  }
-}
-
-class UpdateLogTotals implements Action {
-
-  @override
-  AppState updateState(AppState appState) {
-    List<MyEntry> entries = appState.entriesState.entries.values.toList();
-
-    Map<String, Log> logs = Map.from(appState.logsState.logs);
-
-    logs.updateAll((key, log) => _updateLogMemberTotals(entries: List.from(entries), log: log));
-
 
     return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
   }

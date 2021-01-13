@@ -3,6 +3,7 @@ import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/entry/entry_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
+import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
@@ -18,6 +19,7 @@ class AppState extends Equatable {
   final SettingsState settingsState;
   final SingleEntryState singleEntryState;
   final TagState tagState;
+  final LogTotalsState logTotalsState;
 
   AppState(
       {@required this.authState,
@@ -26,27 +28,8 @@ class AppState extends Equatable {
       @required this.entriesState,
       @required this.settingsState,
       @required this.singleEntryState,
-      @required this.tagState});
-
-  AppState copyWith({
-    AuthState authState,
-    LoginRegState loginState,
-    LogsState logsState,
-    EntriesState entriesState,
-    SettingsState settingsState,
-    SingleEntryState singleEntryState,
-    TagState tagState
-  }) {
-    return AppState(
-      authState: authState ?? this.authState,
-      loginRegState: loginState ?? this.loginRegState,
-      logsState: logsState ?? this.logsState,
-      entriesState: entriesState ?? this.entriesState,
-      settingsState: settingsState ?? this.settingsState,
-      singleEntryState: singleEntryState ?? this.singleEntryState,
-      tagState: tagState ?? this.tagState,
-    );
-  }
+      @required this.tagState,
+      @required this.logTotalsState, });
 
   factory AppState.initial() {
     return AppState(
@@ -57,6 +40,7 @@ class AppState extends Equatable {
       settingsState: SettingsState.initial(),
       singleEntryState: SingleEntryState.initial(),
       tagState: TagState.initial(),
+      logTotalsState: LogTotalsState.initial(),
     );
   }
 
@@ -65,5 +49,38 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState, tagState];
+      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState, tagState, logTotalsState];
+
+  AppState copyWith({
+    AuthState authState,
+    LoginRegState loginRegState,
+    LogsState logsState,
+    EntriesState entriesState,
+    SettingsState settingsState,
+    SingleEntryState singleEntryState,
+    TagState tagState,
+    LogTotalsState logTotalsState,
+  }) {
+    if ((authState == null || identical(authState, this.authState)) &&
+        (loginRegState == null || identical(loginRegState, this.loginRegState)) &&
+        (logsState == null || identical(logsState, this.logsState)) &&
+        (entriesState == null || identical(entriesState, this.entriesState)) &&
+        (settingsState == null || identical(settingsState, this.settingsState)) &&
+        (singleEntryState == null || identical(singleEntryState, this.singleEntryState)) &&
+        (tagState == null || identical(tagState, this.tagState)) &&
+        (logTotalsState == null || identical(logTotalsState, this.logTotalsState))) {
+      return this;
+    }
+
+    return new AppState(
+      authState: authState ?? this.authState,
+      loginRegState: loginRegState ?? this.loginRegState,
+      logsState: logsState ?? this.logsState,
+      entriesState: entriesState ?? this.entriesState,
+      settingsState: settingsState ?? this.settingsState,
+      singleEntryState: singleEntryState ?? this.singleEntryState,
+      tagState: tagState ?? this.tagState,
+      logTotalsState: logTotalsState ?? this.logTotalsState,
+    );
+  }
 }

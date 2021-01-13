@@ -1,12 +1,12 @@
 part of 'actions.dart';
 
-AppState _updateEntriesLogsState(
+AppState _updateEntriesLogTotalsState(
   AppState appState,
-  LogsState updateLogState(LogsState logsState),
+  LogTotalsState updateLogTotalsState(LogTotalsState logTotalsState),
   EntriesState update(EntriesState entriesState),
 ) {
   return appState.copyWith(
-    logsState: updateLogState(appState.logsState),
+    logTotalsState: updateLogTotalsState(appState.logTotalsState),
     entriesState: update(appState.entriesState),
   );
 }
@@ -56,13 +56,19 @@ class SetEntries implements Action {
   AppState updateState(AppState appState) {
     Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, Log> logs = Map.from(appState.logsState.logs);
+    Map<String, LogTotal> logTotals = LinkedHashMap();
 
     entries.addEntries(
       entryList.map((entry) => MapEntry(entry.id, entry)),
     );
 
-    logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
+    logs.forEach((key, log) {
+      logTotals.putIfAbsent(key, () => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
+    });
 
-    return _updateEntriesLogsState(appState, (logsState) => logsState.copyWith(logs: logs), (entriesState) => entriesState.copyWith(entries: entries));
+    print('logTotals: $logTotals');
+
+
+    return _updateEntriesLogTotalsState(appState, (logTotalsState) => logTotalsState.copyWith(logTotals: logTotals), (entriesState) => entriesState.copyWith(entries: entries));
   }
 }

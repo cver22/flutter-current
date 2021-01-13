@@ -4,6 +4,7 @@ import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
+import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 import 'package:expenses/log/log_ui/log_list_tile.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -17,8 +18,12 @@ class LogsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<Log> _logs = [];
-    return ConnectState<LogsState>(
+    List<Log> logs = [];
+    return ConnectState<LogTotalsState>(
+        where: notIdentical,
+        map: (state) => state.logTotalsState,
+        builder: (logTotalsState) {
+          return ConnectState<LogsState>(
         where: notIdentical,
         map: (state) => state.logsState,
         builder: (logsState) {
@@ -29,7 +34,7 @@ class LogsScreen extends StatelessWidget {
           } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
             //TODO create archive bool to show logs that have been archived and not visible
             //TODO can I move this logic to the state object and render this widget stateless?
-            _logs = logsState.logs.entries.map((e) => e.value).toList();
+            logs = logsState.logs.entries.map((e) => e.value).toList();
 
             return SingleChildScrollView(
               scrollDirection: Axis.vertical,
@@ -37,7 +42,7 @@ class LogsScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
-                  buildListView(_logs),
+                  buildListView(logs: logs, logTotalsState: logTotalsState),
                   SizedBox(height: 20.0),
                   addLogButton(context: context, logsState: logsState),
                 ],
@@ -58,15 +63,16 @@ class LogsScreen extends StatelessWidget {
             //TODO pass meaningful error message
             return ErrorContent();
           }
-        });
+        }); });
   }
 
-  Widget buildListView(List<Log> logs) {
+  Widget buildListView({@required List<Log> logs, @required LogTotalsState logTotalsState}) {
     return ListView.builder(
       shrinkWrap: true,
       itemCount: logs.length,
       itemBuilder: (BuildContext context, int index) {
-        return LogListTile(log: logs[index]);
+        Log log = logs[index];
+        return LogListTile(log: log, logTotal: logTotalsState.logTotals[log.id]);
       },
     );
   }

@@ -28,6 +28,7 @@
       //TODO give each person an emoji Icon option
       //TODO entries safety check before loading if their category has been deleted, show no category
       //TODO remove subcategory class and utilize only the category class, parentCategory either null or valid
+      //TODO can totals for the logs be handled in a more efficient way?
 
 
 
@@ -36,7 +37,9 @@
 
 
     //TODO START HERE
-
+//need to rethink how and when I calculate the totals, maybe there should be an action triggered everytime the logscreen builds
+      //the action checks to see if the values are the same, if they are, it returns the current log state which due to being identical, would not cause a rebuild
+      //i can test this with a dummy action that just returns the same logState, if it rebuilds its and issue, if it doesn't this should work
 
 
 
@@ -47,4 +50,4 @@
 
 
       //flutter pub run build_runner build
-      //flutter packages pub run build_runner build --delete-conflicting-outputs
+      //flutter packages pub run build_runner build --delete-conflicting-import 'package:qr_flutter/qr_flutter.dart';

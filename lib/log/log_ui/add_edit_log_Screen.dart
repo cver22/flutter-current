@@ -43,7 +43,10 @@ class AddEditLogScreen extends StatelessWidget {
         _currency = _log?.currency; //TODO change to home currency as default
         _name = _log?.name ?? null;
         return WillPopScope(
-          onWillPop: () async => false,
+          onWillPop: () async {
+            Get.back();
+          return true;
+        },
           child: Scaffold(
             appBar: AppBar(
               title: Text('Log'),
@@ -98,29 +101,12 @@ class AddEditLogScreen extends StatelessWidget {
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
                 log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
-                log.uid == null
-                    ? Container()
-                    : RaisedButton(
-                        elevation: RAISED_BUTTON_ELEVATION,
-                        shape:
-                            RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
-                        child: Text('Add new log member'),
-                        onPressed: () {
-                          Get.to(QRReader());
-                        },
-                      ),
-                log.uid == null
-                    ? Container()
-                    : LogMemberTotalList(
-                        logMembers: log.logMembers.values.toList(),
-                      ),
+                _buildLogMemberList(log: log),
+                _buildAddMemberButton(log: log),
                 SizedBox(height: 16.0),
-                log.uid == null
-                    ? MyCurrencyPicker(
-                        currency: currency,
-                        returnCurrency: (currency) =>
-                            Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
-                    : Text('Currency: $currency'),
+                //_buildMakeDefaultButton(log: log),
+                SizedBox(height: 16.0),
+                _buildCurrencyPicker(log: log, currency: currency),
               ],
             ),
           ),
@@ -175,11 +161,6 @@ class AddEditLogScreen extends StatelessWidget {
         : CategoryButton(
             label: 'Edit Log Subcategories',
             onPressed: () => {
-              /*Get.dialog(
-                SubcategoryListDialog(
-                  backChevron: () => Navigator.of(context).pop(),
-                ),
-              )*/
               showDialog(
                 context: context,
                 builder: (_) => CategoryListDialog(
@@ -191,5 +172,54 @@ class AddEditLogScreen extends StatelessWidget {
             },
             category: null, // do not pass a category, maintains label
           );
+  }
+
+  Widget _buildLogMemberList({@required Log log}) {
+    return log.uid == null ? Container() : LogMemberTotalList(log: log);
+  }
+
+  Widget _buildAddMemberButton({@required Log log}) {
+    return log.uid == null
+        ? Container()
+        : RaisedButton(
+            elevation: RAISED_BUTTON_ELEVATION,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+            child: Text('Add new log member'),
+            onPressed: () {
+              Get.to(QRReader());
+            },
+          );
+  }
+
+
+  //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
+  /*Widget _buildMakeDefaultButton({@required Log log}) {
+    if (log?.id == null) {
+      return Container();
+    }
+
+    bool isDefault = log.id == Env.store.state.settingsState.settings.value.defaultLogId ? true : false;
+
+    return RaisedButton(
+      elevation: RAISED_BUTTON_ELEVATION,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+      child: Text(
+        isDefault ? 'Default Log' : 'Make Log Default',
+        //style: TextStyle(color: isDefault ? Colors.grey : Colors.black),
+      ),
+      onPressed: isDefault
+          ? null
+          : () {
+              Env.store.dispatch(ChangeDefaultLog(log: log));
+            },
+    );
+  }*/
+
+  Widget _buildCurrencyPicker({@required Log log, @required String currency}) {
+    return log.uid == null
+        ? MyCurrencyPicker(
+            currency: currency,
+            returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
+        : Text('Currency: $currency');
   }
 }

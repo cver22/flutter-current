@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/auth_user/models/user.dart';
@@ -8,11 +10,11 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
+import 'package:expenses/log/log_totals_model/log_total.dart';
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/member/member_model/member.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
@@ -24,6 +26,7 @@ import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
+import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 
 part 'auth_actions.dart';
 
@@ -221,7 +224,7 @@ class AddUpdateSingleEntryAndTags implements Action {
   }
 }
 
-Log _updateLogMemberTotals({@required List<MyEntry> entries, @required Log log}) {
+LogTotal _updateLogMemberTotals({@required List<MyEntry> entries, @required Log log}) {
   Map<String, LogMember> logMembers = Map.from(log.logMembers);
   DateTime now = DateTime.now();
 
@@ -235,8 +238,6 @@ Log _updateLogMemberTotals({@required List<MyEntry> entries, @required Log log})
   int lastMonthTotalPaid = 0;
   int sameMonthLastYearTotalPaid = 0;
   int daysSoFar = now.day > 0 ? now.day : 1;
-
-
 
   entries.removeWhere((entry) => entry.logId != log.id);
 
@@ -270,7 +271,7 @@ Log _updateLogMemberTotals({@required List<MyEntry> entries, @required Log log})
     }
   });
 
-  return log.copyWith(
+  return LogTotal(
       logMembers: logMembers,
       thisMonthTotalPaid: thisMonthTotalPaid,
       lastMonthTotalPaid: lastMonthTotalPaid,

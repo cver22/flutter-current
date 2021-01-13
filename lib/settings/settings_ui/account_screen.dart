@@ -28,7 +28,7 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     user = Env.store.state.authState.user.value;
-    _displayNameController.value = TextEditingValue(text: user.displayName) ?? '';
+    _displayNameController.value = TextEditingValue(text: user.displayName ?? '') ;
     super.initState();
   }
 
