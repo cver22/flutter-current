@@ -12,10 +12,10 @@ class LogTotal extends Equatable {
 
   LogTotal({
     this.logMembers,
-    this.thisMonthTotalPaid,
-    this.lastMonthTotalPaid,
-    this.sameMonthLastYearTotalPaid,
-    this.averagePerDay,
+    this.thisMonthTotalPaid = 0,
+    this.lastMonthTotalPaid = 0,
+    this.sameMonthLastYearTotalPaid = 0,
+    this.averagePerDay = 0,
   });
 
   @override

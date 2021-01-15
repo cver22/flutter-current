@@ -6,7 +6,6 @@ import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:expenses/store/actions/actions.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key key}) : super(key: key);
@@ -18,14 +17,10 @@ class HomeScreen extends StatelessWidget {
       map: (state) => state.authState,
       builder: (authState) {
         print('Rendering Home Screen');
-        print('logged in user ${authState.user.toString()}');
-        print('is loading ${authState.isLoading}');
 
+        //Prevents calling in the current build cycle
         if (authState.user.isSome && authState.isLoading == false) {
-          //Prevents calling in the current build cycle
-
           Env.settingsFetcher.readResetAppSettings(resetSettings: false);
-          print('current settings ${Env.store.state.settingsState.settings}');
           Env.logsFetcher.loadLogs();
           Env.tagFetcher.loadTags();
           Env.entriesFetcher.loadEntries();

@@ -1,9 +1,10 @@
-import 'package:expenses/entry/entry_screen/entries_screen.dart';
+import 'package:expenses/entries/entries_screen/entries_screen.dart';
 import 'package:expenses/log/log_ui/logs_screen.dart';
 import 'package:expenses/settings/settings_ui/app_drawer.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:get/get.dart';
 
 class AppScreen extends StatefulWidget {
   const AppScreen({Key key}) : super(key: key);
@@ -22,7 +23,14 @@ class _AppScreenState extends State<AppScreen> {
         child: Scaffold(
           drawer: AppDrawer(),
           appBar: AppBar(
-            actions: <Widget>[],
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(Icons.filter_alt_outlined),
+                onPressed: () => {
+                  //Get.dialog(widget), //TODO navigate to filter widget dialog
+                }, //TODO can this filter button be changed depending on which tab we're on
+              )
+            ],
             bottom: TabBar(
               tabs: [
                 Tab(icon: Icon(Icons.account_balance_wallet)),
@@ -34,14 +42,14 @@ class _AppScreenState extends State<AppScreen> {
           body: TabBarView(
             children: [
               LogsScreen(key: ExpenseKeys.logsScreen),
-              EntriesScreen(key: ExpenseKeys.entriesScreen), //TODO should lead to empty content if user has not yet started a log
+              EntriesScreen(key: ExpenseKeys.entriesScreen),
+              //TODO should lead to empty content if user has not yet started a log
               Icon(Icons.assessment),
             ],
           ),
         ),
         //TODO this is an Android exit only, need iOS which is exit(0) here and in login_register_screen.dart
-        onWillPop: () =>
-            SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+        onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
       ),
     );
   }

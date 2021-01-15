@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
-import 'package:expenses/entry/entry_model/entries_state.dart';
+import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/log/log_totals_model/log_totals_state.dart';

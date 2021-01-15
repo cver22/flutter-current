@@ -1,5 +1,5 @@
+import 'package:expenses/entries/entries_screen/entry_list_tile.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
-import 'package:expenses/entry/entry_screen/entry_list_tile.dart';
 import 'package:flutter/material.dart';
 
 class EntriesScreenBuildListView extends StatelessWidget {
@@ -20,7 +20,6 @@ class EntriesScreenBuildListView extends StatelessWidget {
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];
-          //TODO build filtered view options
           return EntryListTile(entry: _entry);
         });
   }

@@ -15,12 +15,10 @@ class MyEntry extends Equatable with ChangeNotifier {
     this.categoryId,
     this.subcategoryId,
     this.amount,
-    this.previousAmount,
     this.comment,
     this.dateTime,
     this.tagIDs,
     this.entryMembers = const {},
-    this.previousEntryMembers = const {},
   });
 
   final String id;
@@ -29,12 +27,10 @@ class MyEntry extends Equatable with ChangeNotifier {
   final String categoryId;
   final String subcategoryId;
   final int amount;
-  final int previousAmount; //used for changing the total on the log
   final String comment;
   final DateTime dateTime;
   final List<String> tagIDs;
   final Map<String, EntryMember> entryMembers;
-  final Map<String, EntryMember> previousEntryMembers; //used for changing individual totals on the log
 
   MyEntry changeCategories({
     String category,
@@ -52,12 +48,10 @@ class MyEntry extends Equatable with ChangeNotifier {
         categoryId: category,
         subcategoryId: subcategory,
         amount: this.amount,
-        previousAmount: this.previousAmount,
         comment: this.comment,
         dateTime: this.dateTime,
         tagIDs: this.tagIDs,
-        entryMembers: this.entryMembers,
-        previousEntryMembers: this.previousEntryMembers);
+        entryMembers: this.entryMembers);
   }
 
   @override
@@ -68,8 +62,8 @@ class MyEntry extends Equatable with ChangeNotifier {
   String toString() {
     return 'Entry {id: $id, $LOG_ID: $logId, '
         'currency: $currency, $CATEGORY: $categoryId, '
-        '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, previousAmount: $previousAmount, $COMMENT: $comment, '
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, previousEntryMembers: $previousEntryMembers}';
+        '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, $COMMENT: $comment, '
+        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers}';
   }
 
   MyEntryEntity toEntity() {
@@ -122,12 +116,10 @@ class MyEntry extends Equatable with ChangeNotifier {
     String categoryId,
     String subcategoryId,
     int amount,
-    int previousAmount,
     String comment,
     DateTime dateTime,
     List<String> tagIDs,
     Map<String, EntryMember> entryMembers,
-    Map<String, EntryMember> previousEntryMembers,
   }) {
     if ((id == null || identical(id, this.id)) &&
         (logId == null || identical(logId, this.logId)) &&
@@ -135,12 +127,10 @@ class MyEntry extends Equatable with ChangeNotifier {
         (categoryId == null || identical(categoryId, this.categoryId)) &&
         (subcategoryId == null || identical(subcategoryId, this.subcategoryId)) &&
         (amount == null || identical(amount, this.amount)) &&
-        (previousAmount == null || identical(previousAmount, this.previousAmount)) &&
         (comment == null || identical(comment, this.comment)) &&
         (dateTime == null || identical(dateTime, this.dateTime)) &&
         (tagIDs == null || identical(tagIDs, this.tagIDs)) &&
-        (entryMembers == null || identical(entryMembers, this.entryMembers)) &&
-        (previousEntryMembers == null || identical(previousEntryMembers, this.previousEntryMembers))) {
+        (entryMembers == null || identical(entryMembers, this.entryMembers))) {
       return this;
     }
 
@@ -151,12 +141,10 @@ class MyEntry extends Equatable with ChangeNotifier {
       categoryId: categoryId ?? this.categoryId,
       subcategoryId: subcategoryId ?? this.subcategoryId,
       amount: amount ?? this.amount,
-      previousAmount: previousAmount ?? this.previousAmount,
       comment: comment ?? this.comment,
       dateTime: dateTime ?? this.dateTime,
       tagIDs: tagIDs ?? this.tagIDs,
       entryMembers: entryMembers ?? this.entryMembers,
-      previousEntryMembers: previousEntryMembers ?? this.previousEntryMembers,
     );
   }
 }

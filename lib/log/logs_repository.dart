@@ -4,7 +4,6 @@ import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/log_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/firebase_storage_calculator.dart';
 
 abstract class LogsRepository {
   Future<void> addNewLog(Log log);
@@ -24,7 +23,6 @@ class FirebaseLogsRepository implements LogsRepository {
     return logsCollection.document(log.id).setData(log.toEntity().toDocument());
   }
 
-  //TODO need to filter by UID for groups
   @override
   Stream<List<Log>> loadLogs(User user) {
     return logsCollection.where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {

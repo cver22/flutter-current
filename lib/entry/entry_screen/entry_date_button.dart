@@ -5,8 +5,8 @@ import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
-class EntriesDateButton extends StatelessWidget {
-  const EntriesDateButton({
+class EntryDateButton extends StatelessWidget {
+  const EntryDateButton({
     Key key,
     @required this.context,
     @required this.log,

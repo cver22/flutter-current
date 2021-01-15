@@ -1,7 +1,7 @@
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
-import 'package:expenses/entry/entry_screen/entries_date_button.dart';
+import 'package:expenses/entry/entry_screen/entry_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
@@ -20,8 +20,8 @@ import 'package:get/get.dart';
 
 //TODO change back to stateful widget to utilize focus node or add to single entry state?
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
-class AddEditEntriesScreen extends StatelessWidget {
-  AddEditEntriesScreen({Key key}) : super(key: key);
+class AddEditEntryScreen extends StatelessWidget {
+  AddEditEntryScreen({Key key}) : super(key: key);
 
   void _submit({@required MyEntry entry}) {
     Env.store.dispatch(AddUpdateSingleEntryAndTags(entry: entry));
@@ -75,19 +75,7 @@ class AddEditEntriesScreen extends StatelessWidget {
                           ? () => {_submit(entry: entry)}
                           : null,
                     ),
-                    entry?.id == null
-                        ? Container()
-                        : PopupMenuButton<String>(
-                            onSelected: handleClick,
-                            itemBuilder: (BuildContext context) {
-                              return {'Delete Entry'}.map((String choice) {
-                                return PopupMenuItem<String>(
-                                  value: choice,
-                                  child: Text(choice),
-                                );
-                              }).toList();
-                            },
-                          ),
+                    _buildDeleteEntryButton(entry: entry),
                   ],
                 );
   }
@@ -137,7 +125,7 @@ class AddEditEntriesScreen extends StatelessWidget {
         SizedBox(height: 10),
         EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log),
         SizedBox(height: 10.0),
-        EntriesDateButton(context: context, log: log, entry: entry),
+        EntryDateButton(context: context, log: log, entry: entry),
         SizedBox(height: 10.0),
         entry?.logId == null ? Container() : _categoryButton(log: log, entry: entry),
         entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
@@ -224,6 +212,23 @@ class AddEditEntriesScreen extends StatelessWidget {
       }
     }
     return canSubmit;
+  }
+
+  Widget _buildDeleteEntryButton({MyEntry entry}) {
+
+    return entry?.id == null
+        ? Container()
+        : PopupMenuButton<String>(
+      onSelected: handleClick,
+      itemBuilder: (BuildContext context) {
+        return {'Delete Entry'}.map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
+          );
+        }).toList();
+      },
+    );
   }
 
 //currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues

@@ -29,7 +29,7 @@ class EntryListTile extends StatelessWidget {
         ),
         title: entry?.comment != null ? Text(entry.comment) : Text(''),
         subtitle: Text(categoriesSubcategoriesTags(log)),
-        trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'), //TODO utilize money package here
+        trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
         onTap: () => {
           Env.store.dispatch(SelectEntry(entryId: entry.id)),
           Get.toNamed(ExpenseRoutes.addEditEntries),

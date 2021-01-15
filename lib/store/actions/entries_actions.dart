@@ -51,7 +51,6 @@ class SetEntries implements Action {
 
   SetEntries({this.entryList});
 
-  //Only shows logs that have not been "deleted" using active filter
   @override
   AppState updateState(AppState appState) {
     Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
@@ -66,9 +65,7 @@ class SetEntries implements Action {
       logTotals.putIfAbsent(key, () => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
     });
 
-    print('logTotals: $logTotals');
-
-
-    return _updateEntriesLogTotalsState(appState, (logTotalsState) => logTotalsState.copyWith(logTotals: logTotals), (entriesState) => entriesState.copyWith(entries: entries));
+    return _updateEntriesLogTotalsState(appState, (logTotalsState) => logTotalsState.copyWith(logTotals: logTotals),
+        (entriesState) => entriesState.copyWith(entries: entries));
   }
 }
