@@ -35,7 +35,6 @@ class EntriesScreen extends StatelessWidget {
         map: (state) => state.entriesState,
         builder: (entriesState) {
           print('Rendering entries screen');
-          Env.store.dispatch(ClearSingleEntryState());
 
           if (entriesState.isLoading == true) {
             return ModalLoadingIndicator(loadingMessage: 'Loading your entries...', activate: true);

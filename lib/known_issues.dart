@@ -26,7 +26,8 @@
       //TODO entries safety check before loading if their category has been deleted, show no category
       //TODO remove subcategory class and utilize only the category class, parentCategory either null or valid
       //TODO log order for log screen
-      //TODO clicking in a focusNode value for a member should tick its checkbox
+      //TODO clicking in a focusNode value for a member should tick its
+      //TODO updating parent category of a selected subcategory should change the selected category and affect increment and decrement
 
 
 
@@ -35,6 +36,7 @@
 
 
     //TODO START HERE
+      //fix how to edit a subcategory, probably just a matter of modifying the selected entry to reflect the changes in the log?
 //build filter dialog
       //build function to return filtered list back to the widget
 

@@ -1,5 +1,4 @@
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ class EditCategoryDialog extends StatefulWidget {
   final Function(String) delete;
   final Function(MyCategory) setDefault;
   final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
-  final MySubcategory subcategory; //TODO needs to handle both categories and subcategories separately
   final MyCategory category;
   final String initialParent;
 
@@ -23,7 +21,6 @@ class EditCategoryDialog extends StatefulWidget {
     this.setDefault,
     @required this.categoryOrSubcategory,
     @required this.save,
-    this.subcategory,
     this.category,
     this.categories,
     this.initialParent,
@@ -35,7 +32,7 @@ class EditCategoryDialog extends StatefulWidget {
 
 class _EditCategoryDialogState extends State<EditCategoryDialog> {
   CategoryOrSubcategory categoryOrSubcategory;
-  MySubcategory subcategory;
+  MyCategory subcategory;
   MyCategory category;
   TextEditingController controller;
   String parentCategoryId;
@@ -56,40 +53,26 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     categoryOrSubcategory = widget?.categoryOrSubcategory;
     String exclamationMark = '\u{2757}'; // exclamation_mark
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
-
-    if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-      category = widget?.category;
-
-      if (category.name != null) {
-        newCategory = false;
-        emojiChar = category.emojiChar ?? exclamationMark;
-        name = category?.name;
-        id = category?.id;
-      } else {
-        newCategory = true;
-        showEmojiGrid = true;
-        emojiChar = heavyDollarSign;
-        name = '';
-      }
+    category = widget?.category;
+    if (category.name != null) {
+      newCategory = false;
+      emojiChar = category.emojiChar ?? exclamationMark;
+      name = category?.name;
+      id = category?.id;
     } else {
-      subcategory = widget?.subcategory;
+      newCategory = true;
+      showEmojiGrid = true;
+      emojiChar = heavyDollarSign;
+      name = '';
+    }
 
-      if (subcategory.name != null) {
-        newCategory = false;
-        emojiChar = subcategory.emojiChar ?? exclamationMark;
-        name = subcategory?.name;
-        id = subcategory?.id;
-        parentCategoryId = subcategory?.parentCategoryId;
-        if (!categories.any((element) => element.id == parentCategoryId)) {
-          parentCategoryId = categories.first.id;
-        }
+    if (categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
+      if (newCategory) {
+        parentCategoryId = widget?.initialParent ?? NO_CATEGORY;
       } else {
-        newCategory = true;
-        showEmojiGrid = true;
-        emojiChar = heavyDollarSign;
-        name = '';
-        parentCategoryId = widget?.initialParent ?? categories.first.id;
+        parentCategoryId = category?.parentCategoryId ?? NO_CATEGORY;
       }
+
       selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
     }
 
@@ -102,7 +85,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         composing: TextRange.empty,
       );
     });
-
   }
 
   void dispose() {
@@ -135,7 +117,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               SizedBox(width: 20),
               Expanded(
                 flex: 5,
-                child: id == NO_CATEGORY || id == NO_SUBCATEGORY ? Text(name) : TextField(controller: controller, decoration: InputDecoration(border: OutlineInputBorder())),
+                child: id == NO_CATEGORY || id == NO_SUBCATEGORY
+                    ? Text(name)
+                    : TextField(controller: controller, decoration: InputDecoration(border: OutlineInputBorder())),
               ),
             ],
           ),
@@ -156,12 +140,14 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            id == NO_CATEGORY || id == NO_SUBCATEGORY? Container() : FlatButton(
-                child: Text('Delete'),
-                onPressed: () => {
-                      widget?.delete(id),
-                      Get.back(),
-                    }),
+            id == NO_CATEGORY || id == NO_SUBCATEGORY
+                ? Container()
+                : FlatButton(
+                    child: Text('Delete'),
+                    onPressed: () => {
+                          widget?.delete(id),
+                          Get.back(),
+                        }),
             FlatButton(
               child: Text('Cancel'),
               onPressed: () => {
@@ -213,35 +199,31 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             children: [
               Text('Parent Category: '),
               SizedBox(width: 10),
-              id == NO_CATEGORY || id == NO_SUBCATEGORY ? Text(initialCategory.name): DropdownButton<MyCategory>(
-                  value: initialCategory,
-                  items: categories.map((MyCategory category) {
-                    return DropdownMenuItem<MyCategory>(
-                      value: category,
-                      child: Text(
-                        category.name,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: _onParentCategoryChanged),
+              id == NO_CATEGORY || id == NO_SUBCATEGORY
+                  ? Text(initialCategory.name)
+                  : DropdownButton<MyCategory>(
+                      value: initialCategory,
+                      items: categories.map((MyCategory category) {
+                        return DropdownMenuItem<MyCategory>(
+                          value: category,
+                          child: Text(
+                            category.name,
+                            style: TextStyle(color: Colors.black),
+                          ),
+                        );
+                      }).toList(),
+                      onChanged: _onParentCategoryChanged),
             ],
           );
   }
 
   String dialogTitle(CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
     if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
-      if (newCategory) {
-        return 'New Category';
-      } else {
-        return 'Edit Category';
-      }
+      if (newCategory) return 'New Category';
+      return 'Edit Category';
     } else {
-      if (newCategory) {
-        return 'New Subcategory';
-      } else {
-        return 'Edit Subcategory';
-      }
+      if (newCategory) return 'New Subcategory';
+      return 'Edit Subcategory';
     }
   }
 

@@ -1,8 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
 import 'package:expenses/settings/settings_model/settings_entity.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
@@ -18,14 +16,14 @@ class Settings extends Equatable {
 
   final String homeCurrency;
   final List<MyCategory> defaultCategories;
-  final List<MySubcategory> defaultSubcategories;
+  final List<MyCategory> defaultSubcategories;
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
 
   Settings copyWith(
       {String homeCurrency,
       List<MyCategory> defaultCategories,
-      List<MySubcategory> defaultSubcategories,
+      List<MyCategory> defaultSubcategories,
       String defaultLogId,
       String autoInsertDecimalPoint}) {
     return Settings(
@@ -49,8 +47,8 @@ class Settings extends Equatable {
     return settings.copyWith(defaultCategories: categories);
   }
 
-  Settings editSettingSubcategories({Settings settings, MySubcategory subcategory}) {
-    List<MySubcategory> subcategories = settings.defaultSubcategories;
+  Settings editSettingSubcategories({Settings settings, MyCategory subcategory}) {
+    List<MyCategory> subcategories = settings.defaultSubcategories;
 
     if (subcategory.id != null) {
       subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
@@ -75,7 +73,7 @@ class Settings extends Equatable {
       defaultCategoryEntities.add(e.toEntity());
       return true;
     });
-    List<MySubcategoryEntity> defaultSubcategoryEntities = [];
+    List<MyCategoryEntity> defaultSubcategoryEntities = [];
     defaultSubcategories.every((e) {
       defaultSubcategoryEntities.add(e.toEntity());
       return true;
@@ -98,9 +96,9 @@ class Settings extends Equatable {
       return true;
     });
 
-    List<MySubcategory> returnedDefaultSubcategories = [];
+    List<MyCategory> returnedDefaultSubcategories = [];
     entity.defaultSubcategoryEntities.every((e) {
-      returnedDefaultSubcategories.add(MySubcategory.fromEntity(e));
+      returnedDefaultSubcategories.add(MyCategory.fromEntity(e));
       return true;
     });
 

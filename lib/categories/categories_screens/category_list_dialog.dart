@@ -1,5 +1,4 @@
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
 import 'package:expenses/env.dart';
@@ -32,8 +31,8 @@ class CategoryListDialog extends StatefulWidget {
 
 class _CategoryListDialogState extends State<CategoryListDialog> {
   List<MyCategory> _categories = [];
-  List<MySubcategory> _subcategories = [];
-  List<MySubcategory> _organizedSubcategories = [];
+  List<MyCategory> _subcategories = [];
+  List<MyCategory> _organizedSubcategories = [];
   SettingsLogEntry _settingsLogEntry;
   CategoryOrSubcategory _categoryOrSubcategory;
   Log _log;
@@ -116,7 +115,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
                 //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
                 style: TextStyle(fontSize: 20.0),
               ),
-              parentCateogryId != null && parentCateogryId == NO_CATEGORY ? IconButton(icon: Container(),) : IconButton(
+              parentCateogryId != null && parentCateogryId == NO_CATEGORY ? IconButton(icon: Container(), onPressed: null,) : IconButton(
                 icon: Icon(Icons.add),
                 //if no back action is passed, automatically set to pop context
                 onPressed: () => _addNew(),
@@ -146,7 +145,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
   void _onReorder(int oldIndex, int newIndex) {
     //TODO, rethink this
 
-    List<MySubcategory> _allSubcategories = [];
+    List<MyCategory> _allSubcategories = [];
     bool reOrdered = false;
     if (newIndex > oldIndex) {
       newIndex -= 1;
@@ -171,8 +170,8 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         reOrdered = true;
       } else {
         //reorder entry subcategories
-        MySubcategory subcategoryBefore;
-        MySubcategory subcategoryAfter;
+        MyCategory subcategoryBefore;
+        MyCategory subcategoryAfter;
         if (newIndex == 0 && _organizedSubcategories.length > 1) {
           subcategoryAfter = _organizedSubcategories[newIndex + 1];
           newIndex = _allSubcategories.indexOf(subcategoryAfter) - 1;
@@ -187,7 +186,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         oldIndex = _allSubcategories.indexOf(_organizedSubcategories[oldIndex]);
         print('modified oldIndex $oldIndex and modified newIndex $newIndex');
 
-        MySubcategory subcategory = _allSubcategories.removeAt(oldIndex);
+        MyCategory subcategory = _allSubcategories.removeAt(oldIndex);
         _allSubcategories.insert(newIndex, subcategory);
       }
     } else if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
@@ -384,7 +383,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     if (_settingsLogEntry == SettingsLogEntry.settings || _settingsLogEntry == SettingsLogEntry.log) {
       for (int i = 0; i < _categories.length; i++) {
         //Adds title to setting subcategory list
-        _organizedSubcategories.add(MySubcategory(
+        _organizedSubcategories.add(MyCategory(
             parentCategoryId: null,
             name: _categories[i].name,
             emojiChar: _categories[i].emojiChar,
@@ -402,7 +401,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
 
     return _organizedSubcategories
         .map(
-          (MySubcategory subcategory) => CategoryListTile(
+          (MyCategory subcategory) => CategoryListTile(
             key: Key(subcategory.id),
             category: subcategory,
             onTap: subcategory.parentCategoryId == null ? null : () => _switchSubOnTap(subcategory),
@@ -413,7 +412,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         .toList();
   }
 
-  Future<dynamic> _switchSubOnTap(MySubcategory subcategory) {
+  Future<dynamic> _switchSubOnTap(MyCategory subcategory) {
     switch (_settingsLogEntry) {
       case SettingsLogEntry.settings:
         //not required
@@ -431,7 +430,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     }
   }
 
-  Future<dynamic> _logAddEditSubcategory(MySubcategory subcategory) {
+  Future<dynamic> _logAddEditSubcategory(MyCategory subcategory) {
     return Get.dialog(
       EditCategoryDialog(
         categories: _categories,
@@ -447,7 +446,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         delete: (id) => {
           setState(() {
             if (id != NO_SUBCATEGORY) {
-              List<MySubcategory> subcategories = [];
+              List<MyCategory> subcategories = [];
               subcategories = _log.subcategories.where((element) => element.id != subcategory.id).toList();
               Env.logsFetcher.updateLog(_log.copyWith(subcategories: subcategories));
             } else {
@@ -455,13 +454,13 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
             }
           })
         },
-        subcategory: subcategory,
+        category: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
     );
   }
 
-  Future<dynamic> _settingsAddEditSubcategory(MySubcategory subcategory) {
+  Future<dynamic> _settingsAddEditSubcategory(MyCategory subcategory) {
     return Get.dialog(
       EditCategoryDialog(
         categories: _categories,
@@ -484,7 +483,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
         delete: (id) => {
           setState(() {
             if (id != NO_SUBCATEGORY) {
-              List<MySubcategory> subcategories = [];
+              List<MyCategory> subcategories = [];
               subcategories = _settings.defaultSubcategories.where((element) => element.id != subcategory.id).toList();
               Env.store.dispatch(
                   UpdateSettings(settings: Maybe.some(_settings.copyWith(defaultSubcategories: subcategories))));
@@ -493,19 +492,19 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
             }
           }),
         },
-        subcategory: subcategory,
+        category: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
     );
   }
 
-  Future<void> _entrySelectSubcategory(MySubcategory subcategory) async {
+  Future<void> _entrySelectSubcategory(MyCategory subcategory) async {
     //onTap method for Entry Subcategories
     Env.store.dispatch(UpdateSelectedEntry(subcategory: subcategory.id));
     Get.back();
   }
 
-  Future<dynamic> _switchSubcategoryOnTapEdit(MySubcategory subcategory) {
+  Future<dynamic> _switchSubcategoryOnTapEdit(MyCategory subcategory) {
     //methods for settings and logs onLongPress not required at this time
     switch (_settingsLogEntry) {
       case SettingsLogEntry.settings:
@@ -524,7 +523,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
     }
   }
 
-  Future<dynamic> _entryAddEditSubcategory(MySubcategory subcategory) {
+  Future<dynamic> _entryAddEditSubcategory(MyCategory subcategory) {
     return Get.dialog(
       EditCategoryDialog(
         categories: _categories,
@@ -541,7 +540,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
 
         //TODO create delete function
         initialParent: Env.store.state.singleEntryState.selectedEntry.value.categoryId,
-        subcategory: subcategory,
+        category: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
     );
@@ -566,7 +565,7 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
           break;
       }
     } else {
-      MySubcategory newSubcategory = MySubcategory(name: null, parentCategoryId: null);
+      MyCategory newSubcategory = MyCategory(name: null, parentCategoryId: null);
       switch (_settingsLogEntry) {
         case SettingsLogEntry.settings:
           return _settingsAddEditSubcategory(newSubcategory);

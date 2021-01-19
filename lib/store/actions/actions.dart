@@ -59,14 +59,16 @@ AppState _updateLogEntriesTagSettingState(
       settingsState: updateSettingsState(appState.settingsState));
 }
 
-AppState _updateLogsTagsState(
+AppState _updateLogsTagsSingleEntryState(
     AppState appState,
     LogsState updateLogState(LogsState logsState),
     TagState updateTagState(TagState tagState),
+    SingleEntryState update(SingleEntryState singleEntryState),
     ) {
   return appState.copyWith(
     logsState: updateLogState(appState.logsState),
     tagState: updateTagState(appState.tagState),
+    singleEntryState: update(appState.singleEntryState),
   );
 }
 
@@ -213,10 +215,11 @@ class AddUpdateSingleEntryAndTags implements Action {
     //update logs total in state
     //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
 
-    return _updateLogsTagsState(
+    return _updateLogsTagsSingleEntryState(
       appState,
       (logsState) => logsState.copyWith(logs: logs),
       (tagState) => tagState.copyWith(tags: masterTagList),
+        (singleEntryState) => SingleEntryState.initial(),
 
     );
   }

@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
 import 'package:expenses/log/log_model/log_entity.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -34,7 +33,7 @@ class Log extends Equatable {
   final bool archive;
   final String defaultCategory;
   final List<MyCategory> categories;
-  final List<MySubcategory> subcategories;
+  final List<MyCategory> subcategories;
   final Map<String, LogMember> logMembers;
 
   //TODO both of these should be move to the actions/logic section
@@ -51,8 +50,8 @@ class Log extends Equatable {
     return log.copyWith(categories: categories);
   }
 
-  Log addEditLogSubcategories({Log log, MySubcategory subcategory}) {
-    List<MySubcategory> subcategories = log.subcategories;
+  Log addEditLogSubcategories({Log log, MyCategory subcategory}) {
+    List<MyCategory> subcategories = log.subcategories;
 
     //update subcategory if it already exists
     //otherwise add subcategory to the list
@@ -82,7 +81,7 @@ class Log extends Equatable {
       currency: currency,
       categories: Map<String, MyCategory>.fromIterable(categories,
           key: (e) => categories.indexOf(e).toString(), value: (e) => e),
-      subcategories: Map<String, MySubcategory>.fromIterable(subcategories,
+      subcategories: Map<String, MyCategory>.fromIterable(subcategories,
           key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
       archive: archive,
       defaultCategory: defaultCategory,
@@ -124,7 +123,7 @@ class Log extends Equatable {
     bool archive,
     String defaultCategory,
     List<MyCategory> categories,
-    List<MySubcategory> subcategories,
+    List<MyCategory> subcategories,
     Map<String, LogMember> logMembers,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&

@@ -2,8 +2,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -18,7 +16,7 @@ class LogEntity extends Equatable {
   final bool archive;
   final String defaultCategory;
   final Map<String, MyCategory> categories;
-  final Map<String, MySubcategory> subcategories;
+  final Map<String, MyCategory> subcategories;
   final Map<String, LogMember> logMembers;
   final List<String> memberList;
 
@@ -53,7 +51,7 @@ class LogEntity extends Equatable {
       categories: (snap.data[CATEGORIES] as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
       subcategories: (snap.data[SUBCATEGORIES] as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, MySubcategory.fromEntity(MySubcategoryEntity.fromJson(value)))),
+          .map((key, value) => MapEntry(key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
       archive: snap.data[ARCHIVE],
       defaultCategory: snap.data[DEFAULT_CATEGORY],
       logMembers: (snap.data[MEMBERS] as Map<String, dynamic>)

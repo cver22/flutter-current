@@ -1,6 +1,5 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
-import 'package:expenses/categories/categories_model/my_subcategory/my_subcategory_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
@@ -19,7 +18,7 @@ class SettingsEntity implements Equatable {
 
   final String homeCurrency;
   final List<MyCategoryEntity> defaultCategoryEntities;
-  final List<MySubcategoryEntity> defaultSubcategoryEntities;
+  final List<MyCategoryEntity> defaultSubcategoryEntities;
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
 

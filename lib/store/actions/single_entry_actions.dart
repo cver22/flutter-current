@@ -7,13 +7,6 @@ AppState _updateSingleEntryState(
   return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
-class ClearSingleEntryState implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    return _updateSingleEntryState(appState, (singleEntryState) => SingleEntryState.initial());
-  }
-}
-
 class UpdateSingleEntryState implements Action {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag;
