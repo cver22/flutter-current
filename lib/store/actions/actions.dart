@@ -59,6 +59,28 @@ AppState _updateLogEntriesTagSettingState(
       settingsState: updateSettingsState(appState.settingsState));
 }
 
+AppState _updateLogsTagsState(
+    AppState appState,
+    LogsState updateLogState(LogsState logsState),
+    TagState updateTagState(TagState tagState),
+    ) {
+  return appState.copyWith(
+    logsState: updateLogState(appState.logsState),
+    tagState: updateTagState(appState.tagState),
+  );
+}
+
+AppState _updateTagSingleEntryState(
+    AppState appState,
+    TagState updateTagState(TagState tagState),
+    SingleEntryState update(SingleEntryState singleEntryState),
+    ) {
+  return appState.copyWith(
+    tagState: updateTagState(appState.tagState),
+    singleEntryState: update(appState.singleEntryState),
+  );
+}
+
 class DeleteLog implements Action {
   //This action updates multiple states simultaneously
   final Log log;
@@ -111,30 +133,6 @@ class DeleteLog implements Action {
       (settingsState) => settingsState.copyWith(settings: Maybe.some(settings)),
     );
   }
-}
-
-AppState _updateLogsTagsSingleEntryState(
-  AppState appState,
-  LogsState updateLogState(LogsState logsState),
-  TagState updateTagState(TagState tagState),
-  SingleEntryState update(SingleEntryState singleEntryState),
-) {
-  return appState.copyWith(
-    logsState: updateLogState(appState.logsState),
-    tagState: updateTagState(appState.tagState),
-    singleEntryState: update(appState.singleEntryState),
-  );
-}
-
-AppState _updateTagSingleEntryState(
-  AppState appState,
-  TagState updateTagState(TagState tagState),
-  SingleEntryState update(SingleEntryState singleEntryState),
-) {
-  return appState.copyWith(
-    tagState: updateTagState(appState.tagState),
-    singleEntryState: update(appState.singleEntryState),
-  );
 }
 
 class DeleteTagFromEntryScreen implements Action {
@@ -215,11 +213,11 @@ class AddUpdateSingleEntryAndTags implements Action {
     //update logs total in state
     //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
 
-    return _updateLogsTagsSingleEntryState(
+    return _updateLogsTagsState(
       appState,
       (logsState) => logsState.copyWith(logs: logs),
       (tagState) => tagState.copyWith(tags: masterTagList),
-      (singleEntryState) => SingleEntryState.initial(),
+
     );
   }
 }

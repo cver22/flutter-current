@@ -28,6 +28,7 @@ class LogsScreen extends StatelessWidget {
         map: (state) => state.logsState,
         builder: (logsState) {
           print('Rendering Logs Screen');
+         Env.store.dispatch(ClearSingleEntryState());
 
           if (logsState.isLoading == true && Env.store.state.singleEntryState.selectedEntry.isNone) {
             return ModalLoadingIndicator(loadingMessage: 'Loading your logs...', activate: true);

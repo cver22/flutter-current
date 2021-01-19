@@ -7,6 +7,13 @@ AppState _updateSingleEntryState(
   return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
+class ClearSingleEntryState implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateSingleEntryState(appState, (singleEntryState) => SingleEntryState.initial());
+  }
+}
+
 class UpdateSingleEntryState implements Action {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag;
@@ -46,12 +53,12 @@ class SetNewSelectedEntry implements Action {
     MyEntry entry = MyEntry();
     //if a log is not passed to the action it is assumed to have been triggered from the FAB and creates and entry for the default log
 
-
-    Log log = appState.logsState.logs[logId ?? appState.settingsState.settings?.value?.defaultLogId ?? appState.logsState.logs.keys.first];
+    Log log = appState.logsState
+        .logs[logId ?? appState.settingsState.settings?.value?.defaultLogId ?? appState.logsState.logs.keys.first];
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> members = _setMembersList(log: log);
     //sets the selected user as paying unless the action is triggered from the FAB
-    if(logId != null) {
+    if (logId != null) {
       members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
     }
 

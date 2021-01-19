@@ -15,14 +15,14 @@ class EntriesFilter extends Equatable {
   EntriesFilter(
       {this.startDate,
       this.endDate,
-      this.logId,
-      this.currency,
-      this.categories,
-      this.subcategories,
+      this.logId = const [],
+      this.currency = const {},
+      this.categories = const [],
+      this.subcategories = const [],
       this.minAmount,
       this.maxAmount,
-      this.logMembers,
-      this.tags});
+      this.logMembers = const [],
+      this.tags = const []});
 
   @override
   List<Object> get props => [

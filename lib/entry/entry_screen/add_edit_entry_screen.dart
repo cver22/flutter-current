@@ -123,7 +123,7 @@ class AddEditEntryScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-        EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log),
+        entryState.selectedEntry.isSome ? EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log) : Container(),
         SizedBox(height: 10.0),
         EntryDateButton(context: context, log: log, entry: entry),
         SizedBox(height: 10.0),
