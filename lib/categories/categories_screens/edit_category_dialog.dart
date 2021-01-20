@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class EditCategoryDialog extends StatefulWidget {
-  final Function(String) delete;
+  final Function() delete;
   final Function(MyCategory) setDefault;
   final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
   final MyCategory category;
@@ -54,7 +54,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     String exclamationMark = '\u{2757}'; // exclamation_mark
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
     category = widget?.category;
-    if (category.name != null) {
+    if (category.id != null) {
       newCategory = false;
       emojiChar = category.emojiChar ?? exclamationMark;
       name = category?.name;
@@ -75,6 +75,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
       selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
     }
+
 
     controller = TextEditingController(text: name);
     controller.addListener(() {
@@ -140,12 +141,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            id == NO_CATEGORY || id == NO_SUBCATEGORY
+            id == null || id == NO_CATEGORY || id == NO_SUBCATEGORY
                 ? Container()
                 : FlatButton(
                     child: Text('Delete'),
                     onPressed: () => {
-                          widget?.delete(id),
+                          widget?.delete,
                           Get.back(),
                         }),
             FlatButton(

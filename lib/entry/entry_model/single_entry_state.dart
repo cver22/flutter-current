@@ -12,11 +12,12 @@ class SingleEntryState extends Equatable {
 
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
-  final Map<String, Tag> tags; //collection of all log tags for updating
-  final List<MyCategory> logCategoryList; // collection of all log categories for updating;
+  final Map<String, Tag> tags; //collection of all log tags for updating if required
+  final List<MyCategory> categories; // collection of all log categories for updating if required;
+  final List<MyCategory> subcategories; //collection of all log subcategories for updating if required;
   final bool savingEntry;
 
-  SingleEntryState( {this.selectedTag, this.tags, this.selectedEntry, this.logCategoryList, this.savingEntry});
+  SingleEntryState( {this.selectedTag, this.tags, this.selectedEntry, this.categories, this.subcategories, this.savingEntry});
 
   factory SingleEntryState.initial() {
     return SingleEntryState(
@@ -24,36 +25,43 @@ class SingleEntryState extends Equatable {
       selectedEntry: Maybe.none(),
       selectedTag: Maybe.none(),
       tags: LinkedHashMap(),
-      logCategoryList: List<MyCategory>(),
+      categories: List<MyCategory>(),
+      subcategories: List<MyCategory>(),
       savingEntry: false,
 
     );
   }
 
-  SingleEntryState copyWith({
-
-    Maybe<MyEntry> selectedEntry,
-    Maybe<Tag> selectedTag,
-    Map<String, Tag> tags,
-    List<MyCategory> logCategoryList,
-    bool savingEntry,
-
-  }) {
-
-    return SingleEntryState(
-
-      selectedEntry: selectedEntry ?? this.selectedEntry,
-      selectedTag: selectedTag ?? this.selectedTag,
-      tags: tags ?? this.tags,
-      logCategoryList: logCategoryList ?? this.logCategoryList,
-      savingEntry: savingEntry ?? this.savingEntry,
-    );
-  }
-
   @override
-  List<Object> get props => [selectedEntry, selectedTag, tags, logCategoryList, savingEntry];
+  List<Object> get props => [selectedEntry, selectedTag, tags, categories, subcategories, savingEntry];
 
   @override
   bool get stringify => true;
 
+  SingleEntryState copyWith({
+    Maybe<MyEntry> selectedEntry,
+    Maybe<Tag> selectedTag,
+    Map<String, Tag> tags,
+    List<MyCategory> categories,
+    List<MyCategory> subcategories,
+    bool savingEntry,
+  }) {
+    if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
+        (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
+        (tags == null || identical(tags, this.tags)) &&
+        (categories == null || identical(categories, this.categories)) &&
+        (subcategories == null || identical(subcategories, this.subcategories)) &&
+        (savingEntry == null || identical(savingEntry, this.savingEntry))) {
+      return this;
+    }
+
+    return new SingleEntryState(
+      selectedEntry: selectedEntry ?? this.selectedEntry,
+      selectedTag: selectedTag ?? this.selectedTag,
+      tags: tags ?? this.tags,
+      categories: categories ?? this.categories,
+      subcategories: subcategories ?? this.subcategories,
+      savingEntry: savingEntry ?? this.savingEntry,
+    );
+  }
 }

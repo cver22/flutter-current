@@ -1,5 +1,6 @@
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
+import 'package:expenses/categories/categories_screens/entry_category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_screen/entry_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
@@ -60,24 +61,22 @@ class AddEditEntryScreen extends StatelessWidget {
 
   AppBar _buildAppBar(MyEntry entry, SingleEntryState singleEntryState, Log log) {
     return AppBar(
-                  title: Text('Entry'),
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back),
-                    onPressed: () => closeEntryScreen(),
-                  ),
-                  actions: <Widget>[
-                    IconButton(
-                      icon: Icon(
-                        Icons.check,
-                        color: _canSubmit(entry: entry) ? Colors.white : Colors.grey,
-                      ),
-                      onPressed: _canSubmit(entry: entry)
-                          ? () => {_submit(entry: entry)}
-                          : null,
-                    ),
-                    _buildDeleteEntryButton(entry: entry),
-                  ],
-                );
+      title: Text('Entry'),
+      leading: IconButton(
+        icon: Icon(Icons.arrow_back),
+        onPressed: () => closeEntryScreen(),
+      ),
+      actions: <Widget>[
+        IconButton(
+          icon: Icon(
+            Icons.check,
+            color: _canSubmit(entry: entry) ? Colors.white : Colors.grey,
+          ),
+          onPressed: _canSubmit(entry: entry) ? () => {_submit(entry: entry)} : null,
+        ),
+        _buildDeleteEntryButton(entry: entry),
+      ],
+    );
   }
 
   Widget _buildContents(
@@ -123,7 +122,9 @@ class AddEditEntryScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-        entryState.selectedEntry.isSome ? EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log) : Container(),
+        entryState.selectedEntry.isSome
+            ? EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log)
+            : Container(),
         SizedBox(height: 10.0),
         EntryDateButton(context: context, log: log, entry: entry),
         SizedBox(height: 10.0),
@@ -140,11 +141,9 @@ class AddEditEntryScreen extends StatelessWidget {
       label: 'Select a Category',
       onPressed: () => {
         Get.dialog(
-          CategoryListDialog(
+          EntryCategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.category,
-            log: log,
             key: ExpenseKeys.categoriesDialog,
-            settingsLogEntry: SettingsLogEntry.entry,
           ),
         ),
       },
@@ -158,11 +157,9 @@ class AddEditEntryScreen extends StatelessWidget {
       label: 'Select a Subcategory',
       onPressed: () => {
         Get.dialog(
-          CategoryListDialog(
+          EntryCategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-            log: log,
             key: ExpenseKeys.subcategoriesDialog,
-            settingsLogEntry: SettingsLogEntry.entry,
           ),
         ),
       },
@@ -215,20 +212,19 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _buildDeleteEntryButton({MyEntry entry}) {
-
     return entry?.id == null
         ? Container()
         : PopupMenuButton<String>(
-      onSelected: handleClick,
-      itemBuilder: (BuildContext context) {
-        return {'Delete Entry'}.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Delete Entry'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
           );
-        }).toList();
-      },
-    );
   }
 
 //currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues

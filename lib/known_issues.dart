@@ -36,7 +36,9 @@
 
 
     //TODO START HERE
-      //fix how to edit a subcategory, probably just a matter of modifying the selected entry to reflect the changes in the log?
+      //AddEditSubcategoryFromEntryScreen needs to increment and decrement if the parent category is changed
+      //build list views for the log and settings categories and subcategories
+      //need to save updated categories and subcategories to the log from the entry
 //build filter dialog
       //build function to return filtered list back to the widget
 

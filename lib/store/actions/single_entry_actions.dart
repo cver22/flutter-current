@@ -24,7 +24,7 @@ class UpdateSingleEntryState implements Action {
               selectedEntry: selectedEntry,
               selectedTag: selectedTag,
               tags: tags,
-              logCategoryList: logCategoryList,
+              categories: logCategoryList,
               savingEntry: savingEntry,
             ));
   }
@@ -64,7 +64,8 @@ class SetNewSelectedEntry implements Action {
             selectedEntry: Maybe.some(entry),
             selectedTag: Maybe.none(),
             tags: tags,
-            logCategoryList: log.categories,
+            categories: List.from(log.categories),
+            subcategories: List.from(log.subcategories),
             savingEntry: false));
   }
 }
@@ -94,7 +95,8 @@ class SelectEntry implements Action {
             selectedEntry: Maybe.some(entry.copyWith(entryMembers: entryMembers)),
             selectedTag: Maybe.none(),
             tags: tags,
-            logCategoryList: log.categories,
+            categories: List.from(log.categories),
+            subcategories: List.from(log.subcategories),
             savingEntry: false));
   }
 }
@@ -106,7 +108,7 @@ class DeleteSelectedEntry implements Action {
   AppState updateState(AppState appState) {
     Env.store.dispatch(SingleEntryProcessing());
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<MyCategory> categories = appState.singleEntryState.logCategoryList;
+    List<MyCategory> categories = appState.singleEntryState.categories;
     Map<String, Tag> tags = appState.singleEntryState.tags;
     EntriesState updatedEntriesState = appState.entriesState;
     updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
@@ -250,6 +252,128 @@ class ChangeEntryCategories implements Action {
             selectedEntry: Maybe.some(
               entry.changeCategories(category: newCategory ?? NO_CATEGORY),
             )));
+  }
+}
+
+class ReorderCategoriesFromEntryScreen implements Action {
+  final List<MyCategory> categories;
+
+  ReorderCategoriesFromEntryScreen({@required this.categories});
+
+  AppState updateState(AppState appState) {
+    return _updateSingleEntryState(
+      appState,
+      (singleEntryState) => singleEntryState.copyWith(categories: categories),
+    );
+  }
+}
+
+class ReorderSubcategoriesFromEntryScreen implements Action {
+  final List<MyCategory> reorderedSubcategories;
+
+  ReorderSubcategoriesFromEntryScreen({@required this.reorderedSubcategories});
+
+  AppState updateState(AppState appState) {
+    List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
+    reorderedSubcategories.forEach((reordedSub) {
+      subcategories.removeWhere((sub) => reordedSub.id == sub.id);
+    });
+    reorderedSubcategories.forEach((subcategory) {
+      subcategories.add(subcategory);
+    });
+
+
+    return _updateSingleEntryState(
+      appState,
+      (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories),
+    );
+  }
+}
+
+class AddEditCategoryFromEntryScreen implements Action {
+  final MyCategory category;
+
+  AddEditCategoryFromEntryScreen({@required this.category});
+
+  AppState updateState(AppState appState) {
+    List<MyCategory> categories = List.from(appState.singleEntryState.categories);
+    if (category.id == null) {
+      categories.add(category.copyWith(id: Uuid().v4()));
+    } else {
+      categories[categories.indexWhere((entry) => entry.id == category.id)] = category;
+    }
+
+    return _updateSingleEntryState(
+      appState,
+      (singleEntryState) => singleEntryState.copyWith(categories: categories),
+    );
+  }
+}
+
+class DeleteCategoryFromEntryScreen implements Action {
+  final MyCategory category;
+
+  DeleteCategoryFromEntryScreen({@required this.category});
+
+  AppState updateState(AppState appState) {
+    List<MyCategory> categories = List.from(appState.singleEntryState.categories);
+    List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
+
+    //remove category and its subcategories if the category is not "no category"
+    if (category.id != NO_CATEGORY) {
+      categories.removeWhere((e) => e.id == category.id);
+      subcategories.removeWhere((e) => e.parentCategoryId == category.id);
+    }
+
+    return _updateSingleEntryState(
+      appState,
+      (singleEntryState) => singleEntryState.copyWith(categories: categories, subcategories: subcategories),
+    );
+  }
+}
+
+class AddEditSubcategoryFromEntryScreen implements Action {
+  final MyCategory subcategory;
+
+  AddEditSubcategoryFromEntryScreen({@required this.subcategory});
+
+  AppState updateState(AppState appState) {
+    List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
+
+    if (subcategory.id == null) {
+      subcategories.add(subcategory.copyWith(id: Uuid().v4()));
+    } else {
+      subcategories[subcategories.indexWhere((entry) => entry.id == subcategory.id)] = subcategory;
+    }
+
+    //update the subcategory as well as the category if the parent has changed
+    return _updateSingleEntryState(
+      appState,
+      (singleEntryState) => singleEntryState.copyWith(
+          subcategories: subcategories,
+          selectedEntry: Maybe.some(
+              appState.singleEntryState.selectedEntry.value.copyWith(categoryId: subcategory.parentCategoryId))),
+    );
+  }
+}
+
+class DeleteSubcategoryFromEntryScreen implements Action {
+  final MyCategory subcategory;
+
+  DeleteSubcategoryFromEntryScreen({@required this.subcategory});
+
+  AppState updateState(AppState appState) {
+    List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
+
+    //remove the subcategory if it is not "no subcategory"
+    if (subcategory.id != NO_SUBCATEGORY) {
+      subcategories.removeWhere((e) => e.id == subcategory.id);
+    }
+
+    return _updateSingleEntryState(
+      appState,
+      (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories),
+    );
   }
 }
 
