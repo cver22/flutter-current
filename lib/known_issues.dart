@@ -23,8 +23,6 @@
       // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
       //TODO change all data models to Maybe
       //TODO give each person an emoji Icon option
-      //TODO entries safety check before loading if their category has been deleted, show no category
-      //TODO remove subcategory class and utilize only the category class, parentCategory either null or valid
       //TODO log order for log screen
       //TODO clicking in a focusNode value for a member should tick its
       //TODO ask the user to add a category or subcategory if the is none on the dialog/add error message is none load?

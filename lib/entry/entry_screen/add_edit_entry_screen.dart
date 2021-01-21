@@ -154,7 +154,7 @@ class AddEditEntryScreen extends StatelessWidget {
       },
       category: entry?.categoryId == null
           ? null
-          : categories?.firstWhere((element) => element.id == entry.categoryId, orElse: null),
+          : categories?.firstWhere((element) => element.id == entry.categoryId, orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
     );
   }
 
@@ -171,7 +171,7 @@ class AddEditEntryScreen extends StatelessWidget {
       },
       category: entry?.subcategoryId == null
           ? null
-          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: null),
+          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: () => subcategories?.firstWhere((element) => element.id == NO_SUBCATEGORY, orElse: () => null)),
     );
   }
 

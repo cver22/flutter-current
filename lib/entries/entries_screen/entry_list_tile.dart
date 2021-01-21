@@ -1,3 +1,4 @@
+import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -18,7 +19,8 @@ class EntryListTile extends StatelessWidget {
     Log log;
 
     if (entry?.logId != null) {
-      log = Env.store.state.logsState.logs?.values?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
+      log = Env.store.state.logsState.logs?.values
+          ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
     }
     if (log != null) {
       return ListTile(
@@ -44,26 +46,26 @@ class EntryListTile extends StatelessWidget {
     String emojiChar;
 
     if (entry?.categoryId != null && log != null) {
-      emojiChar = log.categories.firstWhere((element) => element.id == entry.categoryId)?.emojiChar ?? '\u{2757}';
+      emojiChar =
+          log.categories.firstWhere((element) => element.id == entry.categoryId, orElse: () => null)?.emojiChar ??
+              '\u{2757}';
     }
 
     return emojiChar;
   }
 
   String categoriesSubcategoriesTags(Log log) {
-    String category = 'Category';
-    String subcategory = 'Subcategory';
+    MyCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId, orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
+    MyCategory subcategory = log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => log?.subcategories?.firstWhere((element) => element.id == NO_SUBCATEGORY));
+    String categoryText = 'Category';
+    String subcategoryText = 'Subcategory';
 
-    if (entry?.categoryId != null && log != null) {
-      category =
-          '${log.categories.firstWhere((element) => element.id == entry?.categoryId)?.emojiChar} ${log.categories.firstWhere((element) => element.id == entry?.categoryId)?.name}';
-    }
+    categoryText =
+        '${category.emojiChar} ${category.name}';
 
-    if (entry?.subcategoryId != null && log != null) {
-      subcategory =
-          '${log.subcategories.firstWhere((element) => element.id == entry?.subcategoryId)?.emojiChar} ${log.subcategories.firstWhere((element) => element.id == entry?.subcategoryId)?.name}';
-    }
+    subcategoryText =
+        '${subcategory.emojiChar} ${subcategory.name}';
 
-    return '$category, $subcategory, tags';
+    return '$categoryText, $subcategoryText, tags';
   }
 }
