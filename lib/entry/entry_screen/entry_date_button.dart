@@ -9,12 +9,10 @@ class EntryDateButton extends StatelessWidget {
   const EntryDateButton({
     Key key,
     @required this.context,
-    @required this.log,
     @required this.entry,
   }) : super(key: key);
 
   final BuildContext context;
-  final Log log;
   final MyEntry entry;
 
   @override

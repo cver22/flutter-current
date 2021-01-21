@@ -1,5 +1,5 @@
       //TODO KNOWN ISSUES
-//TODO selected entry needs to be cleared when saving, but that caused a loop, need to utilize the isLoading state in entries state
+//TODO selected entry needs to be cleared when saving, but that caused a loop, need to utilize the isLoading state in entries state ***still an issue***
 //TODO going back from entry does not clear the logTags from the singleEntryState logTagList
 
       //TODO Log Term Goals
@@ -27,7 +27,8 @@
       //TODO remove subcategory class and utilize only the category class, parentCategory either null or valid
       //TODO log order for log screen
       //TODO clicking in a focusNode value for a member should tick its
-      //TODO updating parent category of a selected subcategory should change the selected category and affect increment and decrement
+      //TODO ask the user to add a category or subcategory if the is none on the dialog/add error message is none load?
+
 
 
 
@@ -36,9 +37,7 @@
 
 
     //TODO START HERE
-      //AddEditSubcategoryFromEntryScreen needs to increment and decrement if the parent category is changed
       //build list views for the log and settings categories and subcategories
-      //need to save updated categories and subcategories to the log from the entry
 //build filter dialog
       //build function to return filtered list back to the widget
 

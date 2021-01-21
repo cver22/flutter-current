@@ -35,7 +35,7 @@ class _TagPickerState extends State<TagPicker> {
           int maxTags = 10;
 
           //ensures the visible entry isn't reset while the entry is saving
-          if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
+          if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
             currentSingleEntryState = singleEntryState;
             entry = currentSingleEntryState.selectedEntry.value;
           }

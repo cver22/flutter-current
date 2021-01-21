@@ -1,10 +1,10 @@
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
+import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/entry_category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_screen/entry_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -19,7 +19,6 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-//TODO change back to stateful widget to utilize focus node or add to single entry state?
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
 class AddEditEntryScreen extends StatelessWidget {
   AddEditEntryScreen({Key key}) : super(key: key);
@@ -38,24 +37,28 @@ class AddEditEntryScreen extends StatelessWidget {
         builder: (singleEntryState) {
           print('Rendering AddEditEntriesScreen');
 
-          if (!singleEntryState.savingEntry && singleEntryState.selectedEntry.isSome) {
-            entry = singleEntryState.selectedEntry.value;
-          }
-          Log log;
-          log = Env.store.state.logsState.logs[entry.logId];
+          if (singleEntryState.processing) {
+            return Container(); //TODO replace with spinner
+          } else {
+            if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
+              entry = singleEntryState.selectedEntry.value;
+            }
+            Log log;
+            log = Env.store.state.logsState.logs[entry.logId];
 
-          return WillPopScope(
-            onWillPop: () async => false, //TODO need to implement will pop?
-            child: Stack(
-              children: [
-                Scaffold(
-                  appBar: _buildAppBar(entry, singleEntryState, log),
-                  body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
-                ),
-                ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.savingEntry),
-              ],
-            ),
-          );
+            return WillPopScope(
+              onWillPop: () async => false, //TODO need to implement will pop?
+              child: Stack(
+                children: [
+                  Scaffold(
+                    appBar: _buildAppBar(entry, singleEntryState, log),
+                    body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
+                  ),
+                  ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.processing),
+                ],
+              ),
+            );
+          }
         });
   }
 
@@ -126,17 +129,19 @@ class AddEditEntryScreen extends StatelessWidget {
             ? EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log)
             : Container(),
         SizedBox(height: 10.0),
-        EntryDateButton(context: context, log: log, entry: entry),
+        EntryDateButton(context: context, entry: entry),
         SizedBox(height: 10.0),
-        entry?.logId == null ? Container() : _categoryButton(log: log, entry: entry),
-        entry?.categoryId == null ? Container() : _subcategoryButton(log: log, entry: entry),
+        entry?.logId == null ? Container() : _categoryButton(categories: entryState?.categories, entry: entry),
+        entry?.categoryId == null
+            ? Container()
+            : _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
         _commentFormField(entry: entry),
         TagPicker(),
       ],
     );
   }
 
-  CategoryButton _categoryButton({@required Log log, @required MyEntry entry}) {
+  CategoryButton _categoryButton({@required MyEntry entry, @required List<MyCategory> categories}) {
     return CategoryButton(
       label: 'Select a Category',
       onPressed: () => {
@@ -147,12 +152,13 @@ class AddEditEntryScreen extends StatelessWidget {
           ),
         ),
       },
-      category:
-          entry?.categoryId == null ? null : log.categories.firstWhere((element) => element.id == entry.categoryId),
+      category: entry?.categoryId == null
+          ? null
+          : categories?.firstWhere((element) => element.id == entry.categoryId, orElse: null),
     );
   }
 
-  CategoryButton _subcategoryButton({@required Log log, @required MyEntry entry}) {
+  CategoryButton _subcategoryButton({@required MyEntry entry, @required List<MyCategory> subcategories}) {
     return CategoryButton(
       label: 'Select a Subcategory',
       onPressed: () => {
@@ -165,7 +171,7 @@ class AddEditEntryScreen extends StatelessWidget {
       },
       category: entry?.subcategoryId == null
           ? null
-          : log.subcategories.firstWhere((element) => element.id == entry.subcategoryId),
+          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: null),
     );
   }
 
@@ -189,9 +195,9 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   void closeEntryScreen() {
-    Env.store.dispatch(SingleEntryProcessing());
-    Env.store.dispatch(ClearEntryState());
     Get.back();
+    Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose());
+    Env.store.dispatch(ClearEntryState());
   }
 
   bool _canSubmit({MyEntry entry}) {

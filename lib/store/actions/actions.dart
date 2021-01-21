@@ -215,6 +215,9 @@ class AddUpdateSingleEntryAndTags implements Action {
     //update logs total in state
     //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
 
+    //update log categories and subcategories if they have changed
+    logs = _updateLogCategoriesSubcategoriesFromEntry(appState: appState, logId: entry.logId, logs: logs);
+
     return _updateLogsTagsSingleEntryState(
       appState,
       (logsState) => logsState.copyWith(logs: logs),
@@ -223,6 +226,17 @@ class AddUpdateSingleEntryAndTags implements Action {
 
     );
   }
+}
+
+Map<String, Log> _updateLogCategoriesSubcategoriesFromEntry({@required AppState appState, @required String logId, @required Map<String, Log> logs}) {
+  Log log = logs[logId];
+  if(appState.singleEntryState.categories != log.categories || appState.singleEntryState.subcategories != log.subcategories) {
+    log = log.copyWith(categories: appState.singleEntryState.categories, subcategories: appState.singleEntryState.subcategories);
+    logs.update(log.id, (value) => log);
+    //send updated log to database
+    Env.logsFetcher.updateLog(log);
+  }
+  return logs;
 }
 
 LogTotal _updateLogMemberTotals({@required List<MyEntry> entries, @required Log log}) {

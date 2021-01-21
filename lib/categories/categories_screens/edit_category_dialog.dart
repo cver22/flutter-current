@@ -1,11 +1,14 @@
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../env.dart';
+
 class EditCategoryDialog extends StatefulWidget {
-  final Function() delete;
+  final VoidCallback delete;
   final Function(MyCategory) setDefault;
   final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
   final MyCategory category;
@@ -76,7 +79,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
     }
 
-
     controller = TextEditingController(text: name);
     controller.addListener(() {
       final textController = controller.text;
@@ -143,12 +145,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
           children: <Widget>[
             id == null || id == NO_CATEGORY || id == NO_SUBCATEGORY
                 ? Container()
-                : FlatButton(
-                    child: Text('Delete'),
-                    onPressed: () => {
-                          widget?.delete,
-                          Get.back(),
-                        }),
+                : FlatButton(child: Text('Delete'), onPressed: widget.delete),
+
             FlatButton(
               child: Text('Cancel'),
               onPressed: () => {

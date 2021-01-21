@@ -32,8 +32,8 @@ class EntryCategoryListDialog extends StatelessWidget {
             categories = List.from(singleEntryState.categories);
           } else {
             categories = List.from(singleEntryState.subcategories);
-            categories.retainWhere(
-                (subcategory) => subcategory.parentCategoryId == Env.store.state.singleEntryState.selectedEntry.value.categoryId);
+            categories.retainWhere((subcategory) =>
+                subcategory.parentCategoryId == Env.store.state.singleEntryState.selectedEntry.value.categoryId);
           }
 
           return buildDialog(context: context, categories: categories, singleEntryState: singleEntryState);
@@ -74,8 +74,8 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget _displayAddButton({MyEntry selectedEntry}) {
-    //add button is displayed in all cases except for entries where the parent category is "No Category
-    if (selectedEntry?.categoryId != null && selectedEntry.categoryId == NO_CATEGORY) {
+    //add button is displayed in all cases except for the subcategory dialog where the parent category is "No Category"
+    if (selectedEntry?.categoryId != null && selectedEntry.categoryId == NO_CATEGORY && categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
       return IconButton(icon: Container(), onPressed: null);
     } else {
       MyCategory category = MyCategory();
@@ -154,7 +154,10 @@ class EntryCategoryListDialog extends StatelessWidget {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
         },*/
 
-        delete: () => Env.store.dispatch(DeleteCategoryFromEntryScreen(category: category)),
+        delete: () => {
+          Env.store.dispatch(DeleteCategoryFromEntryScreen(category: category)),
+          Get.back(),
+        },
         category: category,
         categoryOrSubcategory: CategoryOrSubcategory.category,
       ),
@@ -192,7 +195,10 @@ class EntryCategoryListDialog extends StatelessWidget {
 
         //TODO default function
 
-        delete: () => Env.store.dispatch(DeleteSubcategoryFromEntryScreen(subcategory: subcategory)),
+        delete: () => {
+          Env.store.dispatch(DeleteSubcategoryFromEntryScreen(subcategory: subcategory)),
+          Get.back(),
+        },
         initialParent: Env.store.state.singleEntryState.selectedEntry.value.categoryId,
         category: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,

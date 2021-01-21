@@ -162,3 +162,5 @@ class UpdateLogMember implements Action {
     return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
   }
 }
+
+

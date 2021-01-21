@@ -15,9 +15,9 @@ class SingleEntryState extends Equatable {
   final Map<String, Tag> tags; //collection of all log tags for updating if required
   final List<MyCategory> categories; // collection of all log categories for updating if required;
   final List<MyCategory> subcategories; //collection of all log subcategories for updating if required;
-  final bool savingEntry;
+  final bool processing;
 
-  SingleEntryState( {this.selectedTag, this.tags, this.selectedEntry, this.categories, this.subcategories, this.savingEntry});
+  SingleEntryState( {this.selectedTag, this.tags, this.selectedEntry, this.categories, this.subcategories, this.processing});
 
   factory SingleEntryState.initial() {
     return SingleEntryState(
@@ -27,13 +27,13 @@ class SingleEntryState extends Equatable {
       tags: LinkedHashMap(),
       categories: List<MyCategory>(),
       subcategories: List<MyCategory>(),
-      savingEntry: false,
+      processing: true,
 
     );
   }
 
   @override
-  List<Object> get props => [selectedEntry, selectedTag, tags, categories, subcategories, savingEntry];
+  List<Object> get props => [selectedEntry, selectedTag, tags, categories, subcategories, processing];
 
   @override
   bool get stringify => true;
@@ -44,14 +44,14 @@ class SingleEntryState extends Equatable {
     Map<String, Tag> tags,
     List<MyCategory> categories,
     List<MyCategory> subcategories,
-    bool savingEntry,
+    bool processing,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
         (tags == null || identical(tags, this.tags)) &&
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null || identical(subcategories, this.subcategories)) &&
-        (savingEntry == null || identical(savingEntry, this.savingEntry))) {
+        (processing == null || identical(processing, this.processing))) {
       return this;
     }
 
@@ -61,7 +61,7 @@ class SingleEntryState extends Equatable {
       tags: tags ?? this.tags,
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
-      savingEntry: savingEntry ?? this.savingEntry,
+      processing: processing ?? this.processing,
     );
   }
 }
