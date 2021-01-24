@@ -47,7 +47,10 @@ class AddEditEntryScreen extends StatelessWidget {
             log = Env.store.state.logsState.logs[entry.logId];
 
             return WillPopScope(
-              onWillPop: () async => false, //TODO need to implement will pop?
+              onWillPop: () async {
+                closeEntryScreen();
+                return false;
+              }, //TODO need to implement will pop?
               child: Stack(
                 children: [
                   Scaffold(

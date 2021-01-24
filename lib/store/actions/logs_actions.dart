@@ -80,7 +80,7 @@ class AddUpdateLog implements Action {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
-   // Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
+    // Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
 
     //check is the log currently exists
     if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
@@ -99,7 +99,6 @@ class AddUpdateLog implements Action {
         (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
-
     } else {
       //create a new log, does not save locally to state as there is no id yet
       Map<String, LogMember> members = {};
@@ -116,8 +115,6 @@ class AddUpdateLog implements Action {
 
       Env.logsFetcher.addLog(addedUpdatedLog);
     }
-
-
 
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none(), logs: logs));
   }
@@ -163,4 +160,92 @@ class UpdateLogMember implements Action {
   }
 }
 
+class AddEditCategoryFromLog implements Action {
+  final MyCategory category;
 
+  AddEditCategoryFromLog({@required this.category});
+
+  @override
+  AppState updateState(AppState appState) {
+    Log log = appState.logsState.selectedLog.value;
+    List<MyCategory> categories = List.from(log.categories);
+
+    if (category?.id != null) {
+      //category exists, update category
+      categories[categories.indexWhere((e) => e.id == category.id)] = category;
+    } else {
+      //category does not exists, create category
+      categories.add(category.copyWith(id: Uuid().v4()));
+    }
+
+    log = log.copyWith(categories: categories);
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+  }
+}
+
+class DeleteCategoryFromLog implements Action {
+  final MyCategory category;
+
+  DeleteCategoryFromLog({@required this.category});
+
+  AppState updateState(AppState appState) {
+    Log log = appState.logsState.selectedLog.value;
+    List<MyCategory> categories = List.from(log.categories);
+    List<MyCategory> subcategories = List.from(log.subcategories);
+
+    //remove category and its subcategories if the category is not "no category"
+    if (category.id != NO_CATEGORY) {
+      categories.removeWhere((e) => e.id == category.id);
+      subcategories.removeWhere((e) => e.parentCategoryId == category.id);
+    }
+
+    log = log.copyWith(subcategories: subcategories, categories: categories);
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+  }
+}
+
+class AddEditSubcategoryFromLog implements Action {
+  final MyCategory subcategory;
+
+  AddEditSubcategoryFromLog({@required this.subcategory});
+
+  @override
+  AppState updateState(AppState appState) {
+    Log log = appState.logsState.selectedLog.value;
+    List<MyCategory> subcategories = List.from(log.subcategories);
+
+    if (subcategory?.id != null) {
+      //category exists, update category
+      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+    } else {
+      //category does not exists, create category
+      subcategories.add(subcategory.copyWith(id: Uuid().v4()));
+    }
+
+    log = log.copyWith(subcategories: subcategories);
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+  }
+}
+
+class DeleteSubcategoryFromLog implements Action {
+  final MyCategory subcategory;
+
+  DeleteSubcategoryFromLog({@required this.subcategory});
+
+  AppState updateState(AppState appState) {
+    Log log = appState.logsState.selectedLog.value;
+    List<MyCategory> subcategories = List.from(log.subcategories);
+
+    //remove the subcategory if it is not "no subcategory"
+    if (subcategory.id != NO_SUBCATEGORY) {
+      subcategories.removeWhere((e) => e.id == subcategory.id);
+    }
+
+    log = log.copyWith(subcategories: subcategories);
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+  }
+}

@@ -6,7 +6,7 @@ class CategoryListTile extends StatelessWidget {
   final MyCategory category;
   final VoidCallback onTap;
   final VoidCallback onTapEdit;
-  final bool heading;
+  final bool heading; //TODO likely remove this
 
   const CategoryListTile({Key key, @required this.category, this.onTap, this.onTapEdit, this.heading = false})
       : super(key: key);

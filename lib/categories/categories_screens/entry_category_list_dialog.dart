@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/empty_content.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
@@ -13,8 +14,6 @@ import 'package:get/get.dart';
 import '../../env.dart';
 
 class EntryCategoryListDialog extends StatelessWidget {
-  /*ALL CHANGES TO CATEGORIES AND SUBCATEGORIES FROM THE ENTRY SCREEN MUST BE SAVED*/
-  //TODO may need to implement onWillPop scope to handle the back function
 
   final VoidCallback backChevron;
   final CategoryOrSubcategory categoryOrSubcategory;
@@ -67,7 +66,7 @@ class EntryCategoryListDialog extends StatelessWidget {
             ],
           ),
           //shows this list view if the category list comes from the log
-          _categoryListView(context: context, categories: categories),
+          categories.length > 0 ? _categoryListView(context: context, categories: categories) : EmptyContent(),
         ],
       ),
     );
@@ -101,7 +100,6 @@ class EntryCategoryListDialog extends StatelessWidget {
               _reorderSubcategories(newIndex: newIndex, subcategories: categories, oldIndex: oldIndex);
             }
           },
-          //TODO implement onReorder
           children: _categoryList(context: context, categories: categories)),
     );
   }

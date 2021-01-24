@@ -1,6 +1,7 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
+import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
@@ -45,8 +46,8 @@ class AddEditLogScreen extends StatelessWidget {
         return WillPopScope(
           onWillPop: () async {
             Get.back();
-          return true;
-        },
+            return true;
+          },
           child: Scaffold(
             appBar: AppBar(
               title: Text('Log'),
@@ -99,7 +100,7 @@ class AddEditLogScreen extends StatelessWidget {
                 _buildForm(log: log),
                 SizedBox(height: 16.0),
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
-                log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
+                //log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
                 _buildLogMemberList(log: log),
                 _buildAddMemberButton(log: log),
@@ -144,18 +145,14 @@ class AddEditLogScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => CategoryListDialog(
-                  log: log,
-                  settingsLogEntry: SettingsLogEntry.log,
-                  categoryOrSubcategory: CategoryOrSubcategory.category,
-                ),
+                builder: (_) => MasterCategoryListDialog(log: log),
               ),
             },
             category: null, // do not pass a category, maintains label
           );
   }
 
-  Widget _subcategoryButton({@required BuildContext context, @required Log log}) {
+  /*Widget _subcategoryButton({@required BuildContext context, @required Log log}) {
     return log.subcategories == null
         ? Container()
         : CategoryButton(
@@ -172,7 +169,7 @@ class AddEditLogScreen extends StatelessWidget {
             },
             category: null, // do not pass a category, maintains label
           );
-  }
+  }*/
 
   Widget _buildLogMemberList({@required Log log}) {
     return log.uid == null ? Container() : LogMemberTotalList(log: log);
@@ -190,7 +187,6 @@ class AddEditLogScreen extends StatelessWidget {
             },
           );
   }
-
 
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
   /*Widget _buildMakeDefaultButton({@required Log log}) {
