@@ -14,11 +14,13 @@ class LogsState extends Equatable{
   final Map<String, Log> logs;
   final bool isLoading;
   final Maybe<Log> selectedLog;
+  final List<bool> expandedCategories;
 
   LogsState({
     this.logs,
     this.isLoading,
     this.selectedLog,
+    this.expandedCategories
   });
 
   /*Maybe<Log> get selectedLog {
@@ -30,24 +32,34 @@ class LogsState extends Equatable{
       logs: LinkedHashMap(),
       isLoading: true,
       selectedLog: Maybe.none(),
+      expandedCategories: List(),
     );
   }
+
+  @override
+  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories];
+
+  @override
+  bool get stringify => true;
 
   LogsState copyWith({
     Map<String, Log> logs,
     bool isLoading,
     Maybe<Log> selectedLog,
+    List<bool> expandedCategories,
   }) {
-    return LogsState(
+    if ((logs == null || identical(logs, this.logs)) &&
+        (isLoading == null || identical(isLoading, this.isLoading)) &&
+        (selectedLog == null || identical(selectedLog, this.selectedLog)) &&
+        (expandedCategories == null || identical(expandedCategories, this.expandedCategories))) {
+      return this;
+    }
+
+    return new LogsState(
       logs: logs ?? this.logs,
       isLoading: isLoading ?? this.isLoading,
       selectedLog: selectedLog ?? this.selectedLog,
+      expandedCategories: expandedCategories ?? this.expandedCategories,
     );
   }
-
-  @override
-  List<Object> get props => [logs, isLoading, selectedLog];
-
-  @override
-  bool get stringify => true;
 }

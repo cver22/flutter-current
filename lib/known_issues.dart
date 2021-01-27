@@ -25,6 +25,8 @@
       //TODO clicking in a focusNode value for a member should tick its
       //TODO spent redistribution methods that account for multiple people
       //TODO Option for new logs to copy category list from another log to remove it from
+      //TODO exiting of categories you cannot move the cursor, same issue with tags, but only in the transaction, the editor is fine, look there for the solution
+      //TODO selected log onBack, are you sure you don't want to save changes
 
 
 

@@ -11,16 +11,25 @@ import 'package:get/get.dart';
 
 import '../../env.dart';
 
-class MasterCategoryDragAndDropList extends StatelessWidget {
+class MasterCategoryDragAndDropList extends StatefulWidget {
   final Log log;
 
   const MasterCategoryDragAndDropList({Key key, @required this.log}) : super(key: key);
 
   @override
+  _MasterCategoryDragAndDropListState createState() => _MasterCategoryDragAndDropListState();
+}
+
+class _MasterCategoryDragAndDropListState extends State<MasterCategoryDragAndDropList> {
+  List<bool> expandedCategories = [];
+
+  @override
   Widget build(BuildContext context) {
+    expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
+
     print('build drag and drop');
     return DragAndDropLists(
-      children: List.generate(log.categories.length, (index) => _buildList(index)),
+      children: List.generate(widget.log.categories.length, (index) => _buildList(index)),
       onItemReorder: _onItemReorder,
       onListReorder: _onListReorder,
       // listGhost is mandatory when using expansion tiles to prevent multiple widgets using the same globalkey
@@ -41,10 +50,14 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   }
 
   _buildList(int outerIndex) {
-    MyCategory category = log.categories[outerIndex];
-    List<MyCategory> subcategories = List.from(log.subcategories);
+    MyCategory category = widget.log.categories[outerIndex];
+    List<MyCategory> subcategories = List.from(widget.log.subcategories);
     subcategories.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
     return DragAndDropListExpansion(
+      initiallyExpanded: expandedCategories[outerIndex],
+      onExpansionChanged: (bool) {
+        Env.store.dispatch(ExpandCollapseCategory(index: outerIndex));
+      },
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
       trailing: CategoryListTileTrailing(onTapEdit: () => _logAddEditCategory(category: category),),
@@ -66,7 +79,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   }
 
   _onListReorder(int oldListIndex, int newListIndex) {
-    //TODO create on reorder method for categories
+    //TODO create on reorder method for categories (also reorder categoryExpanded)
   }
 
   Future<dynamic> _logAddEditCategory({@required MyCategory category}) {
@@ -81,7 +94,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
         },*/
 
         delete: () => {
-          Env.store.dispatch(DeleteCategoryFromLog(category: null)),
+          Env.store.dispatch(DeleteCategoryFromLog(category: category)),
           Get.back(),
         },
         category: category,

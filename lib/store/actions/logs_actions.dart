@@ -1,16 +1,12 @@
 part of 'actions.dart';
 
-AppState _updateLogState(
-  AppState appState,
-  LogsState update(LogsState logsState),
-) {
+AppState _updateLogState(AppState appState,
+    LogsState update(LogsState logsState),) {
   return appState.copyWith(logsState: update(appState.logsState));
 }
 
-AppState _updateLogs(
-  AppState appState,
-  void updateInPlace(Map<String, Log> logs),
-) {
+AppState _updateLogs(AppState appState,
+    void updateInPlace(Map<String, Log> logs),) {
   Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
   updateInPlace(cloneMap);
   return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
@@ -48,7 +44,15 @@ class SelectLog implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId])));
+    List<bool> expandedCategories = [];
+    appState.logsState.logs[logId].categories.forEach((element) {
+      expandedCategories.add(false);
+    });
+
+    return _updateLogState(
+        appState,
+            (logsState) =>
+            logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId]), expandedCategories: expandedCategories));
   }
 }
 
@@ -69,7 +73,7 @@ class SetLogs implements Action {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
         logList.map(
-          (log) => MapEntry(log.id, log),
+              (log) => MapEntry(log.id, log),
         ),
       );
     });
@@ -90,13 +94,13 @@ class AddUpdateLog implements Action {
       //if there are new log members, add them to all transaction
       if (logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
         List<MyEntry> entries =
-            appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
+        appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
       }
 
       logs.update(
         addedUpdatedLog.id,
-        (value) => addedUpdatedLog,
+            (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
     } else {
@@ -162,13 +166,15 @@ class UpdateLogMember implements Action {
 
 class AddEditCategoryFromLog implements Action {
   final MyCategory category;
+  final List<bool> expandedCategories;
 
-  AddEditCategoryFromLog({@required this.category});
+  AddEditCategoryFromLog({@required this.category, @required this.expandedCategories});
 
   @override
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
     List<MyCategory> categories = List.from(log.categories);
+    List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
 
     if (category?.id != null) {
       //category exists, update category
@@ -176,11 +182,13 @@ class AddEditCategoryFromLog implements Action {
     } else {
       //category does not exists, create category
       categories.add(category.copyWith(id: Uuid().v4()));
+      expandedCategories.add(false);
     }
 
     log = log.copyWith(categories: categories);
 
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+    return _updateLogState(appState,
+            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
@@ -193,16 +201,21 @@ class DeleteCategoryFromLog implements Action {
     Log log = appState.logsState.selectedLog.value;
     List<MyCategory> categories = List.from(log.categories);
     List<MyCategory> subcategories = List.from(log.subcategories);
+    List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
+    print('deleted category: $category');
 
     //remove category and its subcategories if the category is not "no category"
     if (category.id != NO_CATEGORY) {
-      categories.removeWhere((e) => e.id == category.id);
+      int indexOfCategory = categories.indexWhere((element) => element.id == category.id);
+      categories.removeAt(indexOfCategory);
       subcategories.removeWhere((e) => e.parentCategoryId == category.id);
+      expandedCategories.removeAt(indexOfCategory);
     }
 
     log = log.copyWith(subcategories: subcategories, categories: categories);
 
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+    return _updateLogState(appState, (logsState) =>
+        logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
@@ -247,5 +260,18 @@ class DeleteSubcategoryFromLog implements Action {
     log = log.copyWith(subcategories: subcategories);
 
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+  }
+}
+
+class ExpandCollapseCategory implements Action {
+  final int index;
+
+  ExpandCollapseCategory({@required this.index});
+
+  AppState updateState(AppState appState) {
+    List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
+    expandedCategories[index] = !expandedCategories[index];
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(expandedCategories: expandedCategories));
   }
 }
