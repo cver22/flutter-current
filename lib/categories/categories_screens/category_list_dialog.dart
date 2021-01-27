@@ -401,7 +401,6 @@ class _CategoryListDialogState extends State<CategoryListDialog> {
             category: subcategory,
             onTap: subcategory.parentCategoryId == null ? null : () => _switchSubOnTap(subcategory),
             onTapEdit: subcategory.parentCategoryId == null ? null : () => _switchSubcategoryOnTapEdit(subcategory),
-            heading: subcategory.parentCategoryId == null ? true : false,
           ),
         )
         .toList();

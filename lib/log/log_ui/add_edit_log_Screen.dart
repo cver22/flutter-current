@@ -1,6 +1,5 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -145,31 +144,12 @@ class AddEditLogScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => MasterCategoryListDialog(log: log),
+                builder: (_) => MasterCategoryListDialog(),
               ),
             },
             category: null, // do not pass a category, maintains label
           );
   }
-
-  /*Widget _subcategoryButton({@required BuildContext context, @required Log log}) {
-    return log.subcategories == null
-        ? Container()
-        : CategoryButton(
-            label: 'Edit Log Subcategories',
-            onPressed: () => {
-              showDialog(
-                context: context,
-                builder: (_) => CategoryListDialog(
-                  log: log,
-                  settingsLogEntry: SettingsLogEntry.log,
-                  categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-                ),
-              ),
-            },
-            category: null, // do not pass a category, maintains label
-          );
-  }*/
 
   Widget _buildLogMemberList({@required Log log}) {
     return log.uid == null ? Container() : LogMemberTotalList(log: log);
