@@ -11,27 +11,21 @@ import 'package:get/get.dart';
 
 import '../../env.dart';
 
-class MasterCategoryDragAndDropList extends StatefulWidget {
+class MasterCategoryDragAndDropList extends StatelessWidget {
   final Log log;
 
   const MasterCategoryDragAndDropList({Key key, @required this.log}) : super(key: key);
 
   @override
-  _MasterCategoryDragAndDropListState createState() => _MasterCategoryDragAndDropListState();
-}
-
-class _MasterCategoryDragAndDropListState extends State<MasterCategoryDragAndDropList> {
-  List<bool> expandedCategories = [];
-
-  @override
   Widget build(BuildContext context) {
-    expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
-
     print('build drag and drop');
     return DragAndDropLists(
-      children: List.generate(widget.log.categories.length, (index) => _buildList(index)),
+      children: List.generate(log.categories.length, (index) => _buildList(outerIndex: index)),
       onItemReorder: _onItemReorder,
-      onListReorder: _onListReorder,
+      onListReorder: (oldCategoryIndex, newCategoryIndex) => {
+        Env.store.dispatch(
+            ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex)),
+      },
       // listGhost is mandatory when using expansion tiles to prevent multiple widgets using the same globalkey
       listGhost: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -49,9 +43,10 @@ class _MasterCategoryDragAndDropListState extends State<MasterCategoryDragAndDro
     );
   }
 
-  _buildList(int outerIndex) {
-    MyCategory category = widget.log.categories[outerIndex];
-    List<MyCategory> subcategories = List.from(widget.log.subcategories);
+  _buildList({@required int outerIndex}) {
+    List<bool> expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
+    MyCategory category = log.categories[outerIndex];
+    List<MyCategory> subcategories = List.from(log.subcategories);
     subcategories.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
     return DragAndDropListExpansion(
       initiallyExpanded: expandedCategories[outerIndex],
@@ -60,7 +55,9 @@ class _MasterCategoryDragAndDropListState extends State<MasterCategoryDragAndDro
       },
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
-      trailing: CategoryListTileTrailing(onTapEdit: () => _logAddEditCategory(category: category),),
+      trailing: CategoryListTileTrailing(
+        onTapEdit: () => _logAddEditCategory(category: category),
+      ),
       children: List.generate(subcategories.length, (index) => _buildItem(subcategory: subcategories[index])),
       listKey: ObjectKey(subcategories),
     );
@@ -69,17 +66,17 @@ class _MasterCategoryDragAndDropListState extends State<MasterCategoryDragAndDro
   _buildItem({MyCategory subcategory}) {
     return DragAndDropItem(
         child: CategoryListTile(
-          onTapEdit: () => _logAddEditSubcategory(subcategory: subcategory),
+      onTapEdit: () => _logAddEditSubcategory(subcategory: subcategory),
       category: subcategory,
     ));
   }
 
-  _onItemReorder(int oldItemIndex, int oldListIndex, int newItemIndex, int newListIndex) {
-    //TODO create on reorder method for subcategories
-  }
-
-  _onListReorder(int oldListIndex, int newListIndex) {
-    //TODO create on reorder method for categories (also reorder categoryExpanded)
+  _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
+    Env.store.dispatch(ReorderSubcategoryFromLogScreen(
+        oldCategoryIndex: oldCategoryIndex,
+        newCategoryIndex: newCategoryIndex,
+        oldSubcategoryIndex: oldSubcategoryIndex,
+        newSubcategoryIndex: newSubcategoryIndex));
   }
 
   Future<dynamic> _logAddEditCategory({@required MyCategory category}) {
@@ -89,6 +86,7 @@ class _MasterCategoryDragAndDropListState extends State<MasterCategoryDragAndDro
           Env.store.dispatch(AddEditCategoryFromLog(category: category.copyWith(name: name, emojiChar: emojiChar))),
         },
 
+        //TODO default function
         /*setDefault: (category) => {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
         },*/

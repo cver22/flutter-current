@@ -95,33 +95,13 @@ class EntryCategoryListDialog extends StatelessWidget {
           onReorder: (oldIndex, newIndex) {
             //reorder for categories
             if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-              _reorderCategories(newIndex: newIndex, categories: categories, oldIndex: oldIndex);
+              Env.store.dispatch(ReorderCategoriesFromEntryScreen(oldIndex: oldIndex, newIndex: newIndex));
             } else {
-              _reorderSubcategories(newIndex: newIndex, subcategories: categories, oldIndex: oldIndex);
+              Env.store.dispatch(ReorderSubcategoriesFromEntryScreen(newIndex: newIndex, oldIndex: oldIndex, reorderedSubcategories: categories));
             }
           },
           children: _categoryList(context: context, categories: categories)),
     );
-  }
-
-  void _reorderCategories({int newIndex, List<MyCategory> categories, int oldIndex}) {
-    if (newIndex > categories.length) newIndex = categories.length;
-    if (oldIndex < newIndex) newIndex--;
-
-    MyCategory category = categories[oldIndex];
-    categories.remove(category);
-    categories.insert(newIndex, category);
-    Env.store.dispatch(ReorderCategoriesFromEntryScreen(categories: categories));
-  }
-
-  void _reorderSubcategories({int newIndex, List<MyCategory> subcategories, int oldIndex}) {
-    if (newIndex > subcategories.length) newIndex = subcategories.length;
-    if (oldIndex < newIndex) newIndex--;
-
-    MyCategory category = subcategories[oldIndex];
-    subcategories.remove(category);
-    subcategories.insert(newIndex, category);
-    Env.store.dispatch(ReorderSubcategoriesFromEntryScreen(reorderedSubcategories: subcategories));
   }
 
   List<CategoryListTile> _categoryList({List<MyCategory> categories, BuildContext context}) {

@@ -12,8 +12,9 @@ class EntriesState extends Equatable {
   final bool isLoading;
   final Maybe<EntriesFilter> entriesFilter;
   final Maybe<EntriesFilter> chartFilter;
+  final bool descending;
 
-  EntriesState( {this.entries, this.isLoading,this.entriesFilter, this.chartFilter});
+  EntriesState( {this.entries, this.isLoading,this.entriesFilter, this.chartFilter, this.descending});
 
   factory EntriesState.initial() {
     return EntriesState(
@@ -21,11 +22,12 @@ class EntriesState extends Equatable {
       isLoading: true,
       entriesFilter: Maybe.none(),
       chartFilter: Maybe.none(),
+      descending: true,
     );
   }
 
   @override
-  List<Object> get props => [entries, isLoading, entriesFilter];
+  List<Object> get props => [entries, isLoading, entriesFilter, chartFilter, descending];
 
   @override
   bool get stringify => true;
@@ -35,11 +37,13 @@ class EntriesState extends Equatable {
     bool isLoading,
     Maybe<EntriesFilter> entriesFilter,
     Maybe<EntriesFilter> chartFilter,
+    bool descending,
   }) {
     if ((entries == null || identical(entries, this.entries)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
         (entriesFilter == null || identical(entriesFilter, this.entriesFilter)) &&
-        (chartFilter == null || identical(chartFilter, this.chartFilter))) {
+        (chartFilter == null || identical(chartFilter, this.chartFilter)) &&
+        (descending == null || identical(descending, this.descending))) {
       return this;
     }
 
@@ -48,6 +52,9 @@ class EntriesState extends Equatable {
       isLoading: isLoading ?? this.isLoading,
       entriesFilter: entriesFilter ?? this.entriesFilter,
       chartFilter: chartFilter ?? this.chartFilter,
+      descending: descending ?? this.descending,
     );
   }
+
+
 }

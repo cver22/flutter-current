@@ -256,11 +256,22 @@ class ChangeEntryCategories implements Action {
 }
 
 class ReorderCategoriesFromEntryScreen implements Action {
-  final List<MyCategory> categories;
+  final int newIndex;
+  final int oldIndex;
 
-  ReorderCategoriesFromEntryScreen({@required this.categories});
+  ReorderCategoriesFromEntryScreen({@required this.newIndex, @required this.oldIndex});
 
   AppState updateState(AppState appState) {
+    List<MyCategory> categories = List.from(appState.singleEntryState.categories);
+    int categoryNewIndex = newIndex;
+
+    if (newIndex > categories.length) categoryNewIndex = categories.length;
+    if (oldIndex < newIndex) categoryNewIndex--;
+
+    MyCategory category = categories[oldIndex];
+    categories.remove(category);
+    categories.insert(categoryNewIndex, category);
+
     return _updateSingleEntryState(
       appState,
       (singleEntryState) => singleEntryState.copyWith(categories: categories),
@@ -270,11 +281,23 @@ class ReorderCategoriesFromEntryScreen implements Action {
 
 class ReorderSubcategoriesFromEntryScreen implements Action {
   final List<MyCategory> reorderedSubcategories;
+  final int newIndex;
+  final int oldIndex;
 
-  ReorderSubcategoriesFromEntryScreen({@required this.reorderedSubcategories});
+  ReorderSubcategoriesFromEntryScreen(
+      {@required this.newIndex, @required this.oldIndex, @required this.reorderedSubcategories});
 
   AppState updateState(AppState appState) {
     List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
+    int subcategoryNexIndex = newIndex;
+
+    if (newIndex > reorderedSubcategories.length) subcategoryNexIndex = reorderedSubcategories.length;
+    if (oldIndex < subcategoryNexIndex) subcategoryNexIndex--;
+
+    MyCategory category = reorderedSubcategories[oldIndex];
+    reorderedSubcategories.remove(category);
+    reorderedSubcategories.insert(newIndex, category);
+
     reorderedSubcategories.forEach((reordedSub) {
       subcategories.removeWhere((sub) => reordedSub.id == sub.id);
     });
@@ -324,16 +347,17 @@ class DeleteCategoryFromEntryScreen implements Action {
       categories.removeWhere((e) => e.id == category.id);
       subcategories.removeWhere((e) => e.parentCategoryId == category.id);
     }
-    if(category.id == entry.categoryId) {
+    if (category.id == entry.categoryId) {
       entry = entry.copyWith(categoryId: NO_CATEGORY);
-      if(entry.subcategoryId != null) {
+      if (entry.subcategoryId != null) {
         entry = entry.copyWith(subcategoryId: NO_SUBCATEGORY);
       }
     }
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry)),
+      (singleEntryState) => singleEntryState.copyWith(
+          categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry)),
     );
   }
 }
@@ -394,7 +418,7 @@ class DeleteSubcategoryFromEntryScreen implements Action {
     if (subcategory.id != NO_SUBCATEGORY) {
       subcategories.removeWhere((e) => e.id == subcategory.id);
     }
-    if(subcategory.id == entry.subcategoryId) {
+    if (subcategory.id == entry.subcategoryId) {
       entry = entry.copyWith(subcategoryId: NO_SUBCATEGORY);
     }
 

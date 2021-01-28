@@ -214,8 +214,8 @@ class DeleteCategoryFromLog implements Action {
 
     log = log.copyWith(subcategories: subcategories, categories: categories);
 
-    return _updateLogState(appState, (logsState) =>
-        logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
+    return _updateLogState(appState,
+            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
@@ -273,5 +273,77 @@ class ExpandCollapseCategory implements Action {
     expandedCategories[index] = !expandedCategories[index];
 
     return _updateLogState(appState, (logsState) => logsState.copyWith(expandedCategories: expandedCategories));
+  }
+}
+
+class ReorderCategoryFromLogScreen implements Action {
+  final int oldCategoryIndex;
+  final int newCategoryIndex;
+
+  ReorderCategoryFromLogScreen({@required this.oldCategoryIndex, @required this.newCategoryIndex});
+
+  AppState updateState(AppState appState) {
+    List<MyCategory> categories = List.from(appState.logsState.selectedLog.value.categories);
+    MyCategory movedCategory = categories.removeAt(oldCategoryIndex);
+    categories.insert(newCategoryIndex, movedCategory);
+
+    return _updateLogState(
+        appState,
+            (logsState) =>
+            logsState.copyWith(
+                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories))));
+  }
+}
+
+class ReorderSubcategoryFromLogScreen implements Action {
+  final int oldCategoryIndex;
+  final int newCategoryIndex;
+  final int oldSubcategoryIndex;
+  final int newSubcategoryIndex;
+
+  ReorderSubcategoryFromLogScreen({@required this.oldCategoryIndex,
+    @required this.newCategoryIndex,
+    @required this.oldSubcategoryIndex,
+    @required this.newSubcategoryIndex});
+
+  AppState updateState(AppState appState) {
+    Log log = appState.logsState.selectedLog.value;
+    String oldParentId = log.categories[oldCategoryIndex].id;
+    String newParentId = log.categories[newCategoryIndex].id;
+    List<MyCategory> subcategories = List.from(log.subcategories);
+    List<MyCategory> subsetOfSubcategories = List.from(subcategories);
+    subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
+    MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
+
+    //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
+    if (subcategory.id != NO_SUBCATEGORY && newParentId != NO_CATEGORY) {
+
+      if (oldParentId == newParentId) {
+        //subcategory has not moved parents
+        subsetOfSubcategories.remove(subcategory);
+        subsetOfSubcategories.insert(newSubcategoryIndex, subcategory);
+      } else {
+
+        //category has moved parents, organize in new list with revised parent
+        subsetOfSubcategories = List.from(subcategories); //reinitialize subset list
+        subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == newParentId);
+        subsetOfSubcategories.insert(newSubcategoryIndex, subcategory.copyWith(parentCategoryId: newParentId));
+      }
+
+      //remove from subcategory list
+      subsetOfSubcategories.forEach((reordedSub) {
+        subcategories.removeWhere((sub) => reordedSub.id == sub.id);
+      });
+      //reinsert in subcategory list in revised order
+      subsetOfSubcategories.forEach((subcategory) {
+        subcategories.add(subcategory);
+      });
+    }
+
+    return _updateLogState(
+        appState,
+            (logsState) =>
+            logsState.copyWith(
+                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories))));
   }
 }
