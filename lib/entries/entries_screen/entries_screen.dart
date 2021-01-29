@@ -41,6 +41,12 @@ class EntriesScreen extends StatelessWidget {
           } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
             entries = entriesState.entries.entries.map((e) => e.value).toList();
 
+            if(entriesState.descending){
+              entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
+            }else {
+              entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+            }
+
             return EntriesScreenBuildListView(
                 entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter));
           } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {

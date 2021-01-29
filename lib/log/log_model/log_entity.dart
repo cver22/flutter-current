@@ -19,6 +19,7 @@ class LogEntity extends Equatable {
   final Map<String, MyCategory> subcategories;
   final Map<String, LogMember> logMembers;
   final List<String> memberList;
+  final int order;
 
   const LogEntity(
       {this.uid,
@@ -30,16 +31,18 @@ class LogEntity extends Equatable {
       this.archive,
       this.defaultCategory,
       this.logMembers,
-      this.memberList});
+      this.memberList,
+      this.order});
 
   @override
   List<Object> get props =>
-      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, memberList];
+      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, memberList, order];
 
   @override
   String toString() {
     return 'Log {uid: $uid, id: $id, logName: $name, currency: $currency, categories: $categories, '
-        '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $logMembers, memberList: $memberList}';
+        '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $logMembers, '
+        'memberList: $memberList, order: $order}';
   }
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
@@ -56,6 +59,7 @@ class LogEntity extends Equatable {
       defaultCategory: snap.data[DEFAULT_CATEGORY],
       logMembers: (snap.data[MEMBERS] as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
+      order: snap.data[ORDER],
     );
   }
 
@@ -70,6 +74,7 @@ class LogEntity extends Equatable {
       DEFAULT_CATEGORY: defaultCategory,
       MEMBERS: logMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       MEMBER_LIST: memberList,
+      ORDER: order
     };
   }
 }

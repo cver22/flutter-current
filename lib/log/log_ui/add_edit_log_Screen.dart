@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/exit_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
@@ -19,13 +20,24 @@ class AddEditLogScreen extends StatelessWidget {
   void _submit() {
     print('submit pressed');
     Env.store.dispatch(AddUpdateLog());
-
     Get.back();
   }
 
-  void closeAddEditLogScreen() {
-    Get.back();
-    Env.store.dispatch(ClearSelectedLog());
+  Future<bool> _confirmationDialog() async {
+    bool onWillPop = false;
+    await Get.dialog(
+      ExitConfirmationDialog(
+        title: 'Exit without saving?',
+        pop: (willPop) => {onWillPop = willPop},
+        onTap: () => {
+          Env.store.dispatch(ClearSelectedLog()),
+        },
+      ),
+    );
+
+    if (onWillPop) Get.back(); //used for back arrow
+
+    return onWillPop; //used for willPop
   }
 
   @override
@@ -44,15 +56,14 @@ class AddEditLogScreen extends StatelessWidget {
         _name = _log?.name ?? null;
         return WillPopScope(
           onWillPop: () async {
-            Get.back();
-            return true;
+            return _confirmationDialog();
           },
           child: Scaffold(
             appBar: AppBar(
               title: Text('Log'),
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                onPressed: () => closeAddEditLogScreen(),
+                onPressed: () => _confirmationDialog(),
               ),
               actions: <Widget>[
                 IconButton(

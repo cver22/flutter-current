@@ -25,8 +25,7 @@
       //TODO clicking in a focusNode value for a member should tick its
       //TODO spent redistribution methods that account for multiple people
       //TODO Option for new logs to copy category list from another log to remove it from
-      //TODO exiting of categories you cannot move the cursor, same issue with tags, but only in the transaction, the editor is fine, look there for the solution
-      //TODO selected log onBack, are you sure you don't want to save changes
+      //TODO editing of categories you cannot move the cursor, same issue with tags, but only in the transaction, the editor is fine, look there for the solution
       //TODO current default for null is no category and no subcategory, this likely isn't going to work and needs to be adjusted
 
 
@@ -37,7 +36,6 @@
 
 
     //TODO START HERE
-      //ordering of entries in the list and changing the order
 //build filter dialog
       //build function to return filtered list back to the widget
 

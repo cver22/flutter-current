@@ -429,6 +429,7 @@ class DeleteSubcategoryFromEntryScreen implements Action {
   }
 }
 
+//TODO this should be combined with ClearEntryState()
 class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements Action {
   @override
   AppState updateState(AppState appState) {

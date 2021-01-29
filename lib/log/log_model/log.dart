@@ -24,6 +24,7 @@ class Log extends Equatable {
     this.archive = false,
     this.defaultCategory,
     this.logMembers,
+    this.order,
   });
 
   final String uid;
@@ -35,6 +36,7 @@ class Log extends Equatable {
   final List<MyCategory> categories;
   final List<MyCategory> subcategories;
   final Map<String, LogMember> logMembers;
+  final int order;
 
   //TODO both of these should be move to the actions/logic section
   Log addEditLogCategories({Log log, MyCategory category}) {
@@ -65,12 +67,12 @@ class Log extends Equatable {
   }
 
   @override
-  List<Object> get props => [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers];
+  List<Object> get props => [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, order];
 
   @override
   String toString() {
     return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $name, currency: $currency, $CATEGORIES: $categories,  '
-        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers}';
+        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers, order: $order}';
   }
 
   LogEntity toEntity() {
@@ -87,6 +89,7 @@ class Log extends Equatable {
       defaultCategory: defaultCategory,
       logMembers: logMembers,
       memberList: logMembers.keys.toList(),
+      order: order,
     );
   }
 
@@ -112,6 +115,7 @@ class Log extends Equatable {
       archive: entity.archive,
       defaultCategory: entity.defaultCategory,
       logMembers: logMemberHashMap,
+      order: entity.order,
     );
   }
 
@@ -125,6 +129,7 @@ class Log extends Equatable {
     List<MyCategory> categories,
     List<MyCategory> subcategories,
     Map<String, LogMember> logMembers,
+    int order,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (id == null || identical(id, this.id)) &&
@@ -134,7 +139,8 @@ class Log extends Equatable {
         (defaultCategory == null || identical(defaultCategory, this.defaultCategory)) &&
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null || identical(subcategories, this.subcategories)) &&
-        (logMembers == null || identical(logMembers, this.logMembers))) {
+        (logMembers == null || identical(logMembers, this.logMembers)) &&
+        (order == null || identical(order, this.order))) {
       return this;
     }
 
@@ -148,6 +154,7 @@ class Log extends Equatable {
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       logMembers: logMembers ?? this.logMembers,
+      order: order ?? this.order,
     );
   }
 }

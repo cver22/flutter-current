@@ -69,3 +69,10 @@ class SetEntries implements Action {
         (entriesState) => entriesState.copyWith(entries: entries));
   }
 }
+
+class SetEntriesOrder implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending));
+  }
+}
