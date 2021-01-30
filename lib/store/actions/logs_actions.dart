@@ -80,6 +80,53 @@ class SetLogs implements Action {
   }
 }
 
+class Reorder implements Action {
+  final bool save;
+
+  Reorder({this.save = false});
+
+  @override
+  AppState updateState(AppState appState) {
+    bool reorder = appState.logsState.reorder;
+
+    if (reorder && save) {
+      //app is in reorder state and user wishes to save
+      appState.logsState.logs.forEach((key, log) {
+        Env.logsFetcher.updateLog(log);
+      });
+    } else if (reorder && !save) {
+      //app is in reorder state and user does not wish to save, reload previous logs
+      Env.logsFetcher.loadLogs();
+    }
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(reorder: !reorder));
+  }
+
+}
+
+class ReorderLog implements Action {
+  final int oldIndex;
+  final int newIndex;
+  final List<Log> logs;
+
+  ReorderLog({this.oldIndex, this.newIndex, this.logs});
+
+  @override
+  AppState updateState(AppState appState) {
+    Map<String, Log> logsMap = Map.from(appState.logsState.logs);
+    List<Log> organizedLogs = logs;
+
+    Log movedLog = organizedLogs.removeAt(oldIndex);
+    organizedLogs.insert(newIndex, movedLog);
+
+    organizedLogs.forEach((log) {
+      logsMap[log.id] = log.copyWith(order: organizedLogs.indexOf(log));
+    });
+
+    return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logsMap));
+  }
+}
+
 class AddUpdateLog implements Action {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
@@ -107,6 +154,17 @@ class AddUpdateLog implements Action {
       //create a new log, does not save locally to state as there is no id yet
       Map<String, LogMember> members = {};
       String uid = appState.authState.user.value.id;
+      int order = 0;
+
+      if (logs.length > 0) {
+        logs.forEach((key, log) {
+          if (log.order > order) {
+            order = log.order;
+          }
+        });
+        order++;
+      }
+
       members.putIfAbsent(
           uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0));
 
@@ -115,6 +173,7 @@ class AddUpdateLog implements Action {
         categories: appState.settingsState.settings.value.defaultCategories,
         subcategories: appState.settingsState.settings.value.defaultSubcategories,
         logMembers: members,
+        order: order,
       );
 
       Env.logsFetcher.addLog(addedUpdatedLog);
@@ -312,18 +371,17 @@ class ReorderSubcategoryFromLogScreen implements Action {
     String newParentId = log.categories[newCategoryIndex].id;
     List<MyCategory> subcategories = List.from(log.subcategories);
     List<MyCategory> subsetOfSubcategories = List.from(subcategories);
-    subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
+    subsetOfSubcategories
+        .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
     MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
     //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
     if (subcategory.id != NO_SUBCATEGORY && newParentId != NO_CATEGORY) {
-
       if (oldParentId == newParentId) {
         //subcategory has not moved parents
         subsetOfSubcategories.remove(subcategory);
         subsetOfSubcategories.insert(newSubcategoryIndex, subcategory);
       } else {
-
         //category has moved parents, organize in new list with revised parent
         subsetOfSubcategories = List.from(subcategories); //reinitialize subset list
         subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == newParentId);

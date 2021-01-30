@@ -15,12 +15,14 @@ class LogsState extends Equatable{
   final bool isLoading;
   final Maybe<Log> selectedLog;
   final List<bool> expandedCategories;
+  final bool reorder;
 
   LogsState({
     this.logs,
     this.isLoading,
     this.selectedLog,
-    this.expandedCategories
+    this.expandedCategories,
+    this.reorder,
   });
 
   /*Maybe<Log> get selectedLog {
@@ -33,11 +35,12 @@ class LogsState extends Equatable{
       isLoading: true,
       selectedLog: Maybe.none(),
       expandedCategories: List(),
+      reorder: false,
     );
   }
 
   @override
-  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories];
+  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories, reorder];
 
   @override
   bool get stringify => true;
@@ -47,11 +50,13 @@ class LogsState extends Equatable{
     bool isLoading,
     Maybe<Log> selectedLog,
     List<bool> expandedCategories,
+    bool reorder,
   }) {
     if ((logs == null || identical(logs, this.logs)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
         (selectedLog == null || identical(selectedLog, this.selectedLog)) &&
-        (expandedCategories == null || identical(expandedCategories, this.expandedCategories))) {
+        (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
+        (reorder == null || identical(reorder, this.reorder))) {
       return this;
     }
 
@@ -60,6 +65,7 @@ class LogsState extends Equatable{
       isLoading: isLoading ?? this.isLoading,
       selectedLog: selectedLog ?? this.selectedLog,
       expandedCategories: expandedCategories ?? this.expandedCategories,
+      reorder: reorder ?? this.reorder,
     );
   }
 }

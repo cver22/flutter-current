@@ -22,10 +22,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     return DragAndDropLists(
       children: List.generate(log.categories.length, (index) => _buildList(outerIndex: index)),
       onItemReorder: _onItemReorder,
-      onListReorder: (oldCategoryIndex, newCategoryIndex) => {
-        Env.store.dispatch(
-            ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex)),
-      },
+      onListReorder: _onListReorder,
       // listGhost is mandatory when using expansion tiles to prevent multiple widgets using the same globalkey
       listGhost: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0),
@@ -71,12 +68,17 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     ));
   }
 
-  _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
+  void _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
     Env.store.dispatch(ReorderSubcategoryFromLogScreen(
         oldCategoryIndex: oldCategoryIndex,
         newCategoryIndex: newCategoryIndex,
         oldSubcategoryIndex: oldSubcategoryIndex,
         newSubcategoryIndex: newSubcategoryIndex));
+  }
+
+  void _onListReorder(int oldCategoryIndex, int newCategoryIndex) {
+    Env.store
+        .dispatch(ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
   }
 
   Future<dynamic> _logAddEditCategory({@required MyCategory category}) {

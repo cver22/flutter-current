@@ -27,6 +27,7 @@
       //TODO Option for new logs to copy category list from another log to remove it from
       //TODO editing of categories you cannot move the cursor, same issue with tags, but only in the transaction, the editor is fine, look there for the solution
       //TODO current default for null is no category and no subcategory, this likely isn't going to work and needs to be adjusted
+      //TODO move settings over to new reorderable list model
 
 
 
@@ -36,6 +37,7 @@
 
 
     //TODO START HERE
+      //reorder of logs needs to handle out of range exception
 //build filter dialog
       //build function to return filtered list back to the widget
 
