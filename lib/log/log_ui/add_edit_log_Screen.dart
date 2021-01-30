@@ -155,7 +155,7 @@ class AddEditLogScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => MasterCategoryListDialog(),
+                builder: (_) => MasterCategoryListDialog(setLogEnt: SettingsLogEntry.log,),
               ),
             },
             category: null, // do not pass a category, maintains label

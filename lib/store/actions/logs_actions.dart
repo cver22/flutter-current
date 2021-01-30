@@ -225,9 +225,8 @@ class UpdateLogMember implements Action {
 
 class AddEditCategoryFromLog implements Action {
   final MyCategory category;
-  final List<bool> expandedCategories;
 
-  AddEditCategoryFromLog({@required this.category, @required this.expandedCategories});
+  AddEditCategoryFromLog({@required this.category});
 
   @override
   AppState updateState(AppState appState) {
@@ -322,10 +321,10 @@ class DeleteSubcategoryFromLog implements Action {
   }
 }
 
-class ExpandCollapseCategory implements Action {
+class ExpandCollapseLogCategory implements Action {
   final int index;
 
-  ExpandCollapseCategory({@required this.index});
+  ExpandCollapseLogCategory({@required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);

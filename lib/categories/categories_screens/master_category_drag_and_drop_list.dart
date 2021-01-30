@@ -2,25 +2,27 @@ import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile_components.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
-import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
-import 'package:expenses/log/log_model/log.dart';
+import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../env.dart';
 
 class MasterCategoryDragAndDropList extends StatelessWidget {
-  final Log log;
+  final List<MyCategory> categories;
+  final List<MyCategory> subcategories;
+  final SettingsLogEntry setLogEnt;
 
-  const MasterCategoryDragAndDropList({Key key, @required this.log}) : super(key: key);
+  const MasterCategoryDragAndDropList(
+      {Key key, @required this.categories, @required this.subcategories, @required this.setLogEnt})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     print('build drag and drop');
     return DragAndDropLists(
-      children: List.generate(log.categories.length, (index) => _buildList(outerIndex: index)),
+      children: List.generate(categories.length, (index) => _buildList(outerIndex: index)),
       onItemReorder: _onItemReorder,
       onListReorder: _onListReorder,
       // listGhost is mandatory when using expansion tiles to prevent multiple widgets using the same globalkey
@@ -42,86 +44,66 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   _buildList({@required int outerIndex}) {
     List<bool> expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
-    MyCategory category = log.categories[outerIndex];
-    List<MyCategory> subcategories = List.from(log.subcategories);
-    subcategories.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
+    MyCategory category = categories[outerIndex];
+    List<MyCategory> subs = List.from(subcategories);
+    subs.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
     return DragAndDropListExpansion(
       initiallyExpanded: expandedCategories[outerIndex],
       onExpansionChanged: (bool) {
-        Env.store.dispatch(ExpandCollapseCategory(index: outerIndex));
+        if (setLogEnt == SettingsLogEntry.log) {
+          Env.store.dispatch(ExpandCollapseLogCategory(index: outerIndex));
+        } else if (setLogEnt == SettingsLogEntry.settings) {
+          Env.store.dispatch(ExpandCollapseSettingsCategory(index: outerIndex));
+        }
       },
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
-      trailing: CategoryListTileTrailing(
-        onTapEdit: () => _logAddEditCategory(category: category),
-      ),
-      children: List.generate(subcategories.length, (index) => _buildItem(subcategory: subcategories[index])),
-      listKey: ObjectKey(subcategories),
+      trailing: CategoryListTileTrailing(onTapEdit: () {
+        if (setLogEnt == SettingsLogEntry.log) {
+          getLogAddEditCategoryDialog(category: category);
+        } else if (setLogEnt == SettingsLogEntry.settings) {
+          getSettingsAddEditCategoryDialog(category: category);
+        }
+      }),
+      children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories)),
+      listKey: ObjectKey(subs),
     );
   }
 
-  _buildItem({MyCategory subcategory}) {
+  _buildItem({@required MyCategory subcategory, @required List<MyCategory> categories}) {
     return DragAndDropItem(
         child: CategoryListTile(
-      onTapEdit: () => _logAddEditSubcategory(subcategory: subcategory),
+      onTapEdit: () {
+        if (setLogEnt == SettingsLogEntry.log) {
+          getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+        } else if (setLogEnt == SettingsLogEntry.settings) {
+          getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+        }
+      },
       category: subcategory,
     ));
   }
 
   void _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
-    Env.store.dispatch(ReorderSubcategoryFromLogScreen(
-        oldCategoryIndex: oldCategoryIndex,
-        newCategoryIndex: newCategoryIndex,
-        oldSubcategoryIndex: oldSubcategoryIndex,
-        newSubcategoryIndex: newSubcategoryIndex));
+    if (setLogEnt == SettingsLogEntry.log) {
+      Env.store.dispatch(ReorderSubcategoryFromLogScreen(
+          oldCategoryIndex: oldCategoryIndex,
+          newCategoryIndex: newCategoryIndex,
+          oldSubcategoryIndex: oldSubcategoryIndex,
+          newSubcategoryIndex: newSubcategoryIndex));
+    } else if (setLogEnt == SettingsLogEntry.settings) {
+      //TODO create reorder function
+    }
+
   }
 
   void _onListReorder(int oldCategoryIndex, int newCategoryIndex) {
-    Env.store
-        .dispatch(ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
-  }
+    if (setLogEnt == SettingsLogEntry.log) {
+      Env.store
+          .dispatch(ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
+    } else if (setLogEnt == SettingsLogEntry.settings) {
+      //TODO create reorder function
+    }
 
-  Future<dynamic> _logAddEditCategory({@required MyCategory category}) {
-    return Get.dialog(
-      EditCategoryDialog(
-        save: (name, emojiChar, unused) => {
-          Env.store.dispatch(AddEditCategoryFromLog(category: category.copyWith(name: name, emojiChar: emojiChar))),
-        },
-
-        //TODO default function
-        /*setDefault: (category) => {
-          Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
-        },*/
-
-        delete: () => {
-          Env.store.dispatch(DeleteCategoryFromLog(category: category)),
-          Get.back(),
-        },
-        category: category,
-        categoryOrSubcategory: CategoryOrSubcategory.category,
-      ),
-    );
-  }
-
-  Future<dynamic> _logAddEditSubcategory({@required MyCategory subcategory}) {
-    return Get.dialog(
-      EditCategoryDialog(
-        categories: Env.store.state.logsState.selectedLog.value.categories,
-        save: (name, emojiChar, parentCategoryId) => {
-          Env.store.dispatch(AddEditSubcategoryFromLog(
-              subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
-        },
-
-        //TODO default function
-
-        delete: () => {
-          Env.store.dispatch(DeleteSubcategoryFromLog(subcategory: subcategory)),
-          Get.back(),
-        },
-        initialParent: subcategory.parentCategoryId,
-        category: subcategory,
-        categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-      ),
-    );
   }
 }

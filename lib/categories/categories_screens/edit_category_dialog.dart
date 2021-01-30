@@ -4,7 +4,6 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../env.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;

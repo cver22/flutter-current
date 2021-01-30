@@ -1,6 +1,7 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
+import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
@@ -53,7 +54,6 @@ class SettingsScreen extends StatelessWidget {
                   ),
                   SizedBox(height: 10),
                   _categoryButton(settingsState: settingsState, context: context),
-                  _subcategoryButton(settingsState: settingsState, context: context),
                   SizedBox(
                     height: 50,
                   ),
@@ -67,9 +67,7 @@ class SettingsScreen extends StatelessWidget {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Reset Settings'),
-                                    content: SingleChildScrollView(
-                                      child: Text('Are you sure you want to reset all settings?'),
-                                    ),
+                                    content: Text('Are you sure you want to reset all settings?'),
                                     actions: [
                                       TextButton(
                                         child: Text('Cancel'),
@@ -88,6 +86,10 @@ class SettingsScreen extends StatelessWidget {
                                   );
                                 })
                           }),
+                  RaisedButton(child: Text('Reload settings'),
+                  onPressed: () {
+                    Env.settingsFetcher.readResetAppSettings(resetSettings: false);
+                  },),
                 ],
               ),
             ),
@@ -141,10 +143,7 @@ class SettingsScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => CategoryListDialog(
-                  settingsLogEntry: SettingsLogEntry.settings,
-                  categoryOrSubcategory: CategoryOrSubcategory.category,
-                ),
+                builder: (_) => MasterCategoryListDialog(setLogEnt: SettingsLogEntry.settings,),
               ),
             },
             category: null, // do not pass a category, maintains label

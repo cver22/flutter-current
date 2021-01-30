@@ -35,6 +35,7 @@
 
 
 //TODO START HERE
+//cant find the settings state for some reason
 //build filter dialog
 //build function to return filtered list back to the widget
 
