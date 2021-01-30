@@ -95,7 +95,7 @@ class AddEditLogScreen extends StatelessWidget {
     );
   }
 
-  bool canSave(String _name) => _name != null && _name != '';
+  bool canSave(String name) => name != null && name != '';
 
   Widget _buildContents({@required BuildContext context, @required Log log, @required String currency}) {
     return SingleChildScrollView(
@@ -130,7 +130,7 @@ class AddEditLogScreen extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
       initialValue: log.name,
-      onChanged: (value) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: value))),
+      onChanged: (name) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: name))),
       //TODO validate name cannot be empty
       //TODO need controllers
     );

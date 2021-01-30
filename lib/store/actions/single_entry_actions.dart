@@ -62,7 +62,7 @@ class SetNewSelectedEntry implements Action {
         appState,
         (singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe.some(entry),
-            selectedTag: Maybe.none(),
+            selectedTag: Maybe.some(Tag()),
             tags: tags,
             categories: List.from(log.categories),
             subcategories: List.from(log.subcategories),
@@ -93,7 +93,7 @@ class SelectEntry implements Action {
         appState,
         (singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe.some(entry.copyWith(entryMembers: entryMembers)),
-            selectedTag: Maybe.none(),
+            selectedTag: Maybe.some(Tag()),
             tags: tags,
             categories: List.from(log.categories),
             subcategories: List.from(log.subcategories),
@@ -587,7 +587,7 @@ class AddUpdateTagFromEntryScreen implements Action {
 
   @override
   AppState updateState(AppState appState) {
-    Tag addedUpdatedTag = tag; //TODO - update the editor to utilize the selectedTagState and pull from there
+    Tag addedUpdatedTag = tag;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
 
@@ -612,7 +612,7 @@ class AddUpdateTagFromEntryScreen implements Action {
     return _updateSingleEntryState(
         appState,
         (singleEntryState) =>
-            singleEntryState.copyWith(selectedEntry: Maybe.some(entry), selectedTag: Maybe.none(), tags: tags));
+            singleEntryState.copyWith(selectedEntry: Maybe.some(entry), selectedTag: Maybe.some(Tag()), tags: tags));
   }
 }
 

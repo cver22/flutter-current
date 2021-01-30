@@ -45,6 +45,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   bool showEmojiGrid;
   String emojiChar;
   MyCategory selectedCategory;
+  bool canSave;
 
   //TODO prevent NoCategory and NoSubcategory from being edited or deleted
 
@@ -79,14 +80,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     }
 
     controller = TextEditingController(text: name);
-    controller.addListener(() {
-      final textController = controller.text;
-      controller.value = controller.value.copyWith(
-        text: textController,
-        selection: TextSelection(baseOffset: textController.length, extentOffset: textController.length),
-        composing: TextRange.empty,
-      );
-    });
+    canSave = controller.text != null && controller.value.text.length > 0;
   }
 
   void dispose() {
@@ -121,7 +115,15 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                 flex: 5,
                 child: id == NO_CATEGORY || id == NO_SUBCATEGORY
                     ? Text(name)
-                    : TextField(controller: controller, decoration: InputDecoration(border: OutlineInputBorder())),
+                    : TextField(
+                        controller: controller,
+                        decoration: InputDecoration(border: OutlineInputBorder()),
+                        onChanged: (value) {
+                          setState(() {
+                            canSave = value != null && value.length > 0;
+                          });
+                        },
+                      ),
               ),
             ],
           ),
@@ -170,19 +172,15 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             ),*/
             FlatButton(
               child: Text('Save'),
-              onPressed: () => {
-                //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
-                if (controller.text.length > 0)
-                  {
-                    print('${controller.text}, $emojiChar, $parentCategoryId'),
-                    widget?.save(controller.text, emojiChar, parentCategoryId),
-                    Get.back(),
-                  }
-                else
-                  {
-                    null,
-                  },
-              },
+              onPressed: canSave
+                  ? () => {
+                        //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
+
+                        print('${controller.text}, $emojiChar, $parentCategoryId'),
+                        widget?.save(controller.text, emojiChar, parentCategoryId),
+                        Get.back(),
+                      }
+                  : null,
             ),
           ],
         )

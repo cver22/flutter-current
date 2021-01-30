@@ -45,8 +45,7 @@ class _TagPickerState extends State<TagPicker> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TagEditor(
-                log: log,
+              TagCreator(
               ),
 
               SingleChildScrollView(

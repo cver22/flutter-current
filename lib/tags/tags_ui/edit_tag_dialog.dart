@@ -20,10 +20,12 @@ class EditTagDialog extends StatefulWidget {
 
 class _EditTagDialogState extends State<EditTagDialog> {
   TextEditingController _controller;
+  bool canSave;
 
   void initState() {
     _controller = TextEditingController();
     _controller.value = TextEditingValue(text: widget.tag.name);
+    canSave = _controller.text != null && _controller.text.length > 0;
     super.initState();
   }
 
@@ -37,11 +39,17 @@ class _EditTagDialogState extends State<EditTagDialog> {
     return AlertDialog(
       title: Text('Tag Editor'),
       content: TextField(
-          controller: _controller,
-          autofocus: true,
-          keyboardType: TextInputType.text,
-          inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
-          decoration: InputDecoration(border: OutlineInputBorder())),
+        controller: _controller,
+        autofocus: true,
+        keyboardType: TextInputType.text,
+        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
+        decoration: InputDecoration(border: OutlineInputBorder()),
+        onChanged: (value) {
+          setState(() {
+            canSave = value != null && value.length > 0;
+          });
+        },
+      ),
       actions: <Widget>[
         Row(
           children: <Widget>[
@@ -59,7 +67,8 @@ class _EditTagDialogState extends State<EditTagDialog> {
             ),
             FlatButton(
               child: Text('Save'),
-              onPressed: _controller.text != null && _controller.text.length > 0
+              //TODO this does not work
+              onPressed: canSave
                   ? () => {
                         Env.store.dispatch(
                             AddUpdateTagFromEntryScreen(tag: widget.tag.copyWith(name: _controller.text.trimRight()))),

@@ -12,7 +12,7 @@ class Tag extends Equatable {
   final Map<String, int> tagCategoryFrequency;
   final List<String> memberList;
 
-  Tag({this.logId, this.id, this.name, this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}, this.memberList = const []});
+  Tag({this.logId, this.id, this.name ='', this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}, this.memberList = const []});
 
   Tag copyWith({String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency, List<String> memberList}) {
     return Tag(
