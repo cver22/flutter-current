@@ -24,7 +24,7 @@ class MasterCategoryListDialog extends StatelessWidget {
     if (setLogEnt == SettingsLogEntry.log) {
       return ConnectState(
         where: notIdentical,
-        map: (state) => state.logsState,
+        map: (logsState) => logsState.logsState,
         builder: (state) {
           print('Rendering Log Category Dialog');
           Log log = state.selectedLog.value;
@@ -38,9 +38,10 @@ class MasterCategoryListDialog extends StatelessWidget {
       return ConnectState(
         where: notIdentical,
         map: (state) => state.settingsState,
-        builder: (state) {
+        builder: (settingsState) {
+          print('state: $settingsState');
           print('Rendering Settings Category Dialog');
-          Settings settings = state.settingsState.settings.value;
+          Settings settings = settingsState.settings.value;
           categories = settings.defaultCategories;
           subcategories = settings.defaultSubcategories;
 

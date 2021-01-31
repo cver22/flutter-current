@@ -35,30 +35,6 @@ class Settings extends Equatable {
     );
   }
 
-  Settings editSettingCategories({Settings settings, MyCategory category}) {
-    List<MyCategory> categories = settings.defaultCategories;
-
-    if (category.id != null) {
-      categories[categories.indexWhere((e) => e.id == category.id)] = category;
-    } else {
-      categories.add(category.copyWith(id: Uuid().v4()));
-    }
-
-    return settings.copyWith(defaultCategories: categories);
-  }
-
-  Settings editSettingSubcategories({Settings settings, MyCategory subcategory}) {
-    List<MyCategory> subcategories = settings.defaultSubcategories;
-
-    if (subcategory.id != null) {
-      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
-    } else {
-      subcategories.add(subcategory.copyWith(id: Uuid().v4()));
-    }
-
-    return settings.copyWith(defaultSubcategories: subcategories);
-  }
-
   @override
   List<Object> get props =>
       [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId, autoInsertDecimalPoint];

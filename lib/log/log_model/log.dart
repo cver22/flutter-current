@@ -38,33 +38,6 @@ class Log extends Equatable {
   final Map<String, LogMember> logMembers;
   final int order;
 
-  //TODO both of these should be move to the actions/logic section
-  Log addEditLogCategories({Log log, MyCategory category}) {
-    List<MyCategory> categories = log.categories;
-
-    //update category if it already exists
-    //otherwise add category to the list
-    if (category?.id != null) {
-      categories[categories.indexWhere((e) => e.id == category.id)] = category;
-    } else {
-      categories.add(category.copyWith(id: Uuid().v4()));
-    }
-    return log.copyWith(categories: categories);
-  }
-
-  Log addEditLogSubcategories({Log log, MyCategory subcategory}) {
-    List<MyCategory> subcategories = log.subcategories;
-
-    //update subcategory if it already exists
-    //otherwise add subcategory to the list
-    if (subcategory?.id != null) {
-      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
-    } else {
-      subcategories.add(subcategory.copyWith(id: Uuid().v4()));
-    }
-
-    return log.copyWith(subcategories: subcategories);
-  }
 
   @override
   List<Object> get props => [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, order];

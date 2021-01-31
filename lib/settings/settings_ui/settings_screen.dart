@@ -1,6 +1,5 @@
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/category_list_dialog.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -32,7 +31,7 @@ class SettingsScreen extends StatelessWidget {
               child: Column(
                 children: <Widget>[
                   Row(
-              mainAxisSize: MainAxisSize.max,
+                    mainAxisSize: MainAxisSize.max,
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text('Default Log:'),
@@ -41,8 +40,8 @@ class SettingsScreen extends StatelessWidget {
                     ],
                   ),
                   Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       Text('Default Currency:'),
                       SizedBox(width: 10),
@@ -86,10 +85,12 @@ class SettingsScreen extends StatelessWidget {
                                   );
                                 })
                           }),
-                  RaisedButton(child: Text('Reload settings'),
-                  onPressed: () {
-                    Env.settingsFetcher.readResetAppSettings(resetSettings: false);
-                  },),
+                  RaisedButton(
+                    child: Text('Reload settings'),
+                    onPressed: () {
+                      Env.settingsFetcher.readResetAppSettings(resetSettings: false);
+                    },
+                  ),
                 ],
               ),
             ),
@@ -115,9 +116,7 @@ class SettingsScreen extends StatelessWidget {
         value: _logs?.firstWhere((e) => e.id == _defaultLogId),
         onChanged: (Log log) {
           _defaultLogId = log.id;
-          _store.dispatch(
-            ChangeDefaultLog(log: log));
-
+          _store.dispatch(ChangeDefaultLog(log: log));
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(
@@ -143,30 +142,10 @@ class SettingsScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => MasterCategoryListDialog(setLogEnt: SettingsLogEntry.settings,),
-              ),
-            },
-            category: null, // do not pass a category, maintains label
-          );
-  }
-
-  Widget _subcategoryButton({SettingsState settingsState, BuildContext context}) {
-    return settingsState?.settings?.value?.defaultSubcategories == null
-        ? Container()
-        : CategoryButton(
-            label: 'Edit Default Subcategories',
-            onPressed: () => {
-              /*Get.dialog(
-                SubcategoryListDialog(
-                  backChevron: () => Navigator.of(context).pop(),
-                ),
-              )*/
-              showDialog(
-                context: context,
-                builder: (_) => CategoryListDialog(
-                  settingsLogEntry: SettingsLogEntry.settings,
-                  categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-                ),
+                builder: (_) {
+                  Env.store.dispatch(SetExpandedSettingsCategories());
+                  return MasterCategoryListDialog(setLogEnt: SettingsLogEntry.settings);
+                },
               ),
             },
             category: null, // do not pass a category, maintains label

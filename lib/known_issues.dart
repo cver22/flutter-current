@@ -4,6 +4,10 @@
 // TODO setting option for auto insert decimal
 //TODO reoccurring expenses
 
+//TODO MAYBE GOALS
+//TODO give each person an emoji Icon option
+//TODO do I want to move to null safety?
+
 
 //TODO GENERAL
 //TODO organize and filter entries in various ways
@@ -12,14 +16,12 @@
 //TODO don't show the currency on a log in the list if it is the default currency
 //TODO find an api to get the currency exchange rate information
 //TODO Settings are not being retrieved? JSON error?
-//TODO do I want to move to null safety?
 //TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
 //TODO remove all data handling from the models?
 //TODO spent - distribute to others methods
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
 // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
 //TODO change all data models to Maybe
-//TODO give each person an emoji Icon option
 //TODO clicking in a focusNode value for a member should tick its
 //TODO spent redistribution methods that account for multiple people
 //TODO Option for new logs to copy category list from another log to remove it from
@@ -35,7 +37,6 @@
 
 
 //TODO START HERE
-//cant find the settings state for some reason
 //build filter dialog
 //build function to return filtered list back to the widget
 

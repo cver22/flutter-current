@@ -341,15 +341,24 @@ class ReorderCategoryFromLogScreen implements Action {
   ReorderCategoryFromLogScreen({@required this.oldCategoryIndex, @required this.newCategoryIndex});
 
   AppState updateState(AppState appState) {
+    //reorder categories
     List<MyCategory> categories = List.from(appState.logsState.selectedLog.value.categories);
     MyCategory movedCategory = categories.removeAt(oldCategoryIndex);
     categories.insert(newCategoryIndex, movedCategory);
+
+    //reorder expanded list
+    List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
+    bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
+    expandedCategories.insert(newCategoryIndex, movedExpansion);
+
 
     return _updateLogState(
         appState,
             (logsState) =>
             logsState.copyWith(
-                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories))));
+                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
+              expandedCategories: expandedCategories
+            ));
   }
 }
 

@@ -43,7 +43,13 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   }
 
   _buildList({@required int outerIndex}) {
-    List<bool> expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
+    List<bool> expandedCategories = List();
+    if (setLogEnt == SettingsLogEntry.log) {
+      expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
+    } else if (setLogEnt == SettingsLogEntry.settings) {
+      expandedCategories = List.from(Env.store.state.settingsState.expandedCategories);
+    }
+
     MyCategory category = categories[outerIndex];
     List<MyCategory> subs = List.from(subcategories);
     subs.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
@@ -92,7 +98,11 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
           oldSubcategoryIndex: oldSubcategoryIndex,
           newSubcategoryIndex: newSubcategoryIndex));
     } else if (setLogEnt == SettingsLogEntry.settings) {
-      //TODO create reorder function
+      Env.store.dispatch(ReorderSubcategoryFromSettingsScreen(
+          oldCategoryIndex: oldCategoryIndex,
+          newCategoryIndex: newCategoryIndex,
+          oldSubcategoryIndex: oldSubcategoryIndex,
+          newSubcategoryIndex: newSubcategoryIndex));
     }
 
   }
@@ -102,7 +112,8 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       Env.store
           .dispatch(ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     } else if (setLogEnt == SettingsLogEntry.settings) {
-      //TODO create reorder function
+      Env.store
+          .dispatch(ReorderCategoryFromSettingsScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     }
 
   }
