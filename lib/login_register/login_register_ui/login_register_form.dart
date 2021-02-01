@@ -72,7 +72,6 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                           labelText: 'Email',
                         ),
                         keyboardType: TextInputType.emailAddress,
-                        autovalidate: true,
                         autocorrect: false,
                         //TODO need email validation
                         validator: (_) {
@@ -86,7 +85,6 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                           labelText: 'Password',
                         ),
                         obscureText: true,
-                        autovalidate: true,
                         autocorrect: false,
                         //TODO delay password validation
                         validator: (_) {

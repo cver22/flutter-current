@@ -35,6 +35,7 @@
 
 
 //TODO START HERE
+//continue building state for  user password change form
 //build filter dialog
 //build function to return filtered list back to the widget
 

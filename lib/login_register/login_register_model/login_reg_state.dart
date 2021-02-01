@@ -65,6 +65,7 @@ class LoginRegState extends Equatable{
     );
   }
 
+
   LoginRegState updateCredentials({
     bool isEmailValid,
     bool isPasswordValid,

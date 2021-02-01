@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:expenses/account/account_model/account_state.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
@@ -20,6 +21,7 @@ class AppState extends Equatable {
   final SingleEntryState singleEntryState;
   final TagState tagState;
   final LogTotalsState logTotalsState;
+  final AccountState accountState;
 
   AppState(
       {@required this.authState,
@@ -29,7 +31,8 @@ class AppState extends Equatable {
       @required this.settingsState,
       @required this.singleEntryState,
       @required this.tagState,
-      @required this.logTotalsState, });
+      @required this.logTotalsState,
+      @required this.accountState});
 
   factory AppState.initial() {
     return AppState(
@@ -41,6 +44,7 @@ class AppState extends Equatable {
       singleEntryState: SingleEntryState.initial(),
       tagState: TagState.initial(),
       logTotalsState: LogTotalsState.initial(),
+      accountState: AccountState.initial(),
     );
   }
 
@@ -49,7 +53,7 @@ class AppState extends Equatable {
 
   @override
   List<Object> get props =>
-      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState, tagState, logTotalsState];
+      [authState, loginRegState, logsState, entriesState, settingsState, singleEntryState, tagState, logTotalsState, accountState];
 
   AppState copyWith({
     AuthState authState,
@@ -60,6 +64,7 @@ class AppState extends Equatable {
     SingleEntryState singleEntryState,
     TagState tagState,
     LogTotalsState logTotalsState,
+    AccountState accountState,
   }) {
     if ((authState == null || identical(authState, this.authState)) &&
         (loginRegState == null || identical(loginRegState, this.loginRegState)) &&
@@ -68,7 +73,8 @@ class AppState extends Equatable {
         (settingsState == null || identical(settingsState, this.settingsState)) &&
         (singleEntryState == null || identical(singleEntryState, this.singleEntryState)) &&
         (tagState == null || identical(tagState, this.tagState)) &&
-        (logTotalsState == null || identical(logTotalsState, this.logTotalsState))) {
+        (logTotalsState == null || identical(logTotalsState, this.logTotalsState)) &&
+        (accountState == null || identical(accountState, this.accountState))) {
       return this;
     }
 
@@ -81,6 +87,7 @@ class AppState extends Equatable {
       singleEntryState: singleEntryState ?? this.singleEntryState,
       tagState: tagState ?? this.tagState,
       logTotalsState: logTotalsState ?? this.logTotalsState,
+      accountState: accountState ?? this.accountState,
     );
   }
 }

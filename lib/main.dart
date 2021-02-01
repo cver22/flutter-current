@@ -4,7 +4,7 @@ import 'package:expenses/entry/entry_screen/add_edit_entry_screen.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_ui/add_edit_log_Screen.dart';
 import 'package:expenses/login_register/login_register_ui/login_register_screen.dart';
-import 'package:expenses/settings/settings_ui/account_screen.dart';
+import 'file:///C:/version-control/flutter-current/lib/account/account_ui/account_screen.dart';
 import 'package:expenses/settings/settings_ui/settings_screen.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';

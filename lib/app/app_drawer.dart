@@ -1,4 +1,3 @@
-import 'file:///D:/version-control/flutter/expenses/lib/settings/settings_ui/account_screen.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';

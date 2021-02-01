@@ -21,9 +21,9 @@ abstract class UserRepository {
 
   Future<User> updateUserProfile({@required String displayName});
 
-  Future<bool> isUserSignedInWithEmail();
-
   Future<void> updatePassword({@required String currentPassword, @required String newPassword});
+
+  Future<bool> isUserSignedInWithEmail();
 
 }
 
@@ -100,6 +100,7 @@ class FirebaseUserRepository implements UserRepository {
     user.reauthenticateWithCredential(authCredentials).then((_) {
       user.updatePassword(newPassword).then((_) {
         print("Successfully changed password");
+        return true;
       }).catchError((error) {
         print("Password can't be changed" + error.toString());
         //This might happen, when the wrong password is entered, the user isn't found, or if the user hasn't logged in recently.
@@ -107,6 +108,7 @@ class FirebaseUserRepository implements UserRepository {
     }).catchError((error) {
       print("Password can't be changed" + error.toString());
     });
+    return false;
   }
 
   @override

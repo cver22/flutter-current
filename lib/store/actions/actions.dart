@@ -27,6 +27,7 @@ import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/log/log_totals_model/log_totals_state.dart';
+import 'package:expenses/account/account_model/account_state.dart';
 
 part 'auth_actions.dart';
 
@@ -41,6 +42,8 @@ part 'settings_actions.dart';
 part 'single_entry_actions.dart';
 
 part 'tag_actions.dart';
+
+part 'account_actions.dart';
 
 abstract class Action {
   AppState updateState(AppState appState);

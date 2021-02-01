@@ -1,6 +1,7 @@
+
+import 'package:expenses/app/app_drawer.dart';
 import 'package:expenses/entries/entries_screen/entries_screen.dart';
 import 'package:expenses/log/log_ui/logs_screen.dart';
-import 'package:expenses/settings/settings_ui/app_drawer.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';

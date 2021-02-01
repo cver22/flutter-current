@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:expenses/account/account_ui/change_password_form.dart';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
@@ -11,6 +12,7 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+import 'package:flutter/services.dart';
 
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key key}) : super(key: key);
@@ -75,7 +77,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     SizedBox(height: 10.0),
                     _showUserEmail(),
                     SizedBox(height: 10.0),
-                    _showPasswordEdit(),
+                    ChangePasswordForm(),
                     SizedBox(height: 20.0),
                     _showQRCode(),
                     SizedBox(height: 10.0),
@@ -122,71 +124,38 @@ class _AccountScreenState extends State<AccountScreen> {
   Widget _showEditDisplayIcon() {
     return editDisplayName
         ? IconButton(
-      icon: Icon(
-        Icons.check_outlined,
-        size: EMOJI_SIZE,
-      ),
-      onPressed: () {
-        String displayName = _displayNameController.value.text;
-        if (displayName != user.displayName) {
-          Env.userFetcher.updateDisplayName(displayName: displayName);
-          Env.store.dispatch(UpdateDisplayName(displayName: displayName));
-          Env.store.dispatch(UpdateLogMember());
-          user = Env.store.state.authState.user.value;
-        }
-        setState(() {
-          editDisplayName = false;
-        });
-      },
-    )
+            icon: Icon(
+              Icons.check_outlined,
+              size: EMOJI_SIZE,
+            ),
+            onPressed: () {
+              String displayName = _displayNameController.value.text;
+              if (displayName != user.displayName) {
+                Env.userFetcher.updateDisplayName(displayName: displayName);
+                Env.store.dispatch(UpdateDisplayName(displayName: displayName));
+                Env.store.dispatch(UpdateLogMember());
+                user = Env.store.state.authState.user.value;
+              }
+              setState(() {
+                editDisplayName = false;
+              });
+            },
+          )
         : IconButton(
-      icon: Icon(
-        Icons.edit_outlined,
-        size: EMOJI_SIZE,
-      ),
-      onPressed: () {
-        setState(() {
-          editDisplayName = true;
-        });
-      },
-    );
+            icon: Icon(
+              Icons.edit_outlined,
+              size: EMOJI_SIZE,
+            ),
+            onPressed: () {
+              setState(() {
+                editDisplayName = true;
+              });
+            },
+          );
   }
 
   Widget _showUserEmail() {
     return Text(user.email != null ? user.email : 'Email missing');
-  }
-
-  Widget _showPasswordEdit() {
-
-    return FutureBuilder<bool>(
-      future: Env.userFetcher.isUserSignedInWithEmail(),
-      builder: (BuildContext context, AsyncSnapshot<bool> isSignedInWithEmail){
-
-        if(isSignedInWithEmail.hasData && isSignedInWithEmail.data) {
-          //user signed in with email
-          if(showPasswordFields) {
-            return Text('password fields go here');
-          }else{
-            return RaisedButton(
-              elevation: RAISED_BUTTON_ELEVATION,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
-              child: Text('Change Password'),
-              onPressed: () {
-                setState(() {
-                 showPasswordFields = true;
-                });
-              },
-            );
-          }
-
-        }
-          return Container();
-
-      },
-
-    );
-
-
   }
 
   Widget _showQRCode() {
@@ -225,5 +194,4 @@ class _AccountScreenState extends State<AccountScreen> {
       },
     );
   }
-
 }
