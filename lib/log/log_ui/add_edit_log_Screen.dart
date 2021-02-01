@@ -1,4 +1,5 @@
 import 'package:expenses/app/common_widgets/exit_confirmation_dialog.dart';
+import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
@@ -7,6 +8,7 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list.dart';
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
+import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -42,20 +44,26 @@ class AddEditLogScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Log _log = Log(currency: 'CAD');
-    String _currency;
-    String _name;
+    Log log;
+    String currency;
+    String name;
     return ConnectState<LogsState>(
       where: notIdentical,
       map: (state) => state.logsState,
       builder: (logsState) {
-        if (logsState.selectedLog.isSome) {
-          _log = logsState.selectedLog.value;
+
+
+        if (logsState.selectedLog.isNone) {
+          return Container();
         }
-        _currency = _log?.currency; //TODO change to home currency as default
-        _name = _log?.name ?? null;
+
+        log = logsState.selectedLog.value;
+        currency = log?.currency; //TODO change to home currency as default
+        name = log?.name ?? null;
+
         return WillPopScope(
           onWillPop: () async {
+
             return _confirmationDialog();
           },
           child: Scaffold(
@@ -69,11 +77,11 @@ class AddEditLogScreen extends StatelessWidget {
                 IconButton(
                   icon: Icon(
                     Icons.check,
-                    color: canSave(_name) ? Colors.white : Colors.grey,
+                    color: canSave(name) ? Colors.white : Colors.grey,
                   ),
-                  onPressed: canSave(_name) ? () => _submit() : null,
+                  onPressed: canSave(name) ? () => _submit() : null,
                 ),
-                _log.id == null
+                log.id == null
                     ? Container()
                     : PopupMenuButton<String>(
                         onSelected: handleClick,
@@ -88,7 +96,7 @@ class AddEditLogScreen extends StatelessWidget {
                       ),
               ],
             ),
-            body: _buildContents(context: context, log: _log, currency: _currency),
+            body: _buildContents(context: context, log: log, currency: currency, logs: logsState.logs),
           ),
         );
       },
@@ -97,7 +105,8 @@ class AddEditLogScreen extends StatelessWidget {
 
   bool canSave(String name) => name != null && name != '';
 
-  Widget _buildContents({@required BuildContext context, @required Log log, @required String currency}) {
+  Widget _buildContents(
+      {@required BuildContext context, @required Log log, @required String currency, @required Map<String, Log> logs}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -107,7 +116,10 @@ class AddEditLogScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildForm(log: log),
+                _buildLogNameForm(log: log),
+                SizedBox(height: 16.0),
+
+                log.uid == null ? NewLogCategorySource(logs: logs, log: log) : Container(),
                 SizedBox(height: 16.0),
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
                 //log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
@@ -126,7 +138,7 @@ class AddEditLogScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildForm({@required Log log}) {
+  Widget _buildLogNameForm({@required Log log}) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
       initialValue: log.name,
@@ -155,7 +167,9 @@ class AddEditLogScreen extends StatelessWidget {
               /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
-                builder: (_) => MasterCategoryListDialog(setLogEnt: SettingsLogEntry.log,),
+                builder: (_) => MasterCategoryListDialog(
+                  setLogEnt: SettingsLogEntry.log,
+                ),
               ),
             },
             category: null, // do not pass a category, maintains label
@@ -208,5 +222,69 @@ class AddEditLogScreen extends StatelessWidget {
             currency: currency,
             returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
         : Text('Currency: $currency');
+  }
+}
+
+class NewLogCategorySource extends StatefulWidget {
+  const NewLogCategorySource({
+    Key key,
+    @required this.logs,
+    @required this.log,
+  }) : super(key: key);
+
+  final Map<String, Log> logs;
+  final Log log;
+
+  @override
+  _NewLogCategorySourceState createState() => _NewLogCategorySourceState();
+}
+
+class _NewLogCategorySourceState extends State<NewLogCategorySource> {
+  Log defaultLog;
+  Log currentDropDownSelection;
+  List<Log> temporaryLogs = [];
+
+  @override
+  void initState() {
+    super.initState();
+    //converts the settings to a temporary log for the purpose of creating a drop down list
+    //from this list, the user can decide where they are getting the category list from
+    Settings settings = Env.store.state.settingsState.settings.value;
+    defaultLog = Log(
+        name: 'Default',
+        id: 'default',
+        categories: settings.defaultCategories,
+        subcategories: settings.defaultSubcategories);
+    temporaryLogs = widget.logs.entries.map((e) => e.value).toList();
+    temporaryLogs.insert(0, defaultLog);
+    Env.store.dispatch(NewLogSetCategories(log: defaultLog));
+    currentDropDownSelection = defaultLog;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisSize: MainAxisSize.max,
+      children: [
+        Text('Copy Categories From:  '),
+        DropdownButton<Log>(
+          //TODO order preference logs and set default to first log if not navigating from the log itself
+          value: currentDropDownSelection,
+          onChanged: (Log log) {
+            Env.store.dispatch(NewLogSetCategories(log: log));
+          },
+          items: temporaryLogs.map((Log log) {
+            return DropdownMenuItem<Log>(
+              value: log,
+              child: Text(
+                log.name,
+                style: TextStyle(color: Colors.black),
+              ),
+            );
+          }).toList(),
+        ),
+      ],
+    );
   }
 }

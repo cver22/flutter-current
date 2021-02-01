@@ -33,7 +33,7 @@ class AddEditEntryScreen extends StatelessWidget {
     bool onWillPop = false;
     await Get.dialog(
       ExitConfirmationDialog(
-        title: 'Exit without saving?',
+        title: 'Discard this Entry?',
         pop: (willPop) => {onWillPop = willPop},
         onTap: () =>
         {
@@ -68,8 +68,9 @@ class AddEditEntryScreen extends StatelessWidget {
 
             return WillPopScope(
               onWillPop: () async {
+                print('triggered');
                 return _closeConfirmationDialog();
-              }, //TODO need to implement will pop?
+              },
               child: Stack(
                 children: [
                   Scaffold(

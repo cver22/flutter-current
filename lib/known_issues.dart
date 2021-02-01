@@ -17,17 +17,15 @@
 //TODO find an api to get the currency exchange rate information
 //TODO Settings are not being retrieved? JSON error?
 //TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
-//TODO remove all data handling from the models?
 //TODO spent - distribute to others methods
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
 // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
 //TODO change all data models to Maybe
-//TODO clicking in a focusNode value for a member should tick its
+//TODO clicking in a focusNode value for a member should tick its box
 //TODO spent redistribution methods that account for multiple people
-//TODO Option for new logs to copy category list from another log to remove it from
 //TODO current default for null is no category and no subcategory, this likely isn't going to work and needs to be adjusted
-//TODO move settings over to new reorderable list model
 //TODO method to change the photo
+//TODO log and settings category dropdown list needs to be flexible when the keyboard comes up
 
 
 

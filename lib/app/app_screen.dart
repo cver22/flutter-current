@@ -167,7 +167,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
         Env.store.dispatch(SetEntriesOrder());
         break;
       case 'Add Log':
-        Env.store.dispatch(ClearSelectedLog());
+        Env.store.dispatch(SetNewLog());
         Get.toNamed(ExpenseRoutes.addEditLog);
         break;
       case 'Reorder':

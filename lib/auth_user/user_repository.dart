@@ -20,6 +20,11 @@ abstract class UserRepository {
   Future<User> getUser();
 
   Future<User> updateUserProfile({@required String displayName});
+
+  Future<bool> isUserSignedInWithEmail();
+
+  Future<void> updatePassword({@required String currentPassword, @required String newPassword});
+
 }
 
 class FirebaseUserRepository implements UserRepository {
@@ -84,5 +89,32 @@ class FirebaseUserRepository implements UserRepository {
     user = await _firebaseAuth.currentUser();
 
     return User(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoUrl);
+  }
+
+  @override
+  Future<void> updatePassword({@required String currentPassword, @required String newPassword}) async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+
+    AuthCredential authCredentials = EmailAuthProvider.getCredential(email: user.email, password: currentPassword);
+
+    user.reauthenticateWithCredential(authCredentials).then((_) {
+      user.updatePassword(newPassword).then((_) {
+        print("Successfully changed password");
+      }).catchError((error) {
+        print("Password can't be changed" + error.toString());
+        //This might happen, when the wrong password is entered, the user isn't found, or if the user hasn't logged in recently.
+      });
+    }).catchError((error) {
+      print("Password can't be changed" + error.toString());
+    });
+  }
+
+  @override
+  Future<bool> isUserSignedInWithEmail() async {
+    FirebaseUser user = await _firebaseAuth.currentUser();
+
+    //returns true if user has signed into the app with their email
+    return user.providerData[1].providerId == EmailAuthProvider.providerId;
+
   }
 }
