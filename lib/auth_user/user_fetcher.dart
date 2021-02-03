@@ -84,16 +84,20 @@ class UserFetcher {
     _store.dispatch(AuthSuccess(user: user));
   }
 
-  Future<bool> isUserSignedInWithEmail() async {
-    bool thing = await _userRepository.isUserSignedInWithEmail();
-
-    print('user signed in with email: $thing');
-    return thing;
+  Future<void> isUserSignedInWithEmail() async {
+    bool signedInWithEmail = await _userRepository.isUserSignedInWithEmail();
+    _store.dispatch(IsUserSignedInWithEmail(signedInWithEmail: signedInWithEmail));
   }
 
   Future<void> updatePassword({@required String currentPassword, @required String newPassword}) async {
-    _userRepository.updatePassword(currentPassword: currentPassword, newPassword: newPassword);
+    _store.dispatch(AccountUpdateSubmitting());
+    bool success = await  _userRepository.updatePassword(currentPassword: currentPassword, newPassword: newPassword);
+    if(success) {
+      _store.dispatch(AccountUpdateSuccess());
+    } else {
+      _store.dispatch(AccountUpdateFailure());
+    }
+    
+    
   }
-
-
 }

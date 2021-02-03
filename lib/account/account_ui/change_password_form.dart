@@ -1,16 +1,15 @@
-import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/account/account_model/account_state.dart';
+import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
+import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
 import '../../env.dart';
 
 class ChangePasswordForm extends StatefulWidget {
-  final VoidCallback showPasswordFields;
+  final AccountState accountState;
 
-  const ChangePasswordForm({Key key, this.showPasswordFields}) : super(key: key);
+  const ChangePasswordForm({Key key, @required this.accountState}) : super(key: key);
 
   @override
   _ChangePasswordFormState createState() => _ChangePasswordFormState();
@@ -20,84 +19,115 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
   final TextEditingController _oldPasswordController = TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _verifyPasswordController = TextEditingController();
-  final _formKey = GlobalKey<FormState>();
+  final FocusNode _oldPasswordFocus = FocusNode();
+  final FocusNode _newPasswordFocus = FocusNode();
+  final FocusNode _verifyPasswordFocus = FocusNode();
+  AccountState accountState;
+
+  @override
+  void initState() {
+    _oldPasswordController.addListener(_onOldPasswordChanged);
+    _newPasswordController.addListener(_onNewPasswordChanged);
+    _verifyPasswordController.addListener(_onNewPasswordChanged);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+
+    super.dispose();
+    _oldPasswordController.dispose();
+    _newPasswordController.dispose();
+    _verifyPasswordController.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
+    accountState = widget.accountState;
 
+    return Form(
+      autovalidateMode: AutovalidateMode.always,
+      child: Column(
+        children: [
+          accountState.loginStatus == LoginStatus.failure
+              ? Text('Failed to change password, please try again')
+              : Container(),
+          _passwordFormField(
+            autoFocus: true,
+            focusNode: _oldPasswordFocus,
+            onFieldSubmitted: (term) {
+              _fieldFocusChange(context, _oldPasswordFocus, _newPasswordFocus);
+            },
+            textInputAction: TextInputAction.next,
+            controller: _oldPasswordController,
+            label: 'Old Password',
+            validator: (_) {
+              return !accountState.isOldPasswordValid ? 'Minimum 10 characters' : null;
+            },
+          ),
+          _passwordFormField(
+            focusNode: _newPasswordFocus,
+            onFieldSubmitted: (term) {
+              _fieldFocusChange(context, _newPasswordFocus, _verifyPasswordFocus);
+            },
+            textInputAction: TextInputAction.next,
+            controller: _newPasswordController,
+            label: 'New Password',
+            validator: (_) {
+              return !accountState.isNewPasswordValid ? 'Minimum 10 characters' : null;
+            },
+          ),
+          _passwordFormField(
+            focusNode: _verifyPasswordFocus,
+            textInputAction: TextInputAction.done,
+            controller: _verifyPasswordController,
+            label: 'Retype New Password',
+            validator: (_) {
+              return !accountState.newPasswordsMatch && _newPasswordController.text.length > 9
+                  ? 'Passwords do not match'
+                  : null;
+            },
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            mainAxisSize: MainAxisSize.max,
+            children: [
 
-    /*Widget _showPasswordEdit() {
-      return FutureBuilder<bool>(
-        future: Env.userFetcher.isUserSignedInWithEmail(),
-        builder: (BuildContext context, AsyncSnapshot<bool> isSignedInWithEmail) {
-          if (isSignedInWithEmail.hasData && isSignedInWithEmail.data) {
-            //user signed in with email
-            if (showPasswordFields) {
-              return
-            } else {
-              return RaisedButton(
+              RaisedButton(
                 elevation: RAISED_BUTTON_ELEVATION,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
-                child: Text('Change Password'),
-                onPressed: () {
-                  setState(() {
-                    showPasswordFields = true;
-                  });
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+                child: Text('Submit'),
+                onPressed: accountState.loginStatus == LoginStatus.submitting ||
+                    !accountState.newPasswordsMatch ||
+                    _newPasswordController.text.length < 10
+                    ? null
+                    : () {
+                  Env.userFetcher.updatePassword(
+                      currentPassword: _oldPasswordController.text,
+                      newPassword: _newPasswordController.text);
                 },
-              );
-            }
-          }
-          return Container();
-        },
-      );
-    }*/
-
-
-
-
-    return ConnectState<AccountState>(
-        where: notIdentical,
-        map: (state) => state.accountState,
-        builder: (accountState) {
-
-
-
-          return Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                _passwordFormField(controller: _oldPasswordController, label: 'Old Password'),
-                _passwordFormField(controller: _newPasswordController, label: 'New Password'),
-                _passwordFormField(
-                    controller: _verifyPasswordController,
-                    label: 'Retype New Password',
-                    validator: (value) {
-                      if (_newPasswordController.text != _verifyPasswordController.text) {
-                        return 'Passwords do not match';
-                      }
-                      return null;
-                    }),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  mainAxisSize: MainAxisSize.max,
-                  children: [
-                    RaisedButton(
-                      elevation: RAISED_BUTTON_ELEVATION,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
-                      child: Text('Submit'),
-                      onPressed: () {},
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          );
-        });
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
   }
 
-  TextFormField _passwordFormField(
-      {@required TextEditingController controller, @required String label, String Function(String) validator}) {
+  TextFormField _passwordFormField({
+    @required TextEditingController controller,
+    @required String label,
+    String Function(String) validator,
+    @required TextInputAction textInputAction,
+    void Function(String) onFieldSubmitted,
+    FocusNode focusNode, bool autoFocus,
+  }) {
     return TextFormField(
+      autofocus: autoFocus ?? false,
+      focusNode: focusNode,
+      onFieldSubmitted: onFieldSubmitted,
+      textInputAction: textInputAction,
       controller: controller,
       decoration: InputDecoration(
         icon: Icon(Icons.lock),
@@ -105,8 +135,25 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
       ),
       obscureText: true,
       autocorrect: false,
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r'^[\s\S]{10,}$'))],
       validator: validator,
     );
+  }
+
+  void _onOldPasswordChanged() {
+    setState(() {
+      Env.store.dispatch(AccountValidateOldPassword(password: _oldPasswordController.text));
+    });
+  }
+
+  void _onNewPasswordChanged() {
+    setState(() {
+      Env.store.dispatch(AccountValidateNewPassword(
+          newPassword: _newPasswordController.text, verifyPassword: _verifyPasswordController.text));
+    });
+  }
+
+  _fieldFocusChange(BuildContext context, FocusNode currentFocus, FocusNode nextFocus) {
+    currentFocus.unfocus();
+    FocusScope.of(context).requestFocus(nextFocus);
   }
 }

@@ -1,60 +1,232 @@
-{"homeCurrency": null,
-  "defaultCategoryEntities": [
-    {
-      "id": "noCategory",
-      "name": " No Category",
-      "emojiChar": "🔴",
-      "isDefault": true
-    },
-    {
-      "id": "home",
-      "name": "Home",
-      "emojiChar": "🏠"
-    },
-    {
-      "id": "transportation",
-      "name": "Transportation",
-      "emojiChar": "🚀"
-    }
-  ],
-  "defaultSubcategoryEntities": [
-    {
-      "id": "noSubcategory",
-      "name": "No Subcategory",
-      "emojiChar": "🔴",
-      "isDefault": true,
-      "parentCategoryId": "noCategory"
-    },
-    {
-      "id": "rent",
-      "name": "Rent",
-      "emojiChar": "🏚️",
-      "parentCategoryId": "home"
-    },
-    {
-      "id": "utilities",
-      "name": "Utilities",
-      "emojiChar": "💡",
-      "parentCategoryId": "home"
-    },
-    {
-      "id": "car",
-      "name": "Car",
-      "emojiChar": "🚘",
-      "parentCategoryId": "transportation"
-    },
-    {
-      "id": "bus",
-      "name": "Bus",
-      "emojiChar": "🚌",
-      "parentCategoryId": "transportation"
-    },
-    {
-      "id": "parking",
-      "name": "Parking",
-      "emojiChar": "🅿️",
-      "parentCategoryId": "transportation"
-    }
-  ],
-  "defaultLogId": null
+{
+   "homeCurrency":null,
+   "defaultCategoryEntities":[
+      {
+         "id":"grocery",
+         "name":"Grocery",
+         "emojiChar":"🛒"
+      },
+      {
+         "id":"food",
+         "name":"Food",
+         "emojiChar":"🍽️"
+      },
+      {
+         "id":"family",
+         "name":"Family",
+         "emojiChar":"🔴"
+      },
+      {
+         "id":"shopping",
+         "name":"Shopping",
+         "emojiChar":"🕶️"
+      },
+      {
+         "id":"home_shopping",
+         "name":"Home Shopping",
+         "emojiChar":"🪑"
+      },
+      {
+         "id":"health",
+         "name":"Health",
+         "emojiChar":"💊"
+      },
+      {
+         "id":"personal_care",
+         "name":"Personal Care",
+         "emojiChar":"🏥"
+      },
+      {
+         "id":"activities",
+         "name":"Activities",
+         "emojiChar":"🎢"
+      },
+      {
+         "id":"services",
+         "name":"Services",
+         "emojiChar":"💡"
+      },
+      {
+         "id":"housing",
+         "name":"Housing",
+         "emojiChar":"🏠"
+      },
+      {
+         "id":"transportation",
+         "name":"Transportation",
+         "emojiChar":"🚀"
+      },
+      {
+         "id":"travel",
+         "name":"Travel",
+         "emojiChar":"⛱"
+      },
+      {
+         "id":"discounts_and_savings",
+         "name":"Discounts and Savings",
+         "emojiChar":"🏷️"
+      },
+      {
+         "id":"education_training",
+         "name":"Education and Training",
+         "emojiChar":"🎓️"
+      },
+      {
+         "id":"moneyTransfer",
+         "name":"Money Transfer",
+         "emojiChar":"💵️"
+      },
+      {
+         "id":"pet",
+         "name":"Pet",
+         "emojiChar":"🐶️"
+      },
+      {
+         "id":"other",
+         "name":"Other",
+         "emojiChar":"🔴️"
+      },
+      {
+         "id":"noCategory",
+         "name":" No Category",
+         "emojiChar":"🔴",
+         "isDefault":true
+      }
+   ],
+   "defaultSubcategoryEntities":[
+      {
+         "id":"supermarket",
+         "name":"Supermarket",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"grocery"
+      },
+      {
+         "id":"corner_store",
+         "name":"Corner Store",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"grocery"
+      },
+      {
+         "id":"butcher",
+         "name":"Butcher",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"grocery"
+      },
+      {
+         "id":"farmer_market",
+         "name":"Farmer Market",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"grocery"
+      },
+      {
+         "id":"specialty_store",
+         "name":"Specialty Store",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"grocery"
+      },
+      {
+         "id":"liquor_store",
+         "name":"Liquor Store",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"grocery"
+      },
+      {
+         "id":"breakfast",
+         "name":"Breakfast",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"lunch",
+         "name":"Lunch",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"dinner",
+         "name":"Dinner",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"cafe",
+         "name":"Cafe",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"take_out",
+         "name":"Take-Out",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"snack",
+         "name":"Snack",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"bar",
+         "name":"Bar",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"food"
+      },
+      {
+         "id":"school_supplied",
+         "name":"School Supplies",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"family"
+      },
+      {
+         "id":"clothes",
+         "name":"Clothes",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"family"
+      },
+      {
+         "id":"tuition",
+         "name":"tuition",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"family"
+      },
+      {
+         "id":"sports",
+         "name":"Sports",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"family"
+      },
+      {
+         "id":"after_school",
+         "name":"After School",
+         "emojiChar":"🏚️",
+         "parentCategoryId":"family"
+      },
+       {
+         "id":"car",
+         "name":"Car",
+         "emojiChar":"🚘",
+         "parentCategoryId":"transportation"
+      },
+      {
+         "id":"bus",
+         "name":"Bus",
+         "emojiChar":"🚌",
+         "parentCategoryId":"transportation"
+      },
+      {
+         "id":"parking",
+         "name":"Parking",
+         "emojiChar":"🅿️",
+         "parentCategoryId":"transportation"
+      },
+      {
+         "id":"noSubcategory",
+         "name":"No Subcategory",
+         "emojiChar":"🔴",
+         "isDefault":true,
+         "parentCategoryId":"noCategory"
+      }
+   ],
+   "defaultLogId":null
 }

@@ -28,6 +28,7 @@ import 'package:uuid/uuid.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 import 'package:expenses/account/account_model/account_state.dart';
+import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
 
 part 'auth_actions.dart';
 

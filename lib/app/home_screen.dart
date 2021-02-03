@@ -24,6 +24,7 @@ class HomeScreen extends StatelessWidget {
           Env.logsFetcher.loadLogs();
           Env.tagFetcher.loadTags();
           Env.entriesFetcher.loadEntries();
+          Env.userFetcher.isUserSignedInWithEmail();
 
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);

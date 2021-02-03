@@ -1,7 +1,9 @@
 part of 'actions.dart';
 
-AppState _updateAccountState(AppState appState,
-    AccountState update(AccountState accountState),) {
+AppState _updateAccountState(
+  AppState appState,
+  AccountState update(AccountState accountState),
+) {
   return appState.copyWith(accountState: update(appState.accountState));
 }
 
@@ -26,6 +28,20 @@ class AccountUpdateSuccess implements Action {
   }
 }
 
+class ShowHidePasswordForm implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateAccountState(appState, (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm));
+  }
+}
+
+class AccountResetState implements Action {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateAccountState(appState, (accountState) => accountState.resetState());
+  }
+}
+
 class AccountValidateOldPassword implements Action {
   final String password;
 
@@ -37,12 +53,11 @@ class AccountValidateOldPassword implements Action {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(
-        appState, (accountState) => accountState.copyWith(isOldPasswordValid: Validators.isValidPassword(password)));
+        appState, (accountState) => accountState.copyWith(isOldPasswordValid: Validators.isValidPassword(password), loginStatus: LoginStatus.updated));
   }
 }
 
 class AccountValidateNewPassword implements Action {
-
   final String newPassword;
   final String verifyPassword;
 
@@ -57,8 +72,20 @@ class AccountValidateNewPassword implements Action {
     }
 
     return _updateAccountState(
-        appState, (accountState) =>
-        accountState.copyWith(
-            isNewPasswordValid: Validators.isValidPassword(newPassword), newPasswordsMatch: passwordsMatch));
+        appState,
+        (accountState) => accountState.copyWith(
+            isNewPasswordValid: Validators.isValidPassword(newPassword), newPasswordsMatch: passwordsMatch, loginStatus: LoginStatus.updated));
+  }
+}
+
+class IsUserSignedInWithEmail implements Action {
+  final bool signedInWithEmail;
+
+  IsUserSignedInWithEmail({this.signedInWithEmail});
+
+  @override
+  AppState updateState(AppState appState) {
+    return _updateAccountState(
+        appState, (accountState) => accountState.copyWith(isUserSignedInWithEmail: signedInWithEmail));
   }
 }

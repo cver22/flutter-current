@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:expenses/account/account_ui/change_password_controller.dart';
 import 'package:expenses/account/account_ui/change_password_form.dart';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/env.dart';
@@ -77,7 +78,7 @@ class _AccountScreenState extends State<AccountScreen> {
                     SizedBox(height: 10.0),
                     _showUserEmail(),
                     SizedBox(height: 10.0),
-                    ChangePasswordForm(),
+                    ChangePasswordController(),
                     SizedBox(height: 20.0),
                     _showQRCode(),
                     SizedBox(height: 10.0),

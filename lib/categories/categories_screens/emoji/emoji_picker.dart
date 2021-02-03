@@ -10,7 +10,7 @@ class EmojiPicker extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 6,
+      length: 8,
       child: Scaffold(
         resizeToAvoidBottomPadding: true,
         appBar: AppBar(
@@ -21,6 +21,8 @@ class EmojiPicker extends StatelessWidget {
             children: <Widget>[
               TabBar(
                 tabs: [
+                  Tab(child: Icon(Icons.emoji_people_outlined)),
+                  Tab(child: Icon(Icons.emoji_nature_outlined)),
                   Tab(child: Icon(Icons.emoji_food_beverage_outlined)),
                   Tab(child: Icon(Icons.emoji_objects_outlined)),
                   Tab(child: Icon(Icons.emoji_transportation_outlined)),
@@ -34,6 +36,8 @@ class EmojiPicker extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
+            EmojiGrid(emojiGroup: EmojiGroup.peopleBody, emojiSelection: emojiSelection),
+            EmojiGrid(emojiGroup: EmojiGroup.animalsNature, emojiSelection: emojiSelection),
             EmojiGrid(emojiGroup: EmojiGroup.foodDrink, emojiSelection: emojiSelection),
             EmojiGrid(emojiGroup: EmojiGroup.objects, emojiSelection: emojiSelection),
             EmojiGrid(emojiGroup: EmojiGroup.travelPlaces, emojiSelection: emojiSelection),

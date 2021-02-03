@@ -26,6 +26,7 @@
 //TODO current default for null is no category and no subcategory, this likely isn't going to work and needs to be adjusted
 //TODO method to change the photo
 //TODO log and settings category dropdown list needs to be flexible when the keyboard comes up
+//TODO how to handle auto scroll on the account screen and login screen
 
 
 
@@ -35,7 +36,6 @@
 
 
 //TODO START HERE
-//continue building state for  user password change form
 //build filter dialog
 //build function to return filtered list back to the widget
 
