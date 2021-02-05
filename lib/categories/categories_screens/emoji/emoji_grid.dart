@@ -13,8 +13,11 @@ class EmojiGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<String> charList = [];
-    Emoji.all().where((element) => element.emojiGroup == emojiGroup).forEach((element) {
-      charList.add(element.char);
+    Emoji.byGroup(emojiGroup).forEach((element) {
+      if(!element.modifiable){
+        charList.add(element.char);
+      }
+
     });
 
     return GridView.builder(

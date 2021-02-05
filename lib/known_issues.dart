@@ -36,6 +36,7 @@
 
 
 //TODO START HERE
+//should all categories have an "other" subcategory if none is chosen? an automatic category
 //build filter dialog
 //build function to return filtered list back to the widget
 
