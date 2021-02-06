@@ -4,7 +4,6 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
   final Function(MyCategory) setDefault;
@@ -45,6 +44,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   String emojiChar;
   MyCategory selectedCategory;
   bool canSave;
+  bool notModifiable;
 
   //TODO prevent NoCategory and NoSubcategory from being edited or deleted
 
@@ -80,6 +80,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
     controller = TextEditingController(text: name);
     canSave = controller.text != null && controller.value.text.length > 0;
+
+    notModifiable = _notModifiable(id: id);
   }
 
   void dispose() {
@@ -112,7 +114,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               SizedBox(width: 20),
               Expanded(
                 flex: 5,
-                child: id == NO_CATEGORY || id == NO_SUBCATEGORY
+                child: notModifiable
                     ? Text(name)
                     : TextField(
                         controller: controller,
@@ -143,9 +145,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            id == null || id == NO_CATEGORY || id == NO_SUBCATEGORY
-                ? Container()
-                : FlatButton(child: Text('Delete'), onPressed: widget.delete),
+            notModifiable ? Container() : FlatButton(child: Text('Delete'), onPressed: widget.delete),
 
             FlatButton(
               child: Text('Cancel'),
@@ -194,7 +194,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             children: [
               Text('Parent Category: '),
               SizedBox(width: 10),
-              id == NO_CATEGORY || id == NO_SUBCATEGORY
+              notModifiable
                   ? Text(initialCategory.name)
                   : DropdownButton<MyCategory>(
                       value: initialCategory,
@@ -227,5 +227,10 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       parentCategoryId = category.id;
       selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
     });
+  }
+
+  bool _notModifiable({String id}) {
+    //special categories and subcategories can not be deleted or renamed
+    return id == null || id == NO_CATEGORY || id.contains(OTHER) || id == TRANSFER_FUNDS || id == PAYMENT;
   }
 }

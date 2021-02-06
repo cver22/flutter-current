@@ -64,11 +64,11 @@ AppState _updateLogEntriesTagSettingState(
 }
 
 AppState _updateLogsTagsSingleEntryState(
-    AppState appState,
-    LogsState updateLogState(LogsState logsState),
-    TagState updateTagState(TagState tagState),
-    SingleEntryState update(SingleEntryState singleEntryState),
-    ) {
+  AppState appState,
+  LogsState updateLogState(LogsState logsState),
+  TagState updateTagState(TagState tagState),
+  SingleEntryState update(SingleEntryState singleEntryState),
+) {
   return appState.copyWith(
     logsState: updateLogState(appState.logsState),
     tagState: updateTagState(appState.tagState),
@@ -77,10 +77,10 @@ AppState _updateLogsTagsSingleEntryState(
 }
 
 AppState _updateTagSingleEntryState(
-    AppState appState,
-    TagState updateTagState(TagState tagState),
-    SingleEntryState update(SingleEntryState singleEntryState),
-    ) {
+  AppState appState,
+  TagState updateTagState(TagState tagState),
+  SingleEntryState update(SingleEntryState singleEntryState),
+) {
   return appState.copyWith(
     tagState: updateTagState(appState.tagState),
     singleEntryState: update(appState.singleEntryState),
@@ -176,28 +176,42 @@ class AddUpdateSingleEntryAndTags implements Action {
     Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
     Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, Log> logs = Map.from(appState.logsState.logs);
+    MyEntry updatedEntry = entry;
 
     Env.store.dispatch(SingleEntryProcessing());
 
     //update entry for state and database
-    if (entry.id != null &&
-        entry !=
+    if (updatedEntry.id != null &&
+        updatedEntry !=
             appState.entriesState.entries.entries
                 .map((e) => e.value)
                 .toList()
                 .firstWhere((element) => element.id == entry.id)) {
       //update entry if id is not null and thus already exists an the entry has been modified
       Env.entriesFetcher.updateEntry(entry);
-    } else if (entry.id == null) {
+    } else if (updatedEntry.id == null) {
+      String categoryId = updatedEntry?.categoryId ?? NO_CATEGORY;
+      String subcategoryId = updatedEntry?.subcategoryId;
+
+      if (categoryId != NO_CATEGORY && categoryId != TRANSFER_FUNDS && subcategoryId == null) {
+        //if the category has been chosen but not the subcategory, automatically set subcategory to "other"
+
+        List<MyCategory> subcategories = logs[updatedEntry.logId].subcategories;
+
+        subcategoryId = subcategories
+            .firstWhere((element) => element.parentCategoryId == categoryId && element.id.contains(OTHER))
+            .id;
+      }
+
       //save new entry using the user id to help minimize chance of duplication of entry ids in the database
-      Env.entriesFetcher.addEntry(entry.copyWith(
+      Env.entriesFetcher.addEntry(updatedEntry.copyWith(
           id: '${appState.authState.user.value.id}-${Uuid().v4()}',
-          categoryId: entry?.categoryId ?? NO_CATEGORY,
-          subcategoryId: entry?.subcategoryId ?? NO_SUBCATEGORY));
+          categoryId: categoryId,
+          subcategoryId: subcategoryId));
     }
 
     //update entries for total only
-    entries.update(entry.id, (value) => entry, ifAbsent: () => entry);
+    entries.update(updatedEntry.id, (value) => updatedEntry, ifAbsent: () => updatedEntry);
 
     //update tags state
     addedUpdatedTags.forEach((key, tag) {
@@ -220,22 +234,24 @@ class AddUpdateSingleEntryAndTags implements Action {
     //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
 
     //update log categories and subcategories if they have changed
-    logs = _updateLogCategoriesSubcategoriesFromEntry(appState: appState, logId: entry.logId, logs: logs);
+    logs = _updateLogCategoriesSubcategoriesFromEntry(appState: appState, logId: updatedEntry.logId, logs: logs);
 
     return _updateLogsTagsSingleEntryState(
       appState,
       (logsState) => logsState.copyWith(logs: logs),
       (tagState) => tagState.copyWith(tags: masterTagList),
-        (singleEntryState) => SingleEntryState.initial(),
-
+      (singleEntryState) => SingleEntryState.initial(),
     );
   }
 }
 
-Map<String, Log> _updateLogCategoriesSubcategoriesFromEntry({@required AppState appState, @required String logId, @required Map<String, Log> logs}) {
+Map<String, Log> _updateLogCategoriesSubcategoriesFromEntry(
+    {@required AppState appState, @required String logId, @required Map<String, Log> logs}) {
   Log log = logs[logId];
-  if(appState.singleEntryState.categories != log.categories || appState.singleEntryState.subcategories != log.subcategories) {
-    log = log.copyWith(categories: appState.singleEntryState.categories, subcategories: appState.singleEntryState.subcategories);
+  if (appState.singleEntryState.categories != log.categories ||
+      appState.singleEntryState.subcategories != log.subcategories) {
+    log = log.copyWith(
+        categories: appState.singleEntryState.categories, subcategories: appState.singleEntryState.subcategories);
     logs.update(log.id, (value) => log);
     //send updated log to database
     Env.logsFetcher.updateLog(log);
@@ -296,4 +312,25 @@ LogTotal _updateLogMemberTotals({@required List<MyEntry> entries, @required Log 
       lastMonthTotalPaid: lastMonthTotalPaid,
       sameMonthLastYearTotalPaid: sameMonthLastYearTotalPaid,
       averagePerDay: (thisMonthTotalPaid / daysSoFar).round());
+}
+
+bool _canDeleteCategory({@required String id}) {
+  if (id == NO_CATEGORY || id == TRANSFER_FUNDS) {
+    return false;
+  }
+  return true;
+}
+
+bool _canDeleteSubcategory({@required MyCategory subcategory}) {
+  if (subcategory.id.contains(OTHER)) {
+    return false;
+  }
+  return true;
+}
+
+bool _canReorderSubcategory({@required MyCategory subcategory, @required String newParentId}) {
+  if (newParentId == NO_CATEGORY || subcategory.id.contains(OTHER) || newParentId == TRANSFER_FUNDS) {
+    return false;
+  }
+  return true;
 }

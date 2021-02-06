@@ -68,7 +68,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                             ? IconButton(
                                 icon: Icon(Icons.check_outlined),
                                 onPressed: () => { setState((){
-                                  Env.store.dispatch(Reorder(save: true));
+                                  Env.store.dispatch(CanReorder(save: true));
                                 }),},
                               )
                             : Container(),
@@ -77,7 +77,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                                 icon: Icon(Icons.cancel_outlined),
                                 onPressed: () => {
                                   setState ((){
-                                    Env.store.dispatch(Reorder());
+                                    Env.store.dispatch(CanReorder());
                                   }),
                                 },
                               )
@@ -173,7 +173,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
         break;
       case 'Reorder':
         setState(() {
-          Env.store.dispatch(Reorder());
+          Env.store.dispatch(CanReorder());
         });
         break;
     }

@@ -122,8 +122,7 @@ class SettingsDeleteSubcategory implements Action {
     Settings settings = appState.settingsState.settings.value;
     List<MyCategory> subcategories = settings.defaultSubcategories;
 
-    if (subcategory.id != NO_SUBCATEGORY) {
-      //remove as long as the it is not NO_CATEGORY
+    if (_canDeleteSubcategory(subcategory: subcategory)) {
       subcategories = subcategories.where((element) => element.id != subcategory.id).toList();
       settings = settings.copyWith(defaultSubcategories: subcategories);
       Env.settingsFetcher.writeAppSettings(settings);
@@ -208,7 +207,7 @@ class ReorderSubcategoryFromSettingsScreen implements Action {
     MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
     //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
-    if (subcategory.id != NO_SUBCATEGORY && newParentId != NO_CATEGORY) {
+    if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
       if (oldParentId == newParentId) {
         //subcategory has not moved parents
         subsetOfSubcategories.remove(subcategory);

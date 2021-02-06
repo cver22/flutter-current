@@ -56,7 +56,7 @@ class EntryListTile extends StatelessWidget {
 
   String categoriesSubcategoriesTags(Log log) {
     MyCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId, orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
-    MyCategory subcategory = log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => log?.subcategories?.firstWhere((element) => element.id == NO_SUBCATEGORY));
+    MyCategory subcategory = log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId);
     String categoryText = 'Category';
     String subcategoryText = 'Subcategory';
 
@@ -66,6 +66,6 @@ class EntryListTile extends StatelessWidget {
     subcategoryText =
         '${subcategory.emojiChar} ${subcategory.name}';
 
-    return '$categoryText, $subcategoryText, tags';
+    return '$categoryText, ${subcategoryText ?? ''}, tags';
   }
 }

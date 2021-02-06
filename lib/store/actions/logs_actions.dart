@@ -1,16 +1,12 @@
 part of 'actions.dart';
 
-AppState _updateLogState(
-  AppState appState,
-  LogsState update(LogsState logsState),
-) {
+AppState _updateLogState(AppState appState,
+    LogsState update(LogsState logsState),) {
   return appState.copyWith(logsState: update(appState.logsState));
 }
 
-AppState _updateLogs(
-  AppState appState,
-  void updateInPlace(Map<String, Log> logs),
-) {
+AppState _updateLogs(AppState appState,
+    void updateInPlace(Map<String, Log> logs),) {
   Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
   updateInPlace(cloneMap);
   return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
@@ -31,13 +27,11 @@ class SetLogsLoaded implements Action {
 }
 
 class SetNewLog implements Action {
-
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(Log(currency: 'CAD'))));
   }
 }
-
 
 class UpdateSelectedLog implements Action {
   final Log log;
@@ -82,7 +76,7 @@ class SelectLog implements Action {
 
     return _updateLogState(
         appState,
-        (logsState) =>
+            (logsState) =>
             logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId]), expandedCategories: expandedCategories));
   }
 }
@@ -104,17 +98,17 @@ class SetLogs implements Action {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
         logList.map(
-          (log) => MapEntry(log.id, log),
+              (log) => MapEntry(log.id, log),
         ),
       );
     });
   }
 }
 
-class Reorder implements Action {
+class CanReorder implements Action {
   final bool save;
 
-  Reorder({this.save = false});
+  CanReorder({this.save = false});
 
   @override
   AppState updateState(AppState appState) {
@@ -171,13 +165,13 @@ class AddUpdateLog implements Action {
       //if there are new log members, add them to all transaction
       if (logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
         List<MyEntry> entries =
-            appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
+        appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
       }
 
       logs.update(
         addedUpdatedLog.id,
-        (value) => addedUpdatedLog,
+            (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
     } else {
@@ -274,7 +268,7 @@ class AddEditCategoryFromLog implements Action {
     log = log.copyWith(categories: categories);
 
     return _updateLogState(appState,
-        (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
+            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
@@ -288,10 +282,10 @@ class DeleteCategoryFromLog implements Action {
     List<MyCategory> categories = List.from(log.categories);
     List<MyCategory> subcategories = List.from(log.subcategories);
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
-    print('deleted category: $category');
+    bool canDeleteCategory = _canDeleteCategory(id: category.id);
 
     //remove category and its subcategories if the category is not "no category"
-    if (category.id != NO_CATEGORY) {
+    if (canDeleteCategory) {
       int indexOfCategory = categories.indexWhere((element) => element.id == category.id);
       categories.removeAt(indexOfCategory);
       subcategories.removeWhere((e) => e.parentCategoryId == category.id);
@@ -301,7 +295,7 @@ class DeleteCategoryFromLog implements Action {
     log = log.copyWith(subcategories: subcategories, categories: categories);
 
     return _updateLogState(appState,
-        (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
+            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
@@ -337,13 +331,12 @@ class DeleteSubcategoryFromLog implements Action {
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
     List<MyCategory> subcategories = List.from(log.subcategories);
+    bool canDeleteSubcategory = _canDeleteSubcategory(subcategory: subcategory);
 
-    //remove the subcategory if it is not "no subcategory"
-    if (subcategory.id != NO_SUBCATEGORY) {
+    if (canDeleteSubcategory) {
       subcategories.removeWhere((e) => e.id == subcategory.id);
+      log = log.copyWith(subcategories: subcategories);
     }
-
-    log = log.copyWith(subcategories: subcategories);
 
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
   }
@@ -381,9 +374,10 @@ class ReorderCategoryFromLogScreen implements Action {
 
     return _updateLogState(
         appState,
-        (logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
-            expandedCategories: expandedCategories));
+            (logsState) =>
+            logsState.copyWith(
+                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
+                expandedCategories: expandedCategories));
   }
 }
 
@@ -393,11 +387,10 @@ class ReorderSubcategoryFromLogScreen implements Action {
   final int oldSubcategoryIndex;
   final int newSubcategoryIndex;
 
-  ReorderSubcategoryFromLogScreen(
-      {@required this.oldCategoryIndex,
-      @required this.newCategoryIndex,
-      @required this.oldSubcategoryIndex,
-      @required this.newSubcategoryIndex});
+  ReorderSubcategoryFromLogScreen({@required this.oldCategoryIndex,
+    @required this.newCategoryIndex,
+    @required this.oldSubcategoryIndex,
+    @required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -410,7 +403,7 @@ class ReorderSubcategoryFromLogScreen implements Action {
     MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
     //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
-    if (subcategory.id != NO_SUBCATEGORY && newParentId != NO_CATEGORY) {
+    if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
       if (oldParentId == newParentId) {
         //subcategory has not moved parents
         subsetOfSubcategories.remove(subcategory);
@@ -434,7 +427,8 @@ class ReorderSubcategoryFromLogScreen implements Action {
 
     return _updateLogState(
         appState,
-        (logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories))));
+            (logsState) =>
+            logsState.copyWith(
+                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories))));
   }
 }

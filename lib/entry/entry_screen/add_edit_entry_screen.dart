@@ -35,8 +35,7 @@ class AddEditEntryScreen extends StatelessWidget {
       ExitConfirmationDialog(
         title: 'Discard this Entry?',
         pop: (willPop) => {onWillPop = willPop},
-        onTap: () =>
-        {
+        onTap: () => {
           Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose()),
           Env.store.dispatch(ClearEntryState()),
         },
@@ -105,10 +104,11 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContents({@required BuildContext context,
-    @required SingleEntryState entryState,
-    @required Log log,
-    @required MyEntry entry}) {
+  Widget _buildContents(
+      {@required BuildContext context,
+      @required SingleEntryState entryState,
+      @required Log log,
+      @required MyEntry entry}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
@@ -120,10 +120,11 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildForm({@required BuildContext context,
-    @required SingleEntryState entryState,
-    @required Log log,
-    @required MyEntry entry}) {
+  Widget _buildForm(
+      {@required BuildContext context,
+      @required SingleEntryState entryState,
+      @required Log log,
+      @required MyEntry entry}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -142,8 +143,7 @@ class AddEditEntryScreen extends StatelessWidget {
                 currency: entry?.currency,
                 returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
             Text(
-                'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(
-                    value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
+                'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
         ),
         SizedBox(height: 10),
@@ -154,7 +154,8 @@ class AddEditEntryScreen extends StatelessWidget {
         EntryDateButton(context: context, entry: entry),
         SizedBox(height: 10.0),
         entry?.logId == null ? Container() : _categoryButton(categories: entryState?.categories, entry: entry),
-        entry?.categoryId == null
+        //Transfer funds and No_category do not have a sub categories
+        entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
             ? Container()
             : _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
         _commentFormField(entry: entry),
@@ -166,8 +167,7 @@ class AddEditEntryScreen extends StatelessWidget {
   CategoryButton _categoryButton({@required MyEntry entry, @required List<MyCategory> categories}) {
     return CategoryButton(
       label: 'Select a Category',
-      onPressed: () =>
-      {
+      onPressed: () => {
         Get.dialog(
           EntryCategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.category,
@@ -178,15 +178,14 @@ class AddEditEntryScreen extends StatelessWidget {
       category: entry?.categoryId == null
           ? null
           : categories?.firstWhere((element) => element.id == entry.categoryId,
-          orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
+              orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
     );
   }
 
   CategoryButton _subcategoryButton({@required MyEntry entry, @required List<MyCategory> subcategories}) {
     return CategoryButton(
       label: 'Select a Subcategory',
-      onPressed: () =>
-      {
+      onPressed: () => {
         Get.dialog(
           EntryCategoryListDialog(
             categoryOrSubcategory: CategoryOrSubcategory.subcategory,
@@ -196,8 +195,7 @@ class AddEditEntryScreen extends StatelessWidget {
       },
       category: entry?.subcategoryId == null
           ? null
-          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId,
-          orElse: () => subcategories?.firstWhere((element) => element.id == NO_SUBCATEGORY, orElse: () => null)),
+          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId),
     );
   }
 
@@ -205,10 +203,9 @@ class AddEditEntryScreen extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(hintText: 'Comment'),
       initialValue: entry?.comment,
-      onChanged: (value) =>
-          Env.store.dispatch(
-            UpdateSelectedEntry(comment: value),
-          ),
+      onChanged: (value) => Env.store.dispatch(
+        UpdateSelectedEntry(comment: value),
+      ),
     );
   }
 
@@ -244,16 +241,16 @@ class AddEditEntryScreen extends StatelessWidget {
     return entry?.id == null
         ? Container()
         : PopupMenuButton<String>(
-      onSelected: handleClick,
-      itemBuilder: (BuildContext context) {
-        return {'Delete Entry'}.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Delete Entry'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
           );
-        }).toList();
-      },
-    );
   }
 
 //currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues

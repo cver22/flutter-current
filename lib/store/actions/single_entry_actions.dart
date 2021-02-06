@@ -1,9 +1,7 @@
 part of 'actions.dart';
 
-AppState _updateSingleEntryState(
-  AppState appState,
-  SingleEntryState update(SingleEntryState singleEntryState),
-) {
+AppState _updateSingleEntryState(AppState appState,
+    SingleEntryState update(SingleEntryState singleEntryState),) {
   return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
@@ -20,7 +18,8 @@ class UpdateSingleEntryState implements Action {
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(
         appState,
-        (entryState) => entryState.copyWith(
+            (entryState) =>
+            entryState.copyWith(
               selectedEntry: selectedEntry,
               selectedTag: selectedTag,
               tags: tags,
@@ -48,7 +47,8 @@ class SetNewSelectedEntry implements Action {
 
     Log log = appState.logsState
         .logs[logId ?? appState.settingsState.settings?.value?.defaultLogId ?? appState.logsState.logs.keys.first];
-    Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
+    Map<String, Tag> tags = Map.from(appState.tagState.tags)
+      ..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> members = _setMembersList(log: log);
     //sets the selected user as paying unless the action is triggered from the FAB
     if (logId != null) {
@@ -56,17 +56,22 @@ class SetNewSelectedEntry implements Action {
     }
 
     entry = entry.copyWith(
-        logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);
+        logId: log.id,
+        currency: log.currency,
+        dateTime: DateTime.now(),
+        tagIDs: [],
+        entryMembers: members);
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry),
-            selectedTag: Maybe.some(Tag()),
-            tags: tags,
-            categories: List.from(log.categories),
-            subcategories: List.from(log.subcategories),
-            processing: false));
+            (singleEntryState) =>
+            singleEntryState.copyWith(
+                selectedEntry: Maybe.some(entry),
+                selectedTag: Maybe.some(Tag()),
+                tags: tags,
+                categories: List.from(log.categories),
+                subcategories: List.from(log.subcategories),
+                processing: false));
   }
 }
 
@@ -80,9 +85,11 @@ class SelectEntry implements Action {
   AppState updateState(AppState appState) {
     MyEntry entry = appState.entriesState.entries[entryId];
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
+    Map<String, Tag> tags = Map.from(appState.tagState.tags)
+      ..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
-    entryMembers.updateAll((key, value) => value.copyWith(
+    entryMembers.updateAll((key, value) =>
+        value.copyWith(
           payingController: TextEditingController(text: formattedAmount(value: value?.paid)),
           spendingController: TextEditingController(text: formattedAmount(value: value?.spent)),
           payingFocusNode: FocusNode(),
@@ -91,13 +98,14 @@ class SelectEntry implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry.copyWith(entryMembers: entryMembers)),
-            selectedTag: Maybe.some(Tag()),
-            tags: tags,
-            categories: List.from(log.categories),
-            subcategories: List.from(log.subcategories),
-            processing: false));
+            (singleEntryState) =>
+            singleEntryState.copyWith(
+                selectedEntry: Maybe.some(entry.copyWith(entryMembers: entryMembers)),
+                selectedTag: Maybe.some(Tag()),
+                tags: tags,
+                categories: List.from(log.categories),
+                subcategories: List.from(log.subcategories),
+                processing: false));
   }
 }
 
@@ -162,32 +170,32 @@ class UpdateSelectedEntry implements Action {
   final String comment;
   final DateTime dateTime;
 
-  UpdateSelectedEntry(
-      {this.id,
-      this.logId,
-      this.currency,
-      this.active,
-      this.category,
-      this.subcategory,
-      this.amount,
-      this.comment,
-      this.dateTime});
+  UpdateSelectedEntry({this.id,
+    this.logId,
+    this.currency,
+    this.active,
+    this.category,
+    this.subcategory,
+    this.amount,
+    this.comment,
+    this.dateTime});
 
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(
         appState,
-        (entryState) => entryState.copyWith(
+            (entryState) =>
+            entryState.copyWith(
                 selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(
-              id: id,
-              logId: logId,
-              currency: currency,
-              categoryId: category,
-              subcategoryId: subcategory,
-              amount: amount,
-              comment: comment,
-              dateTime: dateTime,
-            ))));
+                  id: id,
+                  logId: logId,
+                  currency: currency,
+                  categoryId: category,
+                  subcategoryId: subcategory,
+                  amount: amount,
+                  comment: comment,
+                  dateTime: dateTime,
+                ))));
   }
 }
 
@@ -247,11 +255,12 @@ class ChangeEntryCategories implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
-            tags: tags,
-            selectedEntry: Maybe.some(
-              entry.changeCategories(category: newCategory ?? NO_CATEGORY),
-            )));
+            (singleEntryState) =>
+            singleEntryState.copyWith(
+                tags: tags,
+                selectedEntry: Maybe.some(
+                  entry.changeCategories(category: newCategory ?? NO_CATEGORY),
+                )));
   }
 }
 
@@ -274,7 +283,7 @@ class ReorderCategoriesFromEntryScreen implements Action {
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(categories: categories),
+          (singleEntryState) => singleEntryState.copyWith(categories: categories),
     );
   }
 }
@@ -291,23 +300,25 @@ class ReorderSubcategoriesFromEntryScreen implements Action {
     List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
     int subcategoryNexIndex = newIndex;
 
-    if (newIndex > reorderedSubcategories.length) subcategoryNexIndex = reorderedSubcategories.length;
-    if (oldIndex < subcategoryNexIndex) subcategoryNexIndex--;
+    if (subcategories.length > 1) {
+      if (newIndex > reorderedSubcategories.length) subcategoryNexIndex = reorderedSubcategories.length;
+      if (oldIndex < subcategoryNexIndex) subcategoryNexIndex--;
 
-    MyCategory category = reorderedSubcategories[oldIndex];
-    reorderedSubcategories.remove(category);
-    reorderedSubcategories.insert(newIndex, category);
+      MyCategory category = reorderedSubcategories[oldIndex];
+      reorderedSubcategories.remove(category);
+      reorderedSubcategories.insert(newIndex, category);
 
-    reorderedSubcategories.forEach((reordedSub) {
-      subcategories.removeWhere((sub) => reordedSub.id == sub.id);
-    });
-    reorderedSubcategories.forEach((subcategory) {
-      subcategories.add(subcategory);
-    });
+      reorderedSubcategories.forEach((reordedSub) {
+        subcategories.removeWhere((sub) => reordedSub.id == sub.id);
+      });
+      reorderedSubcategories.forEach((subcategory) {
+        subcategories.add(subcategory);
+      });
+    }
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories),
+          (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories),
     );
   }
 }
@@ -327,7 +338,7 @@ class AddEditCategoryFromEntryScreen implements Action {
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(categories: categories),
+          (singleEntryState) => singleEntryState.copyWith(categories: categories),
     );
   }
 }
@@ -341,23 +352,30 @@ class DeleteCategoryFromEntryScreen implements Action {
     List<MyCategory> categories = List.from(appState.singleEntryState.categories);
     List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    bool canDeleteCategory = _canDeleteCategory(id: category.id);
 
     //remove category and its subcategories if the category is not "no category"
-    if (category.id != NO_CATEGORY) {
+    if (canDeleteCategory) {
       categories.removeWhere((e) => e.id == category.id);
       subcategories.removeWhere((e) => e.parentCategoryId == category.id);
     }
     if (category.id == entry.categoryId) {
-      entry = entry.copyWith(categoryId: NO_CATEGORY);
-      if (entry.subcategoryId != null) {
-        entry = entry.copyWith(subcategoryId: NO_SUBCATEGORY);
-      }
+      //if we deleted the category used by the entry, reset the entry to no category or subcategory
+      entry = MyEntry(id: entry.id,
+        logId: entry.logId,
+        currency: entry.currency,
+        amount: entry.amount,
+        comment: entry.comment,
+        dateTime: entry.dateTime,
+        tagIDs: entry.tagIDs,
+        entryMembers: entry.entryMembers,);
     }
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(
-          categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry)),
+          (singleEntryState) =>
+          singleEntryState.copyWith(
+              categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry)),
     );
   }
 }
@@ -398,7 +416,7 @@ class AddEditSubcategoryFromEntryScreen implements Action {
     //update the subcategory as well as the category if the parent has changed
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) =>
+          (singleEntryState) =>
           singleEntryState.copyWith(subcategories: subcategories, tags: tags, selectedEntry: Maybe.some(entry)),
     );
   }
@@ -412,19 +430,21 @@ class DeleteSubcategoryFromEntryScreen implements Action {
   AppState updateState(AppState appState) {
     List<MyCategory> subcategories = List.from(appState.singleEntryState.subcategories);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    bool canDeleteSubcategory = _canDeleteSubcategory(subcategory: subcategory);
 
-    print('triggered');
-    //remove the subcategory if it is not "no subcategory"
-    if (subcategory.id != NO_SUBCATEGORY) {
+    if (canDeleteSubcategory) {
       subcategories.removeWhere((e) => e.id == subcategory.id);
+      if (subcategory.id == entry.subcategoryId) {
+        //TODO this should auto select the "other" subcategory
+        //entry = entry.copyWith(subcategoryId: NO_SUBCATEGORY);
+      }
     }
-    if (subcategory.id == entry.subcategoryId) {
-      entry = entry.copyWith(subcategoryId: NO_SUBCATEGORY);
-    }
+
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories, selectedEntry: Maybe.some(entry)),
+          (singleEntryState) =>
+          singleEntryState.copyWith(subcategories: subcategories, selectedEntry: Maybe.some(entry)),
     );
   }
 }
@@ -471,7 +491,8 @@ class UpdateMemberPaidAmount implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
+            (singleEntryState) =>
+            singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(amount: amount, entryMembers: members)),
             ));
   }
@@ -494,7 +515,8 @@ class UpdateMemberSpentAmount implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
+            (singleEntryState) =>
+            singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
             ));
   }
@@ -537,7 +559,8 @@ class ToggleMemberPaying implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
+            (singleEntryState) =>
+            singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(entryMembers: members, amount: amount)),
             ));
   }
@@ -572,7 +595,8 @@ class ToggleMemberSpending implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) => singleEntryState.copyWith(
+            (singleEntryState) =>
+            singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
             ));
   }
@@ -611,7 +635,7 @@ class AddUpdateTagFromEntryScreen implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) =>
+            (singleEntryState) =>
             singleEntryState.copyWith(selectedEntry: Maybe.some(entry), selectedTag: Maybe.some(Tag()), tags: tags));
   }
 }
@@ -659,7 +683,7 @@ class SelectDeselectEntryTag implements Action {
 
     return _updateSingleEntryState(
         appState,
-        (singleEntryState) =>
+            (singleEntryState) =>
             singleEntryState.copyWith(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags));
   }
 }
@@ -691,7 +715,7 @@ Tag _decrementCategoryFrequency({@required String categoryId, @required Tag upda
   //subtracts frequency to tag for the category if present, adds it otherwise
   tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
   tagCategoryFrequency.removeWhere(
-      (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
+          (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
 
   updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
 
@@ -753,7 +777,8 @@ Map<String, EntryMember> _setMembersList({@required Log log}) {
   log.logMembers.forEach((key, value) {
     members.putIfAbsent(
         key,
-        () => EntryMember(
+            () =>
+            EntryMember(
               uid: value.uid,
               order: value.order,
               paying: value.role == OWNER ? true : false,

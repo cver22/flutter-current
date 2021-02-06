@@ -32,6 +32,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   final List<String> tagIDs;
   final Map<String, EntryMember> entryMembers;
 
+  //TODO need to get rid of this and move the logic to actions, will need to create a new entry with the relevant information
   MyEntry changeCategories({
     String category,
   }) {

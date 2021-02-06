@@ -27,6 +27,8 @@
 //TODO method to change the photo
 //TODO log and settings category dropdown list needs to be flexible when the keyboard comes up
 //TODO how to handle auto scroll on the account screen and login screen
+//TODO why are the categories out of order when they are copied to a new log?
+//TODO why aren't the totals calculating?
 
 
 
@@ -36,7 +38,8 @@
 
 
 //TODO START HERE
-//should all categories have an "other" subcategory if none is chosen? an automatic category
+//category special filters for "other", "money transfer", and "payments" so they can't be saved of modified
+//money transfer does not have a subcategory and should modify the entry page accordingly, also not show the subcategory, also get rid of "payment" subcategory
 //build filter dialog
 //build function to return filtered list back to the widget
 

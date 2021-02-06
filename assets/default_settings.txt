@@ -72,8 +72,8 @@
          "emojiChar":"🎓️"
       },
       {
-         "id":"moneyTransfer",
-         "name":"Money Transfer",
+         "id":"transferFunds",
+         "name":"Transfer Funds",
          "emojiChar":"💵️"
       },
       {
@@ -575,12 +575,6 @@
          "parentCategoryId":"discountsAndSavings"
       },
       {
-         "id":"payment",
-         "name":"Payment",
-         "emojiChar":"💸",
-         "parentCategoryId":"moneyTransfer"
-      },
-      {
          "id":"tuition",
          "name":"Tuition",
          "emojiChar":"🏫",
@@ -645,13 +639,6 @@
          "name":"Other",
          "emojiChar":"🤷‍",
          "parentCategoryId":"other"
-      },
-      {
-         "id":"noSubcategory",
-         "name":"No Subcategory",
-         "emojiChar":"🔴",
-         "isDefault":true,
-         "parentCategoryId":"noCategory"
       }
    ],
    "defaultLogId":null
