@@ -3,6 +3,7 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
@@ -11,8 +12,9 @@ import 'package:get/get.dart';
 
 class EntryListTile extends StatelessWidget {
   final MyEntry entry;
+  final Map<String, Tag> tags;
 
-  const EntryListTile({Key key, @required this.entry}) : super(key: key);
+  const EntryListTile({Key key, @required this.entry, @required this.tags}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,17 +57,35 @@ class EntryListTile extends StatelessWidget {
   }
 
   String categoriesSubcategoriesTags(Log log) {
-    MyCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId, orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
-    MyCategory subcategory = log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId);
-    String categoryText = 'Category';
-    String subcategoryText = 'Subcategory';
+    MyCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
+        orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
+    MyCategory subcategory =
+        log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
+    String tagString = _buildTagString(logId: log.id);
+    String categoryText = '';
+    String subcategoryText = '';
 
-    categoryText =
-        '${category.emojiChar} ${category.name}';
+    categoryText = '${category.emojiChar} ${category.name}';
 
-    subcategoryText =
-        '${subcategory.emojiChar} ${subcategory.name}';
+    if (subcategory != null) {
+      subcategoryText = ', ${subcategory.emojiChar} ${subcategory.name}';
+    }
 
-    return '$categoryText, ${subcategoryText ?? ''}, tags';
+    return '$categoryText$subcategoryText$tagString';
+  }
+
+  String _buildTagString({@required String logId}) {
+    String tagString = '';
+    if (entry.tagIDs.length > 0) {
+      entry.tagIDs.forEach((tagId) {
+        Tag tag = tags[tagId];
+
+        if (tag != null) {
+          tagString += ', #${tag.name}';
+        }
+      });
+    }
+
+    return tagString;
   }
 }

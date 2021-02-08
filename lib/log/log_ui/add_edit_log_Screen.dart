@@ -1,6 +1,7 @@
 import 'package:expenses/app/common_widgets/exit_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
+import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
@@ -25,7 +26,7 @@ class AddEditLogScreen extends StatelessWidget {
     Get.back();
   }
 
-  Future<bool> _confirmationDialog() async {
+  Future<bool> _exitConfirmationDialog() async {
     bool onWillPop = false;
     await Get.dialog(
       ExitConfirmationDialog(
@@ -42,6 +43,33 @@ class AddEditLogScreen extends StatelessWidget {
     return onWillPop; //used for willPop
   }
 
+  Future<void> _deleteConfirmationDialog() async {
+    await Get.dialog(
+      AlertDialog(
+        title: Text('Are you sure you want to delete this log and all its entries and tags? This action cannot be undone!'),
+        actions: <Widget>[
+          Row(
+            children: <Widget>[
+              FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: () => {
+                        Get.back(),
+                      }),
+              FlatButton(
+                child: Text('Yes'),
+                onPressed: () => {
+                  Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value)),
+                  Get.back(),
+                  Get.back(),
+                },
+              ),
+            ],
+          )
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     Log log;
@@ -51,8 +79,6 @@ class AddEditLogScreen extends StatelessWidget {
       where: notIdentical,
       map: (state) => state.logsState,
       builder: (logsState) {
-
-
         if (logsState.selectedLog.isNone) {
           return Container();
         }
@@ -63,15 +89,14 @@ class AddEditLogScreen extends StatelessWidget {
 
         return WillPopScope(
           onWillPop: () async {
-
-            return _confirmationDialog();
+            return _exitConfirmationDialog();
           },
           child: Scaffold(
             appBar: AppBar(
               title: Text('Log'),
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                onPressed: () => _confirmationDialog(),
+                onPressed: () => _exitConfirmationDialog(),
               ),
               actions: <Widget>[
                 IconButton(
@@ -152,8 +177,7 @@ class AddEditLogScreen extends StatelessWidget {
     //TODO, I don't like how this works, I would prefer to just pass the log to it
     switch (value) {
       case 'Delete Log':
-        Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
-        Get.back();
+        _deleteConfirmationDialog();
         break;
     }
   }
@@ -250,6 +274,7 @@ class _NewLogCategorySourceState extends State<NewLogCategorySource> {
     //converts the settings to a temporary log for the purpose of creating a drop down list
     //from this list, the user can decide where they are getting the category list from
     Settings settings = Env.store.state.settingsState.settings.value;
+
     defaultLog = Log(
         name: 'Default',
         id: 'default',
@@ -273,6 +298,7 @@ class _NewLogCategorySourceState extends State<NewLogCategorySource> {
           value: currentDropDownSelection,
           onChanged: (Log log) {
             Env.store.dispatch(NewLogSetCategories(log: log));
+            currentDropDownSelection = log;
           },
           items: temporaryLogs.map((Log log) {
             return DropdownMenuItem<Log>(

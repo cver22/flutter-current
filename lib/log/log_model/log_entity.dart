@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
@@ -51,9 +53,9 @@ class LogEntity extends Equatable {
       id: snap.documentID,
       name: snap.data[LOG_NAME],
       currency: snap.data[CURRENCY_NAME],
-      categories: (snap.data[CATEGORIES] as Map<String, dynamic>)
+      categories: (snap.data[CATEGORIES] as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
-      subcategories: (snap.data[SUBCATEGORIES] as Map<String, dynamic>)
+      subcategories: (snap.data[SUBCATEGORIES] as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(key, MyCategory.fromEntity(MyCategoryEntity.fromJson(value)))),
       archive: snap.data[ARCHIVE],
       defaultCategory: snap.data[DEFAULT_CATEGORY],

@@ -266,8 +266,9 @@ LogTotal _updateLogMemberTotals({@required List<MyEntry> entries, @required Log 
   int currentMonth = now.month;
   int currentYear = now.year;
 
-  int lastMonth = currentMonth - 2 < 0 ? 12 : currentMonth - 2;
+  int lastMonth = currentMonth - 1 == 0 ? 12 : currentMonth - 1;
   int lastMonthYear = lastMonth == 12 ? currentYear - 1 : currentYear;
+
 
   int thisMonthTotalPaid = 0;
   int lastMonthTotalPaid = 0;

@@ -25,8 +25,8 @@ class ExitConfirmationDialog extends StatelessWidget {
               child: Text('Yes'),
               onPressed: () => {
                 pop(true),
-                Get.back(),
                 onTap,
+                Get.back(),
               },
             ),
           ],

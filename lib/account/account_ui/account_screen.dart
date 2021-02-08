@@ -1,7 +1,6 @@
 import 'dart:convert';
 
 import 'package:expenses/account/account_ui/change_password_controller.dart';
-import 'package:expenses/account/account_ui/change_password_form.dart';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
@@ -49,7 +48,10 @@ class _AccountScreenState extends State<AccountScreen> {
         map: (state) => state.authState,
         builder: (authState) {
           return WillPopScope(
-            onWillPop: () async => false,
+            onWillPop: () async {
+              Get.back();
+              return false;
+            },
             child: Scaffold(
               appBar: AppBar(
                 title: Text('Account'),

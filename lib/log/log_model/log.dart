@@ -69,6 +69,8 @@ class Log extends Equatable {
   static Log fromEntity(LogEntity entity) {
 //reorder the log members as per the user's preference prior to passing to the log
     LinkedHashMap<String, LogMember> logMemberHashMap = LinkedHashMap();
+    List<MyCategory> categories = [];
+    List<MyCategory> subcategories = [];
 
     for (int i = 0; i < entity.logMembers.length; i++) {
       entity.logMembers.forEach((key, value) {
@@ -78,13 +80,32 @@ class Log extends Equatable {
       });
     }
 
+    //order categories as they should be
+    for (int i = 0; i < entity.categories.length; i++) {
+      entity.categories.forEach((key, category) {
+        if (key == i.toString()) {
+          categories.add(category);
+        }
+      });
+    }
+
+    //order subcategories as they should be
+    for (int i = 0; i < entity.subcategories.length; i++) {
+      entity.subcategories.forEach((key, subcategory) {
+        if (key == i.toString()) {
+          subcategories.add(subcategory);
+        }
+      });
+    }
+
+
     return Log(
       uid: entity.uid,
       id: entity.id,
       name: entity.name,
       currency: entity.currency,
-      categories: entity.categories.entries.map((e) => e.value).toList(),
-      subcategories: entity.subcategories.entries.map((e) => e.value).toList(),
+      categories: categories,
+      subcategories: subcategories,
       archive: entity.archive,
       defaultCategory: entity.defaultCategory,
       logMembers: logMemberHashMap,

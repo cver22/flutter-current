@@ -67,7 +67,7 @@ class AddEditEntryScreen extends StatelessWidget {
 
             return WillPopScope(
               onWillPop: () async {
-                print('triggered');
+                //TODO create method for showing dialog only if the entry has changed or is new and has data
                 return _closeConfirmationDialog();
               },
               child: Stack(
@@ -195,7 +195,7 @@ class AddEditEntryScreen extends StatelessWidget {
       },
       category: entry?.subcategoryId == null
           ? null
-          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId),
+          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: () => null),
     );
   }
 

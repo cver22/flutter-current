@@ -12,7 +12,7 @@
 //TODO GENERAL
 //TODO organize and filter entries in various ways
 //TODO implement currency exchange rates
-//TODO allow user to change password, recover password
+//TODO recover password
 //TODO don't show the currency on a log in the list if it is the default currency
 //TODO find an api to get the currency exchange rate information
 //TODO Settings are not being retrieved? JSON error?
@@ -27,10 +27,8 @@
 //TODO method to change the photo
 //TODO log and settings category dropdown list needs to be flexible when the keyboard comes up
 //TODO how to handle auto scroll on the account screen and login screen
-//TODO why are the categories out of order when they are copied to a new log?
-//TODO why aren't the totals calculating?
-
-
+//TODO need "+" on master categories to be able to add subcategories to them
+//TODO update all entries where a subcategory is deleted to use the "other" subcategory
 
 
 //TODO GENERAL IMPORTANT *************************
@@ -38,8 +36,7 @@
 
 
 //TODO START HERE
-//category special filters for "other", "money transfer", and "payments" so they can't be saved of modified
-//money transfer does not have a subcategory and should modify the entry page accordingly, also not show the subcategory, also get rid of "payment" subcategory
+//start with dealing with focus node
 //build filter dialog
 //build function to return filtered list back to the widget
 

@@ -1,3 +1,4 @@
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 import 'package:expenses/env.dart';
@@ -77,7 +78,8 @@ class SettingsFetcher {
         //reads the settings from the saved file to reload them if they are not yet loaded
         final file = await _localFile;
 
-        Map<String, dynamic> jsonData = json.decode(await file.readAsString());
+        Map<String, dynamic> jsonData = LinkedHashMap();
+        jsonData = json.decode(await file.readAsString());
 
         _store.dispatch(UpdateSettings(
           settings: Maybe.some(Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
