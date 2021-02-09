@@ -158,7 +158,7 @@ class DeleteTagFromEntryScreen implements Action {
     return _updateTagSingleEntryState(
       appState,
       (tagState) => tagState.copyWith(tags: tagsMap),
-      (singleEntryState) => singleEntryState.copyWith(tags: entryTagsMap),
+      (singleEntryState) => singleEntryState.copyWith(tags: entryTagsMap, userUpdated: true),
     );
   }
 }
@@ -190,6 +190,7 @@ class AddUpdateSingleEntryAndTags implements Action {
       //update entry if id is not null and thus already exists an the entry has been modified
       Env.entriesFetcher.updateEntry(entry);
     } else if (updatedEntry.id == null) {
+      //if no category has been chosen, automatically set NO_CATEGORY
       String categoryId = updatedEntry?.categoryId ?? NO_CATEGORY;
       String subcategoryId = updatedEntry?.subcategoryId;
 

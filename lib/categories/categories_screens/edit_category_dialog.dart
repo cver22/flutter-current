@@ -229,8 +229,17 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     });
   }
 
+  bool _canDelete({String id}) {
+    //TODO fill this in
+  }
+
+
   bool _notModifiable({String id}) {
+    if(id == null) {
+      return false;
+    }
+
     //special categories and subcategories can not be deleted or renamed
-    return id == null || id == NO_CATEGORY || id.contains(OTHER) || id == TRANSFER_FUNDS || id == PAYMENT;
+    return id == NO_CATEGORY || id.contains(OTHER) || id == TRANSFER_FUNDS || id == PAYMENT;
   }
 }

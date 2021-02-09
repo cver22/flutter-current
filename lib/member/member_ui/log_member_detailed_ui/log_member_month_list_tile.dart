@@ -10,8 +10,9 @@ import 'package:get/get.dart';
 class LogMemberMonthListTile extends StatelessWidget {
   final LogMember member;
   final Log log;
+  final bool singleMemberLog;
 
-  const LogMemberMonthListTile({Key key, @required this.log, @required this.member}) : super(key: key);
+  const LogMemberMonthListTile({Key key, @required this.log, @required this.member, this.singleMemberLog = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +33,8 @@ class LogMemberMonthListTile extends StatelessWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
-              Text('Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}  '),
-              Text('Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
+              Text('Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
+              singleMemberLog ? Container() : Text('  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
             ],
           )
         ],

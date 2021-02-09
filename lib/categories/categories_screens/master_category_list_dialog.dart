@@ -52,6 +52,7 @@ class MasterCategoryListDialog extends StatelessWidget {
 
   Widget _buildDialog({@required List<MyCategory> categories, @required List<MyCategory> subcategories}) {
     return Dialog(
+      insetPadding: EdgeInsets.all(30),
       elevation: DIALOG_ELEVATION,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
       child: Column(
@@ -77,17 +78,16 @@ class MasterCategoryListDialog extends StatelessWidget {
             ],
           ),
           //shows this list view if the category list comes from the log
-          Container(
-            //TODO this needs a more elegant method of keeping the bound of the list
-            height: 600.0,
-            child: categories.length > 0
-                ? MasterCategoryDragAndDropList(
-                    categories: categories,
-                    subcategories: subcategories,
-                    setLogEnt: setLogEnt,
-                  )
-                : EmptyContent(),
-          ),
+          categories.length > 0
+              ? Expanded(
+            child: MasterCategoryDragAndDropList(
+              categories: categories,
+              subcategories: subcategories,
+              setLogEnt: setLogEnt,
+            ),
+          )
+              : EmptyContent(),
+          //TODO this should direct the user where to ass a category if they have deleted all of them
         ],
       ),
     );

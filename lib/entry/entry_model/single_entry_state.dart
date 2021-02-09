@@ -9,31 +9,37 @@ import 'package:meta/meta.dart';
 
 @immutable
 class SingleEntryState extends Equatable {
-
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
   final Map<String, Tag> tags; //collection of all log tags for updating if required
   final List<MyCategory> categories; // collection of all log categories for updating if required;
   final List<MyCategory> subcategories; //collection of all log subcategories for updating if required;
   final bool processing;
+  final bool userUpdated;
 
-  SingleEntryState( {this.selectedTag, this.tags, this.selectedEntry, this.categories, this.subcategories, this.processing});
+  SingleEntryState(
+      {this.selectedTag,
+      this.tags,
+      this.selectedEntry,
+      this.categories,
+      this.subcategories,
+      this.processing,
+      this.userUpdated});
 
   factory SingleEntryState.initial() {
     return SingleEntryState(
-
       selectedEntry: Maybe.none(),
       selectedTag: Maybe.none(),
       tags: LinkedHashMap(),
       categories: List<MyCategory>(),
       subcategories: List<MyCategory>(),
       processing: true,
-
+      userUpdated: false,
     );
   }
 
   @override
-  List<Object> get props => [selectedEntry, selectedTag, tags, categories, subcategories, processing];
+  List<Object> get props => [selectedEntry, selectedTag, tags, categories, subcategories, processing, userUpdated];
 
   @override
   bool get stringify => true;
@@ -45,13 +51,15 @@ class SingleEntryState extends Equatable {
     List<MyCategory> categories,
     List<MyCategory> subcategories,
     bool processing,
+    bool userUpdated,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
         (tags == null || identical(tags, this.tags)) &&
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null || identical(subcategories, this.subcategories)) &&
-        (processing == null || identical(processing, this.processing))) {
+        (processing == null || identical(processing, this.processing)) &&
+        (userUpdated == null || identical(userUpdated, this.userUpdated))) {
       return this;
     }
 
@@ -62,6 +70,7 @@ class SingleEntryState extends Equatable {
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       processing: processing ?? this.processing,
-    );
+      userUpdated: userUpdated ?? this.userUpdated,
+     );
   }
 }

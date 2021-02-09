@@ -1,4 +1,4 @@
-import 'package:expenses/app/common_widgets/exit_confirmation_dialog.dart';
+import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
@@ -29,45 +29,48 @@ class AddEditLogScreen extends StatelessWidget {
   Future<bool> _exitConfirmationDialog() async {
     bool onWillPop = false;
     await Get.dialog(
-      ExitConfirmationDialog(
+      SimpleConfirmationDialog(
         title: 'Exit without saving?',
-        pop: (willPop) => {onWillPop = willPop},
-        onTap: () => {
-          Env.store.dispatch(ClearSelectedLog()),
+        onTapYes: (pop) => {onWillPop = pop},
+      ),
+    );
+
+    if (onWillPop) {
+      //close without saving
+      Env.store.dispatch(ClearSelectedLog());
+      Get.back();
+    }
+
+    return onWillPop;
+  }
+
+  Future<void> _deleteConfirmationDialog() async {
+    bool deleteConfirmed = false;
+    await Get.dialog(
+      SimpleConfirmationDialog(
+        title: 'Are you sure you want to delete this log?',
+        content:
+            'You will also lose all entries, tags and categories associated with this log. This CANNOT be undone! ',
+        onTapYes: (delete) {
+          deleteConfirmed = delete;
         },
       ),
     );
 
-    if (onWillPop) Get.back(); //used for back arrow
-
-    return onWillPop; //used for willPop
-  }
-
-  Future<void> _deleteConfirmationDialog() async {
-    await Get.dialog(
-      AlertDialog(
-        title: Text('Are you sure you want to delete this log and all its entries and tags? This action cannot be undone!'),
-        actions: <Widget>[
-          Row(
-            children: <Widget>[
-              FlatButton(
-                  child: Text('Cancel'),
-                  onPressed: () => {
-                        Get.back(),
-                      }),
-              FlatButton(
-                child: Text('Yes'),
-                onPressed: () => {
-                  Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value)),
-                  Get.back(),
-                  Get.back(),
-                },
-              ),
-            ],
-          )
-        ],
-      ),
-    );
+    if (deleteConfirmed) {
+      await Get.dialog(
+        SimpleConfirmationDialog(
+          title: 'Please confirm you wish to delete this log?',
+          onTapYes: (delete) {
+            deleteConfirmed = delete;
+            if (deleteConfirmed) {
+              Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
+              Get.back();
+            }
+          },
+        ),
+      );
+    }
   }
 
   @override
@@ -292,7 +295,7 @@ class _NewLogCategorySourceState extends State<NewLogCategorySource> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        Text('Copy Categories From:  '),
+        Container(child: Text('Copy Categories From: '), width: MediaQuery.of(context).size.width / 3),
         DropdownButton<Log>(
           //TODO order preference logs and set default to first log if not navigating from the log itself
           value: currentDropDownSelection,

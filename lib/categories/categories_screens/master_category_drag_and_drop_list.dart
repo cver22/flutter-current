@@ -62,6 +62,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
           Env.store.dispatch(ExpandCollapseSettingsCategory(index: outerIndex));
         }
       },
+      contentsWhenEmpty: _emptyContents(category: category),
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
       trailing: CategoryListTileTrailing(onTapEdit: () {
@@ -115,6 +116,33 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       Env.store
           .dispatch(ReorderCategoryFromSettingsScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     }
+
+  }
+
+  Widget _emptyContents({@required MyCategory category}) {
+    if(category.id == NO_CATEGORY) {
+      return Text(
+        'No category doesn\'t have subcategories',
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+        ),
+      );
+    } else if (category.id == TRANSFER_FUNDS) {
+      return Text(
+        'Transfer funds doesn\'t have subcategories',
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+        ),
+      );
+    } else {
+      return Text(
+        'No subcategories please add one.',
+        style: TextStyle(
+          fontStyle: FontStyle.italic,
+        ),
+      );
+    }
+
 
   }
 }

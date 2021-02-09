@@ -111,38 +111,6 @@ class SelectEntry implements Action {
 
 /*ADD UPDATE DELETE ENTRY SECTION*/
 
-class DeleteSelectedEntry implements Action {
-  @override
-  AppState updateState(AppState appState) {
-    Env.store.dispatch(SingleEntryProcessing());
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<MyCategory> categories = appState.singleEntryState.categories;
-    Map<String, Tag> tags = appState.singleEntryState.tags;
-    EntriesState updatedEntriesState = appState.entriesState;
-    updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
-
-    entry.tagIDs.forEach((tagId) {
-      //updates log list of tags
-      Tag tag = tags[tagId];
-
-      //decrement use of tag for this category and log
-      tag = _decrementCategoryAndLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
-
-      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
-    });
-
-    Env.entriesFetcher.deleteEntry(entry);
-
-    //TODO send to update all changed tags
-    //Map<String, Tag> stateTags = appState.tagState.tags;
-
-    //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
-    Env.store.dispatch(ClearEntryState());
-
-    return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
-  }
-}
-
 class SingleEntryProcessing implements Action {
   @override
   AppState updateState(AppState appState) {
@@ -195,7 +163,8 @@ class UpdateSelectedEntry implements Action {
                   amount: amount,
                   comment: comment,
                   dateTime: dateTime,
-                ))));
+                )),
+                userUpdated: true));
   }
 }
 
@@ -257,10 +226,11 @@ class ChangeEntryCategories implements Action {
         appState,
             (singleEntryState) =>
             singleEntryState.copyWith(
-                tags: tags,
-                selectedEntry: Maybe.some(
-                  entry.changeCategories(category: newCategory ?? NO_CATEGORY),
-                )));
+              tags: tags,
+              selectedEntry: Maybe.some(
+                  entry.changeCategories(category: newCategory ?? NO_CATEGORY)
+              ),
+              userUpdated: true,));
   }
 }
 
@@ -283,7 +253,7 @@ class ReorderCategoriesFromEntryScreen implements Action {
 
     return _updateSingleEntryState(
       appState,
-          (singleEntryState) => singleEntryState.copyWith(categories: categories),
+          (singleEntryState) => singleEntryState.copyWith(categories: categories, userUpdated: true),
     );
   }
 }
@@ -318,7 +288,7 @@ class ReorderSubcategoriesFromEntryScreen implements Action {
 
     return _updateSingleEntryState(
       appState,
-          (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories),
+          (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories, userUpdated: true),
     );
   }
 }
@@ -338,7 +308,7 @@ class AddEditCategoryFromEntryScreen implements Action {
 
     return _updateSingleEntryState(
       appState,
-          (singleEntryState) => singleEntryState.copyWith(categories: categories),
+          (singleEntryState) => singleEntryState.copyWith(categories: categories, userUpdated: true),
     );
   }
 }
@@ -361,21 +331,23 @@ class DeleteCategoryFromEntryScreen implements Action {
     }
     if (category.id == entry.categoryId) {
       //if we deleted the category used by the entry, reset the entry to no category or subcategory
-      entry = MyEntry(id: entry.id,
+      entry = MyEntry(
+        id: entry.id,
         logId: entry.logId,
         currency: entry.currency,
         amount: entry.amount,
         comment: entry.comment,
         dateTime: entry.dateTime,
         tagIDs: entry.tagIDs,
-        entryMembers: entry.entryMembers,);
+        entryMembers: entry.entryMembers,
+      );
     }
 
     return _updateSingleEntryState(
       appState,
           (singleEntryState) =>
           singleEntryState.copyWith(
-              categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry)),
+              categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry), userUpdated: false),
     );
   }
 }
@@ -417,7 +389,7 @@ class AddEditSubcategoryFromEntryScreen implements Action {
     return _updateSingleEntryState(
       appState,
           (singleEntryState) =>
-          singleEntryState.copyWith(subcategories: subcategories, tags: tags, selectedEntry: Maybe.some(entry)),
+          singleEntryState.copyWith(subcategories: subcategories, tags: tags, selectedEntry: Maybe.some(entry), userUpdated: true),
     );
   }
 }
@@ -440,11 +412,10 @@ class DeleteSubcategoryFromEntryScreen implements Action {
       }
     }
 
-
     return _updateSingleEntryState(
       appState,
           (singleEntryState) =>
-          singleEntryState.copyWith(subcategories: subcategories, selectedEntry: Maybe.some(entry)),
+          singleEntryState.copyWith(subcategories: subcategories, selectedEntry: Maybe.some(entry), userUpdated: true),
     );
   }
 }
@@ -493,7 +464,7 @@ class UpdateMemberPaidAmount implements Action {
         appState,
             (singleEntryState) =>
             singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(amount: amount, entryMembers: members)),
+              selectedEntry: Maybe.some(entry.copyWith(amount: amount, entryMembers: members)), userUpdated: true,
             ));
   }
 }
@@ -517,7 +488,7 @@ class UpdateMemberSpentAmount implements Action {
         appState,
             (singleEntryState) =>
             singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)), userUpdated: true,
             ));
   }
 }
@@ -561,7 +532,7 @@ class ToggleMemberPaying implements Action {
         appState,
             (singleEntryState) =>
             singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members, amount: amount)),
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members, amount: amount)), userUpdated: true,
             ));
   }
 }
@@ -597,7 +568,7 @@ class ToggleMemberSpending implements Action {
         appState,
             (singleEntryState) =>
             singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)), userUpdated: true,
             ));
   }
 }
@@ -636,7 +607,7 @@ class AddUpdateTagFromEntryScreen implements Action {
     return _updateSingleEntryState(
         appState,
             (singleEntryState) =>
-            singleEntryState.copyWith(selectedEntry: Maybe.some(entry), selectedTag: Maybe.some(Tag()), tags: tags));
+            singleEntryState.copyWith(selectedEntry: Maybe.some(entry), selectedTag: Maybe.some(Tag()), tags: tags, userUpdated: true));
   }
 }
 
@@ -684,7 +655,7 @@ class SelectDeselectEntryTag implements Action {
     return _updateSingleEntryState(
         appState,
             (singleEntryState) =>
-            singleEntryState.copyWith(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags));
+            singleEntryState.copyWith(selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags, userUpdated: true));
   }
 }
 

@@ -1,4 +1,4 @@
-import 'package:expenses/app/common_widgets/exit_confirmation_dialog.dart';
+import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
@@ -32,19 +32,19 @@ class AddEditEntryScreen extends StatelessWidget {
   Future<bool> _closeConfirmationDialog() async {
     bool onWillPop = false;
     await Get.dialog(
-      ExitConfirmationDialog(
+      SimpleConfirmationDialog(
         title: 'Discard this Entry?',
-        pop: (willPop) => {onWillPop = willPop},
-        onTap: () => {
-          Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose()),
-          Env.store.dispatch(ClearEntryState()),
+        content: 'Any changes to Categories will be saved.',
+        onTapYes: (pop) {
+          onWillPop = pop;
+          if (onWillPop) {
+            _updateCategoriesOnClose();
+            Get.back();
+          }
         },
       ),
     );
-
-    if (onWillPop) Get.back(); //used for back arrow
-
-    return onWillPop; //used for willPop
+    return onWillPop;
   }
 
   @override
@@ -67,8 +67,12 @@ class AddEditEntryScreen extends StatelessWidget {
 
             return WillPopScope(
               onWillPop: () async {
-                //TODO create method for showing dialog only if the entry has changed or is new and has data
-                return _closeConfirmationDialog();
+                if (singleEntryState.userUpdated) {
+                  return _closeConfirmationDialog();
+                } else {
+                  _updateCategoriesOnClose();
+                  return true;
+                }
               },
               child: Stack(
                 children: [
@@ -89,7 +93,13 @@ class AddEditEntryScreen extends StatelessWidget {
       title: Text('Entry'),
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
-        onPressed: () => _closeConfirmationDialog(),
+        onPressed: () {
+          if (singleEntryState.userUpdated) {
+            _closeConfirmationDialog();
+          } else {
+            Get.back();
+          }
+        },
       ),
       actions: <Widget>[
         IconButton(
@@ -209,13 +219,22 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  void handleClick(String value) {
+  void handleClick(String value) async {
     switch (value) {
       case 'Delete Entry':
-        Env.store.dispatch(DeleteSelectedEntry());
-        Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose());
-        Env.store.dispatch(ClearEntryState());
-        Get.back();
+        //confirm deletion
+        await Get.dialog(
+          SimpleConfirmationDialog(
+            title: 'Are you sure you want to delete this Entry?',
+            onTapYes: (confirmDelete) {
+              if (confirmDelete) {
+                Env.store.dispatch(DeleteSelectedEntry());
+                _updateCategoriesOnClose();
+                Get.back();
+              }
+            },
+          ),
+        );
         break;
     }
   }
@@ -251,6 +270,11 @@ class AddEditEntryScreen extends StatelessWidget {
               }).toList();
             },
           );
+  }
+
+  _updateCategoriesOnClose() {
+    Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose());
+    Env.store.dispatch(ClearEntryState());
   }
 
 //currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues

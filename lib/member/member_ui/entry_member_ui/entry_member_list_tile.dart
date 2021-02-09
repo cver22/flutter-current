@@ -10,8 +10,9 @@ import '../../../env.dart';
 class EntryMemberListTile extends StatefulWidget {
   final EntryMember member;
   final String name;
+  final bool singleMemberLog;
 
-  const EntryMemberListTile({Key key, @required this.member, @required this.name}) : super(key: key);
+  const EntryMemberListTile({Key key, @required this.member, @required this.name, this.singleMemberLog = false}) : super(key: key);
 
   @override
   _EntryMemberListTileState createState() => _EntryMemberListTileState();
@@ -71,7 +72,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               ),
             ],
           ),
-          Row(
+          widget.singleMemberLog ? Container() : Row(
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildCheckBox(

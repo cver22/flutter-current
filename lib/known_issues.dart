@@ -1,8 +1,11 @@
 //TODO KNOWN ISSUES
+//TODO app_screen willPopScope does not work if the app is closed and then opened again
+
 
 // TODO LONG TERM GOALS
 // TODO setting option for auto insert decimal
 //TODO reoccurring expenses
+
 
 //TODO MAYBE GOALS
 //TODO give each person an emoji Icon option
@@ -23,9 +26,7 @@
 //TODO change all data models to Maybe
 //TODO clicking in a focusNode value for a member should tick its box
 //TODO spent redistribution methods that account for multiple people
-//TODO current default for null is no category and no subcategory, this likely isn't going to work and needs to be adjusted
 //TODO method to change the photo
-//TODO log and settings category dropdown list needs to be flexible when the keyboard comes up
 //TODO how to handle auto scroll on the account screen and login screen
 //TODO need "+" on master categories to be able to add subcategories to them
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
@@ -36,6 +37,7 @@
 
 
 //TODO START HERE
+//edit category list dialog, separate delete and modify for different bool checks
 //start with dealing with focus node
 //build filter dialog
 //build function to return filtered list back to the widget

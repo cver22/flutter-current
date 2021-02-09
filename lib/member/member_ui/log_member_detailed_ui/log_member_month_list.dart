@@ -20,7 +20,7 @@ class LogMemberMonthList extends StatelessWidget {
       itemCount: logMembers.length,
       itemBuilder: (BuildContext context, int index) {
         final LogMember member = logMembers[index];
-        return LogMemberMonthListTile(member: member, log: log);
+        return LogMemberMonthListTile(member: member, log: log, singleMemberLog: logMembers.length < 2,);
       },
     );
   }

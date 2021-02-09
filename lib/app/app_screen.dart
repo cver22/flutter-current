@@ -1,4 +1,3 @@
-
 import 'package:expenses/app/app_drawer.dart';
 import 'package:expenses/entries/entries_screen/entries_screen.dart';
 import 'package:expenses/log/log_ui/logs_screen.dart';
@@ -21,6 +20,8 @@ class AppScreen extends StatefulWidget {
 class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMixin {
   int index = 0;
   TabController _controller;
+  GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
+
   List<Widget> tabs = [
     Tab(icon: Icon(Icons.account_balance_wallet)),
     Tab(icon: Icon(Icons.assignment)),
@@ -34,7 +35,6 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     _controller.addListener(() {
       setState(() {
         index = _controller.index;
-        print(index);
       });
     });
   }
@@ -51,12 +51,25 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     print('Rendering App Screen');
     return DefaultTabController(
       length: 3,
-      child: WillPopScope(
-        //TODO this is an Android exit only, need iOS which is exit(0) here and in login_register_screen.dart
-        onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
-        child: Builder(
-          builder: (BuildContext context) {
-            return Scaffold(
+      child: Builder(
+        builder: (BuildContext context) {
+          return WillPopScope(
+            //TODO this works the first time but does not work when teh app comes back from sleeping
+            onWillPop: () async {
+              if (index == 0) {
+                return true;
+              } else if (index != 0) {
+                setState(() {
+                  _controller.animateTo(0);
+                });
+                return false;
+              } else if (_key.currentState.isDrawerOpen) {
+                Navigator.of(context).pop();
+                return false;
+              }
+              return true;
+            },
+            child: Scaffold(
               drawer: AppDrawer(),
               appBar: AppBar(
                 actions: <Widget>[
@@ -67,16 +80,18 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                         reorder
                             ? IconButton(
                                 icon: Icon(Icons.check_outlined),
-                                onPressed: () => { setState((){
-                                  Env.store.dispatch(CanReorder(save: true));
-                                }),},
+                                onPressed: () => {
+                                  setState(() {
+                                    Env.store.dispatch(CanReorder(save: true));
+                                  }),
+                                },
                               )
                             : Container(),
                         reorder
                             ? IconButton(
                                 icon: Icon(Icons.cancel_outlined),
                                 onPressed: () => {
-                                  setState ((){
+                                  setState(() {
                                     Env.store.dispatch(CanReorder());
                                   }),
                                 },
@@ -104,9 +119,9 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                   Icon(Icons.assessment),
                 ],
               ),
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }
