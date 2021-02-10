@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+//used by the enty and log for confirming exit, delete actions
 class SimpleConfirmationDialog extends StatelessWidget {
   final Function(bool) onTapYes;
   final String title;

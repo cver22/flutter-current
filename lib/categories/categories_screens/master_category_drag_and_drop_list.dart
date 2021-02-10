@@ -65,13 +65,12 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       contentsWhenEmpty: _emptyContents(category: category),
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
-      trailing: CategoryListTileTrailing(onTapEdit: () {
-        if (setLogEnt == SettingsLogEntry.log) {
-          getLogAddEditCategoryDialog(category: category);
-        } else if (setLogEnt == SettingsLogEntry.settings) {
-          getSettingsAddEditCategoryDialog(category: category);
-        }
-      }),
+      trailing: MasterCategoryListTileTrailing(
+        categories: categories,
+        category: category,
+        expanded: expandedCategories[outerIndex],
+        setLogEnt: setLogEnt,
+      ),
       children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories)),
       listKey: ObjectKey(subs),
     );
@@ -80,6 +79,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   _buildItem({@required MyCategory subcategory, @required List<MyCategory> categories}) {
     return DragAndDropItem(
         child: CategoryListTile(
+          inset: true,
       onTapEdit: () {
         if (setLogEnt == SettingsLogEntry.log) {
           getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
@@ -105,44 +105,32 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
           oldSubcategoryIndex: oldSubcategoryIndex,
           newSubcategoryIndex: newSubcategoryIndex));
     }
-
   }
 
   void _onListReorder(int oldCategoryIndex, int newCategoryIndex) {
     if (setLogEnt == SettingsLogEntry.log) {
-      Env.store
-          .dispatch(ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
+      Env.store.dispatch(
+          ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     } else if (setLogEnt == SettingsLogEntry.settings) {
-      Env.store
-          .dispatch(ReorderCategoryFromSettingsScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
+      Env.store.dispatch(
+          ReorderCategoryFromSettingsScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     }
-
   }
 
   Widget _emptyContents({@required MyCategory category}) {
-    if(category.id == NO_CATEGORY) {
-      return Text(
-        'No category doesn\'t have subcategories',
-        style: TextStyle(
-          fontStyle: FontStyle.italic,
-        ),
-      );
+    String text = 'No subcategories please add one.';
+
+    if (category.id == NO_CATEGORY) {
+      text = '"No Category" doesn\'t have subcategories';
     } else if (category.id == TRANSFER_FUNDS) {
-      return Text(
-        'Transfer funds doesn\'t have subcategories',
-        style: TextStyle(
-          fontStyle: FontStyle.italic,
-        ),
-      );
-    } else {
-      return Text(
-        'No subcategories please add one.',
-        style: TextStyle(
-          fontStyle: FontStyle.italic,
-        ),
-      );
+      text = '"Transfer funds" doesn\'t have subcategories';
     }
 
-
+    return Text(
+      text,
+      style: TextStyle(
+        fontStyle: FontStyle.italic,
+      ),
+    );
   }
 }

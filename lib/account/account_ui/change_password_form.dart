@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 
 import '../../env.dart';
 
+
+//change password form to be shown by the password controller if the user has signed in with email and presses the change password button
 class ChangePasswordForm extends StatefulWidget {
   final AccountState accountState;
 

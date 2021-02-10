@@ -14,6 +14,7 @@ import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:flutter/services.dart';
 
+//AccountScreen contains user information, picture, QR code, password changes, logout
 class AccountScreen extends StatefulWidget {
   const AccountScreen({Key key}) : super(key: key);
 

@@ -1,6 +1,7 @@
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
+import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 
 //leading and trailing components for category list tiles
 
@@ -40,9 +41,11 @@ class CategoryListTileTrailing extends StatelessWidget {
   const CategoryListTileTrailing({
     Key key,
     @required this.onTapEdit,
+    this.addSubcategory = false,
   }) : super(key: key);
 
   final VoidCallback onTapEdit;
+  final bool addSubcategory;
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +56,56 @@ class CategoryListTileTrailing extends StatelessWidget {
       child: IconButton(
         padding: EdgeInsets.all(0),
         icon: Icon(
-          Icons.edit_outlined,
+          addSubcategory ? Icons.add_outlined : Icons.edit_outlined,
           size: EMOJI_SIZE,
         ),
         onPressed: onTapEdit,
       ),
     );
+  }
+}
+
+class MasterCategoryListTileTrailing extends StatelessWidget {
+  const MasterCategoryListTileTrailing({
+    Key key,
+    @required this.setLogEnt,
+    @required this.category,
+    @required this.expanded,
+    @required this.categories,
+  }) : super(key: key);
+
+  final SettingsLogEntry setLogEnt;
+  final MyCategory category;
+  final bool expanded;
+  final List<MyCategory> categories;
+
+  @override
+  Widget build(BuildContext context) {
+
+    return CategoryListTileTrailing(
+      onTapEdit: () => _canAddSubcategory() ? _onTapAdd() : _onTapEdit(),
+      addSubcategory: _canAddSubcategory(),
+    );
+  }
+
+  _onTapEdit() {
+    if (setLogEnt == SettingsLogEntry.log) {
+      getLogAddEditCategoryDialog(category: category);
+    } else if (setLogEnt == SettingsLogEntry.settings) {
+      getSettingsAddEditCategoryDialog(category: category);
+    }
+  }
+
+  _onTapAdd() {
+    MyCategory subcategory = MyCategory(parentCategoryId: category.id);
+    if (setLogEnt == SettingsLogEntry.log) {
+      getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+    } else if (setLogEnt == SettingsLogEntry.settings) {
+      getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+    }
+  }
+
+  bool _canAddSubcategory() {
+    return expanded && category.id != NO_CATEGORY && category.id != TRANSFER_FUNDS;
   }
 }

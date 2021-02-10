@@ -6,8 +6,9 @@ class CategoryListTile extends StatelessWidget {
   final MyCategory category;
   final VoidCallback onTap;
   final VoidCallback onTapEdit;
+  final bool inset;
 
-  const CategoryListTile({Key key, @required this.category, this.onTap, this.onTapEdit}) : super(key: key);
+  const CategoryListTile({Key key, @required this.category, this.onTap, this.onTapEdit, this.inset = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -19,6 +20,7 @@ class CategoryListTile extends StatelessWidget {
       name = category.name;
     }*/
     return ListTile(
+      contentPadding: EdgeInsets.fromLTRB(inset ? 30 : 8, 0, 16, 0),
       leading: CategoryListTileLeading(
         category: category,
         sublist: onTap != null, //only a sublist if there is no ontap method

@@ -28,8 +28,10 @@
 //TODO spent redistribution methods that account for multiple people
 //TODO method to change the photo
 //TODO how to handle auto scroll on the account screen and login screen
-//TODO need "+" on master categories to be able to add subcategories to them
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
+//TODO fix text overflow on log and parentCategory drop downs
+//TODO confirm change password tool works as I have it commented out at the moment
+//TODO fix log exit without saving, add bool to logState
 
 
 //TODO GENERAL IMPORTANT *************************
@@ -37,7 +39,6 @@
 
 
 //TODO START HERE
-//edit category list dialog, separate delete and modify for different bool checks
 //start with dealing with focus node
 //build filter dialog
 //build function to return filtered list back to the widget

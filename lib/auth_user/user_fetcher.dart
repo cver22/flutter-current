@@ -17,7 +17,6 @@ class UserFetcher {
   })  : _store = store,
         _userRepository = userRepository;
 
-//  FirebaseUserRepository get repo => _userRepository;
 
   _getCurrentUser(LoginRegState loginRegState) async {
     final isSignedIn = await _userRepository.isSignedIn();
@@ -84,11 +83,13 @@ class UserFetcher {
     _store.dispatch(AuthSuccess(user: user));
   }
 
+  //used for AccountScreen password change form
   Future<void> isUserSignedInWithEmail() async {
     bool signedInWithEmail = await _userRepository.isUserSignedInWithEmail();
     _store.dispatch(IsUserSignedInWithEmail(signedInWithEmail: signedInWithEmail));
   }
 
+  //only available if user has signed in with email
   Future<void> updatePassword({@required String currentPassword, @required String newPassword}) async {
     _store.dispatch(AccountUpdateSubmitting());
     bool success = await  _userRepository.updatePassword(currentPassword: currentPassword, newPassword: newPassword);

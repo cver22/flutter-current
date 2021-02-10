@@ -7,6 +7,30 @@ import 'package:get/get.dart';
 
 import '../../env.dart';
 
+Future<dynamic> getLogAddEditCategoryDialog({@required MyCategory category}) {
+  return Get.dialog(
+    EditCategoryDialog(
+      save: (name, emojiChar, unused) =>
+      {
+        Env.store.dispatch(AddEditCategoryFromLog(category: category.copyWith(name: name, emojiChar: emojiChar))),
+      },
+
+      //TODO default function
+      /*setDefault: (category) => {
+          Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
+        },*/
+
+      delete: () =>
+      {
+        Env.store.dispatch(DeleteCategoryFromLog(category: category)),
+        Get.back(),
+      },
+      category: category,
+      categoryOrSubcategory: CategoryOrSubcategory.category,
+    ),
+  );
+}
+
 Future<dynamic> getLogAddEditSubcategoryDialog(
     {@required MyCategory subcategory, @required List<MyCategory> categories}) {
   return Get.dialog(
@@ -28,30 +52,6 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
       initialParent: subcategory.parentCategoryId,
       category: subcategory,
       categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-    ),
-  );
-}
-
-Future<dynamic> getLogAddEditCategoryDialog({@required MyCategory category}) {
-  return Get.dialog(
-    EditCategoryDialog(
-      save: (name, emojiChar, unused) =>
-      {
-        Env.store.dispatch(AddEditCategoryFromLog(category: category.copyWith(name: name, emojiChar: emojiChar))),
-      },
-
-      //TODO default function
-      /*setDefault: (category) => {
-          Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
-        },*/
-
-      delete: () =>
-      {
-        Env.store.dispatch(DeleteCategoryFromLog(category: category)),
-        Get.back(),
-      },
-      category: category,
-      categoryOrSubcategory: CategoryOrSubcategory.category,
     ),
   );
 }

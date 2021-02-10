@@ -90,6 +90,7 @@ class FirebaseUserRepository implements UserRepository {
     return User(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoUrl);
   }
 
+  //only available if user has signed in with email
   @override
   Future<bool> updatePassword({@required String currentPassword, @required String newPassword}) async {
    // FirebaseUser user = await _firebaseAuth.currentUser();
@@ -115,6 +116,7 @@ class FirebaseUserRepository implements UserRepository {
     return success;
   }
 
+  //used for AccountScreen password change form
   @override
   Future<bool> isUserSignedInWithEmail() async {
     FirebaseUser user = await _firebaseAuth.currentUser();

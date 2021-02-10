@@ -5,10 +5,11 @@ import 'package:expenses/store/actions/actions.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../env.dart';
+
+//main screen of the app from which we can navigate to other options of the app
 
 class AppScreen extends StatefulWidget {
   AppScreen({Key key}) : super(key: key);
@@ -54,7 +55,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
       child: Builder(
         builder: (BuildContext context) {
           return WillPopScope(
-            //TODO this works the first time but does not work when teh app comes back from sleeping
+            //TODO this works the first time but does not work when the app comes back from sleeping
             onWillPop: () async {
               if (index == 0) {
                 return true;

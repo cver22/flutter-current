@@ -7,7 +7,7 @@ class MyCategory extends Equatable {
   final String id;
   final String name;
   final String emojiChar;
-  final String parentCategoryId;
+  final String parentCategoryId; //only used for subcategories
 
 
   MyCategory( {this.id, this.name = '', this.emojiChar = '\u{1F4B2}',this.parentCategoryId});

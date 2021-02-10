@@ -81,7 +81,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     controller = TextEditingController(text: name);
     canSave = controller.text != null && controller.value.text.length > 0;
 
-    notModifiable = _notModifiable(id: id);
+    notModifiable = _notModifiable(categoryId: id);
   }
 
   void dispose() {
@@ -128,7 +128,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ),
             ],
           ),
-          _selectParentCategory(selectedCategory),
+          categoryOrSubcategory == CategoryOrSubcategory.category
+              ? Container()
+              : _selectParentCategory(selectedCategory),
           SizedBox(height: 10),
           showEmojiGrid
               ? Expanded(
@@ -145,7 +147,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            notModifiable ? Container() : FlatButton(child: Text('Delete'), onPressed: widget.delete),
+            _canDelete(categoryId: category.id)
+                ? FlatButton(child: Text('Delete'), onPressed: widget.delete)
+                : Container(),
 
             FlatButton(
               child: Text('Cancel'),
@@ -188,28 +192,29 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   Widget _selectParentCategory(MyCategory initialCategory) {
-    return categoryOrSubcategory == CategoryOrSubcategory.category
-        ? Container()
-        : Row(
-            children: [
-              Text('Parent Category: '),
-              SizedBox(width: 10),
-              notModifiable
-                  ? Text(initialCategory.name)
-                  : DropdownButton<MyCategory>(
-                      value: initialCategory,
-                      items: categories.map((MyCategory category) {
-                        return DropdownMenuItem<MyCategory>(
-                          value: category,
-                          child: Text(
-                            category.name,
-                            style: TextStyle(color: Colors.black),
-                          ),
-                        );
-                      }).toList(),
-                      onChanged: _onParentCategoryChanged),
-            ],
-          );
+    List<MyCategory> selectableCategories = List.from(categories);
+    selectableCategories.removeWhere((element) => element.id == NO_CATEGORY || element.id == TRANSFER_FUNDS);
+
+    return Row(
+      children: [
+        Text('Parent Category: '),
+        SizedBox(width: 10),
+        notModifiable
+            ? Text(initialCategory.name)
+            : DropdownButton<MyCategory>(
+                value: initialCategory,
+                items: selectableCategories.map((MyCategory category) {
+                  return DropdownMenuItem<MyCategory>(
+                    value: category,
+                    child: Text(
+                      category.name,
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  );
+                }).toList(),
+                onChanged: _onParentCategoryChanged),
+      ],
+    );
   }
 
   String dialogTitle(CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
@@ -229,17 +234,21 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     });
   }
 
-  bool _canDelete({String id}) {
-    //TODO fill this in
+  bool _canDelete({String categoryId}) {
+
+    if (categoryId == null || categoryId == NO_CATEGORY || categoryId.contains(OTHER) || categoryId == TRANSFER_FUNDS) {
+      return false;
+    }
+    return true;
   }
 
-
-  bool _notModifiable({String id}) {
-    if(id == null) {
+  bool _notModifiable({String categoryId}) {
+    //catch null as modifiable
+    if (categoryId == null) {
       return false;
     }
 
-    //special categories and subcategories can not be deleted or renamed
-    return id == NO_CATEGORY || id.contains(OTHER) || id == TRANSFER_FUNDS || id == PAYMENT;
+    //special categories and subcategories can not be renamed
+    return categoryId == NO_CATEGORY || categoryId.contains(OTHER) || categoryId == TRANSFER_FUNDS;
   }
 }

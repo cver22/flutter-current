@@ -82,7 +82,7 @@
          "emojiChar":"🐶️"
       },
       {
-         "id":"other",
+         "id":"parent",
          "name":"Other",
          "emojiChar":"🤷‍♂"
       },
@@ -626,19 +626,19 @@
          "id":"charity",
          "name":"Charity",
          "emojiChar":"⛑",
-         "parentCategoryId":"other"
+         "parentCategoryId":"parent"
       },
       {
          "id":"fines",
          "name":"Fines",
          "emojiChar":"🧾",
-         "parentCategoryId":"other"
+         "parentCategoryId":"parent"
       },
       {
          "id":"otherOther",
          "name":"Other",
          "emojiChar":"🤷‍",
-         "parentCategoryId":"other"
+         "parentCategoryId":"parent"
       }
    ],
    "defaultLogId":null

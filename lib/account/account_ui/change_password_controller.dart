@@ -10,6 +10,8 @@ import 'package:flutter/material.dart';
 
 import '../../env.dart';
 
+
+//controls if the password change fields are visible due to the sign in method and if the password chang is successful
 class ChangePasswordController extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

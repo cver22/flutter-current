@@ -7,6 +7,9 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+//first screen we see when opening the app, used to direct the user to sign in/up if they have not already
+//signed in users have their content loaded, once the content is loaded, the user is directed to the AppScreen
+
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key key}) : super(key: key);
 
@@ -40,8 +43,6 @@ class HomeScreen extends StatelessWidget {
                 ExpenseRoutes.loginRegister,
                 ModalRoute.withName(ExpenseRoutes.home));*/
         }
-
-        //TODO prevent returning to the splash screen with the back button
         return SplashScreen();
       },
     );

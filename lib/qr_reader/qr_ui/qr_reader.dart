@@ -43,10 +43,13 @@ class _QRReaderState extends State<QRReader> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      onWillPop: () async => false,
+      onWillPop: () async {
+        Get.back();
+        return false;
+      },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Scan another person\'s QR code'),
+          title: Text('Scan a QR code'),
           leading: IconButton(
             icon: Icon(Icons.arrow_back),
             onPressed: () => {
@@ -59,41 +62,47 @@ class _QRReaderState extends State<QRReader> {
             Expanded(flex: 4, child: _buildQrView(context)),
             Expanded(
               flex: 1,
-              child: FittedBox(
-                fit: BoxFit.contain,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    if (result != null)
-                      Text('Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}')
-                    else
-                      Text('Scan a code'),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.all(8),
-                          child: RaisedButton(
-                            onPressed: () {
-                              controller?.pauseCamera();
-                            },
-                            child: Text('pause', style: TextStyle(fontSize: 20)),
-                          ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                  Container(
+                      padding: EdgeInsets.symmetric(horizontal: 32.0),
+                      child: Text(
+                        result != null
+                            ? 'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}'
+                            : 'QR code can be found on the other person\'s account screen.',
+                        overflow: TextOverflow.ellipsis,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 16.0,
                         ),
-                        Container(
-                          margin: EdgeInsets.all(8),
-                          child: RaisedButton(
-                            onPressed: () {
-                              controller?.resumeCamera();
-                            },
-                            child: Text('resume', style: TextStyle(fontSize: 20)),
-                          ),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
+                      )),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      Container(
+                        margin: EdgeInsets.all(8),
+                        child: RaisedButton(
+                          onPressed: () {
+                            controller?.pauseCamera();
+                          },
+                          child: Text('pause', style: TextStyle(fontSize: 20)),
+                        ),
+                      ),
+                      Container(
+                        margin: EdgeInsets.all(8),
+                        child: RaisedButton(
+                          onPressed: () {
+                            controller?.resumeCamera();
+                          },
+                          child: Text('resume', style: TextStyle(fontSize: 20)),
+                        ),
+                      )
+                    ],
+                  ),
+                ],
               ),
             )
           ],
