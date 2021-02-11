@@ -76,30 +76,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                 actions: <Widget>[
                   Builder(builder: (BuildContext context) {
                     if (index == 0) {
-                      bool reorder = Env.store.state.logsState.reorder;
-                      return Row(children: [
-                        reorder
-                            ? IconButton(
-                                icon: Icon(Icons.check_outlined),
-                                onPressed: () => {
-                                  setState(() {
-                                    Env.store.dispatch(CanReorder(save: true));
-                                  }),
-                                },
-                              )
-                            : Container(),
-                        reorder
-                            ? IconButton(
-                                icon: Icon(Icons.cancel_outlined),
-                                onPressed: () => {
-                                  setState(() {
-                                    Env.store.dispatch(CanReorder());
-                                  }),
-                                },
-                              )
-                            : Container(),
-                        reorder ? Container() : _buildLogPopupMenuButton(reorder: reorder),
-                      ]);
+                      return _buildLogPopupMenuButton();
                     } else if (index == 1) {
                       return _buildEntriesPopupMenuButton();
                     } else {
@@ -150,17 +127,11 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     );
   }
 
-  PopupMenuButton<String> _buildLogPopupMenuButton({@required bool reorder}) {
+  PopupMenuButton<String> _buildLogPopupMenuButton() {
     return PopupMenuButton<String>(
       onSelected: handleClick,
       itemBuilder: (BuildContext context) {
-        Set<String> menuOptions;
-
-        if (reorder) {
-          menuOptions = {'Add Log'};
-        } else {
-          menuOptions = {'Add Log', 'Reorder'};
-        }
+        Set<String> menuOptions = {'Add Log'};
 
         return menuOptions.map((String choice) {
           return PopupMenuItem<String>(

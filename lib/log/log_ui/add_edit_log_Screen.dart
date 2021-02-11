@@ -30,7 +30,7 @@ class AddEditLogScreen extends StatelessWidget {
     bool onWillPop = false;
     await Get.dialog(
       SimpleConfirmationDialog(
-        title: 'Exit without saving?',
+        title: 'Discard changes?',
         onTapYes: (pop) => {onWillPop = pop},
       ),
     );

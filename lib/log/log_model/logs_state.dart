@@ -5,17 +5,17 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/foundation.dart';
 
-
 //TODO will need a visible method to hide archived/deleted logs
 
 @immutable
-class LogsState extends Equatable{
+class LogsState extends Equatable {
   //map of logId and log
   final Map<String, Log> logs;
   final bool isLoading;
   final Maybe<Log> selectedLog;
   final List<bool> expandedCategories;
   final bool reorder;
+  final bool userUpdated;
 
   LogsState({
     this.logs,
@@ -23,11 +23,8 @@ class LogsState extends Equatable{
     this.selectedLog,
     this.expandedCategories,
     this.reorder,
+    this.userUpdated,
   });
-
-  /*Maybe<Log> get selectedLog {
-    return selectedLogId.map((logId) => this.logs[logId]);
-  }*/
 
   factory LogsState.initial() {
     return LogsState(
@@ -36,11 +33,12 @@ class LogsState extends Equatable{
       selectedLog: Maybe.none(),
       expandedCategories: List(),
       reorder: false,
+      userUpdated: false,
     );
   }
 
   @override
-  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories, reorder];
+  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories, reorder, userUpdated];
 
   @override
   bool get stringify => true;
@@ -51,12 +49,14 @@ class LogsState extends Equatable{
     Maybe<Log> selectedLog,
     List<bool> expandedCategories,
     bool reorder,
+    bool userUpdated,
   }) {
     if ((logs == null || identical(logs, this.logs)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
         (selectedLog == null || identical(selectedLog, this.selectedLog)) &&
         (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
-        (reorder == null || identical(reorder, this.reorder))) {
+        (reorder == null || identical(reorder, this.reorder)) &&
+        (userUpdated == null || identical(userUpdated, this.userUpdated))) {
       return this;
     }
 
@@ -66,6 +66,7 @@ class LogsState extends Equatable{
       selectedLog: selectedLog ?? this.selectedLog,
       expandedCategories: expandedCategories ?? this.expandedCategories,
       reorder: reorder ?? this.reorder,
+      userUpdated: userUpdated ?? this.userUpdated,
     );
   }
 }

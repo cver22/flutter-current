@@ -36,11 +36,9 @@ class LogsScreen extends StatelessWidget {
                   logs = logsState.logs.entries.map((e) => e.value).toList();
                   logs.sort((a, b) => a.order.compareTo(b.order)); //display based on order
 
-                  if (logsState.reorder) {
+
                     return _buildReorderableList(logs: logs, logTotalsState: logTotalsState, context: context);
-                  } else {
-                    return _buildListView(logs: logs, logTotalsState: logTotalsState, context: context);
-                  }
+
                 } else if (logsState.isLoading == false && logsState.logs.isEmpty) {
                   return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -99,14 +97,4 @@ class LogsScreen extends StatelessWidget {
         ]);
   }
 
-  Widget _buildListView({List<Log> logs, LogTotalsState logTotalsState, BuildContext context}) {
-    return ListView.builder(
-      shrinkWrap: true,
-      itemCount: logs.length,
-      itemBuilder: (BuildContext context, int index) {
-        Log log = logs[index];
-        return LogListTile(log: log, logTotal: logTotalsState.logTotals[log.id]);
-      },
-    );
-  }
 }

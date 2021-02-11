@@ -20,7 +20,6 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-//testing new commit
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
 class AddEditEntryScreen extends StatelessWidget {
   AddEditEntryScreen({Key key}) : super(key: key);
@@ -34,8 +33,7 @@ class AddEditEntryScreen extends StatelessWidget {
     bool onWillPop = false;
     await Get.dialog(
       SimpleConfirmationDialog(
-        title: 'Discard this Entry?',
-        content: 'Any changes to Categories will be saved.',
+        title: 'Discard changes?',
         onTapYes: (pop) {
           onWillPop = pop;
           if (onWillPop) {
