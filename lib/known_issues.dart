@@ -39,6 +39,7 @@
 
 
 //TODO START HERE
+//restore connection to Github
 //start with dealing with focus node
 //build filter dialog
 //build function to return filtered list back to the widget
