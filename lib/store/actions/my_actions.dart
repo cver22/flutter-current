@@ -330,14 +330,7 @@ bool _canDeleteSubcategory({@required MyCategory subcategory}) {
   return true;
 }
 
-bool _canReorderSubcategory({@required MyCategory subcategory, @required String newParentId}) {
-  if (newParentId == NO_CATEGORY || subcategory.id.contains(OTHER) || newParentId == TRANSFER_FUNDS) {
-    return false;
-  }
-  return true;
-}
-
-
+//used by setting and log to reorder subcategories
 List<MyCategory> _reorderSubcategoriesLogSetting(
     {@required MyCategory subcategory,
       @required String newParentId,
@@ -369,4 +362,12 @@ List<MyCategory> _reorderSubcategoriesLogSetting(
     });
   }
   return subcategories;
+}
+
+//determine if the subcategory is special and connot be reOrdered
+bool _canReorderSubcategory({@required MyCategory subcategory, @required String newParentId}) {
+  if (newParentId == NO_CATEGORY || subcategory.id.contains(OTHER) || newParentId == TRANSFER_FUNDS) {
+    return false;
+  }
+  return true;
 }

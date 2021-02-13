@@ -45,12 +45,17 @@ class EntryListTile extends StatelessWidget {
   }
 
   String displayChar(Log log) {
-    String emojiChar;
+    String emojiChar = '\u{2757}';
+    String subcategoryId = entry?.subcategoryId;
 
-    if (entry?.categoryId != null && log != null) {
+    if (subcategoryId != null && log != null && !subcategoryId.contains(OTHER)) {
+      emojiChar =
+          log.subcategories.firstWhere((element) => element.id == subcategoryId, orElse: () => null)?.emojiChar ??
+              emojiChar;
+    } else if (entry?.categoryId != null && log != null) {
       emojiChar =
           log.categories.firstWhere((element) => element.id == entry.categoryId, orElse: () => null)?.emojiChar ??
-              '\u{2757}';
+              emojiChar;
     }
 
     return emojiChar;
