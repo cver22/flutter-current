@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';

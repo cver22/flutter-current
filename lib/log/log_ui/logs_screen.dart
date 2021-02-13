@@ -8,7 +8,7 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 import 'package:expenses/log/log_ui/log_list_tile.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';

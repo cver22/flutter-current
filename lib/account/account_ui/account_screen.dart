@@ -4,7 +4,7 @@ import 'package:expenses/account/account_ui/change_password_controller.dart';
 import 'package:expenses/auth_user/models/user.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';

@@ -1,4 +1,4 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 AppState _updateTagState(
   AppState appState,
@@ -16,21 +16,21 @@ AppState _updateTags(
   return _updateTagState(appState, (tagState) => tagState.copyWith(tags: cloneMap));
 }
 
-class SetTagsLoading implements Action {
+class SetTagsLoading implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: true));
   }
 }
 
-class SetTagsLoaded implements Action {
+class SetTagsLoaded implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: false));
   }
 }
 
-class SetTags implements Action {
+class SetTags implements MyAction {
   final Iterable<Tag> tagList;
 
   SetTags({this.tagList});

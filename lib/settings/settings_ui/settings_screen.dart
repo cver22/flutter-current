@@ -4,7 +4,7 @@ import 'package:expenses/categories/categories_screens/master_category_list_dial
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';

@@ -1,7 +1,7 @@
 import 'package:expenses/account/account_model/account_state.dart';
 import 'package:expenses/account/account_ui/change_password_form.dart';
 import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';

@@ -46,7 +46,7 @@ part 'tag_actions.dart';
 
 part 'account_actions.dart';
 
-abstract class Action {
+abstract class MyAction {
   AppState updateState(AppState appState);
 }
 
@@ -87,7 +87,7 @@ AppState _updateTagSingleEntryState(
   );
 }
 
-class DeleteLog implements Action {
+class DeleteLog implements MyAction {
   //This action updates multiple states simultaneously
   final Log log;
 
@@ -133,7 +133,7 @@ class DeleteLog implements Action {
 
     return _updateLogEntriesTagSettingState(
       appState,
-      (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none()),
+      (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none(),userUpdated: false),
       (entriesState) => entriesState.copyWith(entries: entriesMap),
       (tagState) => tagState.copyWith(tags: tagsMap),
       (settingsState) => settingsState.copyWith(settings: Maybe.some(settings)),
@@ -141,7 +141,7 @@ class DeleteLog implements Action {
   }
 }
 
-class DeleteTagFromEntryScreen implements Action {
+class DeleteTagFromEntryScreen implements MyAction {
   final Tag tag;
 
   DeleteTagFromEntryScreen({@required this.tag});
@@ -163,7 +163,7 @@ class DeleteTagFromEntryScreen implements Action {
   }
 }
 
-class AddUpdateSingleEntryAndTags implements Action {
+class AddUpdateSingleEntryAndTags implements MyAction {
   //submits new entry to the entries list and the clear the singleEntryState
   final MyEntry entry;
 
@@ -335,4 +335,38 @@ bool _canReorderSubcategory({@required MyCategory subcategory, @required String 
     return false;
   }
   return true;
+}
+
+
+List<MyCategory> _reorderSubcategoriesLogSetting(
+    {@required MyCategory subcategory,
+      @required String newParentId,
+      @required String oldParentId,
+      @required List<MyCategory> subsetOfSubcategories,
+      @required List<MyCategory> subcategories,
+    @required int newSubcategoryIndex}) {
+
+  //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
+  if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
+    if (oldParentId == newParentId) {
+      //subcategory has not moved parents
+      subsetOfSubcategories.remove(subcategory);
+      subsetOfSubcategories.insert(newSubcategoryIndex, subcategory);
+    } else {
+      //category has moved parents, organize in new list with revised parent
+      subsetOfSubcategories = List.from(subcategories); //reinitialize subset list
+      subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == newParentId);
+      subsetOfSubcategories.insert(newSubcategoryIndex, subcategory.copyWith(parentCategoryId: newParentId));
+    }
+
+    //remove from subcategory list
+    subsetOfSubcategories.forEach((reordedSub) {
+      subcategories.removeWhere((sub) => reordedSub.id == sub.id);
+    });
+    //reinsert in subcategory list in revised order
+    subsetOfSubcategories.forEach((subcategory) {
+      subcategories.add(subcategory);
+    });
+  }
+  return subcategories;
 }

@@ -1,53 +1,58 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
-AppState _updateLogState(AppState appState,
-    LogsState update(LogsState logsState),) {
+AppState _updateLogState(
+  AppState appState,
+  LogsState update(LogsState logsState),
+) {
   return appState.copyWith(logsState: update(appState.logsState));
 }
 
-AppState _updateLogs(AppState appState,
-    void updateInPlace(Map<String, Log> logs),) {
+AppState _updateLogs(
+  AppState appState,
+  void updateInPlace(Map<String, Log> logs),
+) {
   Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
   updateInPlace(cloneMap);
   return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
 }
 
-class SetLogsLoading implements Action {
+class SetLogsLoading implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(isLoading: true));
   }
 }
 
-class SetLogsLoaded implements Action {
+class SetLogsLoaded implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(isLoading: false));
   }
 }
 
-class SetNewLog implements Action {
+class SetNewLog implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(Log(currency: 'CAD'))));
   }
 }
 
-class UpdateSelectedLog implements Action {
+class UpdateSelectedLog implements MyAction {
   final Log log;
 
   UpdateSelectedLog({this.log});
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true));
   }
 }
 
-class NewLogSetCategories implements Action {
+class NewLogSetCategories implements MyAction {
   final Log log;
+  final bool userUpdated;
 
-  NewLogSetCategories({@required this.log});
+  NewLogSetCategories({@required this.log, this.userUpdated = false});
 
   @override
   AppState updateState(AppState appState) {
@@ -55,20 +60,20 @@ class NewLogSetCategories implements Action {
 
     return _updateLogState(
       appState,
-          (logsState) =>
-          logsState.copyWith(
-            selectedLog: Maybe.some(
-              newLog.copyWith(
-                categories: List.from(log.categories),
-                subcategories: List.from(log.subcategories),
-              ),
-            ),
+      (logsState) => logsState.copyWith(
+        selectedLog: Maybe.some(
+          newLog.copyWith(
+            categories: List.from(log.categories),
+            subcategories: List.from(log.subcategories),
           ),
+        ),
+        userUpdated: userUpdated,
+      ),
     );
   }
 }
 
-class SelectLog implements Action {
+class SelectLog implements MyAction {
   final String logId;
 
   SelectLog({this.logId});
@@ -82,19 +87,19 @@ class SelectLog implements Action {
 
     return _updateLogState(
         appState,
-            (logsState) =>
+        (logsState) =>
             logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId]), expandedCategories: expandedCategories));
   }
 }
 
-class ClearSelectedLog implements Action {
+class ClearSelectedLog implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
   }
 }
 
-class SetLogs implements Action {
+class SetLogs implements MyAction {
   final Iterable<Log> logList;
 
   SetLogs({this.logList});
@@ -104,14 +109,14 @@ class SetLogs implements Action {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
         logList.map(
-              (log) => MapEntry(log.id, log),
+          (log) => MapEntry(log.id, log),
         ),
       );
     });
   }
 }
 
-class CanReorder implements Action {
+class CanReorder implements MyAction {
   final bool save;
 
   CanReorder({this.save = false});
@@ -134,7 +139,7 @@ class CanReorder implements Action {
   }
 }
 
-class ReorderLog implements Action {
+class ReorderLog implements MyAction {
   final int oldIndex;
   final int newIndex;
   final List<Log> logs;
@@ -157,7 +162,7 @@ class ReorderLog implements Action {
   }
 }
 
-class AddUpdateLog implements Action {
+class AddUpdateLog implements MyAction {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
@@ -171,13 +176,13 @@ class AddUpdateLog implements Action {
       //if there are new log members, add them to all transaction
       if (logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
         List<MyEntry> entries =
-        appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
+            appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
       }
 
       logs.update(
         addedUpdatedLog.id,
-            (value) => addedUpdatedLog,
+        (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
     } else {
@@ -207,11 +212,12 @@ class AddUpdateLog implements Action {
       Env.logsFetcher.addLog(addedUpdatedLog);
     }
 
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none(), logs: logs));
+    return _updateLogState(
+        appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none(), logs: logs, userUpdated: false));
   }
 }
 
-class AddMemberToSelectedLog implements Action {
+class AddMemberToSelectedLog implements MyAction {
   final String uid;
   final String name;
 
@@ -226,12 +232,13 @@ class AddMemberToSelectedLog implements Action {
 
     log = log.copyWith(logMembers: logMembers);
 
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log)));
+    return _updateLogState(
+        appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true));
   }
 }
 
 //used for name changes
-class UpdateLogMember implements Action {
+class UpdateLogMember implements MyAction {
   @override
   AppState updateState(AppState appState) {
     User user = appState.authState.user.value;
@@ -251,7 +258,7 @@ class UpdateLogMember implements Action {
   }
 }
 
-class AddEditCategoryFromLog implements Action {
+class AddEditCategoryFromLog implements MyAction {
   final MyCategory category;
 
   AddEditCategoryFromLog({@required this.category});
@@ -274,8 +281,8 @@ class AddEditCategoryFromLog implements Action {
       expandedCategories.add(false);
 
       //every new category automatically gets a new subcategory "other"
-      MyCategory otherSubcategory = MyCategory(
-          parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
+      MyCategory otherSubcategory =
+          MyCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
 
       subcategories.add(otherSubcategory);
     }
@@ -283,11 +290,11 @@ class AddEditCategoryFromLog implements Action {
     log = log.copyWith(categories: categories, subcategories: subcategories);
 
     return _updateLogState(appState,
-            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
+        (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
-class DeleteCategoryFromLog implements Action {
+class DeleteCategoryFromLog implements MyAction {
   final MyCategory category;
 
   DeleteCategoryFromLog({@required this.category});
@@ -310,11 +317,11 @@ class DeleteCategoryFromLog implements Action {
     log = log.copyWith(subcategories: subcategories, categories: categories);
 
     return _updateLogState(appState,
-            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
+        (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), expandedCategories: expandedCategories));
   }
 }
 
-class AddEditSubcategoryFromLog implements Action {
+class AddEditSubcategoryFromLog implements MyAction {
   final MyCategory subcategory;
 
   AddEditSubcategoryFromLog({@required this.subcategory});
@@ -338,7 +345,7 @@ class AddEditSubcategoryFromLog implements Action {
   }
 }
 
-class DeleteSubcategoryFromLog implements Action {
+class DeleteSubcategoryFromLog implements MyAction {
   final MyCategory subcategory;
 
   DeleteSubcategoryFromLog({@required this.subcategory});
@@ -357,7 +364,7 @@ class DeleteSubcategoryFromLog implements Action {
   }
 }
 
-class ExpandCollapseLogCategory implements Action {
+class ExpandCollapseLogCategory implements MyAction {
   final int index;
 
   ExpandCollapseLogCategory({@required this.index});
@@ -370,7 +377,7 @@ class ExpandCollapseLogCategory implements Action {
   }
 }
 
-class ReorderCategoryFromLogScreen implements Action {
+class ReorderCategoryFromLogScreen implements MyAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
@@ -379,33 +386,35 @@ class ReorderCategoryFromLogScreen implements Action {
   AppState updateState(AppState appState) {
     //reorder categories
     List<MyCategory> categories = List.from(appState.logsState.selectedLog.value.categories);
+    //TODO this is the same as the settings method, remove duplication
     MyCategory movedCategory = categories.removeAt(oldCategoryIndex);
     categories.insert(newCategoryIndex, movedCategory);
 
     //reorder expanded list
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
+    //TODO this is the same as the settings method, remove duplication on this as well
     bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
     expandedCategories.insert(newCategoryIndex, movedExpansion);
 
     return _updateLogState(
         appState,
-            (logsState) =>
-            logsState.copyWith(
-                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
-                expandedCategories: expandedCategories));
+        (logsState) => logsState.copyWith(
+            selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
+            expandedCategories: expandedCategories));
   }
 }
 
-class ReorderSubcategoryFromLogScreen implements Action {
+class ReorderSubcategoryFromLogScreen implements MyAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
   final int oldSubcategoryIndex;
   final int newSubcategoryIndex;
 
-  ReorderSubcategoryFromLogScreen({@required this.oldCategoryIndex,
-    @required this.newCategoryIndex,
-    @required this.oldSubcategoryIndex,
-    @required this.newSubcategoryIndex});
+  ReorderSubcategoryFromLogScreen(
+      {@required this.oldCategoryIndex,
+      @required this.newCategoryIndex,
+      @required this.oldSubcategoryIndex,
+      @required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -417,33 +426,17 @@ class ReorderSubcategoryFromLogScreen implements Action {
         .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
     MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
-    //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
-    if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
-      if (oldParentId == newParentId) {
-        //subcategory has not moved parents
-        subsetOfSubcategories.remove(subcategory);
-        subsetOfSubcategories.insert(newSubcategoryIndex, subcategory);
-      } else {
-        //category has moved parents, organize in new list with revised parent
-        subsetOfSubcategories = List.from(subcategories); //reinitialize subset list
-        subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == newParentId);
-        subsetOfSubcategories.insert(newSubcategoryIndex, subcategory.copyWith(parentCategoryId: newParentId));
-      }
-
-      //remove from subcategory list
-      subsetOfSubcategories.forEach((reordedSub) {
-        subcategories.removeWhere((sub) => reordedSub.id == sub.id);
-      });
-      //reinsert in subcategory list in revised order
-      subsetOfSubcategories.forEach((subcategory) {
-        subcategories.add(subcategory);
-      });
-    }
+    subcategories = _reorderSubcategoriesLogSetting(
+        newSubcategoryIndex: newSubcategoryIndex,
+        subcategory: subcategory,
+        newParentId: newParentId,
+        oldParentId: oldParentId,
+        subsetOfSubcategories: subsetOfSubcategories,
+        subcategories: subcategories);
 
     return _updateLogState(
         appState,
-            (logsState) =>
-            logsState.copyWith(
-                selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories))));
+        (logsState) => logsState.copyWith(
+            selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories))));
   }
 }

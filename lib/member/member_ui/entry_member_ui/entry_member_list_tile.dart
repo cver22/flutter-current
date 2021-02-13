@@ -1,5 +1,5 @@
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';

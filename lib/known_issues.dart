@@ -31,7 +31,7 @@
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
 //TODO fix text overflow on log and parentCategory drop downs
 //TODO confirm change password tool works as I have it commented out at the moment
-//TODO fix log exit without saving, add bool to logState
+//TODO make Logs into cards and make easier to see different components
 
 
 //TODO GENERAL IMPORTANT *************************

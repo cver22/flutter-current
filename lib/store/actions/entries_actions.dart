@@ -1,4 +1,4 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 AppState _updateEntriesLogTotalsState(
   AppState appState,
@@ -32,21 +32,21 @@ AppState _updateEntriesState(
   );
 }*/
 
-class SetEntriesLoading implements Action {
+class SetEntriesLoading implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: true));
   }
 }
 
-class SetEntriesLoaded implements Action {
+class SetEntriesLoaded implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: false));
   }
 }
 
-class SetEntries implements Action {
+class SetEntries implements MyAction {
   final Iterable<MyEntry> entryList;
 
   SetEntries({this.entryList});
@@ -70,14 +70,14 @@ class SetEntries implements Action {
   }
 }
 
-class SetEntriesOrder implements Action {
+class SetEntriesOrder implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending));
   }
 }
 
-class DeleteSelectedEntry implements Action {
+class DeleteSelectedEntry implements MyAction {
   @override
   AppState updateState(AppState appState) {
     Env.store.dispatch(SingleEntryProcessing());

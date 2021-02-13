@@ -1,11 +1,11 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 AppState _updateSingleEntryState(AppState appState,
     SingleEntryState update(SingleEntryState singleEntryState),) {
   return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
-class UpdateSingleEntryState implements Action {
+class UpdateSingleEntryState implements MyAction {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag;
   final Map<String, Tag> tags;
@@ -31,7 +31,7 @@ class UpdateSingleEntryState implements Action {
 
 /*SET OR SELECT ENTRY*/
 
-class SetNewSelectedEntry implements Action {
+class SetNewSelectedEntry implements MyAction {
   //sets new entry and resets all entry data not yet available
   final String logId;
   final String memberId;
@@ -75,7 +75,7 @@ class SetNewSelectedEntry implements Action {
   }
 }
 
-class SelectEntry implements Action {
+class SelectEntry implements MyAction {
   //sets selected entry and resets all entry data not yet available
   final String entryId;
 
@@ -111,14 +111,14 @@ class SelectEntry implements Action {
 
 /*ADD UPDATE DELETE ENTRY SECTION*/
 
-class SingleEntryProcessing implements Action {
+class SingleEntryProcessing implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState.copyWith(processing: true));
   }
 }
 
-class ClearEntryState implements Action {
+class ClearEntryState implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(appState, (entryState) => SingleEntryState.initial());
@@ -127,7 +127,7 @@ class ClearEntryState implements Action {
 
 /*CHANGE ENTRY VALUES*/
 
-class UpdateSelectedEntry implements Action {
+class UpdateSelectedEntry implements MyAction {
   final String id;
   final String logId;
   final String currency;
@@ -198,7 +198,7 @@ class UpdateSelectedEntry implements Action {
   }
 }*/
 
-class ChangeEntryCategories implements Action {
+class ChangeEntryCategories implements MyAction {
   final String newCategory;
 
   ChangeEntryCategories({@required this.newCategory});
@@ -234,7 +234,7 @@ class ChangeEntryCategories implements Action {
   }
 }
 
-class ReorderCategoriesFromEntryScreen implements Action {
+class ReorderCategoriesFromEntryScreen implements MyAction {
   final int newIndex;
   final int oldIndex;
 
@@ -258,7 +258,7 @@ class ReorderCategoriesFromEntryScreen implements Action {
   }
 }
 
-class ReorderSubcategoriesFromEntryScreen implements Action {
+class ReorderSubcategoriesFromEntryScreen implements MyAction {
   final List<MyCategory> reorderedSubcategories;
   final int newIndex;
   final int oldIndex;
@@ -293,7 +293,7 @@ class ReorderSubcategoriesFromEntryScreen implements Action {
   }
 }
 
-class AddEditCategoryFromEntryScreen implements Action {
+class AddEditCategoryFromEntryScreen implements MyAction {
   final MyCategory category;
 
   AddEditCategoryFromEntryScreen({@required this.category});
@@ -313,7 +313,7 @@ class AddEditCategoryFromEntryScreen implements Action {
   }
 }
 
-class DeleteCategoryFromEntryScreen implements Action {
+class DeleteCategoryFromEntryScreen implements MyAction {
   final MyCategory category;
 
   DeleteCategoryFromEntryScreen({@required this.category});
@@ -352,7 +352,7 @@ class DeleteCategoryFromEntryScreen implements Action {
   }
 }
 
-class AddEditSubcategoryFromEntryScreen implements Action {
+class AddEditSubcategoryFromEntryScreen implements MyAction {
   final MyCategory subcategory;
 
   AddEditSubcategoryFromEntryScreen({@required this.subcategory});
@@ -394,7 +394,7 @@ class AddEditSubcategoryFromEntryScreen implements Action {
   }
 }
 
-class DeleteSubcategoryFromEntryScreen implements Action {
+class DeleteSubcategoryFromEntryScreen implements MyAction {
   final MyCategory subcategory;
 
   DeleteSubcategoryFromEntryScreen({@required this.subcategory});
@@ -421,7 +421,7 @@ class DeleteSubcategoryFromEntryScreen implements Action {
 }
 
 //TODO this should be combined with ClearEntryState()
-class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements Action {
+class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements MyAction {
   @override
   AppState updateState(AppState appState) {
     Map<String, Log> logs = Map.from(appState.logsState.logs);
@@ -435,7 +435,7 @@ class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements Action {
 
 /*MEMBER ACTIONS*/
 
-class UpdateMemberPaidAmount implements Action {
+class UpdateMemberPaidAmount implements MyAction {
   final int paidValue;
   final EntryMember member;
 
@@ -469,7 +469,7 @@ class UpdateMemberPaidAmount implements Action {
   }
 }
 
-class UpdateMemberSpentAmount implements Action {
+class UpdateMemberSpentAmount implements MyAction {
   final int spentValue;
   final EntryMember member;
 
@@ -493,7 +493,7 @@ class UpdateMemberSpentAmount implements Action {
   }
 }
 
-class ToggleMemberPaying implements Action {
+class ToggleMemberPaying implements MyAction {
   final EntryMember member;
 
   ToggleMemberPaying({@required this.member});
@@ -537,7 +537,7 @@ class ToggleMemberPaying implements Action {
   }
 }
 
-class ToggleMemberSpending implements Action {
+class ToggleMemberSpending implements MyAction {
   final EntryMember member;
 
   ToggleMemberSpending({@required this.member});
@@ -575,7 +575,7 @@ class ToggleMemberSpending implements Action {
 
 /*TAGS SECTION*/
 
-class AddUpdateTagFromEntryScreen implements Action {
+class AddUpdateTagFromEntryScreen implements MyAction {
   final Tag tag;
 
   AddUpdateTagFromEntryScreen({@required this.tag});
@@ -611,7 +611,7 @@ class AddUpdateTagFromEntryScreen implements Action {
   }
 }
 
-class SelectDeselectEntryTag implements Action {
+class SelectDeselectEntryTag implements MyAction {
   final Tag tag;
 
   SelectDeselectEntryTag({@required this.tag});

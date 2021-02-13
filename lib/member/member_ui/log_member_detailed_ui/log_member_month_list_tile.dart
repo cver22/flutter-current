@@ -1,7 +1,7 @@
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';

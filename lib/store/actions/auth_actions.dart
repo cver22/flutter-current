@@ -1,4 +1,4 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 AppState _updateAuthState(
   AppState appState,
@@ -7,14 +7,14 @@ AppState _updateAuthState(
   return appState.copyWith(authState: update(appState.authState));
 }
 
-class AuthFailure implements Action {
+class AuthFailure implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAuthState(appState, (authState) => AuthState.initial());
   }
 }
 
-class AuthSuccess implements Action {
+class AuthSuccess implements MyAction {
   final User user;
 
   AuthSuccess({@required this.user});
@@ -25,21 +25,21 @@ class AuthSuccess implements Action {
   }
 }
 
-class SignOutState implements Action {
+class SignOutState implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return AppState.initial();
   }
 }
 
-class LoadingUser implements Action {
+class LoadingUser implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAuthState(appState, (authState) => authState.copyWith(isLoading: true));
   }
 }
 
-class UpdateDisplayName implements Action {
+class UpdateDisplayName implements MyAction {
   final String displayName;
 
   UpdateDisplayName({@required this.displayName});

@@ -5,7 +5,7 @@ import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entries/entries_screen/entries_screen_build_list_view.dart';
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
 import 'package:expenses/entry/entry_model/my_entry.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/maybe.dart';

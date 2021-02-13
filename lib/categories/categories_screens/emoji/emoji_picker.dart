@@ -13,7 +13,7 @@ class EmojiPicker extends StatelessWidget {
     return DefaultTabController(
       length: 8,
       child: Scaffold(
-        resizeToAvoidBottomPadding: true,
+        resizeToAvoidBottomInset: true,
         appBar: AppBar(
           //TODO handle back button
           automaticallyImplyLeading: false,

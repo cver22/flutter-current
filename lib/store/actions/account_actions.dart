@@ -1,4 +1,4 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 AppState _updateAccountState(
   AppState appState,
@@ -7,42 +7,42 @@ AppState _updateAccountState(
   return appState.copyWith(accountState: update(appState.accountState));
 }
 
-class AccountUpdateFailure implements Action {
+class AccountUpdateFailure implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.failure());
   }
 }
 
-class AccountUpdateSubmitting implements Action {
+class AccountUpdateSubmitting implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.submitting());
   }
 }
 
-class AccountUpdateSuccess implements Action {
+class AccountUpdateSuccess implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.success());
   }
 }
 
-class ShowHidePasswordForm implements Action {
+class ShowHidePasswordForm implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm));
   }
 }
 
-class AccountResetState implements Action {
+class AccountResetState implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.resetState());
   }
 }
 
-class AccountValidateOldPassword implements Action {
+class AccountValidateOldPassword implements MyAction {
   final String password;
 
   /*final String newPassword;
@@ -57,7 +57,7 @@ class AccountValidateOldPassword implements Action {
   }
 }
 
-class AccountValidateNewPassword implements Action {
+class AccountValidateNewPassword implements MyAction {
   final String newPassword;
   final String verifyPassword;
 
@@ -78,7 +78,7 @@ class AccountValidateNewPassword implements Action {
   }
 }
 
-class IsUserSignedInWithEmail implements Action {
+class IsUserSignedInWithEmail implements MyAction {
   final bool signedInWithEmail;
 
   IsUserSignedInWithEmail({this.signedInWithEmail});

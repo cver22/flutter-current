@@ -10,7 +10,7 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_ui/entry_member_ui/entry_member_list.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tags_ui/tag_picker.dart';
 import 'package:expenses/utils/db_consts.dart';

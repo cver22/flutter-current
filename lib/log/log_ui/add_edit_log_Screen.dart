@@ -1,7 +1,5 @@
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
-import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
@@ -10,7 +8,7 @@ import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list.dart';
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
-import 'package:expenses/store/actions/actions.dart';
+import 'package:expenses/store/actions/my_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
@@ -28,12 +26,18 @@ class AddEditLogScreen extends StatelessWidget {
 
   Future<bool> _exitConfirmationDialog() async {
     bool onWillPop = false;
-    await Get.dialog(
-      SimpleConfirmationDialog(
-        title: 'Discard changes?',
-        onTapYes: (pop) => {onWillPop = pop},
-      ),
-    );
+    if(Env.store.state.logsState.userUpdated){
+      //user has made changes, confirm they wish to exit
+      await Get.dialog(
+        SimpleConfirmationDialog(
+          title: 'Discard changes?',
+          onTapYes: (pop) => {onWillPop = pop},
+        ),
+      );
+    } else {
+      onWillPop = true;
+    }
+
 
     if (onWillPop) {
       //close without saving
@@ -170,7 +174,7 @@ class AddEditLogScreen extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
       initialValue: log.name,
-      onChanged: (name) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: name))),
+      onChanged: (name) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: name,))),
       //TODO validate name cannot be empty
       //TODO need controllers
     );
@@ -300,7 +304,7 @@ class _NewLogCategorySourceState extends State<NewLogCategorySource> {
           //TODO order preference logs and set default to first log if not navigating from the log itself
           value: currentDropDownSelection,
           onChanged: (Log log) {
-            Env.store.dispatch(NewLogSetCategories(log: log));
+            Env.store.dispatch(NewLogSetCategories(log: log, userUpdated: true));
             currentDropDownSelection = log;
           },
           items: temporaryLogs.map((Log log) {

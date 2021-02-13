@@ -1,4 +1,4 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 AppState _updateLoginRegState(
   AppState appState,
@@ -7,28 +7,28 @@ AppState _updateLoginRegState(
   return appState.copyWith(loginRegState: update(appState.loginRegState));
 }
 
-class LoginRegFailure implements Action {
+class LoginRegFailure implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLoginRegState(appState, (loginRegState) => loginRegState.failure());
   }
 }
 
-class LoginRegSubmitting implements Action {
+class LoginRegSubmitting implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLoginRegState(appState, (loginRegState) => loginRegState.submitting());
   }
 }
 
-class LoginRegSuccess implements Action {
+class LoginRegSuccess implements MyAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLoginRegState(appState, (loginRegState) => loginRegState.success());
   }
 }
 
-class LoginOrCreateUser implements Action {
+class LoginOrCreateUser implements MyAction {
   //switches from between login or create new user
   @override
   AppState updateState(AppState appState) {
@@ -39,7 +39,7 @@ class LoginOrCreateUser implements Action {
   }
 }
 
-class PasswordValidation implements Action {
+class PasswordValidation implements MyAction {
   final String password;
 
   PasswordValidation(this.password);
@@ -51,7 +51,7 @@ class PasswordValidation implements Action {
   }
 }
 
-class EmailValidation implements Action {
+class EmailValidation implements MyAction {
   final String email;
 
   EmailValidation(this.email);

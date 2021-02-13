@@ -1,15 +1,13 @@
-part of 'actions.dart';
+part of 'my_actions.dart';
 
 //TODO load setting from JSON file, change settings
 
-AppState _updateSettingsState(
-  AppState appState,
-  SettingsState update(SettingsState settingsState),
-) {
+AppState _updateSettingsState(AppState appState,
+    SettingsState update(SettingsState settingsState),) {
   return appState.copyWith(settingsState: update(appState.settingsState));
 }
 
-class UpdateSettings implements Action {
+class UpdateSettings implements MyAction {
   final Maybe<Settings> settings;
 
   UpdateSettings({@required this.settings});
@@ -20,13 +18,14 @@ class UpdateSettings implements Action {
 
     return _updateSettingsState(
         appState,
-        (settingsState) => settingsState.copyWith(
+            (settingsState) =>
+            settingsState.copyWith(
               settings: settings,
             ));
   }
 }
 
-class ChangeDefaultLog implements Action {
+class ChangeDefaultLog implements MyAction {
   final Log log;
 
   ChangeDefaultLog({this.log});
@@ -45,7 +44,7 @@ class ChangeDefaultLog implements Action {
   }
 }
 
-class SettingsAddEditCategory implements Action {
+class SettingsAddEditCategory implements MyAction {
   final MyCategory category;
 
   SettingsAddEditCategory({@required this.category});
@@ -68,7 +67,7 @@ class SettingsAddEditCategory implements Action {
   }
 }
 
-class SettingsDeleteCategory implements Action {
+class SettingsDeleteCategory implements MyAction {
   final MyCategory category;
 
   SettingsDeleteCategory({@required this.category});
@@ -89,7 +88,7 @@ class SettingsDeleteCategory implements Action {
   }
 }
 
-class SettingsAddEditSubcategory implements Action {
+class SettingsAddEditSubcategory implements MyAction {
   final MyCategory subcategory;
 
   SettingsAddEditSubcategory({@required this.subcategory});
@@ -112,7 +111,7 @@ class SettingsAddEditSubcategory implements Action {
   }
 }
 
-class SettingsDeleteSubcategory implements Action {
+class SettingsDeleteSubcategory implements MyAction {
   final MyCategory subcategory;
 
   SettingsDeleteSubcategory({@required this.subcategory});
@@ -132,7 +131,7 @@ class SettingsDeleteSubcategory implements Action {
   }
 }
 
-class SetExpandedSettingsCategories implements Action {
+class SetExpandedSettingsCategories implements MyAction {
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = [];
     appState.settingsState.settings.value.defaultCategories.forEach((element) {
@@ -144,7 +143,7 @@ class SetExpandedSettingsCategories implements Action {
   }
 }
 
-class ExpandCollapseSettingsCategory implements Action {
+class ExpandCollapseSettingsCategory implements MyAction {
   final int index;
 
   ExpandCollapseSettingsCategory({@required this.index});
@@ -158,7 +157,7 @@ class ExpandCollapseSettingsCategory implements Action {
   }
 }
 
-class ReorderCategoryFromSettingsScreen implements Action {
+class ReorderCategoryFromSettingsScreen implements MyAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
@@ -178,23 +177,23 @@ class ReorderCategoryFromSettingsScreen implements Action {
 
     return _updateSettingsState(
         appState,
-        (settingsState) => settingsState.copyWith(
-            settings: Maybe.some(settings.copyWith(defaultCategories: categories)),
-            expandedCategories: expandedCategories));
+            (settingsState) =>
+            settingsState.copyWith(
+                settings: Maybe.some(settings.copyWith(defaultCategories: categories)),
+                expandedCategories: expandedCategories));
   }
 }
 
-class ReorderSubcategoryFromSettingsScreen implements Action {
+class ReorderSubcategoryFromSettingsScreen implements MyAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
   final int oldSubcategoryIndex;
   final int newSubcategoryIndex;
 
-  ReorderSubcategoryFromSettingsScreen(
-      {@required this.oldCategoryIndex,
-      @required this.newCategoryIndex,
-      @required this.oldSubcategoryIndex,
-      @required this.newSubcategoryIndex});
+  ReorderSubcategoryFromSettingsScreen({@required this.oldCategoryIndex,
+    @required this.newCategoryIndex,
+    @required this.oldSubcategoryIndex,
+    @required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
@@ -206,32 +205,19 @@ class ReorderSubcategoryFromSettingsScreen implements Action {
         .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
     MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
-    //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
-    if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
-      if (oldParentId == newParentId) {
-        //subcategory has not moved parents
-        subsetOfSubcategories.remove(subcategory);
-        subsetOfSubcategories.insert(newSubcategoryIndex, subcategory);
-      } else {
-        //category has moved parents, organize in new list with revised parent
-        subsetOfSubcategories = List.from(subcategories); //reinitialize subset list
-        subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == newParentId);
-        subsetOfSubcategories.insert(newSubcategoryIndex, subcategory.copyWith(parentCategoryId: newParentId));
-      }
 
-      //remove from subcategory list
-      subsetOfSubcategories.forEach((reordedSub) {
-        subcategories.removeWhere((sub) => reordedSub.id == sub.id);
-      });
-      //reinsert in subcategory list in revised order
-      subsetOfSubcategories.forEach((subcategory) {
-        subcategories.add(subcategory);
-      });
-    }
+    subcategories = _reorderSubcategoriesLogSetting(newSubcategoryIndex: newSubcategoryIndex,
+        subcategory: subcategory,
+        newParentId: newParentId,
+        oldParentId: oldParentId,
+        subsetOfSubcategories: subsetOfSubcategories,
+        subcategories: subcategories);
 
     return _updateSettingsState(
         appState,
-        (settingsState) =>
+            (settingsState) =>
             settingsState.copyWith(settings: Maybe.some(settings.copyWith(defaultSubcategories: subcategories))));
   }
+
+
 }
