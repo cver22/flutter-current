@@ -25,7 +25,12 @@ class EntriesScreenBuildListView extends StatelessWidget {
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];
-          return EntryListTile(entry: _entry, tags: tags);
+          return Column(
+            children: [
+              EntryListTile(entry: _entry, tags: tags),
+              Divider(),
+            ],
+          );
         });
   }
 }

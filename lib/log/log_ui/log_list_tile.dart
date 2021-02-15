@@ -20,44 +20,50 @@ class LogListTile extends StatelessWidget {
     DateTime now = DateTime.now();
     int currentMonth = now.month;
 
-    return ListTile(
-      title: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: [
-              Text(log.name),
-              IconButton(
-                onPressed: () => {
-                  Env.store.dispatch(SelectLog(logId: log.id)),
-                  Get.toNamed(ExpenseRoutes.addEditLog),
-                },
-                icon: Icon(Icons.edit_outlined),
-              ),
-            ],
-          ),
-          LogMemberMonthList(log: log, logTotal: logTotal),
-          Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(
-                      'Daily Average for ${MONTHS_SHORT[currentMonth - 1]}: \$ ${formattedAmount(value: logTotal?.averagePerDay, emptyReturnZeroed: true)}'),
-                  Text(
-                      '${MONTHS_SHORT[currentMonth - 1]} Total: \$ ${formattedAmount(value: logTotal?.thisMonthTotalPaid, emptyReturnZeroed: true)}'),
-                  Text(
-                      '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: \$ ${formattedAmount(value: logTotal?.lastMonthTotalPaid, emptyReturnZeroed: true)}'),
-                  Text(
-                      '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: \$ ${formattedAmount(value: logTotal?.sameMonthLastYearTotalPaid, emptyReturnZeroed: true)}'),
-                ],
-              ),
-            ],
-          ),
-        ],
+    return Card(
+      elevation: 10.0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(15.0),
+      ),
+      child: ListTile(
+        title: Column(
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Text(log.name),
+                IconButton(
+                  onPressed: () => {
+                    Env.store.dispatch(SelectLog(logId: log.id)),
+                    Get.toNamed(ExpenseRoutes.addEditLog),
+                  },
+                  icon: Icon(Icons.edit_outlined),
+                ),
+              ],
+            ),
+            LogMemberMonthList(log: log, logTotal: logTotal),
+            Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(
+                        'Daily Average for ${MONTHS_SHORT[currentMonth - 1]}: \$ ${formattedAmount(value: logTotal?.averagePerDay, emptyReturnZeroed: true)}'),
+                    Text(
+                        '${MONTHS_SHORT[currentMonth - 1]} Total: \$ ${formattedAmount(value: logTotal?.thisMonthTotalPaid, emptyReturnZeroed: true)}'),
+                    Text(
+                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: \$ ${formattedAmount(value: logTotal?.lastMonthTotalPaid, emptyReturnZeroed: true)}'),
+                    Text(
+                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: \$ ${formattedAmount(value: logTotal?.sameMonthLastYearTotalPaid, emptyReturnZeroed: true)}'),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

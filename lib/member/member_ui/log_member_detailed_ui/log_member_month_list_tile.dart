@@ -16,29 +16,34 @@ class LogMemberMonthListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-        onTap: () =>
-        {
-          Env.store.dispatch(SetNewSelectedEntry(
-            logId: log.id,
-            memberId: member.uid,
-          )),
-          Get.toNamed(ExpenseRoutes.addEditEntries),
-        },
-      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(member.name ?? 'Please enter a name'),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.end,
+    return Column(
+      children: [
+        ListTile(
+            onTap: () =>
+            {
+              Env.store.dispatch(SetNewSelectedEntry(
+                logId: log.id,
+                memberId: member.uid,
+              )),
+              Get.toNamed(ExpenseRoutes.addEditEntries),
+            },
+          contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
-              singleMemberLog ? Container() : Text('  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
+              Text(member.name ?? 'Please enter a name'),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text('Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
+                  singleMemberLog ? Container() : Text('  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
+                ],
+              )
             ],
-          )
-        ],
-      ),
+          ),
+        ),
+        Divider(),
+      ],
     );
   }
 }

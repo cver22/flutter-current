@@ -32,6 +32,10 @@
 //TODO fix text overflow on log and parentCategory drop downs
 //TODO confirm change password tool works as I have it commented out at the moment
 //TODO make Logs into cards and make easier to see different components
+//TODO prevent adding tags that already exist
+//TODO track subcategory tag frequency
+//TODO capitalize first comment of tag and comment
+//TODO selectable shadow color on logs
 
 
 //TODO GENERAL IMPORTANT *************************
