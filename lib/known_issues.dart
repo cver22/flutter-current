@@ -11,6 +11,8 @@
 //TODO give each person an emoji Icon option
 //TODO do I want to move to null safety?
 
+//TODO LONG TERM DESIGN IDEAS
+//TODO selectable shadow color on logs
 
 //TODO GENERAL
 //TODO organize and filter entries in various ways
@@ -31,11 +33,8 @@
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
 //TODO fix text overflow on log and parentCategory drop downs
 //TODO confirm change password tool works as I have it commented out at the moment
-//TODO make Logs into cards and make easier to see different components
-//TODO prevent adding tags that already exist
 //TODO track subcategory tag frequency
-//TODO capitalize first comment of tag and comment
-//TODO selectable shadow color on logs
+
 
 
 //TODO GENERAL IMPORTANT *************************

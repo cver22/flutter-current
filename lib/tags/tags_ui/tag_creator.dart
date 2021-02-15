@@ -68,6 +68,7 @@ class _TagCreatorState extends State<TagCreator> {
               focusNode: tagFocus,
               controller: _controller,
               keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.words,
               inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))],
               onFieldSubmitted: (_) {
                 setState(() {

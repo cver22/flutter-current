@@ -13,17 +13,22 @@ class LogMemberTotalListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListTile(
-      contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
-      title: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(member.name ?? 'Please enter a name'),
-          _totals(member: member, logId: logId),
-        ],
-      ),
+    return Column(
+      children: [
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(member.name ?? 'Please enter a name'),
+              _totals(member: member, logId: logId),
+            ],
+          ),
+        ),
+        Divider(height: 0.0),
+      ],
     );
   }
 }

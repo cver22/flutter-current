@@ -157,6 +157,7 @@ class AddEditLogScreen extends StatelessWidget {
                 //log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
                 _buildLogMemberList(log: log),
+                SizedBox(height: 8.0),
                 _buildAddMemberButton(log: log),
                 SizedBox(height: 16.0),
                 //_buildMakeDefaultButton(log: log),

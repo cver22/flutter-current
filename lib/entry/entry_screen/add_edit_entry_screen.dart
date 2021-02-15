@@ -162,19 +162,17 @@ class AddEditEntryScreen extends StatelessWidget {
         SizedBox(height: 10.0),
         EntryDateButton(context: context, entry: entry),
         SizedBox(height: 10.0),
-        entry?.logId == null ? Container() : _categoryButton(categories: entryState?.categories, entry: entry),
+        _categoryButton(categories: entryState?.categories, entry: entry),
         //Transfer funds and No_category do not have a sub categories
-        entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
-            ? Container()
-            : _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
+        _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
         _commentFormField(entry: entry),
         TagPicker(),
       ],
     );
   }
 
-  CategoryButton _categoryButton({@required MyEntry entry, @required List<MyCategory> categories}) {
-    return CategoryButton(
+  Widget _categoryButton({@required MyEntry entry, @required List<MyCategory> categories}) {
+    return entry?.logId == null ? Container() : CategoryButton(
       label: 'Select a Category',
       onPressed: () => {
         Get.dialog(
@@ -191,8 +189,10 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  CategoryButton _subcategoryButton({@required MyEntry entry, @required List<MyCategory> subcategories}) {
-    return CategoryButton(
+  Widget _subcategoryButton({@required MyEntry entry, @required List<MyCategory> subcategories}) {
+    return entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
+        ? Container()
+        : CategoryButton(
       label: 'Select a Subcategory',
       onPressed: () => {
         Get.dialog(
@@ -208,10 +208,11 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  TextFormField _commentFormField({@required MyEntry entry}) {
+  Widget _commentFormField({@required MyEntry entry}) {
     return TextFormField(
       decoration: InputDecoration(hintText: 'Comment'),
       initialValue: entry?.comment,
+      textCapitalization: TextCapitalization.sentences,
       onChanged: (value) => Env.store.dispatch(
         UpdateSelectedEntry(comment: value),
       ),

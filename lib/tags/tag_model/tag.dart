@@ -14,12 +14,12 @@ class Tag extends Equatable {
 
   Tag({this.logId, this.id, this.name ='', this.tagLogFrequency = 0, this.tagCategoryFrequency = const {}, this.memberList = const []});
 
-  Tag copyWith({String logId, String id, String name, int logFrequency, Map<String, int> tagCategoryFrequency, List<String> memberList}) {
+  Tag copyWith({String logId, String id, String name, int tagLogFrequency, Map<String, int> tagCategoryFrequency, List<String> memberList}) {
     return Tag(
       logId: logId ?? this.logId,
       id: id ?? this.id,
       name: name ?? this.name,
-      tagLogFrequency: logFrequency ?? this.tagLogFrequency,
+      tagLogFrequency: tagLogFrequency ?? this.tagLogFrequency,
       tagCategoryFrequency: tagCategoryFrequency ?? this.tagCategoryFrequency,
       memberList: memberList ?? this.memberList,
     );
@@ -57,12 +57,12 @@ class Tag extends Equatable {
 
   Tag incrementTagLogFrequency() {
 
-    return this.copyWith(logFrequency: this.tagLogFrequency + 1);
+    return this.copyWith(tagLogFrequency: this.tagLogFrequency + 1);
   }
 
   Tag decrementTagLogFrequency() {
     if (this.tagLogFrequency >= 1) {
-      return this.copyWith(logFrequency: this.tagLogFrequency - 1);
+      return this.copyWith(tagLogFrequency: this.tagLogFrequency - 1);
     } else {
       return this;
     }

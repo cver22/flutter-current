@@ -42,7 +42,9 @@ class LogListTile extends StatelessWidget {
                 ),
               ],
             ),
+            Divider(height: 0.0),
             LogMemberMonthList(log: log, logTotal: logTotal),
+            SizedBox(height: 10.0),
             Row(
               mainAxisSize: MainAxisSize.max,
               mainAxisAlignment: MainAxisAlignment.end,

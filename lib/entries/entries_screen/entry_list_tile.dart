@@ -25,19 +25,24 @@ class EntryListTile extends StatelessWidget {
           ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
     }
     if (log != null) {
-      return ListTile(
-        leading: Text(
-          '${displayChar(log)}',
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: EMOJI_SIZE),
-        ),
-        title: entry?.comment != null ? Text(entry.comment) : Text(''),
-        subtitle: Text(categoriesSubcategoriesTags(log)),
-        trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
-        onTap: () => {
-          Env.store.dispatch(SelectEntry(entryId: entry.id)),
-          Get.toNamed(ExpenseRoutes.addEditEntries),
-        },
+      return Column(
+        children: [
+          ListTile(
+            leading: Text(
+              '${displayChar(log)}',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: EMOJI_SIZE),
+            ),
+            title: entry?.comment != null ? Text(entry.comment) : Text(''),
+            subtitle: Text(categoriesSubcategoriesTags(log)),
+            trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
+            onTap: () => {
+              Env.store.dispatch(SelectEntry(entryId: entry.id)),
+              Get.toNamed(ExpenseRoutes.addEditEntries),
+            },
+          ),
+          Divider(height: 0.0),
+        ],
       );
     } else {
       return Container();

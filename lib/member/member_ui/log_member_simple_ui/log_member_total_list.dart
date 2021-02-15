@@ -12,13 +12,18 @@ class LogMemberTotalList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<LogMember> logMembers = log.logMembers.values.toList();
-    return ListView.builder(
-        physics: const NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        itemCount: logMembers.length,
-        itemBuilder: (BuildContext context, int index) {
-          final LogMember member = logMembers[index];
-          return LogMemberTotalListTile(member: member, logId: log.id);
-        },);
+    return Column(
+      children: [
+        Divider(height: 0.0),
+        ListView.builder(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            itemCount: logMembers.length,
+            itemBuilder: (BuildContext context, int index) {
+              final LogMember member = logMembers[index];
+              return LogMemberTotalListTile(member: member, logId: log.id);
+            },),
+      ],
+    );
   }
 }

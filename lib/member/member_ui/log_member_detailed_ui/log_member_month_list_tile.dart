@@ -12,21 +12,21 @@ class LogMemberMonthListTile extends StatelessWidget {
   final Log log;
   final bool singleMemberLog;
 
-  const LogMemberMonthListTile({Key key, @required this.log, @required this.member, this.singleMemberLog = false}) : super(key: key);
+  const LogMemberMonthListTile({Key key, @required this.log, @required this.member, this.singleMemberLog = false})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
         ListTile(
-            onTap: () =>
-            {
-              Env.store.dispatch(SetNewSelectedEntry(
-                logId: log.id,
-                memberId: member.uid,
-              )),
-              Get.toNamed(ExpenseRoutes.addEditEntries),
-            },
+          onTap: () => {
+            Env.store.dispatch(SetNewSelectedEntry(
+              logId: log.id,
+              memberId: member.uid,
+            )),
+            Get.toNamed(ExpenseRoutes.addEditEntries),
+          },
           contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -36,13 +36,15 @@ class LogMemberMonthListTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text('Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
-                  singleMemberLog ? Container() : Text('  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
+                  singleMemberLog
+                      ? Container()
+                      : Text('  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
                 ],
               )
             ],
           ),
         ),
-        Divider(),
+        Divider(height: 0.0),
       ],
     );
   }
