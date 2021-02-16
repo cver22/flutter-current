@@ -6,6 +6,7 @@ import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
+import 'package:flutter/material.dart';
 
 @immutable
 class SingleEntryState extends Equatable {
@@ -16,15 +17,20 @@ class SingleEntryState extends Equatable {
   final List<MyCategory> subcategories; //collection of all log subcategories for updating if required;
   final bool processing;
   final bool userUpdated;
+  final Maybe<FocusNode> commentFocusNode;
+  final Maybe<FocusNode> tagFocusNode;
 
-  SingleEntryState(
-      {this.selectedTag,
-      this.tags,
-      this.selectedEntry,
-      this.categories,
-      this.subcategories,
-      this.processing,
-      this.userUpdated});
+  SingleEntryState({
+    this.selectedTag,
+    this.tags,
+    this.selectedEntry,
+    this.categories,
+    this.subcategories,
+    this.processing,
+    this.userUpdated,
+    this.commentFocusNode,
+    this.tagFocusNode,
+  });
 
   factory SingleEntryState.initial() {
     return SingleEntryState(
@@ -35,11 +41,23 @@ class SingleEntryState extends Equatable {
       subcategories: List<MyCategory>(),
       processing: true,
       userUpdated: false,
+      commentFocusNode: Maybe.none(),
+      tagFocusNode: Maybe.none(),
     );
   }
 
   @override
-  List<Object> get props => [selectedEntry, selectedTag, tags, categories, subcategories, processing, userUpdated];
+  List<Object> get props => [
+        selectedEntry,
+        selectedTag,
+        tags,
+        categories,
+        subcategories,
+        processing,
+        userUpdated,
+        commentFocusNode,
+        tagFocusNode
+      ];
 
   @override
   bool get stringify => true;
@@ -52,6 +70,8 @@ class SingleEntryState extends Equatable {
     List<MyCategory> subcategories,
     bool processing,
     bool userUpdated,
+    Maybe<FocusNode> commentFocusNode,
+    Maybe<FocusNode> tagFocusNode,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
@@ -59,7 +79,12 @@ class SingleEntryState extends Equatable {
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null || identical(subcategories, this.subcategories)) &&
         (processing == null || identical(processing, this.processing)) &&
-        (userUpdated == null || identical(userUpdated, this.userUpdated))) {
+        (userUpdated == null ||
+            identical(
+                userUpdated,
+                this.userUpdated &&
+                    (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
+                    (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode))))) {
       return this;
     }
 
@@ -71,6 +96,8 @@ class SingleEntryState extends Equatable {
       subcategories: subcategories ?? this.subcategories,
       processing: processing ?? this.processing,
       userUpdated: userUpdated ?? this.userUpdated,
-     );
+      commentFocusNode: commentFocusNode ?? this.commentFocusNode,
+      tagFocusNode: tagFocusNode ?? this.tagFocusNode,
+    );
   }
 }

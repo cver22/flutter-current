@@ -1,7 +1,7 @@
 import 'package:expenses/member/member_model/entry_member_model/entry_member_entity.dart';
 import 'package:expenses/member/member_model/member.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
 @immutable

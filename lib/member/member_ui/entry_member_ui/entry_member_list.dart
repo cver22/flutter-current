@@ -6,8 +6,10 @@ import 'package:flutter/material.dart';
 class EntryMembersListView extends StatelessWidget {
   final Map<String, EntryMember> members;
   final Log log;
+  final bool userUpdated;
 
-  const EntryMembersListView({Key key, @required this.members, @required this.log}) : super(key: key);
+  const EntryMembersListView({Key key, @required this.members, @required this.log, @required this.userUpdated})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -20,6 +22,7 @@ class EntryMembersListView extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final EntryMember member = membersList[index];
         return EntryMemberListTile(
+          autoFocus: !userUpdated,
           member: member,
           name: log.logMembers[member.uid].name,
           singleMemberLog: membersList.length < 2,

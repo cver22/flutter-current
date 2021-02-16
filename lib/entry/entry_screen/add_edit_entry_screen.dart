@@ -150,15 +150,13 @@ class AddEditEntryScreen extends StatelessWidget {
           children: <Widget>[
             MyCurrencyPicker(
                 currency: entry?.currency,
-                returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedEntry(currency: currency))),
+                returnCurrency: (currency) => Env.store.dispatch(UpdateEntryCurrency(currency: currency))),
             Text(
                 'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
         ),
         SizedBox(height: 10),
-        entryState.selectedEntry.isSome
-            ? EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log)
-            : Container(),
+        EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log, userUpdated: entryState.userUpdated),
         SizedBox(height: 10.0),
         EntryDateButton(context: context, entry: entry),
         SizedBox(height: 10.0),
@@ -210,11 +208,11 @@ class AddEditEntryScreen extends StatelessWidget {
 
   Widget _commentFormField({@required MyEntry entry}) {
     return TextFormField(
-      decoration: InputDecoration(hintText: 'Comment'),
+      decoration: InputDecoration(hintText: 'Comment', labelText: 'Comment'),
       initialValue: entry?.comment,
       textCapitalization: TextCapitalization.sentences,
       onChanged: (value) => Env.store.dispatch(
-        UpdateSelectedEntry(comment: value),
+        UpdateEntryComment(comment: value),
       ),
     );
   }

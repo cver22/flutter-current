@@ -36,7 +36,7 @@ class EntryDateButton extends StatelessWidget {
                               newCombinedDateTime = DateTime.fromMillisecondsSinceEpoch(
                                   newDate.millisecondsSinceEpoch.toInt() +
                                       (((newTime.hour.toInt()) * 60) + newTime.minute.toInt()) * 60 * 1000),
-                              Env.store.dispatch(UpdateSelectedEntry(dateTime: newCombinedDateTime)),
+                              Env.store.dispatch(UpdateEntryDateTime(dateTime: newCombinedDateTime)),
                             }
                         })
                   }

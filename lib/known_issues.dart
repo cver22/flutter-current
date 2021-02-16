@@ -34,6 +34,9 @@
 //TODO fix text overflow on log and parentCategory drop downs
 //TODO confirm change password tool works as I have it commented out at the moment
 //TODO track subcategory tag frequency
+//TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
+//TODO be able to set preferred payer on the FAB as well
+//TODO add calculator
 
 
 

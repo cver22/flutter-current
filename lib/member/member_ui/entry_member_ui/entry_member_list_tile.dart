@@ -11,37 +11,41 @@ class EntryMemberListTile extends StatefulWidget {
   final EntryMember member;
   final String name;
   final bool singleMemberLog;
+  final bool autoFocus;
 
-  const EntryMemberListTile({Key key, @required this.member, @required this.name, this.singleMemberLog = false}) : super(key: key);
+  const EntryMemberListTile({Key key, @required this.member, @required this.name, this.singleMemberLog = false, this.autoFocus = false}) : super(key: key);
 
   @override
   _EntryMemberListTileState createState() => _EntryMemberListTileState();
 }
 
 class _EntryMemberListTileState extends State<EntryMemberListTile> {
-  TextEditingController _paidController;
-  TextEditingController _spentController;
-  FocusNode _paidFocusNode;
-  FocusNode _spentFocusNode;
+  TextEditingController _payingController;
+  TextEditingController _spendingController;
+  FocusNode _payingFocusNode;
+  FocusNode _spendingFocusNode;
 
   @override
   void initState() {
     EntryMember member = widget.member;
 
-    _paidController = member.payingController;
-    _spentController = member.spendingController;
-    _paidFocusNode = member.payingFocusNode;
-    _spentFocusNode = member.spendingFocusNode;
+    _payingController = member.payingController;
+    _spendingController = member.spendingController;
+    _payingFocusNode = member.payingFocusNode;
+    _spendingFocusNode = member.spendingFocusNode;
+    if(widget.autoFocus && member.paying) {
+      _payingFocusNode.requestFocus();
+    }
 
     super.initState();
   }
 
   @override
   void dispose() {
-    _paidController.dispose();
-    _spentController.dispose();
-    _paidFocusNode.dispose();
-    _spentFocusNode.dispose();
+    _payingController.dispose();
+    _spendingController.dispose();
+    _payingFocusNode.dispose();
+    _spendingFocusNode.dispose();
     super.dispose();
   }
 
@@ -66,8 +70,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   checked: member.paying, onChanged: (value) => Env.store.dispatch(ToggleMemberPaying(member: member))),
               _buildTextFormField(
                 paidOrSpent: PaidOrSpent.paid,
-                controller: _paidController,
-                focusNode: _paidFocusNode,
+                controller: _payingController,
+                focusNode: _payingFocusNode,
                 member: member,
               ),
             ],
@@ -80,8 +84,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   onChanged: (value) => Env.store.dispatch(ToggleMemberSpending(member: member))),
               _buildTextFormField(
                 paidOrSpent: PaidOrSpent.spent,
-                controller: _spentController,
-                focusNode: _spentFocusNode,
+                controller: _spendingController,
+                focusNode: _spendingFocusNode,
                 member: member,
               ),
             ],
