@@ -4,13 +4,14 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
-
 import '../../env.dart';
 
 class TagCreator extends StatefulWidget {
+  final FocusNode tagFocusNode;
+
   TagCreator({
     Key key,
+    @required this.tagFocusNode,
   }) : super(key: key);
 
   @override
@@ -20,19 +21,9 @@ class TagCreator extends StatefulWidget {
 class _TagCreatorState extends State<TagCreator> {
   TextEditingController _controller;
   bool canSave = false;
-  FocusNode tagFocus = FocusNode();
-  Map<Type, Action<Intent>> _actionsMap;
-  Map<LogicalKeySet, Intent> _shortcutMap;
 
   void initState() {
     _controller = TextEditingController();
-    _actionsMap = <Type, Action<Intent>> {
-      ActivateIntent: CallbackAction<ActivateIntent>(
-    onInvoke: (Intent intent) => { print('thing')}),
-    };
-    _shortcutMap = <LogicalKeySet, Intent>{
-      LogicalKeySet(LogicalKeyboardKey.space): const ActivateIntent(),
-    };
     super.initState();
   }
 
@@ -43,14 +34,11 @@ class _TagCreatorState extends State<TagCreator> {
 
   @override
   Widget build(BuildContext context) {
-    /*_onEventKey(RawKeyEvent event) {
-      print('triggered');
-      print(event.character);
-
-    }*/
+    FocusNode tagFocusNode = widget.tagFocusNode;
 
     return Row(
       mainAxisSize: MainAxisSize.max,
+      crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
           '#',
@@ -60,28 +48,27 @@ class _TagCreatorState extends State<TagCreator> {
           ),
         ),
         Expanded(
-          child: FocusableActionDetector(
-            shortcuts: _shortcutMap,
-            actions: _actionsMap,
-            child: TextFormField(
-              decoration: InputDecoration(hintText: 'Tag your transaction'),
-              focusNode: tagFocus,
-              controller: _controller,
-              keyboardType: TextInputType.text,
-              textCapitalization: TextCapitalization.words,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))],
-              onFieldSubmitted: (_) {
-                setState(() {
+          child: TextFormField(
+            decoration: InputDecoration(labelText: 'Tag'),
+            focusNode: tagFocusNode,
+            controller: _controller,
+            keyboardType: TextInputType.text,
+            textCapitalization: TextCapitalization.words,
+            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))],
+            textInputAction: TextInputAction.done,
+            onFieldSubmitted: (_) {
+              setState(() {
+                if (canSave) {
                   _saveTag();
-                  tagFocus.requestFocus();
-                });
-              },
-              onChanged: (value) {
-                setState(() {
-                  canSave = value != null && value.length > 0;
-                });
-              },
-            ),
+                  widget.tagFocusNode.requestFocus();
+                }
+              });
+            },
+            onChanged: (value) {
+              setState(() {
+                canSave = value != null && value.length > 0;
+              });
+            },
           ),
         ),
         IconButton(

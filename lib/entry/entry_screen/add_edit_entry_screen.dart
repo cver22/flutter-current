@@ -163,7 +163,7 @@ class AddEditEntryScreen extends StatelessWidget {
         _categoryButton(categories: entryState?.categories, entry: entry),
         //Transfer funds and No_category do not have a sub categories
         _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
-        _commentFormField(entry: entry),
+        _commentFormField(entry: entry, commentFocusNode: entryState.commentFocusNode.value),
         TagPicker(),
       ],
     );
@@ -206,14 +206,20 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _commentFormField({@required MyEntry entry}) {
+  Widget _commentFormField({@required MyEntry entry, @required FocusNode commentFocusNode}) {
     return TextFormField(
-      decoration: InputDecoration(hintText: 'Comment', labelText: 'Comment'),
+      decoration: InputDecoration(labelText: 'Comment'),
       initialValue: entry?.comment,
+      focusNode: commentFocusNode,
       textCapitalization: TextCapitalization.sentences,
       onChanged: (value) => Env.store.dispatch(
         UpdateEntryComment(comment: value),
       ),
+      maxLines: 1,
+      textInputAction: TextInputAction.next,
+      onFieldSubmitted: (value) {
+        Env.store.dispatch(EntryNextFocus());
+      },
     );
   }
 

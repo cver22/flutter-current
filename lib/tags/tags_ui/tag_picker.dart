@@ -45,38 +45,41 @@ class _TagPickerState extends State<TagPicker> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TagCreator(
-              ),
-
-              SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TagCollection(
-                      tags: selectedEntryTags,
-                      collectionName: 'Entry Tags',
-                    ),
-                    //currently selected tags
-                    categoryRecentTags.isNotEmpty
-                        ? TagCollection(
-                            tags: categoryRecentTags,
-                            collectionName: 'Category Recent',
-                          )
-                        : Container(),
-                    //category recent tag collection
-                    logRecentTags.isNotEmpty
-                        ? TagCollection(
-                            tags: logRecentTags,
-                            collectionName: 'Log Recent',
-                          )
-                        : Container(),
-                    //log recent tag collection
-                  ],
-                ),
-              ), //log tag collection
+              TagCreator(tagFocusNode: singleEntryState.tagFocusNode.value),
+              SizedBox(height: 10.0),
+              _buildTagCollections(), //log tag collection
             ],
           );
         });
+  }
+
+  SingleChildScrollView _buildTagCollections() {
+    return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  TagCollection(
+                    tags: selectedEntryTags,
+                    collectionName: 'Entry Tags',
+                  ),
+                  //currently selected tags
+                  categoryRecentTags.isNotEmpty
+                      ? TagCollection(
+                          tags: categoryRecentTags,
+                          collectionName: 'Category Recent',
+                        )
+                      : Container(),
+                  //category recent tag collection
+                  logRecentTags.isNotEmpty
+                      ? TagCollection(
+                          tags: logRecentTags,
+                          collectionName: 'Log Recent',
+                        )
+                      : Container(),
+                  //log recent tag collection
+                ],
+              ),
+            );
   }
 
   void tagListBuilders({@required SingleEntryState entryState, int maxTags}) {

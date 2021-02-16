@@ -45,7 +45,7 @@
 
 
 //TODO START HERE
-//start with dealing with focus node
+//clicking on a member paid/spent area should toggle the member to on if they are currently off, use a focusNode listener and setState to achieve
 //build filter dialog
 //build function to return filtered list back to the widget
 

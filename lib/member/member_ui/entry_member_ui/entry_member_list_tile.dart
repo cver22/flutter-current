@@ -125,6 +125,10 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             ),
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
             keyboardType: TextInputType.number,
+            textInputAction: TextInputAction.next,
+            onFieldSubmitted: (value) {
+              Env.store.dispatch(EntryNextFocus());
+            },
             onTap: () {
               focusNode.requestFocus();
               print('this focusNode HasFocus: ${focusNode.hasFocus}');
