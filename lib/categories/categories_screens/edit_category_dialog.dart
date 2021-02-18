@@ -98,34 +98,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         children: [
           Row(
             children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: RaisedButton(
-                  child: Text(
-                    emojiChar,
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 22),
-                  ),
-                  onPressed: () => setState(() {
-                    showEmojiGrid = true;
-                  }),
-                ),
-              ),
+              _buildEmojiButton(),
               SizedBox(width: 20),
-              Expanded(
-                flex: 5,
-                child: notModifiable
-                    ? Text(name)
-                    : TextField(
-                        controller: controller,
-                        decoration: InputDecoration(border: OutlineInputBorder()),
-                        onChanged: (value) {
-                          setState(() {
-                            canSave = value != null && value.length > 0;
-                          });
-                        },
-                      ),
-              ),
+              _buildNameField(),
             ],
           ),
           categoryOrSubcategory == CategoryOrSubcategory.category
@@ -191,28 +166,74 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     );
   }
 
+  Expanded _buildNameField() {
+    return Expanded(
+      flex: 5,
+      child: notModifiable
+          ? Text(name)
+          : TextField(
+              controller: controller,
+              decoration: InputDecoration(border: OutlineInputBorder()),
+              onChanged: (value) {
+                setState(() {
+                  canSave = value != null && value.length > 0;
+                });
+              },
+            ),
+    );
+  }
+
+  Expanded _buildEmojiButton() {
+    return Expanded(
+      flex: 1,
+      child: RaisedButton(
+        child: Text(
+          emojiChar,
+          textAlign: TextAlign.center,
+          style: TextStyle(fontSize: 22),
+        ),
+        onPressed: () => setState(() {
+          showEmojiGrid = true;
+        }),
+      ),
+    );
+  }
+
   Widget _selectParentCategory(AppCategory initialCategory) {
     List<AppCategory> selectableCategories = List.from(categories);
     selectableCategories.removeWhere((element) => element.id == NO_CATEGORY || element.id == TRANSFER_FUNDS);
 
     return Row(
       children: [
-        Text('Parent Category: '),
+        Flexible(
+          flex: 1,
+          child: Text(
+            'Parent Category: ',
+            maxLines: 2,
+          ),
+
+        ),
         SizedBox(width: 10),
         notModifiable
             ? Text(initialCategory.name)
-            : DropdownButton<AppCategory>(
-                value: initialCategory,
-                items: selectableCategories.map((AppCategory category) {
-                  return DropdownMenuItem<AppCategory>(
-                    value: category,
-                    child: Text(
-                      category.name,
-                      style: TextStyle(color: Colors.black),
-                    ),
-                  );
-                }).toList(),
-                onChanged: _onParentCategoryChanged),
+            : Expanded(
+          flex: 2,
+              child: DropdownButton<AppCategory>(
+                isExpanded: true,
+                  value: initialCategory,
+                  items: selectableCategories.map((AppCategory category) {
+                    return DropdownMenuItem<AppCategory>(
+                      value: category,
+                      child: Text(
+                        category.name,
+                        overflow: TextOverflow.visible,
+                        maxLines: 2,
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: _onParentCategoryChanged),
+            ),
       ],
     );
   }
@@ -235,7 +256,6 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   bool _canDelete({String categoryId}) {
-
     if (categoryId == null || categoryId == NO_CATEGORY || categoryId.contains(OTHER) || categoryId == TRANSFER_FUNDS) {
       return false;
     }

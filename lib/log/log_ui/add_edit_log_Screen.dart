@@ -27,7 +27,7 @@ class AddEditLogScreen extends StatelessWidget {
 
   Future<bool> _exitConfirmationDialog() async {
     bool onWillPop = false;
-    if(Env.store.state.logsState.userUpdated){
+    if (Env.store.state.logsState.userUpdated) {
       //user has made changes, confirm they wish to exit
       await Get.dialog(
         SimpleConfirmationDialog(
@@ -38,7 +38,6 @@ class AddEditLogScreen extends StatelessWidget {
     } else {
       onWillPop = true;
     }
-
 
     if (onWillPop) {
       //close without saving
@@ -152,7 +151,7 @@ class AddEditLogScreen extends StatelessWidget {
                 _buildLogNameForm(log: log),
                 SizedBox(height: 16.0),
 
-                log.uid == null ? NewLogCategorySource(logs: logs, log: log) : Container(),
+                log.uid == null ? NewLogCategorySourceWidget(logs: logs, log: log) : Container(),
                 SizedBox(height: 16.0),
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
                 //log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
@@ -176,7 +175,10 @@ class AddEditLogScreen extends StatelessWidget {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Log Title'),
       initialValue: log.name,
-      onChanged: (name) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: name,))),
+      onChanged: (name) => Env.store.dispatch(UpdateSelectedLog(
+          log: log.copyWith(
+        name: name,
+      ))),
       //TODO validate name cannot be empty
       //TODO need controllers
     );
@@ -258,8 +260,8 @@ class AddEditLogScreen extends StatelessWidget {
   }
 }
 
-class NewLogCategorySource extends StatefulWidget {
-  const NewLogCategorySource({
+class NewLogCategorySourceWidget extends StatefulWidget {
+  const NewLogCategorySourceWidget({
     Key key,
     @required this.logs,
     @required this.log,
@@ -269,10 +271,10 @@ class NewLogCategorySource extends StatefulWidget {
   final Log log;
 
   @override
-  _NewLogCategorySourceState createState() => _NewLogCategorySourceState();
+  _NewLogCategorySourceWidgetState createState() => _NewLogCategorySourceWidgetState();
 }
 
-class _NewLogCategorySourceState extends State<NewLogCategorySource> {
+class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget> {
   Log defaultLog;
   Log currentDropDownSelection;
   List<Log> temporaryLogs = [];
@@ -301,23 +303,32 @@ class _NewLogCategorySourceState extends State<NewLogCategorySource> {
       mainAxisAlignment: MainAxisAlignment.center,
       mainAxisSize: MainAxisSize.max,
       children: [
-        Container(child: Text('Copy Categories From: '), width: MediaQuery.of(context).size.width / 3),
-        DropdownButton<Log>(
-          //TODO order preference logs and set default to first log if not navigating from the log itself
-          value: currentDropDownSelection,
-          onChanged: (Log log) {
-            Env.store.dispatch(NewLogSetCategories(log: log, userUpdated: true));
-            currentDropDownSelection = log;
-          },
-          items: temporaryLogs.map((Log log) {
-            return DropdownMenuItem<Log>(
-              value: log,
-              child: Text(
-                log.name,
-                style: TextStyle(color: Colors.black),
-              ),
-            );
-          }).toList(),
+        Flexible(
+          flex: 1,
+          child: Text('Categories Copy From: '),
+        ),
+        Expanded(
+          flex: 3,
+          child: DropdownButton<Log>(
+            //TODO order preference logs and set default to first log if not navigating from the log itself
+            value: currentDropDownSelection,
+            isExpanded: true,
+            onChanged: (Log log) {
+              Env.store.dispatch(NewLogSetCategories(log: log, userUpdated: true));
+              currentDropDownSelection = log;
+            },
+            items: temporaryLogs.map((Log log) {
+              return DropdownMenuItem<Log>(
+                value: log,
+                child: Text(
+                  log.name,
+                  overflow: TextOverflow.visible,
+                  maxLines: 2,
+                  style: TextStyle(color: Colors.black),
+                ),
+              );
+            }).toList(),
+          ),
         ),
       ],
     );

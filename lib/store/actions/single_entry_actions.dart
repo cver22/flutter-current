@@ -724,6 +724,11 @@ class EntryMemberFocus implements AppAction {
 }
 
 class EntryNextFocus implements AppAction {
+
+  final PaidOrSpent paidOrSpent;
+
+  EntryNextFocus({this.paidOrSpent});
+
   @override
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -734,24 +739,32 @@ class EntryNextFocus implements AppAction {
     FocusNode commentFocusNode = appState.singleEntryState.commentFocusNode.value;
     FocusNode tagFocusNode = appState.singleEntryState.tagFocusNode.value;
 
+
     for (int i = 0; i < memberList.length; i++) {
+      FocusNode focusNode;
       if (memberList[i].spendingFocusNode.hasFocus) {
         //remove focus from current focused member
         memberFocusIndex = i;
-        FocusNode spendingFocusNode = memberList[i].spendingFocusNode;
-        spendingFocusNode.unfocus();
-        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: spendingFocusNode));
+        focusNode = memberList[i].spendingFocusNode;
+        focusNode.unfocus();
+        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: focusNode));
       } else if (memberList[i].payingFocusNode.hasFocus) {
         //remove focus from current focused member
         memberFocusIndex = i;
-        FocusNode payingFocusNode = memberList[i].payingFocusNode;
-        payingFocusNode.unfocus();
-        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: payingFocusNode));
-      } else if (memberFocusIndex != null && i > memberFocusIndex && memberList[i].paying == true) {
+        focusNode = memberList[i].payingFocusNode;
+        focusNode.unfocus();
+        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: focusNode));
+      } else if (paidOrSpent == PaidOrSpent.paid && memberFocusIndex != null && i > memberFocusIndex && memberList[i].paying == true) {
         //focus on next paying member if there is one
-        FocusNode payingFocusNode = memberList[i].payingFocusNode;
-        payingFocusNode.requestFocus();
-        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: payingFocusNode));
+        focusNode = memberList[i].payingFocusNode;
+        focusNode.requestFocus();
+        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: focusNode));
+        membersHaveFocus = true;
+        break;
+      }else if (paidOrSpent == PaidOrSpent.spent && memberFocusIndex != null && i > memberFocusIndex && memberList[i].spending == true) {
+        focusNode = memberList[i].spendingFocusNode;
+        focusNode.requestFocus();
+        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: focusNode));
         membersHaveFocus = true;
         break;
       }

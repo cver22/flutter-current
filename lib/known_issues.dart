@@ -31,7 +31,6 @@
 //TODO method to change the photo
 //TODO how to handle auto scroll on the account screen and login screen
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
-//TODO fix text overflow on log and parentCategory drop downs
 //TODO confirm change password tool works as I have it commented out at the moment
 //TODO track subcategory tag frequency
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
@@ -41,11 +40,10 @@
 
 
 //TODO GENERAL IMPORTANT *************************
-//TODO deal with focusNode when i can add members and also modify paid amounts
 
 
 //TODO START HERE
-//fix passing of focusNode to state to maintain focus on spending when that area is selected
+//improve entries tiles as per Ana
 //build filter dialog
 //build function to return filtered list back to the widget
 

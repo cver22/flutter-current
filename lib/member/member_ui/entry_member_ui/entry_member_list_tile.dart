@@ -1,5 +1,4 @@
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
@@ -135,7 +134,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
             onSubmitted: (value) {
-              Env.store.dispatch(EntryNextFocus());
+              Env.store.dispatch(EntryNextFocus(paidOrSpent: paidOrSpent));
             },
             onTap: () {
               //toggle member spending on if the the user taps in the textfield
