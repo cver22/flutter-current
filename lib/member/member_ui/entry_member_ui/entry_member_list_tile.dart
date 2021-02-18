@@ -39,17 +39,6 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
     if (widget.autoFocus && member.paying) {
       _payingFocusNode.requestFocus();
     }
-    _payingFocusNode.addListener(() {
-      if (!member.paying) {
-        Env.store.dispatch(ToggleMemberPaying(member: member));
-      }
-    });
-    _spendingFocusNode.addListener(() {
-
-      if (!member.spending) {
-        Env.store.dispatch(ToggleMemberSpending(member: member));
-      }
-    });
 
     super.initState();
   }
@@ -134,7 +123,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
         ),
         Container(
           width: 50.0,
-          child: TextFormField(
+          child: TextField(
             style: TextStyle(color: isGrey ? isGreyColor : Colors.black),
             controller: controller,
             focusNode: focusNode,
@@ -145,10 +134,31 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
-            onFieldSubmitted: (value) {
+            onSubmitted: (value) {
               Env.store.dispatch(EntryNextFocus());
             },
+            onTap: () {
+              //toggle member spending on if the the user taps in the textfield
+              if (paidOrSpent == PaidOrSpent.paid) {
+                if (member.paying) {
+                  //user already paying, update state with focus
+                  Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
+                } else {
+                  //user now paying, update focus and toggle
+                  Env.store.dispatch(ToggleMemberPaying(member: member));
+                }
+              } else if (paidOrSpent == PaidOrSpent.spent) {
+                if (member.spending) {
+                  //user already spending, update state with focus
+                  Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
+                } else {
+                  //user now spending, update focus and toggle
+                  Env.store.dispatch(ToggleMemberSpending(member: member));
+                }
+              }
 
+              //TODO need to update state so it knows the focus location when a member tile is tapped
+            },
             onChanged: (newValue) {
               int intValue = parseNewValue(newValue: newValue);
               if (paidOrSpent == PaidOrSpent.paid) {

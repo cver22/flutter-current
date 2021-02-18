@@ -687,6 +687,42 @@ class SelectDeselectEntryTag implements AppAction {
   }
 }
 
+class EntryMemberFocus implements AppAction {
+  final String memberId;
+  final PaidOrSpent paidOrSpent;
+
+  //TODO this does not work
+
+  EntryMemberFocus({@required this.memberId, @required this.paidOrSpent});
+
+  @override
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
+    EntryMember member = memberMap[memberId];
+    FocusNode focusNode;
+
+    if (paidOrSpent == PaidOrSpent.paid) {
+      focusNode = member.payingFocusNode;
+      focusNode.requestFocus();
+      member = member.copyWith(payingFocusNode: focusNode);
+      print(member.payingFocusNode.hasFocus);
+    } else if (paidOrSpent == PaidOrSpent.spent) {
+      focusNode = member.spendingFocusNode;
+      focusNode.requestFocus();
+      member = member.copyWith(spendingFocusNode: focusNode);
+    }
+
+    memberMap.update(memberId, (value) => member);
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: memberMap)),
+            ));
+  }
+}
+
 class EntryNextFocus implements AppAction {
   @override
   AppState updateState(AppState appState) {
@@ -699,7 +735,13 @@ class EntryNextFocus implements AppAction {
     FocusNode tagFocusNode = appState.singleEntryState.tagFocusNode.value;
 
     for (int i = 0; i < memberList.length; i++) {
-      if (memberList[i].payingFocusNode.hasFocus) {
+      if (memberList[i].spendingFocusNode.hasFocus) {
+        //remove focus from current focused member
+        memberFocusIndex = i;
+        FocusNode spendingFocusNode = memberList[i].spendingFocusNode;
+        spendingFocusNode.unfocus();
+        memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: spendingFocusNode));
+      } else if (memberList[i].payingFocusNode.hasFocus) {
         //remove focus from current focused member
         memberFocusIndex = i;
         FocusNode payingFocusNode = memberList[i].payingFocusNode;
