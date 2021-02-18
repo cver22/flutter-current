@@ -1,18 +1,18 @@
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
 import 'package:expenses/app/common_widgets/my_currency_picker.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/entry_category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_screen/entry_date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_ui/entry_member_ui/entry_member_list.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tags_ui/tag_picker.dart';
@@ -172,7 +172,7 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _categoryButton({@required MyEntry entry, @required List<MyCategory> categories}) {
+  Widget _categoryButton({@required MyEntry entry, @required List<AppCategory> categories}) {
     return entry?.logId == null ? Container() : CategoryButton(
       label: 'Select a Category',
       onPressed: () => {
@@ -190,7 +190,7 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _subcategoryButton({@required MyEntry entry, @required List<MyCategory> subcategories}) {
+  Widget _subcategoryButton({@required MyEntry entry, @required List<AppCategory> subcategories}) {
     return entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
         ? Container()
         : CategoryButton(

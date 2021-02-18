@@ -1,10 +1,10 @@
 import 'package:expenses/auth_user/models/user.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
@@ -29,28 +29,28 @@ AppState _updateLogs(
   return _updateLogState(appState, (logsState) => logsState.copyWith(logs: cloneMap));
 }
 
-class SetLogsLoading implements MyAction {
+class SetLogsLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(isLoading: true));
   }
 }
 
-class SetLogsLoaded implements MyAction {
+class SetLogsLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(isLoading: false));
   }
 }
 
-class SetNewLog implements MyAction {
+class SetNewLog implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(Log(currency: 'CAD'))));
   }
 }
 
-class UpdateSelectedLog implements MyAction {
+class UpdateSelectedLog implements AppAction {
   final Log log;
 
   UpdateSelectedLog({this.log});
@@ -61,7 +61,7 @@ class UpdateSelectedLog implements MyAction {
   }
 }
 
-class NewLogSetCategories implements MyAction {
+class NewLogSetCategories implements AppAction {
   final Log log;
   final bool userUpdated;
 
@@ -86,7 +86,7 @@ class NewLogSetCategories implements MyAction {
   }
 }
 
-class SelectLog implements MyAction {
+class SelectLog implements AppAction {
   final String logId;
 
   SelectLog({this.logId});
@@ -105,14 +105,14 @@ class SelectLog implements MyAction {
   }
 }
 
-class ClearSelectedLog implements MyAction {
+class ClearSelectedLog implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
   }
 }
 
-class SetLogs implements MyAction {
+class SetLogs implements AppAction {
   final Iterable<Log> logList;
 
   SetLogs({this.logList});
@@ -129,7 +129,7 @@ class SetLogs implements MyAction {
   }
 }
 
-class CanReorder implements MyAction {
+class CanReorder implements AppAction {
   final bool save;
 
   CanReorder({this.save = false});
@@ -152,7 +152,7 @@ class CanReorder implements MyAction {
   }
 }
 
-class ReorderLog implements MyAction {
+class ReorderLog implements AppAction {
   final int oldIndex;
   final int newIndex;
   final List<Log> logs;
@@ -175,7 +175,7 @@ class ReorderLog implements MyAction {
   }
 }
 
-class AddUpdateLog implements MyAction {
+class AddUpdateLog implements AppAction {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
@@ -230,7 +230,7 @@ class AddUpdateLog implements MyAction {
   }
 }
 
-class AddMemberToSelectedLog implements MyAction {
+class AddMemberToSelectedLog implements AppAction {
   final String uid;
   final String name;
 
@@ -251,7 +251,7 @@ class AddMemberToSelectedLog implements MyAction {
 }
 
 //used for name changes
-class UpdateLogMember implements MyAction {
+class UpdateLogMember implements AppAction {
   @override
   AppState updateState(AppState appState) {
     User user = appState.authState.user.value;
@@ -271,18 +271,18 @@ class UpdateLogMember implements MyAction {
   }
 }
 
-class AddEditCategoryFromLog implements MyAction {
-  final MyCategory category;
+class AddEditCategoryFromLog implements AppAction {
+  final AppCategory category;
 
   AddEditCategoryFromLog({@required this.category});
 
   @override
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
-    List<MyCategory> categories = List.from(log.categories);
-    List<MyCategory> subcategories = List.from(log.subcategories);
+    List<AppCategory> categories = List.from(log.categories);
+    List<AppCategory> subcategories = List.from(log.subcategories);
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
-    MyCategory updatedCategory = category;
+    AppCategory updatedCategory = category;
 
     if (updatedCategory?.id != null) {
       //category exists, update category
@@ -294,8 +294,8 @@ class AddEditCategoryFromLog implements MyAction {
       expandedCategories.add(false);
 
       //every new category automatically gets a new subcategory "other"
-      MyCategory otherSubcategory =
-          MyCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
+      AppCategory otherSubcategory =
+          AppCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
 
       subcategories.add(otherSubcategory);
     }
@@ -307,15 +307,15 @@ class AddEditCategoryFromLog implements MyAction {
   }
 }
 
-class DeleteCategoryFromLog implements MyAction {
-  final MyCategory category;
+class DeleteCategoryFromLog implements AppAction {
+  final AppCategory category;
 
   DeleteCategoryFromLog({@required this.category});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
-    List<MyCategory> categories = List.from(log.categories);
-    List<MyCategory> subcategories = List.from(log.subcategories);
+    List<AppCategory> categories = List.from(log.categories);
+    List<AppCategory> subcategories = List.from(log.subcategories);
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
     bool _canDeleteCategory = canDeleteCategory(id: category.id);
 
@@ -334,15 +334,15 @@ class DeleteCategoryFromLog implements MyAction {
   }
 }
 
-class AddEditSubcategoryFromLog implements MyAction {
-  final MyCategory subcategory;
+class AddEditSubcategoryFromLog implements AppAction {
+  final AppCategory subcategory;
 
   AddEditSubcategoryFromLog({@required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
-    List<MyCategory> subcategories = List.from(log.subcategories);
+    List<AppCategory> subcategories = List.from(log.subcategories);
 
     if (subcategory?.id != null) {
       //category exists, update category
@@ -358,14 +358,14 @@ class AddEditSubcategoryFromLog implements MyAction {
   }
 }
 
-class DeleteSubcategoryFromLog implements MyAction {
-  final MyCategory subcategory;
+class DeleteSubcategoryFromLog implements AppAction {
+  final AppCategory subcategory;
 
   DeleteSubcategoryFromLog({@required this.subcategory});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
-    List<MyCategory> subcategories = List.from(log.subcategories);
+    List<AppCategory> subcategories = List.from(log.subcategories);
     bool _canDeleteSubcategory = canDeleteSubcategory(subcategory: subcategory);
 
     if (_canDeleteSubcategory) {
@@ -377,7 +377,7 @@ class DeleteSubcategoryFromLog implements MyAction {
   }
 }
 
-class ExpandCollapseLogCategory implements MyAction {
+class ExpandCollapseLogCategory implements AppAction {
   final int index;
 
   ExpandCollapseLogCategory({@required this.index});
@@ -390,7 +390,7 @@ class ExpandCollapseLogCategory implements MyAction {
   }
 }
 
-class ReorderCategoryFromLogScreen implements MyAction {
+class ReorderCategoryFromLogScreen implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
@@ -398,9 +398,9 @@ class ReorderCategoryFromLogScreen implements MyAction {
 
   AppState updateState(AppState appState) {
     //reorder categories
-    List<MyCategory> categories = List.from(appState.logsState.selectedLog.value.categories);
+    List<AppCategory> categories = List.from(appState.logsState.selectedLog.value.categories);
     //TODO this is the same as the settings method, remove duplication
-    MyCategory movedCategory = categories.removeAt(oldCategoryIndex);
+    AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
     categories.insert(newCategoryIndex, movedCategory);
 
     //reorder expanded list
@@ -417,7 +417,7 @@ class ReorderCategoryFromLogScreen implements MyAction {
   }
 }
 
-class ReorderSubcategoryFromLogScreen implements MyAction {
+class ReorderSubcategoryFromLogScreen implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
   final int oldSubcategoryIndex;
@@ -433,11 +433,11 @@ class ReorderSubcategoryFromLogScreen implements MyAction {
     Log log = appState.logsState.selectedLog.value;
     String oldParentId = log.categories[oldCategoryIndex].id;
     String newParentId = log.categories[newCategoryIndex].id;
-    List<MyCategory> subcategories = List.from(log.subcategories);
-    List<MyCategory> subsetOfSubcategories = List.from(subcategories);
+    List<AppCategory> subcategories = List.from(log.subcategories);
+    List<AppCategory> subsetOfSubcategories = List.from(subcategories);
     subsetOfSubcategories
         .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
-    MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
+    AppCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
     subcategories = reorderSubcategoriesLogSetting(
         newSubcategoryIndex: newSubcategoryIndex,
@@ -456,7 +456,7 @@ class ReorderSubcategoryFromLogScreen implements MyAction {
 
 
 //TODO this should be combined with ClearEntryState()
-class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements MyAction {
+class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Map<String, Log> logs = Map.from(appState.logsState.logs);

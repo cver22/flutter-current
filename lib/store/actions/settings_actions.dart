@@ -1,8 +1,8 @@
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
@@ -18,7 +18,7 @@ AppState _updateSettingsState(AppState appState,
   return appState.copyWith(settingsState: update(appState.settingsState));
 }
 
-class UpdateSettings implements MyAction {
+class UpdateSettings implements AppAction {
   final Maybe<Settings> settings;
 
   UpdateSettings({@required this.settings});
@@ -36,7 +36,7 @@ class UpdateSettings implements MyAction {
   }
 }
 
-class ChangeDefaultLog implements MyAction {
+class ChangeDefaultLog implements AppAction {
   final Log log;
 
   ChangeDefaultLog({this.log});
@@ -55,15 +55,15 @@ class ChangeDefaultLog implements MyAction {
   }
 }
 
-class SettingsAddEditCategory implements MyAction {
-  final MyCategory category;
+class SettingsAddEditCategory implements AppAction {
+  final AppCategory category;
 
   SettingsAddEditCategory({@required this.category});
 
   @override
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
-    List<MyCategory> categories = List.from(settings.defaultCategories);
+    List<AppCategory> categories = List.from(settings.defaultCategories);
 
     if (category.id != null) {
       categories[categories.indexWhere((e) => e.id == category.id)] = category;
@@ -78,15 +78,15 @@ class SettingsAddEditCategory implements MyAction {
   }
 }
 
-class SettingsDeleteCategory implements MyAction {
-  final MyCategory category;
+class SettingsDeleteCategory implements AppAction {
+  final AppCategory category;
 
   SettingsDeleteCategory({@required this.category});
 
   @override
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
-    List<MyCategory> categories = List.from(settings.defaultCategories);
+    List<AppCategory> categories = List.from(settings.defaultCategories);
 
     if (category.id != NO_CATEGORY) {
       //remove as long as the it is not NO_CATEGORY
@@ -99,15 +99,15 @@ class SettingsDeleteCategory implements MyAction {
   }
 }
 
-class SettingsAddEditSubcategory implements MyAction {
-  final MyCategory subcategory;
+class SettingsAddEditSubcategory implements AppAction {
+  final AppCategory subcategory;
 
   SettingsAddEditSubcategory({@required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
-    List<MyCategory> subcategories = settings.defaultSubcategories;
+    List<AppCategory> subcategories = settings.defaultSubcategories;
 
     if (subcategory.id != null) {
       subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
@@ -122,15 +122,15 @@ class SettingsAddEditSubcategory implements MyAction {
   }
 }
 
-class SettingsDeleteSubcategory implements MyAction {
-  final MyCategory subcategory;
+class SettingsDeleteSubcategory implements AppAction {
+  final AppCategory subcategory;
 
   SettingsDeleteSubcategory({@required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
-    List<MyCategory> subcategories = settings.defaultSubcategories;
+    List<AppCategory> subcategories = settings.defaultSubcategories;
 
     if (canDeleteSubcategory(subcategory: subcategory)) {
       subcategories = subcategories.where((element) => element.id != subcategory.id).toList();
@@ -142,7 +142,7 @@ class SettingsDeleteSubcategory implements MyAction {
   }
 }
 
-class SetExpandedSettingsCategories implements MyAction {
+class SetExpandedSettingsCategories implements AppAction {
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = [];
     appState.settingsState.settings.value.defaultCategories.forEach((element) {
@@ -154,7 +154,7 @@ class SetExpandedSettingsCategories implements MyAction {
   }
 }
 
-class ExpandCollapseSettingsCategory implements MyAction {
+class ExpandCollapseSettingsCategory implements AppAction {
   final int index;
 
   ExpandCollapseSettingsCategory({@required this.index});
@@ -168,7 +168,7 @@ class ExpandCollapseSettingsCategory implements MyAction {
   }
 }
 
-class ReorderCategoryFromSettingsScreen implements MyAction {
+class ReorderCategoryFromSettingsScreen implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
@@ -177,8 +177,8 @@ class ReorderCategoryFromSettingsScreen implements MyAction {
   AppState updateState(AppState appState) {
     //reorder categories list
     Settings settings = appState.settingsState.settings.value;
-    List<MyCategory> categories = List.from(settings.defaultCategories);
-    MyCategory movedCategory = categories.removeAt(oldCategoryIndex);
+    List<AppCategory> categories = List.from(settings.defaultCategories);
+    AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
     categories.insert(newCategoryIndex, movedCategory);
 
     //reorder expanded list
@@ -195,7 +195,7 @@ class ReorderCategoryFromSettingsScreen implements MyAction {
   }
 }
 
-class ReorderSubcategoryFromSettingsScreen implements MyAction {
+class ReorderSubcategoryFromSettingsScreen implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
   final int oldSubcategoryIndex;
@@ -210,11 +210,11 @@ class ReorderSubcategoryFromSettingsScreen implements MyAction {
     Settings settings = appState.settingsState.settings.value;
     String oldParentId = settings.defaultCategories[oldCategoryIndex].id;
     String newParentId = settings.defaultCategories[newCategoryIndex].id;
-    List<MyCategory> subcategories = List.from(settings.defaultSubcategories);
-    List<MyCategory> subsetOfSubcategories = List.from(settings.defaultSubcategories);
+    List<AppCategory> subcategories = List.from(settings.defaultSubcategories);
+    List<AppCategory> subsetOfSubcategories = List.from(settings.defaultSubcategories);
     subsetOfSubcategories
         .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
-    MyCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
+    AppCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
 
     subcategories = reorderSubcategoriesLogSetting(newSubcategoryIndex: newSubcategoryIndex,

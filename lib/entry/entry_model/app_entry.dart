@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/entry/entry_model/my_entry_entity.dart';
+import 'package:expenses/entry/entry_model/app_entry_entity.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';

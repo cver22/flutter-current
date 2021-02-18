@@ -1,6 +1,6 @@
 import 'package:expenses/app/common_widgets/empty_content.dart';
 import 'package:expenses/app/common_widgets/error_widget.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/categories/categories_screens/master_category_drag_and_drop_list.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -18,8 +18,8 @@ class MasterCategoryListDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<MyCategory> categories = [];
-    List<MyCategory> subcategories = [];
+    List<AppCategory> categories = [];
+    List<AppCategory> subcategories = [];
 
     if (setLogEnt == SettingsLogEntry.log) {
       return ConnectState(
@@ -50,7 +50,7 @@ class MasterCategoryListDialog extends StatelessWidget {
     }
   }
 
-  Widget _buildDialog({@required List<MyCategory> categories, @required List<MyCategory> subcategories}) {
+  Widget _buildDialog({@required List<AppCategory> categories, @required List<AppCategory> subcategories}) {
     return Dialog(
       insetPadding: EdgeInsets.all(30),
       elevation: DIALOG_ELEVATION,
@@ -94,7 +94,7 @@ class MasterCategoryListDialog extends StatelessWidget {
   }
 
   Widget _displayAddButton() {
-    MyCategory category = MyCategory();
+    AppCategory category = AppCategory();
     return IconButton(
       icon: Icon(Icons.add),
       onPressed: () => {

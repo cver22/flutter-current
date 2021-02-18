@@ -1,6 +1,6 @@
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/validators.dart';
 
@@ -11,28 +11,28 @@ AppState _updateLoginRegState(
   return appState.copyWith(loginRegState: update(appState.loginRegState));
 }
 
-class LoginRegFailure implements MyAction {
+class LoginRegFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLoginRegState(appState, (loginRegState) => loginRegState.failure());
   }
 }
 
-class LoginRegSubmitting implements MyAction {
+class LoginRegSubmitting implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLoginRegState(appState, (loginRegState) => loginRegState.submitting());
   }
 }
 
-class LoginRegSuccess implements MyAction {
+class LoginRegSuccess implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLoginRegState(appState, (loginRegState) => loginRegState.success());
   }
 }
 
-class LoginOrCreateUser implements MyAction {
+class LoginOrCreateUser implements AppAction {
   //switches from between login or create new user
   @override
   AppState updateState(AppState appState) {
@@ -43,7 +43,7 @@ class LoginOrCreateUser implements MyAction {
   }
 }
 
-class PasswordValidation implements MyAction {
+class PasswordValidation implements AppAction {
   final String password;
 
   PasswordValidation(this.password);
@@ -55,7 +55,7 @@ class PasswordValidation implements MyAction {
   }
 }
 
-class EmailValidation implements MyAction {
+class EmailValidation implements AppAction {
   final String email;
 
   EmailValidation(this.email);

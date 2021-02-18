@@ -3,7 +3,7 @@
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/auth_user/models/user.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
 
@@ -14,14 +14,14 @@ AppState _updateAuthState(
   return appState.copyWith(authState: update(appState.authState));
 }
 
-class AuthFailure implements MyAction {
+class AuthFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAuthState(appState, (authState) => AuthState.initial());
   }
 }
 
-class AuthSuccess implements MyAction {
+class AuthSuccess implements AppAction {
   final User user;
 
   AuthSuccess({@required this.user});
@@ -32,21 +32,21 @@ class AuthSuccess implements MyAction {
   }
 }
 
-class SignOutState implements MyAction {
+class SignOutState implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return AppState.initial();
   }
 }
 
-class LoadingUser implements MyAction {
+class LoadingUser implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAuthState(appState, (authState) => authState.copyWith(isLoading: true));
   }
 }
 
-class UpdateDisplayName implements MyAction {
+class UpdateDisplayName implements AppAction {
   final String displayName;
 
   UpdateDisplayName({@required this.displayName});

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/store/actions/entries_actions.dart';

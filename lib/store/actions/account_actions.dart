@@ -1,6 +1,6 @@
 import 'package:expenses/account/account_model/account_state.dart';
 import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/validators.dart';
 
@@ -11,42 +11,42 @@ AppState _updateAccountState(
   return appState.copyWith(accountState: update(appState.accountState));
 }
 
-class AccountUpdateFailure implements MyAction {
+class AccountUpdateFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.failure());
   }
 }
 
-class AccountUpdateSubmitting implements MyAction {
+class AccountUpdateSubmitting implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.submitting());
   }
 }
 
-class AccountUpdateSuccess implements MyAction {
+class AccountUpdateSuccess implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.success());
   }
 }
 
-class ShowHidePasswordForm implements MyAction {
+class ShowHidePasswordForm implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm));
   }
 }
 
-class AccountResetState implements MyAction {
+class AccountResetState implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(appState, (accountState) => accountState.resetState());
   }
 }
 
-class AccountValidateOldPassword implements MyAction {
+class AccountValidateOldPassword implements AppAction {
   final String password;
 
   /*final String newPassword;
@@ -61,7 +61,7 @@ class AccountValidateOldPassword implements MyAction {
   }
 }
 
-class AccountValidateNewPassword implements MyAction {
+class AccountValidateNewPassword implements AppAction {
   final String newPassword;
   final String verifyPassword;
 
@@ -82,7 +82,7 @@ class AccountValidateNewPassword implements MyAction {
   }
 }
 
-class IsUserSignedInWithEmail implements MyAction {
+class IsUserSignedInWithEmail implements AppAction {
   final bool signedInWithEmail;
 
   IsUserSignedInWithEmail({this.signedInWithEmail});

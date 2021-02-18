@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/utils/maybe.dart';
 
 import 'package:meta/meta.dart';

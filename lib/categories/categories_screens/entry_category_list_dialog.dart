@@ -1,8 +1,8 @@
 import 'package:expenses/app/common_widgets/empty_content.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 
 import 'package:expenses/store/connect_state.dart';
@@ -22,7 +22,7 @@ class EntryCategoryListDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<MyCategory> categories;
+    List<AppCategory> categories;
     return ConnectState(
         where: notIdentical,
         map: (state) => state.singleEntryState,
@@ -39,7 +39,7 @@ class EntryCategoryListDialog extends StatelessWidget {
         });
   }
 
-  Widget buildDialog({singleEntryState, BuildContext context, List<MyCategory> categories}) {
+  Widget buildDialog({singleEntryState, BuildContext context, List<AppCategory> categories}) {
     return Dialog(
       elevation: DIALOG_ELEVATION,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
@@ -73,7 +73,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget _displayAddButton({MyEntry selectedEntry}) {
-    MyCategory category = MyCategory();
+    AppCategory category = AppCategory();
     return IconButton(
       icon: Icon(Icons.add),
       onPressed: () => categoryOrSubcategory == CategoryOrSubcategory.category
@@ -82,7 +82,7 @@ class EntryCategoryListDialog extends StatelessWidget {
     );
   }
 
-  Widget _categoryListView({BuildContext context, List<MyCategory> categories}) {
+  Widget _categoryListView({BuildContext context, List<AppCategory> categories}) {
     return Expanded(
       flex: 1,
       child: ReorderableListView(
@@ -100,12 +100,12 @@ class EntryCategoryListDialog extends StatelessWidget {
     );
   }
 
-  List<CategoryListTile> _categoryList({List<MyCategory> categories, BuildContext context}) {
+  List<CategoryListTile> _categoryList({List<AppCategory> categories, BuildContext context}) {
     //determine if list is categories or subcategories
     bool isCategory = categoryOrSubcategory == CategoryOrSubcategory.category;
     return categories
         .map(
-          (MyCategory category) => CategoryListTile(
+          (AppCategory category) => CategoryListTile(
             key: Key(category.id),
             category: category,
             onTapEdit: () => isCategory
@@ -118,7 +118,7 @@ class EntryCategoryListDialog extends StatelessWidget {
         .toList();
   }
 
-  Future<dynamic> _entryAddEditCategory({@required MyCategory category}) {
+  Future<dynamic> _entryAddEditCategory({@required AppCategory category}) {
     return Get.dialog(
       EditCategoryDialog(
         save: (name, emojiChar, unused) => Env.store
@@ -138,7 +138,7 @@ class EntryCategoryListDialog extends StatelessWidget {
     );
   }
 
-  Future<dynamic> _entrySelectCategory({@required MyCategory category}) {
+  Future<dynamic> _entrySelectCategory({@required AppCategory category}) {
     Env.store.dispatch(UpdateEntryCategory(newCategory: category.id));
     Get.back();
     if(_entryHasSubcategories(category: category)) {
@@ -163,7 +163,7 @@ class EntryCategoryListDialog extends StatelessWidget {
 
   }
 
-  Future<dynamic> _entryAddEditSubcategory({@required MyCategory subcategory}) {
+  Future<dynamic> _entryAddEditSubcategory({@required AppCategory subcategory}) {
     return Get.dialog(
       EditCategoryDialog(
         categories: Env.store.state.singleEntryState.categories,
@@ -185,13 +185,13 @@ class EntryCategoryListDialog extends StatelessWidget {
     );
   }
 
-  Future<void> _entrySelectSubcategory({@required MyCategory subcategory}) async {
+  Future<void> _entrySelectSubcategory({@required AppCategory subcategory}) async {
     //onTap method for Entry Subcategories
     Env.store.dispatch(UpdateEntrySubcategory(subcategory: subcategory.id));
     Get.back();
   }
 
-  bool _entryHasSubcategories({@required MyCategory category}){
+  bool _entryHasSubcategories({@required AppCategory category}){
     if(category.id == NO_CATEGORY || category.id == TRANSFER_FUNDS) {
       return false;
     }

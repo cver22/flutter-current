@@ -1,9 +1,9 @@
 
 import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
@@ -20,7 +20,7 @@ import 'package:uuid/uuid.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 
-abstract class MyAction {
+abstract class AppAction {
   AppState updateState(AppState appState);
 }
 
@@ -61,7 +61,7 @@ AppState _updateTagSingleEntryState(
   );
 }
 
-class DeleteLog implements MyAction {
+class DeleteLog implements AppAction {
   //This action updates multiple states simultaneously
   final Log log;
 
@@ -115,7 +115,7 @@ class DeleteLog implements MyAction {
   }
 }
 
-class DeleteTagFromEntryScreen implements MyAction {
+class DeleteTagFromEntryScreen implements AppAction {
   final Tag tag;
 
   DeleteTagFromEntryScreen({@required this.tag});
@@ -137,7 +137,7 @@ class DeleteTagFromEntryScreen implements MyAction {
   }
 }
 
-class AddUpdateSingleEntryAndTags implements MyAction {
+class AddUpdateSingleEntryAndTags implements AppAction {
   //submits new entry to the entries list and the clear the singleEntryState
   final MyEntry entry;
 
@@ -171,7 +171,7 @@ class AddUpdateSingleEntryAndTags implements MyAction {
       if (categoryId != NO_CATEGORY && categoryId != TRANSFER_FUNDS && subcategoryId == null) {
         //if the category has been chosen but not the subcategory, automatically set subcategory to "other"
 
-        List<MyCategory> subcategories = logs[updatedEntry.logId].subcategories;
+        List<AppCategory> subcategories = logs[updatedEntry.logId].subcategories;
 
         subcategoryId = subcategories
             .firstWhere((element) => element.parentCategoryId == categoryId && element.id.contains(OTHER))
@@ -296,7 +296,7 @@ bool canDeleteCategory({@required String id}) {
   return true;
 }
 
-bool canDeleteSubcategory({@required MyCategory subcategory}) {
+bool canDeleteSubcategory({@required AppCategory subcategory}) {
   if (subcategory.id.contains(OTHER)) {
     return false;
   }
@@ -304,12 +304,12 @@ bool canDeleteSubcategory({@required MyCategory subcategory}) {
 }
 
 //used by setting and log to reorder subcategories
-List<MyCategory> reorderSubcategoriesLogSetting(
-    {@required MyCategory subcategory,
+List<AppCategory> reorderSubcategoriesLogSetting(
+    {@required AppCategory subcategory,
     @required String newParentId,
     @required String oldParentId,
-    @required List<MyCategory> subsetOfSubcategories,
-    @required List<MyCategory> subcategories,
+    @required List<AppCategory> subsetOfSubcategories,
+    @required List<AppCategory> subcategories,
     @required int newSubcategoryIndex}) {
   //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
   if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
@@ -337,7 +337,7 @@ List<MyCategory> reorderSubcategoriesLogSetting(
 }
 
 //determine if the subcategory is special and connot be reOrdered
-bool _canReorderSubcategory({@required MyCategory subcategory, @required String newParentId}) {
+bool _canReorderSubcategory({@required AppCategory subcategory, @required String newParentId}) {
   if (newParentId == NO_CATEGORY || subcategory.id.contains(OTHER) || newParentId == TRANSFER_FUNDS) {
     return false;
   }

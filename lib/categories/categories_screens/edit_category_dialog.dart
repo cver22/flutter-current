@@ -1,4 +1,4 @@
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +6,14 @@ import 'package:get/get.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
-  final Function(MyCategory) setDefault;
+  final Function(AppCategory) setDefault;
   final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
-  final MyCategory category;
+  final AppCategory category;
   final String initialParent;
 
   //TODO I can likely simplify the category and subcategory system where all parent categories have no parent ID, only subcategories do
   final CategoryOrSubcategory categoryOrSubcategory;
-  final List<MyCategory> categories;
+  final List<AppCategory> categories;
 
   const EditCategoryDialog({
     Key key,
@@ -32,17 +32,17 @@ class EditCategoryDialog extends StatefulWidget {
 
 class _EditCategoryDialogState extends State<EditCategoryDialog> {
   CategoryOrSubcategory categoryOrSubcategory;
-  MyCategory subcategory;
-  MyCategory category;
+  AppCategory subcategory;
+  AppCategory category;
   TextEditingController controller;
   String parentCategoryId;
   String name;
   String id;
-  List<MyCategory> categories = [];
+  List<AppCategory> categories = [];
   bool newCategory;
   bool showEmojiGrid;
   String emojiChar;
-  MyCategory selectedCategory;
+  AppCategory selectedCategory;
   bool canSave;
   bool notModifiable;
 
@@ -191,8 +191,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     );
   }
 
-  Widget _selectParentCategory(MyCategory initialCategory) {
-    List<MyCategory> selectableCategories = List.from(categories);
+  Widget _selectParentCategory(AppCategory initialCategory) {
+    List<AppCategory> selectableCategories = List.from(categories);
     selectableCategories.removeWhere((element) => element.id == NO_CATEGORY || element.id == TRANSFER_FUNDS);
 
     return Row(
@@ -201,10 +201,10 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         SizedBox(width: 10),
         notModifiable
             ? Text(initialCategory.name)
-            : DropdownButton<MyCategory>(
+            : DropdownButton<AppCategory>(
                 value: initialCategory,
-                items: selectableCategories.map((MyCategory category) {
-                  return DropdownMenuItem<MyCategory>(
+                items: selectableCategories.map((AppCategory category) {
+                  return DropdownMenuItem<AppCategory>(
                     value: category,
                     child: Text(
                       category.name,
@@ -227,7 +227,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     }
   }
 
-  void _onParentCategoryChanged(MyCategory category) {
+  void _onParentCategoryChanged(AppCategory category) {
     setState(() {
       parentCategoryId = category.id;
       selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);

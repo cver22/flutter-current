@@ -1,6 +1,6 @@
 
 import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:rxdart/rxdart.dart';
 
 class AppStore {
@@ -20,7 +20,7 @@ class AppStore {
     return _stateSubject;
   }
 
-  void dispatch(MyAction action) {
+  void dispatch(AppAction action) {
     _stateSubject.add(action.updateState(_stateSubject.value));
   }
 }

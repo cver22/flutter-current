@@ -1,6 +1,6 @@
 
 import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 
@@ -20,21 +20,21 @@ AppState _updateTags(
   return _updateTagState(appState, (tagState) => tagState.copyWith(tags: cloneMap));
 }
 
-class SetTagsLoading implements MyAction {
+class SetTagsLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: true));
   }
 }
 
-class SetTagsLoaded implements MyAction {
+class SetTagsLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: false));
   }
 }
 
-class SetTags implements MyAction {
+class SetTags implements AppAction {
   final Iterable<Tag> tagList;
 
   SetTags({this.tagList});

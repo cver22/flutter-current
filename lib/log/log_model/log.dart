@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/log/log_model/log_entity.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -33,8 +33,8 @@ class Log extends Equatable {
   final String currency;
   final bool archive;
   final String defaultCategory;
-  final List<MyCategory> categories;
-  final List<MyCategory> subcategories;
+  final List<AppCategory> categories;
+  final List<AppCategory> subcategories;
   final Map<String, LogMember> logMembers;
   final int order;
 
@@ -54,9 +54,9 @@ class Log extends Equatable {
       id: id,
       name: name,
       currency: currency,
-      categories: Map<String, MyCategory>.fromIterable(categories,
+      categories: Map<String, AppCategory>.fromIterable(categories,
           key: (e) => categories.indexOf(e).toString(), value: (e) => e),
-      subcategories: Map<String, MyCategory>.fromIterable(subcategories,
+      subcategories: Map<String, AppCategory>.fromIterable(subcategories,
           key: (e) => subcategories.indexOf(e).toString(), value: (e) => e),
       archive: archive,
       defaultCategory: defaultCategory,
@@ -69,8 +69,8 @@ class Log extends Equatable {
   static Log fromEntity(LogEntity entity) {
 //reorder the log members as per the user's preference prior to passing to the log
     LinkedHashMap<String, LogMember> logMemberHashMap = LinkedHashMap();
-    List<MyCategory> categories = [];
-    List<MyCategory> subcategories = [];
+    List<AppCategory> categories = [];
+    List<AppCategory> subcategories = [];
 
     for (int i = 0; i < entity.logMembers.length; i++) {
       entity.logMembers.forEach((key, value) {
@@ -120,8 +120,8 @@ class Log extends Equatable {
     String currency,
     bool archive,
     String defaultCategory,
-    List<MyCategory> categories,
-    List<MyCategory> subcategories,
+    List<AppCategory> categories,
+    List<AppCategory> subcategories,
     Map<String, LogMember> logMembers,
     int order,
   }) {

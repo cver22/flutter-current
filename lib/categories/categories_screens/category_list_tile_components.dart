@@ -1,4 +1,4 @@
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
@@ -12,7 +12,7 @@ class CategoryListTileLeading extends StatelessWidget {
     this.sublist = false,
   }) : super(key: key);
 
-  final MyCategory category;
+  final AppCategory category;
   final bool sublist;
 
   @override
@@ -75,9 +75,9 @@ class MasterCategoryListTileTrailing extends StatelessWidget {
   }) : super(key: key);
 
   final SettingsLogEntry setLogEnt;
-  final MyCategory category;
+  final AppCategory category;
   final bool expanded;
-  final List<MyCategory> categories;
+  final List<AppCategory> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +97,7 @@ class MasterCategoryListTileTrailing extends StatelessWidget {
   }
 
   _onTapAdd() {
-    MyCategory subcategory = MyCategory(parentCategoryId: category.id);
+    AppCategory subcategory = AppCategory(parentCategoryId: category.id);
     if (setLogEnt == SettingsLogEntry.log) {
       getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     } else if (setLogEnt == SettingsLogEntry.settings) {

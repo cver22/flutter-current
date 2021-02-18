@@ -9,7 +9,7 @@ import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';

@@ -1,4 +1,4 @@
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/actions/settings_actions.dart';
@@ -9,7 +9,7 @@ import 'package:get/get.dart';
 
 import '../../env.dart';
 
-Future<dynamic> getLogAddEditCategoryDialog({@required MyCategory category}) {
+Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) =>
@@ -34,7 +34,7 @@ Future<dynamic> getLogAddEditCategoryDialog({@required MyCategory category}) {
 }
 
 Future<dynamic> getLogAddEditSubcategoryDialog(
-    {@required MyCategory subcategory, @required List<MyCategory> categories}) {
+    {@required AppCategory subcategory, @required List<AppCategory> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,
@@ -58,7 +58,7 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
   );
 }
 
-Future<dynamic> getSettingsAddEditCategoryDialog({@required MyCategory category}) {
+Future<dynamic> getSettingsAddEditCategoryDialog({@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) =>
@@ -78,7 +78,7 @@ Future<dynamic> getSettingsAddEditCategoryDialog({@required MyCategory category}
   );
 }
 
-Future<dynamic> getSettingsAddEditSubcategoryDialog({@required MyCategory subcategory, @required List<MyCategory> categories}) {
+Future<dynamic> getSettingsAddEditSubcategoryDialog({@required AppCategory subcategory, @required List<AppCategory> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,

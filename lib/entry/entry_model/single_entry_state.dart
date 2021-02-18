@@ -1,8 +1,8 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
@@ -13,8 +13,8 @@ class SingleEntryState extends Equatable {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
   final Map<String, Tag> tags; //collection of all log tags for updating if required
-  final List<MyCategory> categories; // collection of all log categories for updating if required;
-  final List<MyCategory> subcategories; //collection of all log subcategories for updating if required;
+  final List<AppCategory> categories; // collection of all log categories for updating if required;
+  final List<AppCategory> subcategories; //collection of all log subcategories for updating if required;
   final bool processing;
   final bool userUpdated;
   final Maybe<FocusNode> commentFocusNode;
@@ -37,8 +37,8 @@ class SingleEntryState extends Equatable {
       selectedEntry: Maybe.none(),
       selectedTag: Maybe.none(),
       tags: LinkedHashMap(),
-      categories: List<MyCategory>(),
-      subcategories: List<MyCategory>(),
+      categories: List<AppCategory>(),
+      subcategories: List<AppCategory>(),
       processing: true,
       userUpdated: false,
       commentFocusNode: Maybe.none(),
@@ -66,8 +66,8 @@ class SingleEntryState extends Equatable {
     Maybe<MyEntry> selectedEntry,
     Maybe<Tag> selectedTag,
     Map<String, Tag> tags,
-    List<MyCategory> categories,
-    List<MyCategory> subcategories,
+    List<AppCategory> categories,
+    List<AppCategory> subcategories,
     bool processing,
     bool userUpdated,
     Maybe<FocusNode> commentFocusNode,

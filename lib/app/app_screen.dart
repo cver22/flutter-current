@@ -3,7 +3,7 @@ import 'package:expenses/entries/entries_screen/entries_screen.dart';
 import 'package:expenses/log/log_ui/logs_screen.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';

@@ -1,10 +1,10 @@
 
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 class CategoryButton extends StatelessWidget {
-  final MyCategory category;
+  final AppCategory category;
   final Function onPressed;
   final String label;
 

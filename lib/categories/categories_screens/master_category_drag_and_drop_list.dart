@@ -1,6 +1,6 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile_components.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
@@ -11,8 +11,8 @@ import 'package:flutter/material.dart';
 import '../../env.dart';
 
 class MasterCategoryDragAndDropList extends StatelessWidget {
-  final List<MyCategory> categories;
-  final List<MyCategory> subcategories;
+  final List<AppCategory> categories;
+  final List<AppCategory> subcategories;
   final SettingsLogEntry setLogEnt;
 
   const MasterCategoryDragAndDropList(
@@ -51,8 +51,8 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       expandedCategories = List.from(Env.store.state.settingsState.expandedCategories);
     }
 
-    MyCategory category = categories[outerIndex];
-    List<MyCategory> subs = List.from(subcategories);
+    AppCategory category = categories[outerIndex];
+    List<AppCategory> subs = List.from(subcategories);
     subs.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
     return DragAndDropListExpansion(
       initiallyExpanded: expandedCategories[outerIndex],
@@ -77,7 +77,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     );
   }
 
-  _buildItem({@required MyCategory subcategory, @required List<MyCategory> categories}) {
+  _buildItem({@required AppCategory subcategory, @required List<AppCategory> categories}) {
     return DragAndDropItem(
         child: CategoryListTile(
           inset: true,
@@ -118,7 +118,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     }
   }
 
-  Widget _emptyContents({@required MyCategory category}) {
+  Widget _emptyContents({@required AppCategory category}) {
     String text = 'No subcategories please add one.';
 
     if (category.id == NO_CATEGORY) {

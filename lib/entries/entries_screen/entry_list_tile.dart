@@ -1,5 +1,5 @@
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
@@ -67,9 +67,9 @@ class EntryListTile extends StatelessWidget {
   }
 
   String categoriesSubcategoriesTags(Log log) {
-    MyCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
+    AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
         orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
-    MyCategory subcategory =
+    AppCategory subcategory =
         log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
     String tagString = _buildTagString(logId: log.id);
     String categoryText = '';

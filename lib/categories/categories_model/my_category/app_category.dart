@@ -1,16 +1,16 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category_entity.dart';
 import 'package:flutter/material.dart';
 
 @immutable
-class MyCategory extends Equatable {
+class AppCategory extends Equatable {
   final String id;
   final String name;
   final String emojiChar;
   final String parentCategoryId; //only used for subcategories
 
 
-  MyCategory( {this.id, this.name = '', this.emojiChar = '\u{1F4B2}',this.parentCategoryId});
+  AppCategory( {this.id, this.name = '', this.emojiChar = '\u{1F4B2}',this.parentCategoryId});
 
   @override
   List<Object> get props => [id, name, emojiChar, parentCategoryId];
@@ -20,8 +20,8 @@ class MyCategory extends Equatable {
     return 'MyCategory {id: $id, name: $name, emojiChar: $emojiChar, parentCategoryID: $parentCategoryId}';
   }
 
-  MyCategoryEntity toEntity() {
-    return MyCategoryEntity(
+  AppCategoryEntity toEntity() {
+    return AppCategoryEntity(
       id: id,
       name: name,
       emojiChar: emojiChar,
@@ -29,8 +29,8 @@ class MyCategory extends Equatable {
     );
   }
 
-  static MyCategory fromEntity(MyCategoryEntity entity) {
-    return MyCategory(
+  static AppCategory fromEntity(AppCategoryEntity entity) {
+    return AppCategory(
       id: entity.id,
       name: entity.name,
       emojiChar: entity.emojiChar,
@@ -38,7 +38,7 @@ class MyCategory extends Equatable {
     );
   }
 
-  MyCategory copyWith({
+  AppCategory copyWith({
     String id,
     String name,
     String emojiChar,
@@ -51,7 +51,7 @@ class MyCategory extends Equatable {
       return this;
     }
 
-    return new MyCategory(
+    return new AppCategory(
       id: id ?? this.id,
       name: name ?? this.name,
       emojiChar: emojiChar ?? this.emojiChar,

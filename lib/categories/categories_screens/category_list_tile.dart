@@ -1,9 +1,9 @@
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile_components.dart';
 import 'package:flutter/material.dart';
 
 class CategoryListTile extends StatelessWidget {
-  final MyCategory category;
+  final AppCategory category;
   final VoidCallback onTap;
   final VoidCallback onTapEdit;
   final bool inset;

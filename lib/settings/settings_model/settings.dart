@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
-import 'package:expenses/categories/categories_model/my_category/my_category_entity.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category_entity.dart';
 import 'package:expenses/settings/settings_model/settings_entity.dart';
 import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
@@ -15,15 +15,15 @@ class Settings extends Equatable {
       this.autoInsertDecimalPoint});
 
   final String homeCurrency;
-  final List<MyCategory> defaultCategories;
-  final List<MyCategory> defaultSubcategories;
+  final List<AppCategory> defaultCategories;
+  final List<AppCategory> defaultSubcategories;
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
 
   Settings copyWith(
       {String homeCurrency,
-      List<MyCategory> defaultCategories,
-      List<MyCategory> defaultSubcategories,
+      List<AppCategory> defaultCategories,
+      List<AppCategory> defaultSubcategories,
       String defaultLogId,
       String autoInsertDecimalPoint}) {
     return Settings(
@@ -44,12 +44,12 @@ class Settings extends Equatable {
 
   SettingsEntity toEntity() {
     //converts from model to entities
-    List<MyCategoryEntity> defaultCategoryEntities = [];
+    List<AppCategoryEntity> defaultCategoryEntities = [];
     defaultCategories.every((e) {
       defaultCategoryEntities.add(e.toEntity());
       return true;
     });
-    List<MyCategoryEntity> defaultSubcategoryEntities = [];
+    List<AppCategoryEntity> defaultSubcategoryEntities = [];
     defaultSubcategories.every((e) {
       defaultSubcategoryEntities.add(e.toEntity());
       return true;
@@ -66,15 +66,15 @@ class Settings extends Equatable {
 
   static Settings fromEntity(SettingsEntity entity) {
     //converts entity back to model
-    List<MyCategory> returnedDefaultCategories = [];
+    List<AppCategory> returnedDefaultCategories = [];
     entity.defaultCategoryEntities.every((e) {
-      returnedDefaultCategories.add(MyCategory.fromEntity(e));
+      returnedDefaultCategories.add(AppCategory.fromEntity(e));
       return true;
     });
 
-    List<MyCategory> returnedDefaultSubcategories = [];
+    List<AppCategory> returnedDefaultSubcategories = [];
     entity.defaultSubcategoryEntities.every((e) {
-      returnedDefaultSubcategories.add(MyCategory.fromEntity(e));
+      returnedDefaultSubcategories.add(AppCategory.fromEntity(e));
       return true;
     });
 

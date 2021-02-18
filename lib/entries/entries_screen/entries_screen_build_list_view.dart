@@ -1,5 +1,5 @@
 import 'package:expenses/entries/entries_screen/entry_list_tile.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:flutter/material.dart';
 

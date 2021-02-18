@@ -1,12 +1,12 @@
 import 'dart:collection';
 
-import 'package:expenses/categories/categories_model/my_category/my_category.dart';
+import 'package:expenses/categories/categories_model/my_category/app_category.dart';
 import 'package:expenses/entries/entries_model/entries_state.dart';
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_totals_model/log_total.dart';
 import 'package:expenses/log/log_totals_model/log_totals_state.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
@@ -46,21 +46,21 @@ AppState _updateEntriesState(
   );
 }*/
 
-class SetEntriesLoading implements MyAction {
+class SetEntriesLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: true));
   }
 }
 
-class SetEntriesLoaded implements MyAction {
+class SetEntriesLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: false));
   }
 }
 
-class SetEntries implements MyAction {
+class SetEntries implements AppAction {
   final Iterable<MyEntry> entryList;
 
   SetEntries({this.entryList});
@@ -84,19 +84,19 @@ class SetEntries implements MyAction {
   }
 }
 
-class SetEntriesOrder implements MyAction {
+class SetEntriesOrder implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending));
   }
 }
 
-class DeleteSelectedEntry implements MyAction {
+class DeleteSelectedEntry implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Env.store.dispatch(SingleEntryProcessing());
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<MyCategory> categories = appState.singleEntryState.categories;
+    List<AppCategory> categories = appState.singleEntryState.categories;
     Map<String, Tag> tags = appState.singleEntryState.tags;
     EntriesState updatedEntriesState = appState.entriesState;
     updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);

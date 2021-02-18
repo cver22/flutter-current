@@ -1,4 +1,4 @@
-import 'package:expenses/entry/entry_model/my_entry.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
