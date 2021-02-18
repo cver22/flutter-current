@@ -5,7 +5,7 @@ import 'package:expenses/login_register/login_register_model/login_reg_state.dar
 import 'package:expenses/login_register/login_register_ui/create_account_button.dart';
 import 'package:expenses/login_register/login_register_ui/google_login_button.dart';
 import 'package:expenses/login_register/login_register_ui/login_register_button.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/login_reg_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';

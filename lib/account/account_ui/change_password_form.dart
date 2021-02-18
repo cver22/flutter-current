@@ -1,6 +1,6 @@
 import 'package:expenses/account/account_model/account_state.dart';
 import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/account_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 

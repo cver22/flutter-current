@@ -2,7 +2,7 @@ import 'package:expenses/categories/categories_model/my_category/my_category.dar
 import 'package:expenses/entry/entry_model/my_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';

@@ -4,7 +4,7 @@ import 'dart:io';
 import 'package:expenses/env.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_entity.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/settings_actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/services.dart';

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/tag_actions.dart';
 import 'package:expenses/store/app_store.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tag_repository.dart';

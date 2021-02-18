@@ -1,6 +1,8 @@
 import 'package:expenses/categories/categories_model/my_category/my_category.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/logs_actions.dart';
+import 'package:expenses/store/actions/settings_actions.dart';
+
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';

@@ -1,8 +1,7 @@
 import 'package:expenses/env.dart';
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/login_reg_actions.dart';
 import 'package:flutter/material.dart';
 
 class CreateAccountButton extends StatelessWidget {

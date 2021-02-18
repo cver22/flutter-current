@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/logs_repository.dart';
-import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/app_store.dart';
 
 import 'package:flutter/foundation.dart';

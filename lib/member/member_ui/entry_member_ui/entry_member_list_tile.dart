@@ -1,5 +1,6 @@
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/store/actions/my_actions.dart';
+import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -13,7 +14,9 @@ class EntryMemberListTile extends StatefulWidget {
   final bool singleMemberLog;
   final bool autoFocus;
 
-  const EntryMemberListTile({Key key, @required this.member, @required this.name, this.singleMemberLog = false, this.autoFocus = false}) : super(key: key);
+  const EntryMemberListTile(
+      {Key key, @required this.member, @required this.name, this.singleMemberLog = false, this.autoFocus = false})
+      : super(key: key);
 
   @override
   _EntryMemberListTileState createState() => _EntryMemberListTileState();
@@ -33,9 +36,20 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
     _spendingController = member.spendingController;
     _payingFocusNode = member.payingFocusNode;
     _spendingFocusNode = member.spendingFocusNode;
-    if(widget.autoFocus && member.paying) {
+    if (widget.autoFocus && member.paying) {
       _payingFocusNode.requestFocus();
     }
+    _payingFocusNode.addListener(() {
+      if (!member.paying) {
+        Env.store.dispatch(ToggleMemberPaying(member: member));
+      }
+    });
+    _spendingFocusNode.addListener(() {
+
+      if (!member.spending) {
+        Env.store.dispatch(ToggleMemberSpending(member: member));
+      }
+    });
 
     super.initState();
   }
@@ -58,13 +72,16 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
         mainAxisAlignment: MainAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          ConstrainedBox(constraints: BoxConstraints(maxWidth: 120.0),
+          ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: 120.0),
               child: Text(widget?.name ?? 'Please enter a name in account')),
-          Expanded( flex: 5,
+          Expanded(
+            flex: 5,
             child: Container(),
           ),
           // paying check box
-          Row(mainAxisSize: MainAxisSize.min,
+          Row(
+            mainAxisSize: MainAxisSize.min,
             children: [
               _buildCheckBox(
                   checked: member.paying, onChanged: (value) => Env.store.dispatch(ToggleMemberPaying(member: member))),
@@ -76,20 +93,22 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               ),
             ],
           ),
-          widget.singleMemberLog ? Container() : Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              _buildCheckBox(
-                  checked: member.spending,
-                  onChanged: (value) => Env.store.dispatch(ToggleMemberSpending(member: member))),
-              _buildTextFormField(
-                paidOrSpent: PaidOrSpent.spent,
-                controller: _spendingController,
-                focusNode: _spendingFocusNode,
-                member: member,
-              ),
-            ],
-          ),
+          widget.singleMemberLog
+              ? Container()
+              : Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _buildCheckBox(
+                        checked: member.spending,
+                        onChanged: (value) => Env.store.dispatch(ToggleMemberSpending(member: member))),
+                    _buildTextFormField(
+                      paidOrSpent: PaidOrSpent.spent,
+                      controller: _spendingController,
+                      focusNode: _spendingFocusNode,
+                      member: member,
+                    ),
+                  ],
+                ),
           // spending checkbox
         ],
       ),
@@ -129,13 +148,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             onFieldSubmitted: (value) {
               Env.store.dispatch(EntryNextFocus());
             },
-            onTap: () {
-              focusNode.requestFocus();
-              print('this focusNode HasFocus: ${focusNode.hasFocus}');
-              print(
-                  'spending focus node: ${member.spendingFocusNode.hasFocus} and paying focus node: ${member.payingFocusNode.hasFocus}');
-            },
-            //focus on this text field if it is tapped on
+
             onChanged: (newValue) {
               int intValue = parseNewValue(newValue: newValue);
               if (paidOrSpent == PaidOrSpent.paid) {
