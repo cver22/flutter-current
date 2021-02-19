@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/maybe.dart';

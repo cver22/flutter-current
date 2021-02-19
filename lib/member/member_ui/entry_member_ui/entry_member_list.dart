@@ -7,8 +7,9 @@ class EntryMembersListView extends StatelessWidget {
   final Map<String, EntryMember> members;
   final Log log;
   final bool userUpdated;
+  final String entryId;
 
-  const EntryMembersListView({Key key, @required this.members, @required this.log, @required this.userUpdated})
+  const EntryMembersListView({Key key, @required this.members, @required this.log, @required this.userUpdated, @required this.entryId})
       : super(key: key);
 
   @override
@@ -22,7 +23,7 @@ class EntryMembersListView extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final EntryMember member = membersList[index];
         return EntryMemberListTile(
-          autoFocus: !userUpdated,
+          autoFocus: !userUpdated /*&& entryId == null*/, //true if new entry and not yet modified
           member: member,
           name: log.logMembers[member.uid].name,
           singleMemberLog: membersList.length < 2,

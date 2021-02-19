@@ -1,5 +1,5 @@
 import 'package:expenses/auth_user/models/user.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';

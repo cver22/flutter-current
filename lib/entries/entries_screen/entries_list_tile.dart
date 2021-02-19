@@ -1,4 +1,4 @@
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -10,11 +10,11 @@ import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class EntryListTile extends StatelessWidget {
+class EntriesListTile extends StatelessWidget {
   final MyEntry entry;
   final Map<String, Tag> tags;
 
-  const EntryListTile({Key key, @required this.entry, @required this.tags}) : super(key: key);
+  const EntriesListTile({Key key, @required this.entry, @required this.tags}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -29,12 +29,25 @@ class EntryListTile extends StatelessWidget {
         children: [
           ListTile(
             leading: Text(
-              '${displayChar(log)}',
+              '${displayChar(log: log)}',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: EMOJI_SIZE),
             ),
-            title: entry?.comment != null ? Text(entry.comment) : Text(''),
-            subtitle: Text(categoriesSubcategoriesTags(log)),
+            title: Transform.translate(
+              offset: Offset(-16, 0),
+              child: categoriesSubcategories(log: log),
+            ),
+            subtitle: Transform.translate(
+              offset: Offset(-16, 0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _buildTagWidget(logId: log.id),
+                  entry?.comment != null && entry.comment.length > 0 ? Text(entry.comment) : Container(),
+                ],
+              ),
+            ),
             trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
             onTap: () => {
               Env.store.dispatch(SelectEntry(entryId: entry.id)),
@@ -49,53 +62,62 @@ class EntryListTile extends StatelessWidget {
     }
   }
 
-  String displayChar(Log log) {
-    String emojiChar = '\u{2757}';
+  String displayChar({@required Log log}) {
+    String emojiChar;
     String subcategoryId = entry?.subcategoryId;
 
-    if (subcategoryId != null && log != null && !subcategoryId.contains(OTHER)) {
-      emojiChar =
-          log.subcategories.firstWhere((element) => element.id == subcategoryId, orElse: () => null)?.emojiChar ??
-              emojiChar;
-    } else if (entry?.categoryId != null && log != null) {
+    if (subcategoryId != null && !subcategoryId.contains(OTHER)) {
+      emojiChar = log.subcategories.firstWhere((element) => element.id == subcategoryId, orElse: () => null)?.emojiChar;
+    }
+
+    if (entry?.categoryId != null && emojiChar == null) {
       emojiChar =
           log.categories.firstWhere((element) => element.id == entry.categoryId, orElse: () => null)?.emojiChar ??
-              emojiChar;
+              '\u{2757}';
     }
 
     return emojiChar;
   }
 
-  String categoriesSubcategoriesTags(Log log) {
+  Text categoriesSubcategories({@required Log log}) {
     AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
         orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
     AppCategory subcategory =
         log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
-    String tagString = _buildTagString(logId: log.id);
     String categoryText = '';
     String subcategoryText = '';
 
-    categoryText = '${category.emojiChar} ${category.name}';
+    categoryText = '${category.name}';
+    if (subcategory?.emojiChar != null) {
+      categoryText = '${category.emojiChar} $categoryText';
+    }
 
     if (subcategory != null) {
-      subcategoryText = ', ${subcategory.emojiChar} ${subcategory.name}';
+      subcategoryText = '${subcategory.name}, ';
     }
 
-    return '$categoryText$subcategoryText$tagString';
+    return Text('$subcategoryText$categoryText');
   }
 
-  String _buildTagString({@required String logId}) {
+  Widget _buildTagWidget({@required String logId}) {
     String tagString = '';
-    if (entry.tagIDs.length > 0) {
-      entry.tagIDs.forEach((tagId) {
-        Tag tag = tags[tagId];
 
-        if (tag != null) {
-          tagString += ', #${tag.name}';
-        }
-      });
+    if (entry.tagIDs.length > 0) {
+      for (int i = 0; i < entry.tagIDs.length; i++) {
+        Tag tag = tags[entry.tagIDs[i]];
+       if(tag != null) {
+         tagString += '#${tag.name}';
+
+         if (i < entry.tagIDs.length - 1) {
+           tagString += ', ';
+         }
+       }
+
+      }
+
+      return Text(tagString);
     }
 
-    return tagString;
+    return Container();
   }
 }

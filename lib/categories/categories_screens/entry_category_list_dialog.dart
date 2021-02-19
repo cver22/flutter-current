@@ -1,10 +1,9 @@
 import 'package:expenses/app/common_widgets/empty_content.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
-
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/keys.dart';

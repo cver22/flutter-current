@@ -1,6 +1,6 @@
 import 'dart:collection';
 
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/log/log_model/log.dart';

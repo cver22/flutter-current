@@ -1,4 +1,5 @@
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';

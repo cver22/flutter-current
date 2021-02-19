@@ -1,4 +1,4 @@
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/log.dart';
@@ -61,7 +61,7 @@ class SetNewSelectedEntry implements AppAction {
     Log log = appState.logsState
         .logs[logId ?? appState.settingsState.settings?.value?.defaultLogId ?? appState.logsState.logs.keys.first];
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
-    Map<String, EntryMember> members = _setMembersList(log: log, memberId: memberId);
+    Map<String, EntryMember> members = _setMembersList(log: log, memberId: memberId, userId: appState.authState.user.value.id);
 
     entry = entry.copyWith(
         logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);
@@ -231,17 +231,18 @@ class UpdateEntryCategory implements AppAction {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     String oldCategoryId = entry.categoryId;
 
-    entry.tagIDs.forEach((tagId) {
-      Tag tag = tags[tagId];
+    if (entry.tagIDs.length > 0) {
+      entry.tagIDs.forEach((tagId) {
+        Tag tag = tags[tagId];
 
-      //uses NO_CATEGORY for increment and decrement default as the actions utilize NO_CATEGORY until it is confirmed by the user
-      tag = _decrementCategoryFrequency(categoryId: oldCategoryId ?? NO_CATEGORY, updatedTag: tag);
+        //uses NO_CATEGORY for increment and decrement default as the actions utilize NO_CATEGORY until it is confirmed by the user
+        tag = _decrementCategoryFrequency(categoryId: oldCategoryId ?? NO_CATEGORY, updatedTag: tag);
 
-      tag = _incrementCategoryFrequency(categoryId: newCategory ?? NO_CATEGORY, updatedTag: tag);
+        tag = _incrementCategoryFrequency(categoryId: newCategory ?? NO_CATEGORY, updatedTag: tag);
 
-      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
-    });
-
+        tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+      });
+    }
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
@@ -724,7 +725,6 @@ class EntryMemberFocus implements AppAction {
 }
 
 class EntryNextFocus implements AppAction {
-
   final PaidOrSpent paidOrSpent;
 
   EntryNextFocus({this.paidOrSpent});
@@ -738,7 +738,6 @@ class EntryNextFocus implements AppAction {
     bool membersHaveFocus = false;
     FocusNode commentFocusNode = appState.singleEntryState.commentFocusNode.value;
     FocusNode tagFocusNode = appState.singleEntryState.tagFocusNode.value;
-
 
     for (int i = 0; i < memberList.length; i++) {
       FocusNode focusNode;
@@ -754,14 +753,20 @@ class EntryNextFocus implements AppAction {
         focusNode = memberList[i].payingFocusNode;
         focusNode.unfocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: focusNode));
-      } else if (paidOrSpent == PaidOrSpent.paid && memberFocusIndex != null && i > memberFocusIndex && memberList[i].paying == true) {
+      } else if (paidOrSpent == PaidOrSpent.paid &&
+          memberFocusIndex != null &&
+          i > memberFocusIndex &&
+          memberList[i].paying == true) {
         //focus on next paying member if there is one
         focusNode = memberList[i].payingFocusNode;
         focusNode.requestFocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: focusNode));
         membersHaveFocus = true;
         break;
-      }else if (paidOrSpent == PaidOrSpent.spent && memberFocusIndex != null && i > memberFocusIndex && memberList[i].spending == true) {
+      } else if (paidOrSpent == PaidOrSpent.spent &&
+          memberFocusIndex != null &&
+          i > memberFocusIndex &&
+          memberList[i].spending == true) {
         focusNode = memberList[i].spendingFocusNode;
         focusNode.requestFocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: focusNode));
@@ -870,7 +875,7 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
   return entryMembers;
 }
 
-Map<String, EntryMember> _setMembersList({@required Log log, @required String memberId}) {
+Map<String, EntryMember> _setMembersList({@required Log log, @required String memberId, @required String userId}) {
   //adds the log members to the entry member list when creating a new entry of changing logs
 
   Map<String, EntryMember> members = {};
@@ -881,7 +886,7 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
         () => EntryMember(
               uid: value.uid,
               order: value.order,
-              paying: value.role == OWNER ? true : false,
+              paying: userId == value.uid? true : false,
               payingController: TextEditingController(),
               spendingController: TextEditingController(),
               payingFocusNode: FocusNode(),
@@ -889,8 +894,11 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
             ));
   });
 
-  //sets the selected user as paying unless the action is triggered from the FAB
-  members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
+  if(memberId != null) {
+    //sets the selected user as paying unless the action is triggered from the FAB
+    members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
+  }
+
 
   return members;
 }

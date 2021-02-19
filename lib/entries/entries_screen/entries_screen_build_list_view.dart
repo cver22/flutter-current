@@ -1,4 +1,4 @@
-import 'package:expenses/entries/entries_screen/entry_list_tile.dart';
+import 'package:expenses/entries/entries_screen/entries_list_tile.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:flutter/material.dart';
@@ -25,7 +25,7 @@ class EntriesScreenBuildListView extends StatelessWidget {
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];
-          return EntryListTile(entry: _entry, tags: tags);
+          return EntriesListTile(entry: _entry, tags: tags);
         });
   }
 }

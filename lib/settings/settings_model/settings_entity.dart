@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category_entity.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 

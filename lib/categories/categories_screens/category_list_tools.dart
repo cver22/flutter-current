@@ -1,4 +1,5 @@
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/actions/settings_actions.dart';

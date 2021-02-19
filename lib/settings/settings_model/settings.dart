@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category_entity.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category_entity.dart';
 import 'package:expenses/settings/settings_model/settings_entity.dart';
 import 'package:meta/meta.dart';
-import 'package:uuid/uuid.dart';
+
 
 @immutable
 class Settings extends Equatable {

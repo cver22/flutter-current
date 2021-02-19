@@ -1,5 +1,5 @@
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
-import 'package:expenses/app/common_widgets/my_currency_picker.dart';
+import 'package:expenses/app/common_widgets/app_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';

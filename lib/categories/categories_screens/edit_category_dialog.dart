@@ -1,4 +1,5 @@
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';

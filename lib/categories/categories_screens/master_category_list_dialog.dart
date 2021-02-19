@@ -1,6 +1,6 @@
 import 'package:expenses/app/common_widgets/empty_content.dart';
 import 'package:expenses/app/common_widgets/error_widget.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/categories/categories_screens/master_category_drag_and_drop_list.dart';
 import 'package:expenses/log/log_model/log.dart';

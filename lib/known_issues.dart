@@ -26,7 +26,6 @@
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
 // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
 //TODO change all data models to Maybe
-//TODO clicking in a focusNode value for a member should tick its box
 //TODO spent redistribution methods that account for multiple people
 //TODO method to change the photo
 //TODO how to handle auto scroll on the account screen and login screen
@@ -34,16 +33,14 @@
 //TODO confirm change password tool works as I have it commented out at the moment
 //TODO track subcategory tag frequency
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
-//TODO be able to set preferred payer on the FAB as well
 //TODO add calculator
-
+//TODO entries tiles seem to be of inconsistent size
 
 
 //TODO GENERAL IMPORTANT *************************
 
 
 //TODO START HERE
-//improve entries tiles as per Ana
 //build filter dialog
 //build function to return filtered list back to the widget
 

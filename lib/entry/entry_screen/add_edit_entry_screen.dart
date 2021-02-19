@@ -1,7 +1,7 @@
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
-import 'package:expenses/app/common_widgets/my_currency_picker.dart';
-import 'package:expenses/categories/categories_model/my_category/app_category.dart';
+import 'package:expenses/app/common_widgets/app_currency_picker.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/entry_category_list_dialog.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_screen/entry_date_button.dart';
@@ -159,7 +159,7 @@ class AddEditEntryScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-        EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log, userUpdated: entryState.userUpdated),
+        EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log, userUpdated: entryState.userUpdated, entryId: entry.id),
         SizedBox(height: 10.0),
         EntryDateButton(context: context, entry: entry),
         SizedBox(height: 10.0),
