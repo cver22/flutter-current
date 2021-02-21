@@ -14,7 +14,7 @@ class EntriesState extends Equatable {
   final Maybe<EntriesFilter> chartFilter;
   final bool descending;
 
-  EntriesState( {this.entries, this.isLoading,this.entriesFilter, this.chartFilter, this.descending});
+  EntriesState({this.entries, this.isLoading, this.entriesFilter, this.chartFilter, this.descending});
 
   factory EntriesState.initial() {
     return EntriesState(
@@ -55,6 +55,4 @@ class EntriesState extends Equatable {
       descending: descending ?? this.descending,
     );
   }
-
-
 }

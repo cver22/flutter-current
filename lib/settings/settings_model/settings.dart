@@ -4,7 +4,6 @@ import 'package:expenses/categories/categories_model/app_category/app_category_e
 import 'package:expenses/settings/settings_model/settings_entity.dart';
 import 'package:meta/meta.dart';
 
-
 @immutable
 class Settings extends Equatable {
   Settings(

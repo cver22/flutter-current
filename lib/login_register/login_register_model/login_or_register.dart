@@ -1,1 +1,1 @@
-enum LoginOrRegister{login, register}
+enum LoginOrRegister { login, register }

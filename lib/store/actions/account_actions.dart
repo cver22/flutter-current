@@ -5,9 +5,9 @@ import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/validators.dart';
 
 AppState _updateAccountState(
-    AppState appState,
-    AccountState update(AccountState accountState),
-    ) {
+  AppState appState,
+  AccountState update(AccountState accountState),
+) {
   return appState.copyWith(accountState: update(appState.accountState));
 }
 
@@ -35,7 +35,8 @@ class AccountUpdateSuccess implements AppAction {
 class ShowHidePasswordForm implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(appState, (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm));
+    return _updateAccountState(
+        appState, (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm));
   }
 }
 
@@ -57,7 +58,9 @@ class AccountValidateOldPassword implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(
-        appState, (accountState) => accountState.copyWith(isOldPasswordValid: Validators.isValidPassword(password), loginStatus: LoginStatus.updated));
+        appState,
+        (accountState) => accountState.copyWith(
+            isOldPasswordValid: Validators.isValidPassword(password), loginStatus: LoginStatus.updated));
   }
 }
 
@@ -77,8 +80,10 @@ class AccountValidateNewPassword implements AppAction {
 
     return _updateAccountState(
         appState,
-            (accountState) => accountState.copyWith(
-            isNewPasswordValid: Validators.isValidPassword(newPassword), newPasswordsMatch: passwordsMatch, loginStatus: LoginStatus.updated));
+        (accountState) => accountState.copyWith(
+            isNewPasswordValid: Validators.isValidPassword(newPassword),
+            newPasswordsMatch: passwordsMatch,
+            loginStatus: LoginStatus.updated));
   }
 }
 

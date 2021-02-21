@@ -10,8 +10,6 @@ import 'package:expenses/store/app_store.dart';
 import 'package:expenses/tags/tag_fetcher.dart';
 import 'package:expenses/tags/tag_repository.dart';
 
-
-
 class Env {
   static final store = AppStore(AppState.initial());
 

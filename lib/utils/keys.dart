@@ -9,7 +9,6 @@ class ExpenseKeys {
   static final appScreen = const Key('__appScreen__');
   static final splashScreen = const Key('__splashScreen__');
 
-
   // Tabs
   /*static final tabSelector = const Key('__tabSelector__');
   static final logsTab = const Key('__logsTab__');
@@ -34,13 +33,12 @@ class ExpenseKeys {
   static final entriesScreen = const Key('__entriesScreen__');
   static final addEditEntriesScreen = const Key('__addEditEntriesScreen__');
 
-
   // Logs Page
   static final logsScreen = const Key('__logsScreen__');
   static final addEditLogScreen = const Key('__addEditLogScreen__');
   static final qrReader = const Key("__qrReader__");
 
   // Categories Dialogs
-static final categoriesDialog = const Key('__categoriesDialog___');
-static final subcategoriesDialog = const Key('__subcategoriesDialog');
+  static final categoriesDialog = const Key('__categoriesDialog___');
+  static final subcategoriesDialog = const Key('__subcategoriesDialog');
 }

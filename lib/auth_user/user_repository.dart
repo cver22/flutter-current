@@ -93,10 +93,10 @@ class FirebaseUserRepository implements UserRepository {
   //only available if user has signed in with email
   @override
   Future<bool> updatePassword({@required String currentPassword, @required String newPassword}) async {
-   // FirebaseUser user = await _firebaseAuth.currentUser();
+    // FirebaseUser user = await _firebaseAuth.currentUser();
     bool success = false;
 
-   // AuthCredential authCredentials = EmailAuthProvider.getCredential(email: user.email, password: currentPassword);
+    // AuthCredential authCredentials = EmailAuthProvider.getCredential(email: user.email, password: currentPassword);
 
     /*await user.reauthenticateWithCredential(authCredentials).then((_) async {
       await user.updatePassword(newPassword).then((_) {

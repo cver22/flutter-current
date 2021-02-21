@@ -1,1 +1,1 @@
-enum AppTab {logs, entries}
+enum AppTab { logs, entries }

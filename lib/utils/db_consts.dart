@@ -16,7 +16,8 @@ const String NAME = 'name';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
 const String DEFAULT_CATEGORY = 'defaultCategory';
 enum CategoryOrSubcategory { category, subcategory }
-enum SettingsLogEntry { settings, log, entry }
+enum SettingsLogFilter { settings, log, filter }
+enum EntriesCharts {entries, charts}
 enum TagCollectionType { entry, category, log }
 //TODO implement filtering later
 //enum GroupBy {day, week, month, year}
@@ -75,9 +76,12 @@ const double RAISED_BUTTON_ELEVATION = 3.0;
 const double RAISED_BUTTON_CIRCULAR_RADIUS = 5.0;
 const double DIALOG_ELEVATION = 5.0;
 const double DIALOG_BORDER_RADIUS = 10.0;
+const double DIALOG_EDGE_INSETS = 25.0;
+const Color ACTIVE_HINT_COLOR = Color(0xFF757575);
+const Color INACTIVE_HINT_COLOR = Color(0xFFD6D6D6);
 
 //DATE constants
-const List MONTHS_LONG = [
+const List<String> MONTHS_LONG = [
   'January',
   'February',
   'March',
@@ -92,17 +96,4 @@ const List MONTHS_LONG = [
   'December'
 ];
 
-const List MONTHS_SHORT = [
-  'Jan',
-  'Feb',
-  'Mar',
-  'Apr',
-  'May',
-  'Jun',
-  'Jul',
-  'Aug',
-  'Sep',
-  'Oct',
-  'Nov',
-  'Dec'
-];
+const List<String> MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];

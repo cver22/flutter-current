@@ -22,7 +22,8 @@ class LogTotal extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props => [logMembers, thisMonthTotalPaid, lastMonthTotalPaid, sameMonthLastYearTotalPaid, averagePerDay];
+  List<Object> get props =>
+      [logMembers, thisMonthTotalPaid, lastMonthTotalPaid, sameMonthLastYearTotalPaid, averagePerDay];
 
   LogTotal copyWith({
     Map<String, LogMember> logMembers,

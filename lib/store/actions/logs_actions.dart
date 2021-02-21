@@ -57,7 +57,8 @@ class UpdateSelectedLog implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true));
+    return _updateLogState(
+        appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true));
   }
 }
 
@@ -453,7 +454,6 @@ class ReorderSubcategoryFromLogScreen implements AppAction {
             selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories))));
   }
 }
-
 
 //TODO this should be combined with ClearEntryState()
 class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements AppAction {

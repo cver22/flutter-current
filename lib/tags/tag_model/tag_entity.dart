@@ -16,8 +16,7 @@ class TagEntity extends Equatable {
   final Map<String, int> tagCategoryFrequency; //how often the tag is used for each category
   final List<String> memberList; //used for retrieval from database
 
-  const TagEntity(
-      {this.logId, this.id, this.name, this.tagLogFrequency, this.tagCategoryFrequency, this.memberList});
+  const TagEntity({this.logId, this.id, this.name, this.tagLogFrequency, this.tagCategoryFrequency, this.memberList});
 
   @override
   List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
@@ -34,13 +33,13 @@ class TagEntity extends Equatable {
 
   static TagEntity fromSnapshot(DocumentSnapshot snap) {
     return TagEntity(
-        logId: snap.data[LOG_ID],
-        id: snap.documentID,
-        name: snap.data[NAME],
-        tagLogFrequency: snap.data[TAG_LOG_FREQUENCY],
-        tagCategoryFrequency:
-        (snap.data[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-        memberList: List<String>.from(snap.data[MEMBER_LIST] as List<dynamic>),
+      logId: snap.data[LOG_ID],
+      id: snap.documentID,
+      name: snap.data[NAME],
+      tagLogFrequency: snap.data[TAG_LOG_FREQUENCY],
+      tagCategoryFrequency:
+          (snap.data[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      memberList: List<String>.from(snap.data[MEMBER_LIST] as List<dynamic>),
     );
   }
 }

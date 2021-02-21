@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/app_dialog.dart';
 import 'package:expenses/app/common_widgets/empty_content.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
@@ -39,9 +40,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget buildDialog({singleEntryState, BuildContext context, List<AppCategory> categories}) {
-    return Dialog(
-      elevation: DIALOG_ELEVATION,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
+    return AppDialog(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -140,7 +139,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   Future<dynamic> _entrySelectCategory({@required AppCategory category}) {
     Env.store.dispatch(UpdateEntryCategory(newCategory: category.id));
     Get.back();
-    if(_entryHasSubcategories(category: category)) {
+    if (_entryHasSubcategories(category: category)) {
       return Get.dialog(
         EntryCategoryListDialog(
           categoryOrSubcategory: CategoryOrSubcategory.subcategory,
@@ -159,7 +158,6 @@ class EntryCategoryListDialog extends StatelessWidget {
     }
 
     return null;
-
   }
 
   Future<dynamic> _entryAddEditSubcategory({@required AppCategory subcategory}) {
@@ -190,13 +188,10 @@ class EntryCategoryListDialog extends StatelessWidget {
     Get.back();
   }
 
-  bool _entryHasSubcategories({@required AppCategory category}){
-    if(category.id == NO_CATEGORY || category.id == TRANSFER_FUNDS) {
+  bool _entryHasSubcategories({@required AppCategory category}) {
+    if (category.id == NO_CATEGORY || category.id == TRANSFER_FUNDS) {
       return false;
     }
     return true;
-
   }
-
-
 }

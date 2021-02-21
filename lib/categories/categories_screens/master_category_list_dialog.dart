@@ -1,8 +1,10 @@
+import 'package:expenses/app/common_widgets/app_dialog.dart';
 import 'package:expenses/app/common_widgets/empty_content.dart';
 import 'package:expenses/app/common_widgets/error_widget.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/categories/categories_screens/master_category_drag_and_drop_list.dart';
+import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -12,16 +14,16 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class MasterCategoryListDialog extends StatelessWidget {
-  final SettingsLogEntry setLogEnt;
+  final SettingsLogFilter setLogFilter;
 
-  const MasterCategoryListDialog({Key key, @required this.setLogEnt}) : super(key: key);
+  const MasterCategoryListDialog({Key key, @required this.setLogFilter}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<AppCategory> categories = [];
     List<AppCategory> subcategories = [];
 
-    if (setLogEnt == SettingsLogEntry.log) {
+    if (setLogFilter == SettingsLogFilter.log) {
       return ConnectState(
         where: notIdentical,
         map: (logsState) => logsState.logsState,
@@ -32,7 +34,7 @@ class MasterCategoryListDialog extends StatelessWidget {
           return _buildDialog(categories: log.categories, subcategories: log.subcategories);
         },
       );
-    } else if (setLogEnt == SettingsLogEntry.settings) {
+    } else if (setLogFilter == SettingsLogFilter.settings) {
       return ConnectState(
         where: notIdentical,
         map: (state) => state.settingsState,
@@ -45,16 +47,35 @@ class MasterCategoryListDialog extends StatelessWidget {
           return _buildDialog(categories: categories, subcategories: subcategories);
         },
       );
+    } else if (setLogFilter == SettingsLogFilter.filter) {
+      return ConnectState(
+        where: notIdentical,
+        map: (state) => state.entriesFilterState,
+        builder: (filterState) {
+          print('Rendering Filter Category Dialog');
+          EntriesFilter filter = filterState.entriesFilter.value;
+          categories = filter.allCategories;
+          subcategories = filter.allSubcategories;
+
+          return _buildDialog(
+            categories: categories,
+            subcategories: subcategories,
+            selectedSubcategories: filter.selectedSubcategories,
+            selectedCategories: filter.selectedCategories,
+          );
+        },
+      );
     } else {
       return ErrorContent();
     }
   }
 
-  Widget _buildDialog({@required List<AppCategory> categories, @required List<AppCategory> subcategories}) {
-    return Dialog(
-      insetPadding: EdgeInsets.all(30),
-      elevation: DIALOG_ELEVATION,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
+  Widget _buildDialog(
+      {@required List<AppCategory> categories,
+      @required List<AppCategory> subcategories,
+      Map<String, bool> selectedCategories,
+      Map<String, bool> selectedSubcategories}) {
+    return AppDialog(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -74,20 +95,22 @@ class MasterCategoryListDialog extends StatelessWidget {
                 //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
                 style: TextStyle(fontSize: 20.0),
               ),
-              _displayAddButton(),
+              setLogFilter == SettingsLogFilter.filter ? Container() : _displayAddButton(),
             ],
           ),
           //shows this list view if the category list comes from the log
           categories.length > 0
               ? Expanded(
-            child: MasterCategoryDragAndDropList(
-              categories: categories,
-              subcategories: subcategories,
-              setLogEnt: setLogEnt,
-            ),
-          )
+                  child: MasterCategoryDragAndDropList(
+                    selectedCategories: selectedCategories,
+                    selectedSubcategories: selectedSubcategories,
+                    categories: categories,
+                    subcategories: subcategories,
+                    setLogFilter: setLogFilter,
+                  ),
+                )
               : EmptyContent(),
-          //TODO this should direct the user where to ass a category if they have deleted all of them
+          //TODO this should direct the user where to add a category if they have deleted all of them
         ],
       ),
     );
@@ -98,11 +121,11 @@ class MasterCategoryListDialog extends StatelessWidget {
     return IconButton(
       icon: Icon(Icons.add),
       onPressed: () => {
-        if (setLogEnt == SettingsLogEntry.log)
+        if (setLogFilter == SettingsLogFilter.log)
           {
             getLogAddEditCategoryDialog(category: category),
           }
-        else if (setLogEnt == SettingsLogEntry.settings)
+        else if (setLogFilter == SettingsLogFilter.settings)
           {getSettingsAddEditCategoryDialog(category: category)}
         else
           {

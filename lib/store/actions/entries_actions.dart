@@ -11,7 +11,6 @@ import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 
-
 import '../../env.dart';
 
 AppState _updateEntriesLogTotalsState(
@@ -87,7 +86,8 @@ class SetEntries implements AppAction {
 class SetEntriesOrder implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending));
+    return _updateEntriesState(
+        appState, (entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending));
   }
 }
 

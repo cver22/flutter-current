@@ -1,13 +1,10 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:expenses/member/member_model/member_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-
-class Member extends Equatable{
-
+class Member extends Equatable {
   final String uid;
   final int paid;
   final int spent;
@@ -22,7 +19,6 @@ class Member extends Equatable{
   String toString() {
     return 'LogMember {$UID: $uid, $PAID: $paid, $SPENT: $spent, $ORDER: $order}';
   }
-
 
   MemberEntity toEntity() {
     return MemberEntity(

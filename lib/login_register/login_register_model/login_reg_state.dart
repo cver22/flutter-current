@@ -9,7 +9,7 @@ import 'package:meta/meta.dart';
 // success is the state of the LoginForm when a login attempt has succeeded.
 
 @immutable
-class LoginRegState extends Equatable{
+class LoginRegState extends Equatable {
   final LoginStatus loginStatus;
   final LoginOrRegister loginOrRegister;
   final bool isEmailValid;
@@ -64,7 +64,6 @@ class LoginRegState extends Equatable{
       isSubmitting: false,
     );
   }
-
 
   LoginRegState updateCredentials({
     bool isEmailValid,

@@ -3,6 +3,7 @@ import 'package:expenses/categories/categories_model/app_category/app_category.d
 import 'package:expenses/categories/categories_screens/category_list_tile_components.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
+import 'package:expenses/store/actions/entries_filter_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/actions/settings_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -11,12 +12,14 @@ import 'package:flutter/material.dart';
 import '../../env.dart';
 
 class MasterCategoryDragAndDropList extends StatelessWidget {
+  final Map<String, bool> selectedCategories;
+  final Map<String, bool> selectedSubcategories;
   final List<AppCategory> categories;
   final List<AppCategory> subcategories;
-  final SettingsLogEntry setLogEnt;
+  final SettingsLogFilter setLogFilter;
 
   const MasterCategoryDragAndDropList(
-      {Key key, @required this.categories, @required this.subcategories, @required this.setLogEnt})
+      {Key key, @required this.categories, @required this.subcategories, @required this.setLogFilter, this.selectedCategories, this.selectedSubcategories})
       : super(key: key);
 
   @override
@@ -45,61 +48,93 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   _buildList({@required int outerIndex}) {
     List<bool> expandedCategories = List();
-    if (setLogEnt == SettingsLogEntry.log) {
-      expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
-    } else if (setLogEnt == SettingsLogEntry.settings) {
-      expandedCategories = List.from(Env.store.state.settingsState.expandedCategories);
-    }
+    expandedCategories = setExpandedCategories(expandedCategories);
 
     AppCategory category = categories[outerIndex];
     List<AppCategory> subs = List.from(subcategories);
     subs.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
+
     return DragAndDropListExpansion(
+      canDrag: setLogFilter != SettingsLogFilter.filter,
       initiallyExpanded: expandedCategories[outerIndex],
       onExpansionChanged: (bool) {
-        if (setLogEnt == SettingsLogEntry.log) {
-          Env.store.dispatch(ExpandCollapseLogCategory(index: outerIndex));
-        } else if (setLogEnt == SettingsLogEntry.settings) {
-          Env.store.dispatch(ExpandCollapseSettingsCategory(index: outerIndex));
-        }
+        _onExpansionChanged(outerIndex);
       },
       contentsWhenEmpty: _emptyContents(category: category),
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
-      trailing: MasterCategoryListTileTrailing(
-        categories: categories,
-        category: category,
-        expanded: expandedCategories[outerIndex],
-        setLogEnt: setLogEnt,
-      ),
+      trailing: _setTrailingIcon(category: category, expandedCategories: expandedCategories, outerIndex: outerIndex),
       children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories)),
       listKey: ObjectKey(subs),
     );
   }
 
+  Widget _setTrailingIcon({AppCategory category, List<bool> expandedCategories, int outerIndex}) {
+
+    if (setLogFilter == SettingsLogFilter.filter) {
+      return FilterListTileTrailing(onSelect: () => Env.store.dispatch(SelectDeselectFilterCategory(id: category.id)), selected: selectedCategories[category.id]);
+    } else {
+      return MasterCategoryListTileTrailing(
+        categories: categories,
+        category: category,
+        expanded: expandedCategories[outerIndex],
+        setLogFilter: setLogFilter,
+      );
+    }
+  }
+
+  void _onExpansionChanged(int outerIndex) {
+    if (setLogFilter == SettingsLogFilter.log) {
+      Env.store.dispatch(ExpandCollapseLogCategory(index: outerIndex));
+    } else if (setLogFilter == SettingsLogFilter.settings) {
+      Env.store.dispatch(ExpandCollapseSettingsCategory(index: outerIndex));
+    } else if (setLogFilter == SettingsLogFilter.filter) {
+      Env.store.dispatch(ExpandCollapseFilterCategory(index: outerIndex));
+    }
+  }
+
+  List<bool> setExpandedCategories(List<bool> expandedCategories) {
+    if (setLogFilter == SettingsLogFilter.log) {
+      expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
+    } else if (setLogFilter == SettingsLogFilter.settings) {
+      expandedCategories = List.from(Env.store.state.settingsState.expandedCategories);
+    } else if (setLogFilter == SettingsLogFilter.filter) {
+      expandedCategories = List.from(Env.store.state.entriesFilterState.expandedCategories);
+    }
+    return expandedCategories;
+  }
+
   _buildItem({@required AppCategory subcategory, @required List<AppCategory> categories}) {
     return DragAndDropItem(
+        canDrag: setLogFilter != SettingsLogFilter.filter,
         child: CategoryListTile(
           inset: true,
-      onTapEdit: () {
-        if (setLogEnt == SettingsLogEntry.log) {
-          getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
-        } else if (setLogEnt == SettingsLogEntry.settings) {
-          getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
-        }
-      },
-      category: subcategory,
-    ));
+          onTapEdit: () {
+            _onTapEdit(subcategory, categories);
+          },
+          category: subcategory,
+          setLogFilter: setLogFilter,
+        ));
+  }
+
+  void _onTapEdit(AppCategory subcategory, List<AppCategory> categories) {
+    if (setLogFilter == SettingsLogFilter.log) {
+      getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+    } else if (setLogFilter == SettingsLogFilter.settings) {
+      getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+    } else if (setLogFilter == SettingsLogFilter.filter) {
+      Env.store.dispatch(SelectDeselectFilterSubcategory(subcategory: subcategory));
+    }
   }
 
   void _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
-    if (setLogEnt == SettingsLogEntry.log) {
+    if (setLogFilter == SettingsLogFilter.log) {
       Env.store.dispatch(ReorderSubcategoryFromLogScreen(
           oldCategoryIndex: oldCategoryIndex,
           newCategoryIndex: newCategoryIndex,
           oldSubcategoryIndex: oldSubcategoryIndex,
           newSubcategoryIndex: newSubcategoryIndex));
-    } else if (setLogEnt == SettingsLogEntry.settings) {
+    } else if (setLogFilter == SettingsLogFilter.settings) {
       Env.store.dispatch(ReorderSubcategoryFromSettingsScreen(
           oldCategoryIndex: oldCategoryIndex,
           newCategoryIndex: newCategoryIndex,
@@ -109,10 +144,10 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   }
 
   void _onListReorder(int oldCategoryIndex, int newCategoryIndex) {
-    if (setLogEnt == SettingsLogEntry.log) {
+    if (setLogFilter == SettingsLogFilter.log) {
       Env.store.dispatch(
           ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
-    } else if (setLogEnt == SettingsLogEntry.settings) {
+    } else if (setLogFilter == SettingsLogFilter.settings) {
       Env.store.dispatch(
           ReorderCategoryFromSettingsScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     }

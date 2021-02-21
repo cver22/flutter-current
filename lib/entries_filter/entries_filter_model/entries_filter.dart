@@ -1,28 +1,54 @@
+import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
+import 'package:expenses/utils/maybe.dart';
 
 class EntriesFilter extends Equatable {
-  final DateTime startDate;
-  final DateTime endDate;
+  final Maybe<DateTime> startDate;
+  final Maybe<DateTime> endDate;
   final List<String> logId; //id, name
   final Map<String, String> currency; // code, name
-  final List<String> categories;
-  final List<String> subcategories;
-  final int minAmount;
-  final int maxAmount;
+  final Map<String, bool> selectedCategories;
+  final Map<String, bool> selectedSubcategories;
+  final List<AppCategory> allCategories;
+  final List<AppCategory> allSubcategories;
+  final Maybe<int> minAmount;
+  final Maybe<int> maxAmount;
   final List<String> logMembers; //id
   final List<String> tags;
 
-  EntriesFilter(
-      {this.startDate,
-      this.endDate,
-      this.logId = const [],
-      this.currency = const {},
-      this.categories = const [],
-      this.subcategories = const [],
-      this.minAmount,
-      this.maxAmount,
-      this.logMembers = const [],
-      this.tags = const []});
+  EntriesFilter({
+    this.startDate,
+    this.endDate,
+    this.logId,
+    this.currency,
+    this.selectedCategories,
+    this.selectedSubcategories,
+    this.allCategories,
+    this.allSubcategories,
+    this.minAmount,
+    this.maxAmount,
+    this.logMembers,
+    this.tags,
+  });
+
+  factory EntriesFilter.initial() {
+    return EntriesFilter(
+      startDate: Maybe.none(),
+      endDate: Maybe.none(),
+      logId: const [],
+      currency: LinkedHashMap(),
+      selectedCategories: LinkedHashMap(),
+      selectedSubcategories: LinkedHashMap(),
+      allCategories: const [],
+      allSubcategories: const [],
+      minAmount: Maybe.none(),
+      maxAmount: Maybe.none(),
+      logMembers: const [],
+      tags: const [],
+    );
+  }
 
   @override
   List<Object> get props => [
@@ -30,8 +56,10 @@ class EntriesFilter extends Equatable {
         endDate,
         logId,
         currency,
-        categories,
-        subcategories,
+        selectedCategories,
+        selectedSubcategories,
+        allCategories,
+        allSubcategories,
         minAmount,
         maxAmount,
         logMembers,
@@ -42,14 +70,16 @@ class EntriesFilter extends Equatable {
   bool get stringify => true;
 
   EntriesFilter copyWith({
-    DateTime startDate,
-    DateTime endDate,
+    Maybe<DateTime> startDate,
+    Maybe<DateTime> endDate,
     List<String> logId,
     Map<String, String> currency,
-    List<String> categories,
-    List<String> subcategories,
-    int minAmount,
-    int maxAmount,
+    Map<String, bool> selectedCategories,
+    Map<String, bool> selectedSubcategories,
+    List<AppCategory> allCategories,
+    List<AppCategory> allSubcategories,
+    Maybe<int> minAmount,
+    Maybe<int> maxAmount,
     List<String> logMembers,
     List<String> tags,
   }) {
@@ -57,8 +87,10 @@ class EntriesFilter extends Equatable {
         (endDate == null || identical(endDate, this.endDate)) &&
         (logId == null || identical(logId, this.logId)) &&
         (currency == null || identical(currency, this.currency)) &&
-        (categories == null || identical(categories, this.categories)) &&
-        (subcategories == null || identical(subcategories, this.subcategories)) &&
+        (selectedCategories == null || identical(selectedCategories, this.selectedCategories)) &&
+        (selectedSubcategories == null || identical(selectedSubcategories, this.selectedSubcategories)) &&
+        (allCategories == null || identical(allCategories, this.allCategories)) &&
+        (allSubcategories == null || identical(allSubcategories, this.allSubcategories)) &&
         (minAmount == null || identical(minAmount, this.minAmount)) &&
         (maxAmount == null || identical(maxAmount, this.maxAmount)) &&
         (logMembers == null || identical(logMembers, this.logMembers)) &&
@@ -71,8 +103,10 @@ class EntriesFilter extends Equatable {
       endDate: endDate ?? this.endDate,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,
-      categories: categories ?? this.categories,
-      subcategories: subcategories ?? this.subcategories,
+      selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedSubcategories: selectedSubcategories ?? this.selectedSubcategories,
+      allCategories: allCategories ?? this.allCategories,
+      allSubcategories: allSubcategories ?? this.allSubcategories,
       minAmount: minAmount ?? this.minAmount,
       maxAmount: maxAmount ?? this.maxAmount,
       logMembers: logMembers ?? this.logMembers,

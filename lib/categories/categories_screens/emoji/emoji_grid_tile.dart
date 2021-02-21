@@ -10,7 +10,6 @@ class EmojiGridTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     //TODO make button with onPressed
     return GridTile(
       child: Center(

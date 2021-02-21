@@ -16,11 +16,15 @@ abstract class Maybe<T> {
   }
 
   T get value;
+
   Maybe<R> map<R>(R mapper(T t));
+
   T orElse(T defVal);
+
   Maybe<R> flatMap<R>(Maybe<R> mapper(T t));
 
   bool get isSome;
+
   bool get isNone;
 }
 
@@ -30,6 +34,7 @@ class _Some<T> implements Maybe<T> {
   _Some(this._value);
 
   T get value => _value;
+
   T orElse(T defVal) => _value;
 
   Maybe<R> map<R>(R mapper(T t)) {
@@ -41,6 +46,7 @@ class _Some<T> implements Maybe<T> {
   }
 
   bool get isSome => true;
+
   bool get isNone => false;
 
   @override
@@ -82,6 +88,7 @@ class _None<T> implements Maybe<T> {
   }
 
   bool get isSome => false;
+
   bool get isNone => true;
 
   @override

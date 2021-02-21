@@ -20,7 +20,9 @@ class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
     _currency = widget.currency;
     return CurrencyPickerDropdown(
       //TODO change default local currency based on phone
-      initialValue: _currency == null ? CurrencyPickerUtils.getCountryByCurrencyCode('CAD').isoCode :CurrencyPickerUtils.getCountryByCurrencyCode(_currency).isoCode,
+      initialValue: _currency == null
+          ? CurrencyPickerUtils.getCountryByCurrencyCode('CAD').isoCode
+          : CurrencyPickerUtils.getCountryByCurrencyCode(_currency).isoCode,
       itemBuilder: _buildDropdownItem,
       onValuePicked: (Country country) {
         _currency = country.currencyCode;

@@ -60,7 +60,7 @@ class EntriesFetcher {
     entries.forEach((entry) {
       Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
       logMembers.forEach((key, logMember) {
-        if(!entry.entryMembers.containsKey(key)) {
+        if (!entry.entryMembers.containsKey(key)) {
           entryMembers.putIfAbsent(key, () => EntryMember(uid: logMember.uid, spending: false));
         }
       });
@@ -74,8 +74,6 @@ class EntriesFetcher {
         print(e.toString());
       }
     }
-
-
   }
 
   Future<void> batchDeleteEntries({@required List<MyEntry> deletedEntries}) async {
@@ -90,12 +88,8 @@ class EntriesFetcher {
     }
   }
 
-
-
   //TODO where to close the subscription when exiting the app?
   Future<void> close() async {
     _entriesSubscription?.cancel();
   }
-
-
 }

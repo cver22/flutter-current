@@ -55,7 +55,7 @@ class SettingsFetcher {
     //determines if this is the first instance the user has logged in and sets the default settings
     bool settingsInitialized = (prefs.getBool('settings_initialized') ?? false);
 
-    if(resetSettings){
+    if (resetSettings) {
       settingsInitialized = false;
     }
 
@@ -90,6 +90,4 @@ class SettingsFetcher {
       print('Error reading settings ${e.toString()}');
     }
   }
-
-
 }

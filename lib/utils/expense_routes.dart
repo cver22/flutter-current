@@ -12,5 +12,4 @@ class ExpenseRoutes {
   static final settings = "/subcategoriesScreen";
   static final splashScreen = "/splashScreen";
   static final qrReader = "/qrReader";
-
 }

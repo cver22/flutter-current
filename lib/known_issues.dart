@@ -1,11 +1,9 @@
 //TODO KNOWN ISSUES
 //TODO app_screen willPopScope does not work if the app is closed and then opened again
 
-
 // TODO LONG TERM GOALS
 // TODO setting option for auto insert decimal
 //TODO reoccurring expenses
-
 
 //TODO MAYBE GOALS
 //TODO give each person an emoji Icon option
@@ -35,19 +33,18 @@
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
 //TODO add calculator
 //TODO entries tiles seem to be of inconsistent size
-
+//TODO start splash screen earlier?
+//TODO changing hte name of a category or subcategory should change the filter for the entries state if .isSome
 
 //TODO GENERAL IMPORTANT *************************
 
-
 //TODO START HERE
+//build onSave function for date filters
 //build filter dialog
 //build function to return filtered list back to the widget
 
-
 //TODO ASK BORIS
 // is having methods in the models bad practice, should they be extracted to the action - if it can be in an action, move it there - Answer - Yes
-
 
 //HELPFUL COMMANDS
 //flutter pub run build_runner build

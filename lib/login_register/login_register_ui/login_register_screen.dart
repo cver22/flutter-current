@@ -6,7 +6,6 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-
 class LoginRegisterScreen extends StatelessWidget {
   const LoginRegisterScreen({Key key}) : super(key: key);
 

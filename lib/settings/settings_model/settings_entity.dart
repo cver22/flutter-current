@@ -29,9 +29,7 @@ class SettingsEntity implements Equatable {
   @override
   bool get stringify => true;
 
-  factory SettingsEntity.fromJson(Map<String, dynamic> json) =>
-      _$SettingsEntityFromJson(json);
+  factory SettingsEntity.fromJson(Map<String, dynamic> json) => _$SettingsEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$SettingsEntityToJson(this);
-
 }

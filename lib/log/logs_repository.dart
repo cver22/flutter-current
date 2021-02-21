@@ -26,7 +26,6 @@ class FirebaseLogsRepository implements LogsRepository {
   @override
   Stream<List<Log>> loadLogs(User user) {
     return logsCollection.where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
-
       var snapshots = snapshot.documents.map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc))).toList();
 
       return snapshots;

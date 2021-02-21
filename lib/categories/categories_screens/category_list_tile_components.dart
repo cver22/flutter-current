@@ -1,4 +1,3 @@
-
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
@@ -23,7 +22,7 @@ class CategoryListTileLeading extends StatelessWidget {
       children: [
         sublist
             ? SizedBox(
-                width: 10.0,
+                width: 20.0,
               )
             : Container(),
         Icon(Icons.unfold_more_outlined),
@@ -66,23 +65,50 @@ class CategoryListTileTrailing extends StatelessWidget {
   }
 }
 
+class FilterListTileTrailing extends StatelessWidget {
+  const FilterListTileTrailing({
+    Key key,
+    @required this.onSelect,
+    @required this.selected,
+  }) : super(key: key);
+
+  final VoidCallback onSelect;
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      alignment: AlignmentDirectional.center,
+      height: 30.0,
+      width: 30.0,
+      child: IconButton(
+        padding: EdgeInsets.all(0),
+        icon: Icon(
+          selected ? Icons.check_box_outlined : Icons.check_box_outline_blank_outlined,
+          size: EMOJI_SIZE,
+        ),
+        onPressed: onSelect,
+      ),
+    );
+  }
+}
+
 class MasterCategoryListTileTrailing extends StatelessWidget {
   const MasterCategoryListTileTrailing({
     Key key,
-    @required this.setLogEnt,
+    @required this.setLogFilter,
     @required this.category,
     @required this.expanded,
     @required this.categories,
   }) : super(key: key);
 
-  final SettingsLogEntry setLogEnt;
+  final SettingsLogFilter setLogFilter;
   final AppCategory category;
   final bool expanded;
   final List<AppCategory> categories;
 
   @override
   Widget build(BuildContext context) {
-
     return CategoryListTileTrailing(
       onTapEdit: () => _canAddSubcategory() ? _onTapAdd() : _onTapEdit(),
       addSubcategory: _canAddSubcategory(),
@@ -90,18 +116,18 @@ class MasterCategoryListTileTrailing extends StatelessWidget {
   }
 
   _onTapEdit() {
-    if (setLogEnt == SettingsLogEntry.log) {
+    if (setLogFilter == SettingsLogFilter.log) {
       getLogAddEditCategoryDialog(category: category);
-    } else if (setLogEnt == SettingsLogEntry.settings) {
+    } else if (setLogFilter == SettingsLogFilter.settings) {
       getSettingsAddEditCategoryDialog(category: category);
     }
   }
 
   _onTapAdd() {
     AppCategory subcategory = AppCategory(parentCategoryId: category.id);
-    if (setLogEnt == SettingsLogEntry.log) {
+    if (setLogFilter == SettingsLogFilter.log) {
       getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
-    } else if (setLogEnt == SettingsLogEntry.settings) {
+    } else if (setLogFilter == SettingsLogFilter.settings) {
       getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     }
   }

@@ -9,7 +9,8 @@ class EntryMembersListView extends StatelessWidget {
   final bool userUpdated;
   final String entryId;
 
-  const EntryMembersListView({Key key, @required this.members, @required this.log, @required this.userUpdated, @required this.entryId})
+  const EntryMembersListView(
+      {Key key, @required this.members, @required this.log, @required this.userUpdated, @required this.entryId})
       : super(key: key);
 
   @override

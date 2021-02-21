@@ -1,4 +1,3 @@
-
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
@@ -14,8 +13,10 @@ import '../../env.dart';
 
 //TODO load setting from JSON file, change settings
 
-AppState _updateSettingsState(AppState appState,
-    SettingsState update(SettingsState settingsState),) {
+AppState _updateSettingsState(
+  AppState appState,
+  SettingsState update(SettingsState settingsState),
+) {
   return appState.copyWith(settingsState: update(appState.settingsState));
 }
 
@@ -30,8 +31,7 @@ class UpdateSettings implements AppAction {
 
     return _updateSettingsState(
         appState,
-            (settingsState) =>
-            settingsState.copyWith(
+        (settingsState) => settingsState.copyWith(
               settings: settings,
             ));
   }
@@ -189,10 +189,9 @@ class ReorderCategoryFromSettingsScreen implements AppAction {
 
     return _updateSettingsState(
         appState,
-            (settingsState) =>
-            settingsState.copyWith(
-                settings: Maybe.some(settings.copyWith(defaultCategories: categories)),
-                expandedCategories: expandedCategories));
+        (settingsState) => settingsState.copyWith(
+            settings: Maybe.some(settings.copyWith(defaultCategories: categories)),
+            expandedCategories: expandedCategories));
   }
 }
 
@@ -202,10 +201,11 @@ class ReorderSubcategoryFromSettingsScreen implements AppAction {
   final int oldSubcategoryIndex;
   final int newSubcategoryIndex;
 
-  ReorderSubcategoryFromSettingsScreen({@required this.oldCategoryIndex,
-    @required this.newCategoryIndex,
-    @required this.oldSubcategoryIndex,
-    @required this.newSubcategoryIndex});
+  ReorderSubcategoryFromSettingsScreen(
+      {@required this.oldCategoryIndex,
+      @required this.newCategoryIndex,
+      @required this.oldSubcategoryIndex,
+      @required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
@@ -217,8 +217,8 @@ class ReorderSubcategoryFromSettingsScreen implements AppAction {
         .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
     AppCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
-
-    subcategories = reorderSubcategoriesLogSetting(newSubcategoryIndex: newSubcategoryIndex,
+    subcategories = reorderSubcategoriesLogSetting(
+        newSubcategoryIndex: newSubcategoryIndex,
         subcategory: subcategory,
         newParentId: newParentId,
         oldParentId: oldParentId,
@@ -227,9 +227,7 @@ class ReorderSubcategoryFromSettingsScreen implements AppAction {
 
     return _updateSettingsState(
         appState,
-            (settingsState) =>
+        (settingsState) =>
             settingsState.copyWith(settings: Maybe.some(settings.copyWith(defaultSubcategories: subcategories))));
   }
-
-
 }

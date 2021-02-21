@@ -55,31 +55,31 @@ class _TagPickerState extends State<TagPicker> {
 
   SingleChildScrollView _buildTagCollections() {
     return SingleChildScrollView(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  TagCollection(
-                    tags: selectedEntryTags,
-                    collectionName: 'Entry Tags',
-                  ),
-                  //currently selected tags
-                  categoryRecentTags.isNotEmpty
-                      ? TagCollection(
-                          tags: categoryRecentTags,
-                          collectionName: 'Category Recent',
-                        )
-                      : Container(),
-                  //category recent tag collection
-                  logRecentTags.isNotEmpty
-                      ? TagCollection(
-                          tags: logRecentTags,
-                          collectionName: 'Log Recent',
-                        )
-                      : Container(),
-                  //log recent tag collection
-                ],
-              ),
-            );
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TagCollection(
+            tags: selectedEntryTags,
+            collectionName: 'Entry Tags',
+          ),
+          //currently selected tags
+          categoryRecentTags.isNotEmpty
+              ? TagCollection(
+                  tags: categoryRecentTags,
+                  collectionName: 'Category Recent',
+                )
+              : Container(),
+          //category recent tag collection
+          logRecentTags.isNotEmpty
+              ? TagCollection(
+                  tags: logRecentTags,
+                  collectionName: 'Log Recent',
+                )
+              : Container(),
+          //log recent tag collection
+        ],
+      ),
+    );
   }
 
   void tagListBuilders({@required SingleEntryState entryState, int maxTags}) {

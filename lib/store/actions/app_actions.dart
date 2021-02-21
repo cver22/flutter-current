@@ -1,4 +1,3 @@
-
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entries/entries_model/entries_state.dart';

@@ -1,13 +1,16 @@
 import 'package:expenses/app/app_drawer.dart';
 import 'package:expenses/entries/entries_screen/entries_screen.dart';
+import 'package:expenses/entries_filter/entries_filter_screen/entries_filter_dialog.dart';
 import 'package:expenses/log/log_ui/logs_screen.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
+import 'package:expenses/store/actions/entries_filter_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
+import 'package:expenses/utils/db_consts.dart';
 
 import '../env.dart';
 
@@ -148,7 +151,11 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
   void handleClick(String value) {
     switch (value) {
       case 'Filter':
-        //Get.dialog(widget), //TODO navigate to filter widget dialog
+        Env.store.dispatch(SetResetEntriesFilter(entriesChart: EntriesCharts.entries));
+        showDialog(
+          context: context,
+          builder: (_) => EntriesFilterDialog(),
+        );
         break;
       case 'Ascending':
         Env.store.dispatch(SetEntriesOrder());

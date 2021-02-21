@@ -2,7 +2,6 @@ import 'package:equatable/equatable.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/utils/maybe.dart';
 
-
 class SettingsState extends Equatable {
   final Maybe<Settings> settings;
   final List<bool> expandedCategories;

@@ -203,7 +203,7 @@ class AddEditLogScreen extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) => MasterCategoryListDialog(
-                  setLogEnt: SettingsLogEntry.log,
+                  setLogFilter: SettingsLogFilter.log,
                 ),
               ),
             },

@@ -20,7 +20,6 @@ class UserFetcher {
   })  : _store = store,
         _userRepository = userRepository;
 
-
   _getCurrentUser(LoginRegState loginRegState) async {
     final isSignedIn = await _userRepository.isSignedIn();
     if (isSignedIn) {
@@ -95,13 +94,11 @@ class UserFetcher {
   //only available if user has signed in with email
   Future<void> updatePassword({@required String currentPassword, @required String newPassword}) async {
     _store.dispatch(AccountUpdateSubmitting());
-    bool success = await  _userRepository.updatePassword(currentPassword: currentPassword, newPassword: newPassword);
-    if(success) {
+    bool success = await _userRepository.updatePassword(currentPassword: currentPassword, newPassword: newPassword);
+    if (success) {
       _store.dispatch(AccountUpdateSuccess());
     } else {
       _store.dispatch(AccountUpdateFailure());
     }
-    
-    
   }
 }

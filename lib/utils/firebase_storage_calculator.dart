@@ -13,7 +13,6 @@ class FirebaseStorageCalculator {
     });
   }
 
-
   calcFirestoreDocSize(docId, docObject) {
     int docNameSize = 1 + 16;
     if (docId is String) {
@@ -64,8 +63,6 @@ class FirebaseStorageCalculator {
         size += calcObjSize(obj[key]);
       });
     }
-    return
-      size += 32;
+    return size += 32;
   }
 }
-

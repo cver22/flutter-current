@@ -61,7 +61,8 @@ class SetNewSelectedEntry implements AppAction {
     Log log = appState.logsState
         .logs[logId ?? appState.settingsState.settings?.value?.defaultLogId ?? appState.logsState.logs.keys.first];
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
-    Map<String, EntryMember> members = _setMembersList(log: log, memberId: memberId, userId: appState.authState.user.value.id);
+    Map<String, EntryMember> members =
+        _setMembersList(log: log, memberId: memberId, userId: appState.authState.user.value.id);
 
     entry = entry.copyWith(
         logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);
@@ -886,7 +887,7 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
         () => EntryMember(
               uid: value.uid,
               order: value.order,
-              paying: userId == value.uid? true : false,
+              paying: userId == value.uid ? true : false,
               payingController: TextEditingController(),
               spendingController: TextEditingController(),
               payingFocusNode: FocusNode(),
@@ -894,11 +895,10 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
             ));
   });
 
-  if(memberId != null) {
+  if (memberId != null) {
     //sets the selected user as paying unless the action is triggered from the FAB
     members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
   }
-
 
   return members;
 }

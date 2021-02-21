@@ -41,9 +41,9 @@ class EntriesScreen extends StatelessWidget {
           } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
             entries = entriesState.entries.entries.map((e) => e.value).toList();
 
-            if(entriesState.descending){
+            if (entriesState.descending) {
               entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-            }else {
+            } else {
               entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
             }
 
@@ -68,33 +68,33 @@ List<MyEntry> _buildFilteredEntries({
   //only processes filters if a filter is present
   if (entriesFilter.isSome) {
     //minimum entry date
-    if (entriesFilter.value?.startDate != null) {
-      entries.removeWhere((entry) => entry.dateTime.isBefore(entriesFilter.value.startDate));
+    if (entriesFilter.value.startDate.isSome) {
+      entries.removeWhere((entry) => entry.dateTime.isBefore(entriesFilter.value.startDate.value));
     }
     //maximum entry date
-    if (entriesFilter.value?.endDate != null) {
-      entries.removeWhere((entry) => entry.dateTime.isAfter(entriesFilter.value.endDate));
+    if (entriesFilter.value.endDate.isSome) {
+      entries.removeWhere((entry) => entry.dateTime.isAfter(entriesFilter.value.endDate.value));
     }
     //is the entry logId found in the list of logIds selected
-    if(entriesFilter.value.logId.length > 0){
+    if (entriesFilter.value.logId.length > 0) {
       entries.removeWhere((entry) => !entriesFilter.value.logId.contains(entry.logId));
     }
     //TODO currency filter
     //is the entry categoryID found in the list of categories selected
-    if(entriesFilter.value.categories.length > 0){
-      entries.removeWhere((entry) => !entriesFilter.value.categories.contains(entry.categoryId));
+    if (entriesFilter.value.selectedCategories.length > 0) {
+      //entries.removeWhere((entry) => !entriesFilter.value.selectedCategories.contains(entry.categoryId));
     }
     //is the entry subcategoryId found in the list of subcategories selected
-    if(entriesFilter.value.subcategories.length > 0){
-      entries.removeWhere((entry) => !entriesFilter.value.subcategories.contains(entry.subcategoryId));
+    if (entriesFilter.value.selectedSubcategories.length > 0) {
+      //entries.removeWhere((entry) => !entriesFilter.value.selectedSubcategories.contains(entry.subcategoryId));
     }
     //is the entry amount less than the min amount
-    if(entriesFilter.value.minAmount != null){
-      entries.removeWhere((entry) => entry.amount < entriesFilter.value.minAmount);
+    if (entriesFilter.value.minAmount.isSome) {
+      entries.removeWhere((entry) => entry.amount < entriesFilter.value.minAmount.value);
     }
     //is the entry amount more than the max amount
-    if(entriesFilter.value.maxAmount != null){
-      entries.removeWhere((entry) => entry.amount > entriesFilter.value.maxAmount);
+    if (entriesFilter.value.maxAmount.isSome) {
+      entries.removeWhere((entry) => entry.amount > entriesFilter.value.maxAmount.value);
     }
     //does the entry contain one of the selected members
     //TODO entryMember filter

@@ -1,4 +1,3 @@
-
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -212,29 +211,28 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             'Parent Category: ',
             maxLines: 2,
           ),
-
         ),
         SizedBox(width: 10),
         notModifiable
             ? Text(initialCategory.name)
             : Expanded(
-          flex: 2,
-              child: DropdownButton<AppCategory>(
-                isExpanded: true,
-                  value: initialCategory,
-                  items: selectableCategories.map((AppCategory category) {
-                    return DropdownMenuItem<AppCategory>(
-                      value: category,
-                      child: Text(
-                        category.name,
-                        overflow: TextOverflow.visible,
-                        maxLines: 2,
-                        style: TextStyle(color: Colors.black),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: _onParentCategoryChanged),
-            ),
+                flex: 2,
+                child: DropdownButton<AppCategory>(
+                    isExpanded: true,
+                    value: initialCategory,
+                    items: selectableCategories.map((AppCategory category) {
+                      return DropdownMenuItem<AppCategory>(
+                        value: category,
+                        child: Text(
+                          category.name,
+                          overflow: TextOverflow.visible,
+                          maxLines: 2,
+                          style: TextStyle(color: Colors.black),
+                        ),
+                      );
+                    }).toList(),
+                    onChanged: _onParentCategoryChanged),
+              ),
       ],
     );
   }

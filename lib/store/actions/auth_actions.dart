@@ -1,5 +1,3 @@
-
-
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/auth_user/models/user.dart';
@@ -53,6 +51,7 @@ class UpdateDisplayName implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(appState, (authState) => authState.copyWith(user: Maybe.some(authState.user.value.copyWith(displayName: displayName))));
+    return _updateAuthState(appState,
+        (authState) => authState.copyWith(user: Maybe.some(authState.user.value.copyWith(displayName: displayName))));
   }
 }

@@ -1,4 +1,3 @@
-
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';

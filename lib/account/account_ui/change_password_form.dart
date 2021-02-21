@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 
 import '../../env.dart';
 
-
 //change password form to be shown by the password controller if the user has signed in with email and presses the change password button
 class ChangePasswordForm extends StatefulWidget {
   final AccountState accountState;
@@ -36,7 +35,6 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
 
   @override
   void dispose() {
-
     super.dispose();
     _oldPasswordController.dispose();
     _newPasswordController.dispose();
@@ -94,21 +92,18 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
             mainAxisAlignment: MainAxisAlignment.end,
             mainAxisSize: MainAxisSize.max,
             children: [
-
               RaisedButton(
                 elevation: RAISED_BUTTON_ELEVATION,
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
                 child: Text('Submit'),
                 onPressed: accountState.loginStatus == LoginStatus.submitting ||
-                    !accountState.newPasswordsMatch ||
-                    _newPasswordController.text.length < 10
+                        !accountState.newPasswordsMatch ||
+                        _newPasswordController.text.length < 10
                     ? null
                     : () {
-                  Env.userFetcher.updatePassword(
-                      currentPassword: _oldPasswordController.text,
-                      newPassword: _newPasswordController.text);
-                },
+                        Env.userFetcher.updatePassword(
+                            currentPassword: _oldPasswordController.text, newPassword: _newPasswordController.text);
+                      },
               ),
             ],
           ),
@@ -123,7 +118,8 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
     String Function(String) validator,
     @required TextInputAction textInputAction,
     void Function(String) onFieldSubmitted,
-    FocusNode focusNode, bool autoFocus,
+    FocusNode focusNode,
+    bool autoFocus,
   }) {
     return TextFormField(
       autofocus: autoFocus ?? false,

@@ -4,13 +4,12 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:meta/meta.dart';
 
 @immutable
-
-class LogMember extends Member{
-
+class LogMember extends Member {
   final String name;
   final String role;
 
-  LogMember({uid, paid, spent, order, this.name, this.role = WRITER}): super (uid: uid, paid: paid, spent: spent, order: order);
+  LogMember({uid, paid, spent, order, this.name, this.role = WRITER})
+      : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
   List<Object> get props => [uid, name, paid, spent, role, order];
@@ -19,7 +18,6 @@ class LogMember extends Member{
   String toString() {
     return 'LogMember {$UID: $uid, $NAME: $name, $PAID: $paid, $SPENT: $spent, role: $role}';
   }
-
 
   LogMember copyWith({
     String uid,
@@ -44,7 +42,7 @@ class LogMember extends Member{
       paid: paid ?? this.paid,
       spent: spent ?? this.spent,
       role: role ?? this.role,
-        order: order ?? this.order,
+      order: order ?? this.order,
     );
   }
 
@@ -67,7 +65,6 @@ class LogMember extends Member{
       spent: entity.spent,
       role: entity.role,
       order: entity.order,
-
     );
   }
 }

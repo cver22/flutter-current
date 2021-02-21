@@ -1,4 +1,3 @@
-
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
@@ -13,8 +12,7 @@ import '../../env.dart';
 Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
-      save: (name, emojiChar, unused) =>
-      {
+      save: (name, emojiChar, unused) => {
         Env.store.dispatch(AddEditCategoryFromLog(category: category.copyWith(name: name, emojiChar: emojiChar))),
       },
 
@@ -23,8 +21,7 @@ Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
         },*/
 
-      delete: () =>
-      {
+      delete: () => {
         Env.store.dispatch(DeleteCategoryFromLog(category: category)),
         Get.back(),
       },
@@ -39,16 +36,14 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,
-      save: (name, emojiChar, parentCategoryId) =>
-      {
+      save: (name, emojiChar, parentCategoryId) => {
         Env.store.dispatch(AddEditSubcategoryFromLog(
             subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
       },
 
       //TODO default function
 
-      delete: () =>
-      {
+      delete: () => {
         Env.store.dispatch(DeleteSubcategoryFromLog(subcategory: subcategory)),
         Get.back(),
       },
@@ -62,8 +57,7 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
 Future<dynamic> getSettingsAddEditCategoryDialog({@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
-      save: (name, emojiChar, unused) =>
-      {
+      save: (name, emojiChar, unused) => {
         Env.store.dispatch(SettingsAddEditCategory(category: category.copyWith(name: name, emojiChar: emojiChar))),
       },
 
@@ -71,28 +65,25 @@ Future<dynamic> getSettingsAddEditCategoryDialog({@required AppCategory category
           Env.logsFetcher.updateLog(log.setCategoryDefault(log: log, category: category)),
         },*/
       delete: () => {
-      Env.store.dispatch(SettingsDeleteCategory(category: category)),
-    },
+        Env.store.dispatch(SettingsDeleteCategory(category: category)),
+      },
       category: category,
       categoryOrSubcategory: CategoryOrSubcategory.category,
     ),
   );
 }
 
-Future<dynamic> getSettingsAddEditSubcategoryDialog({@required AppCategory subcategory, @required List<AppCategory> categories}) {
+Future<dynamic> getSettingsAddEditSubcategoryDialog(
+    {@required AppCategory subcategory, @required List<AppCategory> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,
-      save: (name, emojiChar, parentCategoryId) =>
-      {
+      save: (name, emojiChar, parentCategoryId) => {
         Env.store.dispatch(SettingsAddEditSubcategory(
             subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
       },
       //TODO default function
-      delete: () =>
-      {
-        Env.store.dispatch(SettingsDeleteSubcategory(subcategory: subcategory))
-      },
+      delete: () => {Env.store.dispatch(SettingsDeleteSubcategory(subcategory: subcategory))},
       category: subcategory,
       categoryOrSubcategory: CategoryOrSubcategory.subcategory,
     ),

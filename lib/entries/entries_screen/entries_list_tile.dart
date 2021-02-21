@@ -105,14 +105,13 @@ class EntriesListTile extends StatelessWidget {
     if (entry.tagIDs.length > 0) {
       for (int i = 0; i < entry.tagIDs.length; i++) {
         Tag tag = tags[entry.tagIDs[i]];
-       if(tag != null) {
-         tagString += '#${tag.name}';
+        if (tag != null) {
+          tagString += '#${tag.name}';
 
-         if (i < entry.tagIDs.length - 1) {
-           tagString += ', ';
-         }
-       }
-
+          if (i < entry.tagIDs.length - 1) {
+            tagString += ', ';
+          }
+        }
       }
 
       return Text(tagString);

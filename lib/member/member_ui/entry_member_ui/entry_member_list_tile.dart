@@ -105,12 +105,11 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
 
   Widget _buildTextFormField(
       {PaidOrSpent paidOrSpent, TextEditingController controller, FocusNode focusNode, EntryMember member}) {
-    bool isGrey = true;
-    Color isGreyColor = Colors.grey[350];
+    bool inactive = true;
     if (paidOrSpent == PaidOrSpent.paid) {
-      isGrey = !member.paying;
+      inactive = !member.paying;
     } else {
-      isGrey = !member.spending;
+      inactive = !member.spending;
     }
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -118,17 +117,17 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
       children: [
         Text(
           '\$ ',
-          style: TextStyle(color: isGrey ? isGreyColor : Colors.black),
+          style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
         ),
         Container(
           width: 50.0,
           child: TextField(
-            style: TextStyle(color: isGrey ? isGreyColor : Colors.black),
+            style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(
               hintText: paidOrSpent == PaidOrSpent.paid ? PAID : SPENT,
-              hintStyle: TextStyle(color: isGrey ? isGreyColor : Colors.grey[600]),
+              hintStyle: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : ACTIVE_HINT_COLOR),
             ),
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
             keyboardType: TextInputType.number,

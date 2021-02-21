@@ -8,7 +8,6 @@ import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 
-
 @immutable
 class Log extends Equatable {
   //TODO log keeps track of who owes who how much "debt map"?
@@ -39,9 +38,9 @@ class Log extends Equatable {
   final Map<String, LogMember> logMembers;
   final int order;
 
-
   @override
-  List<Object> get props => [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, order];
+  List<Object> get props =>
+      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, order];
 
   @override
   String toString() {
@@ -98,7 +97,6 @@ class Log extends Equatable {
         }
       });
     }
-
 
     return Log(
       uid: entity.uid,

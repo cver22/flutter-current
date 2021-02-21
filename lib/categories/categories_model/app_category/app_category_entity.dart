@@ -12,9 +12,7 @@ class AppCategoryEntity extends Equatable {
   final String emojiChar;
   final String parentCategoryId;
 
-
-  const AppCategoryEntity(
-      {this.id, this.name, this.emojiChar, this.parentCategoryId});
+  const AppCategoryEntity({this.id, this.name, this.emojiChar, this.parentCategoryId});
 
   @override
   List<Object> get props => [id, name, emojiChar, parentCategoryId];
@@ -24,9 +22,7 @@ class AppCategoryEntity extends Equatable {
     return 'MyCategoryEntity {id: $id, name: $name, emojiChar $emojiChar parentCategoryId: $parentCategoryId}';
   }
 
-  factory AppCategoryEntity.fromJson(Map<String, dynamic> json) =>
-      _$MyCategoryEntityFromJson(json);
+  factory AppCategoryEntity.fromJson(Map<String, dynamic> json) => _$MyCategoryEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$MyCategoryEntityToJson(this);
-
 }

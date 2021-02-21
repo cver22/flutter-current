@@ -36,9 +36,7 @@ class LogsScreen extends StatelessWidget {
                   logs = logsState.logs.entries.map((e) => e.value).toList();
                   logs.sort((a, b) => a.order.compareTo(b.order)); //display based on order
 
-
-                    return _buildReorderableList(logs: logs, logTotalsState: logTotalsState, context: context);
-
+                  return _buildReorderableList(logs: logs, logTotalsState: logTotalsState, context: context);
                 } else if (logsState.isLoading == false && logsState.logs.isEmpty) {
                   return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -96,5 +94,4 @@ class LogsScreen extends StatelessWidget {
           DragAndDropItem(child: Container()),
         ]);
   }
-
 }

@@ -10,7 +10,6 @@ import 'package:flutter/material.dart';
 
 import '../../env.dart';
 
-
 //controls if the password change fields are visible due to the sign in method and if the password chang is successful
 class ChangePasswordController extends StatelessWidget {
   @override
@@ -20,13 +19,17 @@ class ChangePasswordController extends StatelessWidget {
         map: (state) => state.accountState,
         builder: (accountState) {
           if (accountState.isUserSignedInWithEmail) {
-            if ( accountState.showPasswordForm) {
+            if (accountState.showPasswordForm) {
               return ChangePasswordForm(accountState: accountState);
             } else if (accountState.loginStatus == LoginStatus.success) {
               return Text('Password changed!');
             } else if (accountState.loginStatus == LoginStatus.submitting) {
-              return Row(mainAxisSize: MainAxisSize.min,
-                children: [Text('Changing password...    '),CircularProgressIndicator(),],
+              return Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text('Changing password...    '),
+                  CircularProgressIndicator(),
+                ],
               );
             } else {
               return RaisedButton(

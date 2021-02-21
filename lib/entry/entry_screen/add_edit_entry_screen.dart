@@ -159,9 +159,16 @@ class AddEditEntryScreen extends StatelessWidget {
           ],
         ),
         SizedBox(height: 10),
-        EntryMembersListView(members: entryState.selectedEntry.value.entryMembers, log: log, userUpdated: entryState.userUpdated, entryId: entry.id),
+        EntryMembersListView(
+            members: entryState.selectedEntry.value.entryMembers,
+            log: log,
+            userUpdated: entryState.userUpdated,
+            entryId: entry.id),
         SizedBox(height: 10.0),
-        EntryDateButton(context: context, entry: entry),
+        DateButton(
+          initialDateTime: entry.dateTime,
+          onSave: (newDateTIme) => Env.store.dispatch(UpdateEntryDateTime(dateTime: newDateTIme)),
+        ),
         SizedBox(height: 10.0),
         _categoryButton(categories: entryState?.categories, entry: entry),
         //Transfer funds and No_category do not have a sub categories
@@ -173,40 +180,42 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _categoryButton({@required MyEntry entry, @required List<AppCategory> categories}) {
-    return entry?.logId == null ? Container() : CategoryButton(
-      label: 'Select a Category',
-      onPressed: () => {
-        Get.dialog(
-          EntryCategoryListDialog(
-            categoryOrSubcategory: CategoryOrSubcategory.category,
-            key: ExpenseKeys.categoriesDialog,
-          ),
-        ),
-      },
-      category: entry?.categoryId == null
-          ? null
-          : categories?.firstWhere((element) => element.id == entry.categoryId,
-              orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
-    );
+    return entry?.logId == null
+        ? Container()
+        : CategoryButton(
+            label: 'Select a Category',
+            onPressed: () => {
+              Get.dialog(
+                EntryCategoryListDialog(
+                  categoryOrSubcategory: CategoryOrSubcategory.category,
+                  key: ExpenseKeys.categoriesDialog,
+                ),
+              ),
+            },
+            category: entry?.categoryId == null
+                ? null
+                : categories?.firstWhere((element) => element.id == entry.categoryId,
+                    orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
+          );
   }
 
   Widget _subcategoryButton({@required MyEntry entry, @required List<AppCategory> subcategories}) {
     return entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
         ? Container()
         : CategoryButton(
-      label: 'Select a Subcategory',
-      onPressed: () => {
-        Get.dialog(
-          EntryCategoryListDialog(
-            categoryOrSubcategory: CategoryOrSubcategory.subcategory,
-            key: ExpenseKeys.subcategoriesDialog,
-          ),
-        ),
-      },
-      category: entry?.subcategoryId == null
-          ? null
-          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: () => null),
-    );
+            label: 'Select a Subcategory',
+            onPressed: () => {
+              Get.dialog(
+                EntryCategoryListDialog(
+                  categoryOrSubcategory: CategoryOrSubcategory.subcategory,
+                  key: ExpenseKeys.subcategoriesDialog,
+                ),
+              ),
+            },
+            category: entry?.subcategoryId == null
+                ? null
+                : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: () => null),
+          );
   }
 
   Widget _commentFormField({@required MyEntry entry, @required FocusNode commentFocusNode}) {

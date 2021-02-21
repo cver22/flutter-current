@@ -44,7 +44,7 @@ class MyEntryEntity extends Equatable {
         dateTime,
         tagIDs,
         entryMembers,
-    memberList,
+        memberList,
       ];
 
   @override
@@ -66,10 +66,10 @@ class MyEntryEntity extends Equatable {
       comment: snap.data[COMMENT],
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data[DATE_TIME]),
       tagIDs: (snap.data[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-      entryMembers: (snap.data[MEMBERS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
+      entryMembers: (snap.data[MEMBERS] as Map<String, dynamic>)
+          ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }
-
 
   Map<String, Object> toDocument() {
     return {

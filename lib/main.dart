@@ -29,9 +29,7 @@ class App extends StatelessWidget {
         GetPage(name: ExpenseRoutes.settings, page: () => SettingsScreen(key: ExpenseKeys.settingsScreen)),
         GetPage(name: ExpenseRoutes.addEditLog, page: () => AddEditLogScreen(key: ExpenseKeys.addEditLogScreen)),
         GetPage(
-            name: ExpenseRoutes.addEditEntries,
-            page: () => AddEditEntryScreen(key: ExpenseKeys.addEditEntriesScreen)),
-
+            name: ExpenseRoutes.addEditEntries, page: () => AddEditEntryScreen(key: ExpenseKeys.addEditEntriesScreen)),
       ],
       initialRoute: ExpenseRoutes.home,
       key: ExpenseKeys.main,

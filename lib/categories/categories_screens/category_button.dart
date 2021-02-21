@@ -1,4 +1,3 @@
-
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
@@ -26,7 +25,6 @@ class CategoryButton extends StatelessWidget {
                   style: TextStyle(fontSize: EMOJI_SIZE),
                 )
               : Icon(Icons.edit_outlined),
-
           SizedBox(width: 10.0),
           Text(category?.name ?? label),
         ],
