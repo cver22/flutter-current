@@ -151,7 +151,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
   void handleClick(String value) {
     switch (value) {
       case 'Filter':
-        Env.store.dispatch(SetResetEntriesFilter(entriesChart: EntriesCharts.entries));
+        Env.store.dispatch(FilterSetReset(entriesChart: EntriesCharts.entries));
         showDialog(
           context: context,
           builder: (_) => EntriesFilterDialog(),

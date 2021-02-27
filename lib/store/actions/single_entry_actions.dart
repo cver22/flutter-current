@@ -857,6 +857,7 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
   }
 
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
+  //TODO, randomly assign the remainder
   //re-adjust who spent based on the new total amount
   entryMembers.forEach((key, value) {
     int memberSpentAmount = 0;

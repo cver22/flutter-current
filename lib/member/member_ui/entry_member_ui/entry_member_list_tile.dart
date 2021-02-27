@@ -126,7 +126,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(
-              hintText: paidOrSpent == PaidOrSpent.paid ? PAID : SPENT,
+              hintText: focusNode.hasFocus ? '': paidOrSpent == PaidOrSpent.paid ? PAID : SPENT, //TODO this doesn't fully work as the initial focus does not operate
               hintStyle: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : ACTIVE_HINT_COLOR),
             ),
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
@@ -136,7 +136,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               Env.store.dispatch(EntryNextFocus(paidOrSpent: paidOrSpent));
             },
             onTap: () {
-              //toggle member spending on if the the user taps in the textfield
+              //toggle member spending on if the the user taps in the textField
               if (paidOrSpent == PaidOrSpent.paid) {
                 if (member.paying) {
                   //user already paying, update state with focus

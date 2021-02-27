@@ -52,7 +52,9 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
     AppCategory category = categories[outerIndex];
     List<AppCategory> subs = List.from(subcategories);
+    //retain subcategory list based on parent category list
     subs.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
+
 
     return DragAndDropListExpansion(
       canDrag: setLogFilter != SettingsLogFilter.filter,
@@ -64,7 +66,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
       trailing: _setTrailingIcon(category: category, expandedCategories: expandedCategories, outerIndex: outerIndex),
-      children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories)),
+      children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories, selected: selectedSubcategories != null ? selectedSubcategories[subs[index].id] : null )),
       listKey: ObjectKey(subs),
     );
   }
@@ -72,7 +74,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   Widget _setTrailingIcon({AppCategory category, List<bool> expandedCategories, int outerIndex}) {
 
     if (setLogFilter == SettingsLogFilter.filter) {
-      return FilterListTileTrailing(onSelect: () => Env.store.dispatch(SelectDeselectFilterCategory(id: category.id)), selected: selectedCategories[category.id]);
+      return FilterListTileTrailing(onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id)), selected: selectedCategories[category.id]);
     } else {
       return MasterCategoryListTileTrailing(
         categories: categories,
@@ -89,7 +91,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     } else if (setLogFilter == SettingsLogFilter.settings) {
       Env.store.dispatch(ExpandCollapseSettingsCategory(index: outerIndex));
     } else if (setLogFilter == SettingsLogFilter.filter) {
-      Env.store.dispatch(ExpandCollapseFilterCategory(index: outerIndex));
+      Env.store.dispatch(FilterExpandCollapseCategory(index: outerIndex));
     }
   }
 
@@ -104,7 +106,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     return expandedCategories;
   }
 
-  _buildItem({@required AppCategory subcategory, @required List<AppCategory> categories}) {
+  _buildItem({@required AppCategory subcategory, @required List<AppCategory> categories, bool selected}) {
     return DragAndDropItem(
         canDrag: setLogFilter != SettingsLogFilter.filter,
         child: CategoryListTile(
@@ -114,6 +116,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
           },
           category: subcategory,
           setLogFilter: setLogFilter,
+          selected: selected,
         ));
   }
 
@@ -123,7 +126,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     } else if (setLogFilter == SettingsLogFilter.settings) {
       getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     } else if (setLogFilter == SettingsLogFilter.filter) {
-      Env.store.dispatch(SelectDeselectFilterSubcategory(subcategory: subcategory));
+      Env.store.dispatch(FilterSelectDeselectSubcategory(subcategory: subcategory));
     }
   }
 

@@ -76,6 +76,7 @@ class MasterCategoryListDialog extends StatelessWidget {
       Map<String, bool> selectedCategories,
       Map<String, bool> selectedSubcategories}) {
     return AppDialog(
+
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,

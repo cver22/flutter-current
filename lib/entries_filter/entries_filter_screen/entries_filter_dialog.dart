@@ -1,14 +1,20 @@
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/app/common_widgets/app_dialog.dart';
+import 'package:expenses/app/common_widgets/date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter_state.dart';
-import 'package:expenses/entry/entry_screen/entry_date_button.dart';
+import 'package:expenses/store/actions/entries_filter_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
+import 'package:expenses/utils/currency.dart';
+
+import '../../env.dart';
 
 class EntriesFilterDialog extends StatefulWidget {
   @override
@@ -81,14 +87,12 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       _amountFilter(),
-                      SizedBox(
-                        height: 16.0,
-                      ),
+                      SizedBox(height: 16.0),
                       _dateFilter(),
-                      SizedBox(
-                        height: 16.0,
-                      ),
+                      SizedBox(height: 16.0),
                       _categoryFilter(),
+                      SizedBox(height: 16.0),
+                      _paidSpentFilter(),
                     ],
                   ),
                 ),
@@ -104,39 +108,42 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text('Amount'),
-        SizedBox(
-          width: 20.0,
-        ),
+        SizedBox(width: 20.0),
+        Text('\$ '),
         Container(
           width: 100.0,
-          child: TextField(
-            style: TextStyle(color: Colors.black),
-            controller: _minAmountController,
-            focusNode: _minFocusNode,
-            decoration: InputDecoration(
-              labelText: 'Min',
-              hintText: _minFocusNode.hasFocus ? '' : 'Min',
-              hintStyle: TextStyle(color: ACTIVE_HINT_COLOR),
-            ),
-          ),
+          child: _minMaxTextField(label: 'Min', controller: _minAmountController, focusNode: _minFocusNode),
         ),
-        SizedBox(
-          width: 20.0,
-        ),
+        SizedBox(width: 10.0),
+        Text('\$ '),
         Container(
           width: 100.0,
-          child: TextField(
-            style: TextStyle(color: Colors.black),
-            controller: _maxAmountController,
-            focusNode: _maxFocusNode,
-            decoration: InputDecoration(
-              labelText: 'Max',
-              hintText: _maxFocusNode.hasFocus ? '' : 'Max',
-              hintStyle: TextStyle(color: ACTIVE_HINT_COLOR),
-            ),
-          ),
+          child: _minMaxTextField(label: 'Max', controller: _maxAmountController, focusNode: _maxFocusNode),
         )
       ],
+    );
+  }
+
+  TextField _minMaxTextField(
+      {@required TextEditingController controller, @required String label, @required FocusNode focusNode}) {
+    return TextField(
+      style: TextStyle(color: Colors.black),
+      controller: controller,
+      focusNode: focusNode,
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
+      keyboardType: TextInputType.number,
+      textInputAction: TextInputAction.done,
+      decoration: InputDecoration(
+        labelText: label,
+        hintText: focusNode.hasFocus ? '' : label,
+        hintStyle: TextStyle(color: ACTIVE_HINT_COLOR),
+      ),
+      onChanged: (newValue) {
+        int intValue = parseNewValue(newValue: newValue);
+
+        //TODO need to pass min and max Function(int) callback
+        //Env.store.dispatch();
+      },
     );
   }
 
@@ -150,18 +157,22 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
           initialDateTime: filter.startDate.isSome ? filter.startDate.value : null,
           useShortDate: true,
           label: 'Start Date',
+          pickTime: false,
+          onSave: (dateTime) {
+            Env.store.dispatch(FilterSetStartDate(dateTime: dateTime));
+          },
         ),
-        SizedBox(
-          width: 8.0,
-        ),
+        SizedBox(width: 8.0),
         Text('to'),
-        SizedBox(
-          width: 8.0,
-        ),
+        SizedBox(width: 8.0),
         DateButton(
           initialDateTime: filter.endDate.isSome ? filter.endDate.value : null,
           useShortDate: true,
           label: 'End Date',
+          pickTime: false,
+          onSave: (dateTime) {
+            Env.store.dispatch(FilterSetEndDate(dateTime: dateTime));
+          },
         )
       ],
     );
@@ -178,6 +189,19 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
           ),
         ),
       },
+    );
+  }
+
+  //TODO
+  Widget _paidSpentFilter() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AppButton(onPressed: null, child: null),
+        SizedBox(width: 8.0),
+        AppButton(onPressed: null, child: null),
+      ],
     );
   }
 }

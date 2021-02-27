@@ -39,7 +39,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//build onSave function for date filters
+//build paid/spent filter
 //build filter dialog
 //build function to return filtered list back to the widget
 

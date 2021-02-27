@@ -15,10 +15,18 @@ AppState _updateEntriesFilterState(
   return appState.copyWith(entriesFilterState: update(appState.entriesFilterState));
 }
 
-class ExpandCollapseFilterCategory implements AppAction {
+AppState _updateEntriesFilter({
+  AppState appState,
+  Maybe<EntriesFilter> entriesFilter,
+}) {
+  return _updateEntriesFilterState(
+      appState, (entriesFilterState) => entriesFilterState.copyWith(entriesFilter: entriesFilter));
+}
+
+class FilterExpandCollapseCategory implements AppAction {
   final int index;
 
-  ExpandCollapseFilterCategory({@required this.index});
+  FilterExpandCollapseCategory({@required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.entriesFilterState.expandedCategories);
@@ -32,10 +40,10 @@ class ExpandCollapseFilterCategory implements AppAction {
   }
 }
 
-class SetResetEntriesFilter implements AppAction {
+class FilterSetReset implements AppAction {
   final EntriesCharts entriesChart;
 
-  SetResetEntriesFilter({this.entriesChart});
+  FilterSetReset({this.entriesChart});
 
   AppState updateState(AppState appState) {
     EntriesFilter updatedEntriesFilter = EntriesFilter.initial();
@@ -50,9 +58,9 @@ class SetResetEntriesFilter implements AppAction {
     if (logs.length > 0) {
       logs.forEach((log) {
         log.categories.forEach((category) {
-          if ((allCategories.singleWhere((e) => e.name == category.name, orElse: () => null)) == null) {
+          if ((allCategories.singleWhere((cat) => cat.name == category.name, orElse: () => null)) == null) {
             //list does not contain this category, add it and change its Id to its name
-            allCategories.add(category.copyWith(parentCategoryId: category.name));
+            allCategories.add(category.copyWith(id: category.name));
           }
           log.subcategories.forEach((subcategory) {
             if (category.id == subcategory.parentCategoryId &&
@@ -78,8 +86,8 @@ class SetResetEntriesFilter implements AppAction {
       updatedEntriesFilter = appState.entriesState.chartFilter.value;
     } else {
       //only process this list and update the selected cat & sub if a filter was not passed to the action
-      allSubcategories.forEach((element) {
-        selectedSubcategories.putIfAbsent(element.id, () => false);
+      allSubcategories.forEach((subcategory) {
+        selectedSubcategories.putIfAbsent(subcategory.id, () => false);
       });
 
       updatedEntriesFilter = updatedEntriesFilter.copyWith(
@@ -97,29 +105,28 @@ class SetResetEntriesFilter implements AppAction {
   }
 }
 
-class SelectDeselectFilterCategory implements AppAction {
+class FilterSelectDeselectCategory implements AppAction {
   final String id;
 
-  SelectDeselectFilterCategory({@required this.id});
+  FilterSelectDeselectCategory({@required this.id});
 
   AppState updateState(AppState appState) {
     EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
     Map<String, bool> selectedCategories = entriesFilter.selectedCategories;
     selectedCategories.update(id, (value) => !value);
 
-    return _updateEntriesFilterState(
-        appState,
-        (entriesFilterState) => entriesFilterState.copyWith(
-                entriesFilter: Maybe.some(entriesFilter.copyWith(
-              selectedCategories: selectedCategories,
-            ))));
+    return _updateEntriesFilter(
+        appState: appState,
+        entriesFilter: Maybe.some(entriesFilter.copyWith(
+          selectedCategories: selectedCategories,
+        )));
   }
 }
 
-class SelectDeselectFilterSubcategory implements AppAction {
+class FilterSelectDeselectSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  SelectDeselectFilterSubcategory({@required this.subcategory});
+  FilterSelectDeselectSubcategory({@required this.subcategory});
 
   AppState updateState(AppState appState) {
     EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
@@ -131,12 +138,99 @@ class SelectDeselectFilterSubcategory implements AppAction {
       selectedCategories.update(subcategory.parentCategoryId, (value) => true);
     }
 
-    return _updateEntriesFilterState(
-        appState,
-        (entriesFilterState) => entriesFilterState.copyWith(
-                entriesFilter: Maybe.some(entriesFilter.copyWith(
-              selectedCategories: selectedCategories,
-              selectedSubcategories: selectedSubcategories,
-            ))));
+    return _updateEntriesFilter(
+        appState: appState,
+        entriesFilter: Maybe.some(entriesFilter.copyWith(
+          selectedCategories: selectedCategories,
+          selectedSubcategories: selectedSubcategories,
+        )));
+  }
+}
+
+class FilterSetStartDate implements AppAction {
+  final DateTime dateTime;
+
+  FilterSetStartDate({this.dateTime});
+
+  AppState updateState(AppState appState) {
+    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
+    Maybe<DateTime> previousDate = entriesFilter.startDate;
+    Maybe<DateTime> updatedDateTime = Maybe.some(dateTime);
+
+    //check if there is an end date
+    if (entriesFilter.endDate.isSome) {
+      //if so, start date can not be after the end date
+      if (updatedDateTime.value.isAfter(entriesFilter.endDate.value) && previousDate.isSome) {
+        if (previousDate.isSome) {
+          //update with previous acceptable start date
+          updatedDateTime = Maybe.some(previousDate.value);
+        } else {
+          //user needs to enter a valid start date
+          updatedDateTime = Maybe.none();
+        }
+        //TODO toast error message
+
+      }
+    }
+
+    return _updateEntriesFilter(
+        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(startDate: updatedDateTime)));
+  }
+}
+
+class FilterSetEndDate implements AppAction {
+  final DateTime dateTime;
+
+  FilterSetEndDate({this.dateTime});
+
+  AppState updateState(AppState appState) {
+    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
+    Maybe<DateTime> previousDate = entriesFilter.endDate;
+    Maybe<DateTime> updatedDateTime = Maybe.some(dateTime);
+
+    //check if there is an start date
+    if (entriesFilter.startDate.isSome) {
+      //if so, end date can not be before the end date
+      if (updatedDateTime.value.isBefore(entriesFilter.startDate.value)) {
+        if (previousDate.isSome) {
+          //update with previous acceptable end date
+          updatedDateTime = Maybe.some(previousDate.value);
+        } else {
+          //user needs to enter a valid end date
+          updatedDateTime = Maybe.none();
+        }
+        //TODO toast error message
+      }
+    }
+
+    return _updateEntriesFilter(
+        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(endDate: updatedDateTime)));
+  }
+}
+
+class FilterUpdateAmount implements AppAction {
+  final int minAmount;
+  final int maxAmount;
+
+  FilterUpdateAmount({this.minAmount, this.maxAmount});
+
+  AppState updateState(AppState appState) {
+    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
+    Maybe<int> min = entriesFilter.minAmount;
+    Maybe<int> max = entriesFilter.minAmount;
+
+    if (minAmount != null) {
+      min = Maybe.some(minAmount);
+    }
+    if (maxAmount != null) {
+      max = Maybe.some(maxAmount);
+    }
+
+    return _updateEntriesFilter(
+        appState: appState,
+        entriesFilter: Maybe.some(appState.entriesFilterState.entriesFilter.value.copyWith(
+          minAmount: min,
+          maxAmount: max,
+        )));
   }
 }
