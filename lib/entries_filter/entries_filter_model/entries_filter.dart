@@ -2,6 +2,7 @@ import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/maybe.dart';
 
 class EntriesFilter extends Equatable {
@@ -15,7 +16,11 @@ class EntriesFilter extends Equatable {
   final List<AppCategory> allSubcategories;
   final Maybe<int> minAmount;
   final Maybe<int> maxAmount;
-  final List<String> logMembers; //id
+  final Map<String, String> allMembers; //id, name
+  final List<String> membersPaid; //id
+  final List<String> membersSpent; //id
+  final List<String> selectedLogs;
+  final List<Tag> allTags;
   final List<String> tags;
 
   EntriesFilter({
@@ -29,7 +34,11 @@ class EntriesFilter extends Equatable {
     this.allSubcategories,
     this.minAmount,
     this.maxAmount,
-    this.logMembers,
+    this.allMembers,
+    this.membersPaid,
+    this.membersSpent,
+    this.selectedLogs,
+    this.allTags,
     this.tags,
   });
 
@@ -45,7 +54,11 @@ class EntriesFilter extends Equatable {
       allSubcategories: const [],
       minAmount: Maybe.none(),
       maxAmount: Maybe.none(),
-      logMembers: const [],
+      allMembers: LinkedHashMap(),
+      membersPaid: const [],
+      membersSpent: const [],
+      selectedLogs: const [],
+      allTags: const [],
       tags: const [],
     );
   }
@@ -62,7 +75,11 @@ class EntriesFilter extends Equatable {
         allSubcategories,
         minAmount,
         maxAmount,
-        logMembers,
+        allMembers,
+        membersPaid,
+        membersSpent,
+        selectedLogs,
+        allTags,
         tags
       ]; //id, name
 
@@ -80,7 +97,11 @@ class EntriesFilter extends Equatable {
     List<AppCategory> allSubcategories,
     Maybe<int> minAmount,
     Maybe<int> maxAmount,
-    List<String> logMembers,
+    Map<String, String> allMembers,
+    List<String> membersPaid,
+    List<String> membersSpent,
+    List<String> selectedLogs,
+    List<Tag> allTags,
     List<String> tags,
   }) {
     if ((startDate == null || identical(startDate, this.startDate)) &&
@@ -93,7 +114,11 @@ class EntriesFilter extends Equatable {
         (allSubcategories == null || identical(allSubcategories, this.allSubcategories)) &&
         (minAmount == null || identical(minAmount, this.minAmount)) &&
         (maxAmount == null || identical(maxAmount, this.maxAmount)) &&
-        (logMembers == null || identical(logMembers, this.logMembers)) &&
+        (allMembers == null || identical(allMembers, this.allMembers)) &&
+        (membersPaid == null || identical(membersPaid, this.membersPaid)) &&
+        (membersSpent == null || identical(membersSpent, this.membersSpent)) &&
+        (selectedLogs == null || identical(selectedLogs, this.selectedLogs)) &&
+        (allTags == null || identical(allTags, this.allTags)) &&
         (tags == null || identical(tags, this.tags))) {
       return this;
     }
@@ -109,7 +134,11 @@ class EntriesFilter extends Equatable {
       allSubcategories: allSubcategories ?? this.allSubcategories,
       minAmount: minAmount ?? this.minAmount,
       maxAmount: maxAmount ?? this.maxAmount,
-      logMembers: logMembers ?? this.logMembers,
+      allMembers: allMembers ?? this.allMembers,
+      membersPaid: membersPaid ?? this.membersPaid,
+      membersSpent: membersSpent ?? this.membersSpent,
+      selectedLogs: selectedLogs ?? this.selectedLogs,
+      allTags: allTags ?? this.allTags,
       tags: tags ?? this.tags,
     );
   }

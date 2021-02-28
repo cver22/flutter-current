@@ -1,6 +1,6 @@
 import 'package:drag_and_drop_lists/drag_and_drop_lists.dart';
+import 'package:expenses/app/common_widgets/list_tile_components.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/categories/categories_screens/category_list_tile_components.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/store/actions/entries_filter_actions.dart';

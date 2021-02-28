@@ -41,6 +41,9 @@ class EntryCategoryListDialog extends StatelessWidget {
 
   Widget buildDialog({singleEntryState, BuildContext context, List<AppCategory> categories}) {
     return AppDialog(
+      title: categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
+      backChevron: backChevron,
+      trailingTitleWidget: _displayAddButton(selectedEntry: singleEntryState.selectedEntry.value),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.start,
@@ -60,7 +63,7 @@ class EntryCategoryListDialog extends StatelessWidget {
                 //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
                 style: TextStyle(fontSize: 20.0),
               ),
-              _displayAddButton(selectedEntry: singleEntryState.selectedEntry.value)
+
             ],
           ),
           //shows this list view if the category list comes from the log

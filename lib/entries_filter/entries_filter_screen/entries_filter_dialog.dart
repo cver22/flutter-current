@@ -5,12 +5,12 @@ import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter_state.dart';
+import 'package:expenses/entries_filter/entries_filter_screen/filter_member_dialog.dart';
 import 'package:expenses/store/actions/entries_filter_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 import 'package:expenses/utils/currency.dart';
 
@@ -58,51 +58,37 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
         map: (state) => state.entriesFilterState,
         builder: (state) {
           filter = state.entriesFilter.value;
+
           return AppDialog(
-              child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: <Widget>[
-                  IconButton(
-                    icon: Icon(Icons.chevron_left),
-                    //if no back action is passed, automatically set to pop context
-                    onPressed: () => Get.back(),
-                  ),
-                  Text(
-                    'Entries Filter',
-                    //TODO this should change based on entries/chart
-                    style: TextStyle(fontSize: 20.0),
-                  ),
-                  Container(),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: SingleChildScrollView(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.max,
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      _amountFilter(),
-                      SizedBox(height: 16.0),
-                      _dateFilter(),
-                      SizedBox(height: 16.0),
-                      _categoryFilter(),
-                      SizedBox(height: 16.0),
-                      _paidSpentFilter(),
-                    ],
-                  ),
+            title: 'Entries Filter',
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _amountFilter(filter: filter),
+                    SizedBox(height: 16.0),
+                    _dateFilter(),
+                    SizedBox(height: 16.0),
+                    _categoryFilter(),
+                    SizedBox(height: 16.0),
+                    _paidSpentFilter(filter: filter),
+                  ],
                 ),
               ),
-            ],
-          ));
+            ),
+          );
         });
   }
 
-  Widget _amountFilter() {
+  Widget _amountFilter({EntriesFilter filter}) {
+    bool minExceedMax = false;
+    if (filter.minAmount.isSome && filter.maxAmount.isSome) {
+      minExceedMax = filter.minAmount.value > filter.maxAmount.value;
+    }
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
@@ -112,27 +98,50 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
         Text('\$ '),
         Container(
           width: 100.0,
-          child: _minMaxTextField(label: 'Min', controller: _minAmountController, focusNode: _minFocusNode),
+          child: _minMaxTextField(
+            minExceedMax: minExceedMax,
+            label: 'Min',
+            controller: _minAmountController,
+            focusNode: _minFocusNode,
+            onChange: (minAmount) {
+              Env.store.dispatch(FilterUpdateAmount(minAmount: minAmount));
+            },
+            textInputAction: TextInputAction.next,
+          ),
         ),
         SizedBox(width: 10.0),
         Text('\$ '),
         Container(
           width: 100.0,
-          child: _minMaxTextField(label: 'Max', controller: _maxAmountController, focusNode: _maxFocusNode),
+          child: _minMaxTextField(
+            minExceedMax: minExceedMax,
+            label: 'Max',
+            controller: _maxAmountController,
+            focusNode: _maxFocusNode,
+            onChange: (maxAmount) {
+              Env.store.dispatch(FilterUpdateAmount(maxAmount: maxAmount));
+            },
+            textInputAction: TextInputAction.done,
+          ),
         )
       ],
     );
   }
 
   TextField _minMaxTextField(
-      {@required TextEditingController controller, @required String label, @required FocusNode focusNode}) {
+      {@required TextEditingController controller,
+      @required String label,
+      @required FocusNode focusNode,
+      Function(int) onChange,
+      TextInputAction textInputAction,
+      bool minExceedMax}) {
     return TextField(
-      style: TextStyle(color: Colors.black),
+      style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),
       controller: controller,
       focusNode: focusNode,
       inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
       keyboardType: TextInputType.number,
-      textInputAction: TextInputAction.done,
+      textInputAction: textInputAction,
       decoration: InputDecoration(
         labelText: label,
         hintText: focusNode.hasFocus ? '' : label,
@@ -140,9 +149,7 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
       ),
       onChanged: (newValue) {
         int intValue = parseNewValue(newValue: newValue);
-
-        //TODO need to pass min and max Function(int) callback
-        //Env.store.dispatch();
+        onChange(intValue);
       },
     );
   }
@@ -192,15 +199,50 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
     );
   }
 
-  //TODO
-  Widget _paidSpentFilter() {
+  //TODO make app button show list of who paid
+  Widget _paidSpentFilter({@required EntriesFilter filter}) {
+    String membersPaidName = '';
+    String membersSpentName = '';
+
+    //build paid button String
+    filter.membersPaid.forEach((memberId) {
+      if (membersPaidName.length > 0) {
+        membersPaidName += filter.allMembers[memberId];
+      } else {
+        membersPaidName += '\, ${filter.allMembers[memberId]}';
+      }
+    });
+
+    //build spent button string
+    filter.membersSpent.forEach((memberId) {
+      if (membersSpentName.length > 0) {
+        membersSpentName += filter.allMembers[memberId];
+      } else {
+        membersSpentName += '\, ${filter.allMembers[memberId]}';
+      }
+    });
+
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AppButton(onPressed: null, child: null),
+        AppButton(
+            onPressed: () => {
+                  showDialog(
+                    context: context,
+                    builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+                  ),
+                },
+            child: null),
         SizedBox(width: 8.0),
-        AppButton(onPressed: null, child: null),
+        AppButton(
+            onPressed: () => {
+                  showDialog(
+                    context: context,
+                    builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+                  ),
+                },
+            child: null),
       ],
     );
   }

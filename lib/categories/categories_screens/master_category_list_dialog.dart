@@ -76,44 +76,18 @@ class MasterCategoryListDialog extends StatelessWidget {
       Map<String, bool> selectedCategories,
       Map<String, bool> selectedSubcategories}) {
     return AppDialog(
-
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.chevron_left),
-                //if no back action is passed, automatically set to pop context
-                onPressed: () => Get.back(),
+      trailingTitleWidget: setLogFilter == SettingsLogFilter.filter ? Container() : _displayAddButton(),
+      child: categories.length > 0
+          ? Expanded(
+              child: MasterCategoryDragAndDropList(
+                selectedCategories: selectedCategories,
+                selectedSubcategories: selectedSubcategories,
+                categories: categories,
+                subcategories: subcategories,
+                setLogFilter: setLogFilter,
               ),
-              Text(
-                CATEGORY,
-                //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
-                style: TextStyle(fontSize: 20.0),
-              ),
-              setLogFilter == SettingsLogFilter.filter ? Container() : _displayAddButton(),
-            ],
-          ),
-          //shows this list view if the category list comes from the log
-          categories.length > 0
-              ? Expanded(
-                  child: MasterCategoryDragAndDropList(
-                    selectedCategories: selectedCategories,
-                    selectedSubcategories: selectedSubcategories,
-                    categories: categories,
-                    subcategories: subcategories,
-                    setLogFilter: setLogFilter,
-                  ),
-                )
-              : EmptyContent(),
-          //TODO this should direct the user where to add a category if they have deleted all of them
-        ],
-      ),
+            )
+          : EmptyContent(),
     );
   }
 

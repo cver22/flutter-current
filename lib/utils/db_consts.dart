@@ -19,6 +19,7 @@ enum CategoryOrSubcategory { category, subcategory }
 enum SettingsLogFilter { settings, log, filter }
 enum EntriesCharts {entries, charts}
 enum TagCollectionType { entry, category, log }
+enum SortMethod {alphabetical, frequency}
 //TODO implement filtering later
 //enum GroupBy {day, week, month, year}
 //enum FilterBy {none, all, category, subcategory, tag}

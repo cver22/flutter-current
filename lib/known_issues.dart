@@ -35,13 +35,16 @@
 //TODO entries tiles seem to be of inconsistent size
 //TODO start splash screen earlier?
 //TODO changing hte name of a category or subcategory should change the filter for the entries state if .isSome
+//TODO filter can't save if min > max, maybe also make it colour it red?
 
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//build paid/spent filter
-//build filter dialog
-//build function to return filtered list back to the widget
+//filter basic lists and dialogs
+  //paid spent -> likely need to adjust entriesFilter to have list of paid and spent rather than just a list of members
+  //currencies
+  //logs
+
 
 //TODO ASK BORIS
 // is having methods in the models bad practice, should they be extracted to the action - if it can be in an action, move it there - Answer - Yes

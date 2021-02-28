@@ -4,6 +4,7 @@ import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart
 import 'package:expenses/entries_filter/entries_filter_model/entries_filter_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/app_actions.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
@@ -40,28 +41,36 @@ class FilterExpandCollapseCategory implements AppAction {
   }
 }
 
-class FilterSetReset implements AppAction {
+class FilterSet implements AppAction {
   final EntriesCharts entriesChart;
 
-  FilterSetReset({this.entriesChart});
+  FilterSet({this.entriesChart});
 
   AppState updateState(AppState appState) {
     EntriesFilter updatedEntriesFilter = EntriesFilter.initial();
-    Map<String, bool> selectedCategories = {};
-    Map<String, bool> selectedSubcategories = {};
+    List<Log> logs = List.from(appState.logsState.logs.values.toList());
     List<AppCategory> allCategories = [];
     List<AppCategory> allSubcategories = [];
     List<bool> expandedCategories = [];
-    List<Log> logs = List.from(appState.logsState.logs.values.toList());
+    Map<String, String> members = {};
+    List<Tag> allTags = [];
 
-    //consolidates the list of categories to prevent duplication
+    //creates lists the user can select from an over writes the entries list every time because these elements are dynamic
     if (logs.length > 0) {
       logs.forEach((log) {
+        //create map of allMembers
+        log.logMembers.forEach((key, member) {
+          if (members.containsKey(key)) {
+            members.putIfAbsent(key, () => member.name);
+          }
+        });
+        //create allCategory list
         log.categories.forEach((category) {
           if ((allCategories.singleWhere((cat) => cat.name == category.name, orElse: () => null)) == null) {
             //list does not contain this category, add it and change its Id to its name
             allCategories.add(category.copyWith(id: category.name));
           }
+          //create allSubcategory list
           log.subcategories.forEach((subcategory) {
             if (category.id == subcategory.parentCategoryId &&
                 (allSubcategories.singleWhere((e) => e.name == subcategory.name, orElse: () => null)) == null) {
@@ -72,11 +81,24 @@ class FilterSetReset implements AppAction {
         });
       });
     }
+
+    //create list of all tags so it can be sorted as desired by the user
+    appState.tagState.tags.forEach((key, tag) {
+      if ((allTags.singleWhere((it) => it.name == tag.name, orElse: () => null)) != null) {
+        //tag exists in the list, add to its frequency from another log
+        Tag tagToUpdate = allTags.firstWhere((element) => element.name == tag.name);
+        allTags[allTags.indexOf(tagToUpdate)] =
+            tagToUpdate.copyWith(tagLogFrequency: tagToUpdate.tagLogFrequency + tag.tagLogFrequency);
+      } else {
+        //tag does not exist in the list, add it
+        allTags.add(tag);
+      }
+    });
+    allTags = _sortTags(sortMethod: SortMethod.alphabetical, ascending: true, allTags: allTags);
+
+    //create list of expanded categories the same size as the list of categories and set expanded to false
     allCategories.forEach((element) {
-      //create list of expanded categories the same size as the list of categories and set expanded to false
       expandedCategories.add(false);
-      //create list of selected categories since we're looping this list anyway
-      selectedCategories.putIfAbsent(element.id, () => false);
     });
 
     //check if user is updating an existing filter
@@ -85,13 +107,27 @@ class FilterSetReset implements AppAction {
     } else if (entriesChart == EntriesCharts.charts && appState.entriesState.chartFilter.isSome) {
       updatedEntriesFilter = appState.entriesState.chartFilter.value;
     } else {
+      //new filter, setup filter
+      Map<String, bool> selectedCategories = {};
+      Map<String, bool> selectedSubcategories = {};
+
+      allCategories.forEach((element) {
+        //create list of selected categories
+        selectedCategories.putIfAbsent(element.id, () => false);
+      });
+
       //only process this list and update the selected cat & sub if a filter was not passed to the action
       allSubcategories.forEach((subcategory) {
         selectedSubcategories.putIfAbsent(subcategory.id, () => false);
       });
 
+      //setup the new filter
       updatedEntriesFilter = updatedEntriesFilter.copyWith(
           selectedCategories: selectedCategories, selectedSubcategories: selectedSubcategories);
+    }
+
+    if (entriesChart != null) {
+      //TODO remove any references to selected items that are no longer present
     }
 
     return _updateEntriesFilterState(
@@ -99,9 +135,13 @@ class FilterSetReset implements AppAction {
         (entriesFilterState) => entriesFilterState.copyWith(
             expandedCategories: expandedCategories,
             entriesFilter: Maybe.some(updatedEntriesFilter.copyWith(
-              allCategories: allCategories,
-              allSubcategories: allSubcategories,
-            ))));
+                allCategories: allCategories, allSubcategories: allSubcategories, allMembers: members))));
+  }
+}
+
+class FilterReset implements AppAction {
+  AppState updateState(AppState appState) {
+    return _updateEntriesFilter(appState: appState, entriesFilter: Maybe.none());
   }
 }
 
@@ -217,13 +257,21 @@ class FilterUpdateAmount implements AppAction {
   AppState updateState(AppState appState) {
     EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
     Maybe<int> min = entriesFilter.minAmount;
-    Maybe<int> max = entriesFilter.minAmount;
+    Maybe<int> max = entriesFilter.maxAmount;
 
     if (minAmount != null) {
-      min = Maybe.some(minAmount);
+      if (minAmount == 0) {
+        min = Maybe.none();
+      } else {
+        min = Maybe.some(minAmount);
+      }
     }
     if (maxAmount != null) {
-      max = Maybe.some(maxAmount);
+      if (maxAmount == 0) {
+        max = Maybe.none();
+      } else {
+        max = Maybe.some(maxAmount);
+      }
     }
 
     return _updateEntriesFilter(
@@ -233,4 +281,60 @@ class FilterUpdateAmount implements AppAction {
           maxAmount: max,
         )));
   }
+}
+
+class FilterSelectPaid implements AppAction {
+  final String id;
+
+  FilterSelectPaid({@required this.id});
+
+  AppState updateState(AppState appState) {
+    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
+    List<String> membersPaid = entriesFilter.membersPaid;
+
+    if (membersPaid.contains(id)) {
+      membersPaid.remove(id);
+    } else {
+      membersPaid.add(id);
+    }
+
+    return _updateEntriesFilter(
+        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(membersPaid: membersPaid)));
+  }
+}
+
+class FilterSelectSpent implements AppAction {
+  final String id;
+
+  FilterSelectSpent({@required this.id});
+
+  AppState updateState(AppState appState) {
+    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
+    List<String> membersSpent = entriesFilter.membersSpent;
+
+    if (membersSpent.contains(id)) {
+      membersSpent.remove(id);
+    } else {
+      membersSpent.add(id);
+    }
+
+    return _updateEntriesFilter(
+        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(membersPaid: membersSpent)));
+  }
+}
+
+List<Tag> _sortTags({SortMethod sortMethod = SortMethod.alphabetical, List<Tag> allTags, bool ascending = true}) {
+  List<Tag> orderTags = List.from(allTags);
+
+  if (sortMethod == SortMethod.alphabetical) {
+    orderTags.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  } else if (sortMethod == SortMethod.frequency) {
+    orderTags.sort((a, b) => a.tagLogFrequency..compareTo(b.tagLogFrequency));
+  }
+
+  if (!ascending) {
+    orderTags = orderTags.reversed;
+  }
+
+  return orderTags;
 }
