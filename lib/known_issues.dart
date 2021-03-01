@@ -35,15 +35,23 @@
 //TODO entries tiles seem to be of inconsistent size
 //TODO start splash screen earlier?
 //TODO changing hte name of a category or subcategory should change the filter for the entries state if .isSome
-//TODO filter can't save if min > max, maybe also make it colour it red?
+
+
+//TODO VISUAL
+//TODO appDialog needs and invisible icon on the trailing side if there is no trailing
+
+
+
+//TODO WARNINGS AND TOASTS to build
+//TODO filter, min must be less than max
+
+
 
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//filter basic lists and dialogs
-  //paid spent -> likely need to adjust entriesFilter to have list of paid and spent rather than just a list of members
-  //currencies
-  //logs
+//filter category - if all subs deselected, remove category as well
+//implement paid/spent list and filters, need all, none, done
 
 
 //TODO ASK BORIS

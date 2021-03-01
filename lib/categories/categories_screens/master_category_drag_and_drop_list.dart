@@ -3,7 +3,7 @@ import 'package:expenses/app/common_widgets/list_tile_components.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/category_list_tile.dart';
 import 'package:expenses/categories/categories_screens/category_list_tools.dart';
-import 'package:expenses/store/actions/entries_filter_actions.dart';
+import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/actions/settings_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -12,8 +12,8 @@ import 'package:flutter/material.dart';
 import '../../env.dart';
 
 class MasterCategoryDragAndDropList extends StatelessWidget {
-  final Map<String, bool> selectedCategories;
-  final Map<String, bool> selectedSubcategories;
+  final List<String> selectedCategories;
+  final List<String> selectedSubcategories;
   final List<AppCategory> categories;
   final List<AppCategory> subcategories;
   final SettingsLogFilter setLogFilter;
@@ -66,7 +66,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       title: Text(category.name),
       leading: CategoryListTileLeading(category: category),
       trailing: _setTrailingIcon(category: category, expandedCategories: expandedCategories, outerIndex: outerIndex),
-      children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories, selected: selectedSubcategories != null ? selectedSubcategories[subs[index].id] : null )),
+      children: List.generate(subs.length, (index) => _buildItem(subcategory: subs[index], categories: categories, selected: selectedSubcategories.contains(subs[index].id) )),
       listKey: ObjectKey(subs),
     );
   }
@@ -74,7 +74,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   Widget _setTrailingIcon({AppCategory category, List<bool> expandedCategories, int outerIndex}) {
 
     if (setLogFilter == SettingsLogFilter.filter) {
-      return FilterListTileTrailing(onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id)), selected: selectedCategories[category.id]);
+      return FilterListTileTrailing(onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id)), selected: selectedCategories.contains(category.id));
     } else {
       return MasterCategoryListTileTrailing(
         categories: categories,
@@ -101,7 +101,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     } else if (setLogFilter == SettingsLogFilter.settings) {
       expandedCategories = List.from(Env.store.state.settingsState.expandedCategories);
     } else if (setLogFilter == SettingsLogFilter.filter) {
-      expandedCategories = List.from(Env.store.state.entriesFilterState.expandedCategories);
+      expandedCategories = List.from(Env.store.state.filterState.expandedCategories);
     }
     return expandedCategories;
   }

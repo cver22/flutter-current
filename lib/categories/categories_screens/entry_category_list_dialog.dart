@@ -44,32 +44,7 @@ class EntryCategoryListDialog extends StatelessWidget {
       title: categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
       backChevron: backChevron,
       trailingTitleWidget: _displayAddButton(selectedEntry: singleEntryState.selectedEntry.value),
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            mainAxisSize: MainAxisSize.max,
-            children: <Widget>[
-              IconButton(
-                icon: Icon(Icons.chevron_left),
-                //if no back action is passed, automatically set to pop context
-                onPressed: backChevron ?? () => Get.back(),
-              ),
-              Text(
-                categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
-                //TODO currently uses the database constants to label the dialog, will need to change to if function that utilizes the constants to trigger the UI constants
-                style: TextStyle(fontSize: 20.0),
-              ),
-
-            ],
-          ),
-          //shows this list view if the category list comes from the log
-          categories.length > 0 ? _categoryListView(context: context, categories: categories) : EmptyContent(),
-        ],
-      ),
+      child: categories.length > 0 ? _categoryListView(context: context, categories: categories) : EmptyContent(),
     );
   }
 

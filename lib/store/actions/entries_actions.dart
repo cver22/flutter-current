@@ -3,6 +3,8 @@ import 'dart:collection';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
+import 'package:expenses/filter/filter_model/filter.dart';
+import 'package:expenses/filter/filter_model/filter_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_totals_model/log_total.dart';
 import 'package:expenses/log/log_totals_model/log_totals_state.dart';
@@ -10,6 +12,7 @@ import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
+import 'package:expenses/utils/maybe.dart';
 
 import '../../env.dart';
 
@@ -45,14 +48,14 @@ AppState _updateEntriesState(
   );
 }*/
 
-class SetEntriesLoading implements AppAction {
+class EntriesSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: true));
   }
 }
 
-class SetEntriesLoaded implements AppAction {
+class EntriesSetLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: false));
@@ -83,7 +86,7 @@ class SetEntries implements AppAction {
   }
 }
 
-class SetEntriesOrder implements AppAction {
+class EntriesSetOrder implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(
@@ -91,7 +94,7 @@ class SetEntriesOrder implements AppAction {
   }
 }
 
-class DeleteSelectedEntry implements AppAction {
+class EntriesDeleteSelectedEntry implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Env.store.dispatch(SingleEntryProcessing());
@@ -120,5 +123,33 @@ class DeleteSelectedEntry implements AppAction {
     Env.store.dispatch(ClearEntryState());
 
     return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
+  }
+}
+
+class EntriesSetEntriesFilter implements AppAction {
+
+  @override
+  AppState updateState(AppState appState) {
+    FilterState filterState = appState.filterState;
+
+    //if filter has been changed, save new filter, if reset, pass no filter
+    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+
+    return _updateEntriesState(
+        appState, (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
+  }
+}
+
+class EntriesSetChartFilter implements AppAction {
+
+  @override
+  AppState updateState(AppState appState) {
+    FilterState filterState = appState.filterState;
+
+    //if filter has been changed, save new filter, if reset, pass no filter
+    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+
+    return _updateEntriesState(
+        appState, (entriesState) => entriesState.copyWith(chartFilter: updatedFilter));
   }
 }

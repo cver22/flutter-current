@@ -245,7 +245,7 @@ class AddEditEntryScreen extends StatelessWidget {
             title: 'Are you sure you want to delete this Entry?',
             onTapYes: (confirmDelete) {
               if (confirmDelete) {
-                Env.store.dispatch(DeleteSelectedEntry());
+                Env.store.dispatch(EntriesDeleteSelectedEntry());
                 _updateCategoriesOnClose();
                 Get.back();
               }

@@ -1,7 +1,7 @@
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
-import 'package:expenses/entries_filter/entries_filter_model/entries_filter_state.dart';
+import 'package:expenses/filter/filter_model/filter.dart';
+import 'package:expenses/filter/filter_model/filter_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
@@ -9,19 +9,23 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
 
-AppState _updateEntriesFilterState(
+AppState _updateFilterState(
   AppState appState,
-  EntriesFilterState update(EntriesFilterState entriesFilterState),
+  FilterState update(FilterState filterState),
 ) {
-  return appState.copyWith(entriesFilterState: update(appState.entriesFilterState));
+  return appState.copyWith(filterState: update(appState.filterState));
 }
 
-AppState _updateEntriesFilter({
+AppState _updateFilter({
   AppState appState,
-  Maybe<EntriesFilter> entriesFilter,
+  Maybe<Filter> filter,
 }) {
-  return _updateEntriesFilterState(
-      appState, (entriesFilterState) => entriesFilterState.copyWith(entriesFilter: entriesFilter));
+  return _updateFilterState(
+      appState,
+      (filterState) => filterState.copyWith(
+            filter: filter,
+            updated: true,
+          ));
 }
 
 class FilterExpandCollapseCategory implements AppAction {
@@ -30,24 +34,24 @@ class FilterExpandCollapseCategory implements AppAction {
   FilterExpandCollapseCategory({@required this.index});
 
   AppState updateState(AppState appState) {
-    List<bool> expandedCategories = List.from(appState.entriesFilterState.expandedCategories);
+    List<bool> expandedCategories = List.from(appState.filterState.expandedCategories);
     expandedCategories[index] = !expandedCategories[index];
 
-    return _updateEntriesFilterState(
+    return _updateFilterState(
         appState,
-        (entriesFilterState) => entriesFilterState.copyWith(
+        (filterState) => filterState.copyWith(
               expandedCategories: expandedCategories,
             ));
   }
 }
 
-class FilterSet implements AppAction {
+class FilterSetReset implements AppAction {
   final EntriesCharts entriesChart;
 
-  FilterSet({this.entriesChart});
+  FilterSetReset({this.entriesChart});
 
   AppState updateState(AppState appState) {
-    EntriesFilter updatedEntriesFilter = EntriesFilter.initial();
+    Filter updatedFilter = Filter.initial();
     List<Log> logs = List.from(appState.logsState.logs.values.toList());
     List<AppCategory> allCategories = [];
     List<AppCategory> allSubcategories = [];
@@ -55,19 +59,19 @@ class FilterSet implements AppAction {
     Map<String, String> members = {};
     List<Tag> allTags = [];
 
-    //creates lists the user can select from an over writes the entries list every time because these elements are dynamic
+    //creates lists the user can select from an overwrites the list every time because these elements are dynamic
     if (logs.length > 0) {
       logs.forEach((log) {
         //create map of allMembers
         log.logMembers.forEach((key, member) {
-          if (members.containsKey(key)) {
+          if (!members.containsKey(key)) {
             members.putIfAbsent(key, () => member.name);
           }
         });
-        //create allCategory list
+        //create allCategory list replacing the id with the name
         log.categories.forEach((category) {
           if ((allCategories.singleWhere((cat) => cat.name == category.name, orElse: () => null)) == null) {
-            //list does not contain this category, add it and change its Id to its name
+            //list does not contain this category, add it and change its id to its name
             allCategories.add(category.copyWith(id: category.name));
           }
           //create allSubcategory list
@@ -81,6 +85,7 @@ class FilterSet implements AppAction {
         });
       });
     }
+
 
     //create list of all tags so it can be sorted as desired by the user
     appState.tagState.tags.forEach((key, tag) {
@@ -103,45 +108,33 @@ class FilterSet implements AppAction {
 
     //check if user is updating an existing filter
     if (entriesChart == EntriesCharts.entries && appState.entriesState.entriesFilter.isSome) {
-      updatedEntriesFilter = appState.entriesState.entriesFilter.value;
+      updatedFilter = appState.entriesState.entriesFilter.value;
     } else if (entriesChart == EntriesCharts.charts && appState.entriesState.chartFilter.isSome) {
-      updatedEntriesFilter = appState.entriesState.chartFilter.value;
-    } else {
-      //new filter, setup filter
-      Map<String, bool> selectedCategories = {};
-      Map<String, bool> selectedSubcategories = {};
-
-      allCategories.forEach((element) {
-        //create list of selected categories
-        selectedCategories.putIfAbsent(element.id, () => false);
-      });
-
-      //only process this list and update the selected cat & sub if a filter was not passed to the action
-      allSubcategories.forEach((subcategory) {
-        selectedSubcategories.putIfAbsent(subcategory.id, () => false);
-      });
-
-      //setup the new filter
-      updatedEntriesFilter = updatedEntriesFilter.copyWith(
-          selectedCategories: selectedCategories, selectedSubcategories: selectedSubcategories);
+      updatedFilter = appState.entriesState.chartFilter.value;
     }
 
     if (entriesChart != null) {
       //TODO remove any references to selected items that are no longer present
     }
 
-    return _updateEntriesFilterState(
+    print(members);
+
+    return _updateFilterState(
         appState,
-        (entriesFilterState) => entriesFilterState.copyWith(
-            expandedCategories: expandedCategories,
-            entriesFilter: Maybe.some(updatedEntriesFilter.copyWith(
-                allCategories: allCategories, allSubcategories: allSubcategories, allMembers: members))));
+        (filterState) => filterState.copyWith(
+              expandedCategories: expandedCategories,
+              allCategories: allCategories,
+              allSubcategories: allSubcategories,
+              allMembers: members,
+              filter: Maybe.some(updatedFilter),
+              updated: false,
+            ));
   }
 }
 
-class FilterReset implements AppAction {
+class FilterInitial implements AppAction {
   AppState updateState(AppState appState) {
-    return _updateEntriesFilter(appState: appState, entriesFilter: Maybe.none());
+    return _updateFilterState(appState, (filterState) => FilterState.initial());
   }
 }
 
@@ -151,15 +144,35 @@ class FilterSelectDeselectCategory implements AppAction {
   FilterSelectDeselectCategory({@required this.id});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    Map<String, bool> selectedCategories = entriesFilter.selectedCategories;
-    selectedCategories.update(id, (value) => !value);
+    Filter filter = appState.filterState.filter.value;
+    List<String> selectedCategoryNames = List.from(filter.selectedCategoryNames);
+    List<String> selectedSubcategoryIds = List.from(filter.selectedSubcategoryIds);
 
-    return _updateEntriesFilter(
-        appState: appState,
-        entriesFilter: Maybe.some(entriesFilter.copyWith(
-          selectedCategories: selectedCategories,
-        )));
+    if (selectedCategoryNames.contains(id)) {
+      //deselection of a category deselects all subcategories
+      selectedCategoryNames.remove(id);
+      appState.filterState.allSubcategories.forEach((subcategory) {
+        if (subcategory.parentCategoryId == id) {
+          selectedSubcategoryIds.removeWhere((id) => id == subcategory.id);
+        }
+      });
+    } else {
+      //select category
+      selectedCategoryNames.add(id);
+      appState.filterState.allSubcategories.forEach((subcategory) {
+        if (subcategory.parentCategoryId == id) {
+          selectedSubcategoryIds.add(subcategory.id);
+        }
+      });
+    }
+
+    return _updateFilter(
+      appState: appState,
+      filter: Maybe.some(filter.copyWith(
+        selectedCategoryNames: selectedCategoryNames,
+        selectedSubcategoryIds: selectedSubcategoryIds,
+      )),
+    );
   }
 }
 
@@ -169,20 +182,27 @@ class FilterSelectDeselectSubcategory implements AppAction {
   FilterSelectDeselectSubcategory({@required this.subcategory});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    Map<String, bool> selectedCategories = entriesFilter.selectedCategories;
-    Map<String, bool> selectedSubcategories = entriesFilter.selectedSubcategories;
-    selectedSubcategories.update(subcategory.id, (value) => !value);
+    Filter filter = appState.filterState.filter.value;
+    List<String> selectedCategoryNames = List.from(filter.selectedCategoryNames);
+    List<String> selectedSubcategoryIds = List.from(filter.selectedSubcategoryIds);
 
-    if (selectedSubcategories[subcategory.id]) {
-      selectedCategories.update(subcategory.parentCategoryId, (value) => true);
+    if (selectedSubcategoryIds.contains(subcategory.id)) {
+      //deselect subcategory
+      selectedSubcategoryIds.remove(subcategory.id);
+      //TODO if this is the last subcategory we are deselecting, then deselect the parent category
+    } else {
+      //select subcategory and its parent category if not already selected
+      selectedSubcategoryIds.add(subcategory.id);
+      if (!selectedCategoryNames.contains(subcategory.parentCategoryId)) {
+        selectedCategoryNames.add(subcategory.parentCategoryId);
+      }
     }
 
-    return _updateEntriesFilter(
+    return _updateFilter(
         appState: appState,
-        entriesFilter: Maybe.some(entriesFilter.copyWith(
-          selectedCategories: selectedCategories,
-          selectedSubcategories: selectedSubcategories,
+        filter: Maybe.some(filter.copyWith(
+          selectedCategoryNames: selectedCategoryNames,
+          selectedSubcategoryIds: selectedSubcategoryIds,
         )));
   }
 }
@@ -193,14 +213,14 @@ class FilterSetStartDate implements AppAction {
   FilterSetStartDate({this.dateTime});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    Maybe<DateTime> previousDate = entriesFilter.startDate;
+    Filter filter = appState.filterState.filter.value;
+    Maybe<DateTime> previousDate = filter.startDate;
     Maybe<DateTime> updatedDateTime = Maybe.some(dateTime);
 
     //check if there is an end date
-    if (entriesFilter.endDate.isSome) {
+    if (filter.endDate.isSome) {
       //if so, start date can not be after the end date
-      if (updatedDateTime.value.isAfter(entriesFilter.endDate.value) && previousDate.isSome) {
+      if (updatedDateTime.value.isAfter(filter.endDate.value) && previousDate.isSome) {
         if (previousDate.isSome) {
           //update with previous acceptable start date
           updatedDateTime = Maybe.some(previousDate.value);
@@ -213,8 +233,7 @@ class FilterSetStartDate implements AppAction {
       }
     }
 
-    return _updateEntriesFilter(
-        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(startDate: updatedDateTime)));
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(startDate: updatedDateTime)));
   }
 }
 
@@ -224,14 +243,14 @@ class FilterSetEndDate implements AppAction {
   FilterSetEndDate({this.dateTime});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    Maybe<DateTime> previousDate = entriesFilter.endDate;
+    Filter filter = appState.filterState.filter.value;
+    Maybe<DateTime> previousDate = filter.endDate;
     Maybe<DateTime> updatedDateTime = Maybe.some(dateTime);
 
     //check if there is an start date
-    if (entriesFilter.startDate.isSome) {
+    if (filter.startDate.isSome) {
       //if so, end date can not be before the end date
-      if (updatedDateTime.value.isBefore(entriesFilter.startDate.value)) {
+      if (updatedDateTime.value.isBefore(filter.startDate.value)) {
         if (previousDate.isSome) {
           //update with previous acceptable end date
           updatedDateTime = Maybe.some(previousDate.value);
@@ -243,21 +262,19 @@ class FilterSetEndDate implements AppAction {
       }
     }
 
-    return _updateEntriesFilter(
-        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(endDate: updatedDateTime)));
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(endDate: updatedDateTime)));
   }
 }
 
-class FilterUpdateAmount implements AppAction {
+class FilterUpdateMinAmount implements AppAction {
   final int minAmount;
-  final int maxAmount;
 
-  FilterUpdateAmount({this.minAmount, this.maxAmount});
+  FilterUpdateMinAmount({this.minAmount});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    Maybe<int> min = entriesFilter.minAmount;
-    Maybe<int> max = entriesFilter.maxAmount;
+    Filter filter = appState.filterState.filter.value;
+    Maybe<int> min = filter.minAmount;
+    //Maybe<int> max = filter.maxAmount;
 
     if (minAmount != null) {
       if (minAmount == 0) {
@@ -266,6 +283,25 @@ class FilterUpdateAmount implements AppAction {
         min = Maybe.some(minAmount);
       }
     }
+
+    return _updateFilter(
+        appState: appState,
+        filter: Maybe.some(filter.copyWith(
+          minAmount: min,
+        )));
+  }
+}
+
+class FilterUpdateMaxAmount implements AppAction {
+  final int maxAmount;
+
+  FilterUpdateMaxAmount({this.maxAmount});
+
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+    //Maybe<int> min = filter.minAmount;
+    Maybe<int> max = filter.maxAmount;
+
     if (maxAmount != null) {
       if (maxAmount == 0) {
         max = Maybe.none();
@@ -274,10 +310,9 @@ class FilterUpdateAmount implements AppAction {
       }
     }
 
-    return _updateEntriesFilter(
+    return _updateFilter(
         appState: appState,
-        entriesFilter: Maybe.some(appState.entriesFilterState.entriesFilter.value.copyWith(
-          minAmount: min,
+        filter: Maybe.some(filter.copyWith(
           maxAmount: max,
         )));
   }
@@ -289,8 +324,8 @@ class FilterSelectPaid implements AppAction {
   FilterSelectPaid({@required this.id});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    List<String> membersPaid = entriesFilter.membersPaid;
+    Filter filter = appState.filterState.filter.value;
+    List<String> membersPaid = List.from(filter.membersPaid);
 
     if (membersPaid.contains(id)) {
       membersPaid.remove(id);
@@ -298,8 +333,7 @@ class FilterSelectPaid implements AppAction {
       membersPaid.add(id);
     }
 
-    return _updateEntriesFilter(
-        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(membersPaid: membersPaid)));
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: membersPaid)));
   }
 }
 
@@ -309,8 +343,8 @@ class FilterSelectSpent implements AppAction {
   FilterSelectSpent({@required this.id});
 
   AppState updateState(AppState appState) {
-    EntriesFilter entriesFilter = appState.entriesFilterState.entriesFilter.value;
-    List<String> membersSpent = entriesFilter.membersSpent;
+    Filter filter = appState.filterState.filter.value;
+    List<String> membersSpent = List.from(filter.membersSpent);
 
     if (membersSpent.contains(id)) {
       membersSpent.remove(id);
@@ -318,8 +352,7 @@ class FilterSelectSpent implements AppAction {
       membersSpent.add(id);
     }
 
-    return _updateEntriesFilter(
-        appState: appState, entriesFilter: Maybe.some(entriesFilter.copyWith(membersPaid: membersSpent)));
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: membersSpent)));
   }
 }
 

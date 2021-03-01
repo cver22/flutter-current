@@ -1,7 +1,7 @@
 import 'dart:collection';
 import 'package:equatable/equatable.dart';
-import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
+import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/utils/maybe.dart';
 
 import 'package:meta/meta.dart';
@@ -10,8 +10,8 @@ import 'package:meta/meta.dart';
 class EntriesState extends Equatable {
   final Map<String, MyEntry> entries;
   final bool isLoading;
-  final Maybe<EntriesFilter> entriesFilter;
-  final Maybe<EntriesFilter> chartFilter;
+  final Maybe<Filter> entriesFilter;
+  final Maybe<Filter> chartFilter;
   final bool descending;
 
   EntriesState({this.entries, this.isLoading, this.entriesFilter, this.chartFilter, this.descending});
@@ -35,8 +35,8 @@ class EntriesState extends Equatable {
   EntriesState copyWith({
     Map<String, MyEntry> entries,
     bool isLoading,
-    Maybe<EntriesFilter> entriesFilter,
-    Maybe<EntriesFilter> chartFilter,
+    Maybe<Filter> entriesFilter,
+    Maybe<Filter> chartFilter,
     bool descending,
   }) {
     if ((entries == null || identical(entries, this.entries)) &&

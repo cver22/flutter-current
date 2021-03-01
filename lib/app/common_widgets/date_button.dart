@@ -40,7 +40,7 @@ class DateButton extends StatelessWidget {
                               onSave(newCombinedDateTime),
                             }
                         })
-                  } else {
+                  } else if (newDate != null && !pickTime){
                   newCombinedDateTime = DateTime.fromMillisecondsSinceEpoch(
                       newDate.millisecondsSinceEpoch.toInt()),
                   onSave(newCombinedDateTime),

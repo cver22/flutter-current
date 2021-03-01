@@ -3,30 +3,36 @@ import 'package:expenses/app/common_widgets/app_dialog.dart';
 import 'package:expenses/app/common_widgets/date_button.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
-import 'package:expenses/entries_filter/entries_filter_model/entries_filter.dart';
-import 'package:expenses/entries_filter/entries_filter_model/entries_filter_state.dart';
-import 'package:expenses/entries_filter/entries_filter_screen/filter_member_dialog.dart';
-import 'package:expenses/store/actions/entries_filter_actions.dart';
+import 'package:expenses/filter/filter_model/filter.dart';
+import 'package:expenses/filter/filter_model/filter_state.dart';
+import 'package:expenses/filter/filter_screen/filter_member_dialog.dart';
+import 'package:expenses/store/actions/entries_actions.dart';
+import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:expenses/utils/currency.dart';
+import 'package:get/get.dart';
 
 import '../../env.dart';
 
-class EntriesFilterDialog extends StatefulWidget {
+class FilterDialog extends StatefulWidget {
+  final EntriesCharts entriesChart;
+
+  const FilterDialog({Key key, @required this.entriesChart}) : super(key: key);
+
   @override
-  _EntriesFilterDialogState createState() => _EntriesFilterDialogState();
+  _FilterDialogState createState() => _FilterDialogState();
 }
 
-class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
+class _FilterDialogState extends State<FilterDialog> {
   TextEditingController _minAmountController;
   TextEditingController _maxAmountController;
   FocusNode _minFocusNode;
   FocusNode _maxFocusNode;
-  EntriesFilter filter;
+  Filter filter;
 
   @override
   void initState() {
@@ -53,14 +59,39 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return ConnectState<EntriesFilterState>(
+    EntriesCharts entriesChart = widget.entriesChart;
+    return ConnectState<FilterState>(
         where: notIdentical,
-        map: (state) => state.entriesFilterState,
-        builder: (state) {
-          filter = state.entriesFilter.value;
+        map: (state) => state.filterState,
+        builder: (filterState) {
+          filter = filterState.filter.value;
 
-          return AppDialog(
+          return AppDialogWithActions(
             title: 'Entries Filter',
+            actions: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                FlatButton(
+                  child: Text('Cancel'),
+                  onPressed: () => Get.back(),
+                ),
+                FlatButton(
+                  child: Text('Reset'),
+                  onPressed: () => Env.store.dispatch(FilterSetReset()),
+                ),
+                FlatButton(
+                    child: Text('Save Filter'),
+                    onPressed: () {
+                      if (entriesChart == EntriesCharts.entries) {
+                        Env.store.dispatch(EntriesSetEntriesFilter());
+                      } else if (entriesChart == EntriesCharts.charts) {
+                        Env.store.dispatch(EntriesSetChartFilter());
+                      }
+                      Get.back();
+                    }),
+              ],
+            ),
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -75,7 +106,7 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
                     SizedBox(height: 16.0),
                     _categoryFilter(),
                     SizedBox(height: 16.0),
-                    _paidSpentFilter(filter: filter),
+                    _paidSpentFilter(filterState: filterState),
                   ],
                 ),
               ),
@@ -84,7 +115,7 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
         });
   }
 
-  Widget _amountFilter({EntriesFilter filter}) {
+  Widget _amountFilter({Filter filter}) {
     bool minExceedMax = false;
     if (filter.minAmount.isSome && filter.maxAmount.isSome) {
       minExceedMax = filter.minAmount.value > filter.maxAmount.value;
@@ -104,7 +135,7 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
             controller: _minAmountController,
             focusNode: _minFocusNode,
             onChange: (minAmount) {
-              Env.store.dispatch(FilterUpdateAmount(minAmount: minAmount));
+              Env.store.dispatch(FilterUpdateMinAmount(minAmount: minAmount));
             },
             textInputAction: TextInputAction.next,
           ),
@@ -119,7 +150,7 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
             controller: _maxAmountController,
             focusNode: _maxFocusNode,
             onChange: (maxAmount) {
-              Env.store.dispatch(FilterUpdateAmount(maxAmount: maxAmount));
+              Env.store.dispatch(FilterUpdateMaxAmount(maxAmount: maxAmount));
             },
             textInputAction: TextInputAction.done,
           ),
@@ -200,25 +231,25 @@ class _EntriesFilterDialogState extends State<EntriesFilterDialog> {
   }
 
   //TODO make app button show list of who paid
-  Widget _paidSpentFilter({@required EntriesFilter filter}) {
+  Widget _paidSpentFilter({@required FilterState filterState}) {
     String membersPaidName = '';
     String membersSpentName = '';
 
     //build paid button String
-    filter.membersPaid.forEach((memberId) {
+    filterState.filter.value.membersPaid.forEach((memberId) {
       if (membersPaidName.length > 0) {
-        membersPaidName += filter.allMembers[memberId];
+        membersPaidName += filterState.allMembers[memberId];
       } else {
-        membersPaidName += '\, ${filter.allMembers[memberId]}';
+        membersPaidName += '\, ${filterState.allMembers[memberId]}';
       }
     });
 
     //build spent button string
-    filter.membersSpent.forEach((memberId) {
+    filterState.filter.value.membersSpent.forEach((memberId) {
       if (membersSpentName.length > 0) {
-        membersSpentName += filter.allMembers[memberId];
+        membersSpentName += filterState.allMembers[memberId];
       } else {
-        membersSpentName += '\, ${filter.allMembers[memberId]}';
+        membersSpentName += '\, ${filterState.allMembers[memberId]}';
       }
     });
 
