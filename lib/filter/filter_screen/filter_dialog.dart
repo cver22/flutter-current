@@ -5,7 +5,9 @@ import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/filter/filter_model/filter_state.dart';
+import 'package:expenses/filter/filter_screen/filter_log_dialog.dart';
 import 'package:expenses/filter/filter_screen/filter_member_dialog.dart';
+import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/connect_state.dart';
@@ -67,31 +69,9 @@ class _FilterDialogState extends State<FilterDialog> {
           filter = filterState.filter.value;
 
           return AppDialogWithActions(
-            title: 'Entries Filter',
-            actions: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                FlatButton(
-                  child: Text('Cancel'),
-                  onPressed: () => Get.back(),
-                ),
-                FlatButton(
-                  child: Text('Reset'),
-                  onPressed: () => Env.store.dispatch(FilterSetReset()),
-                ),
-                FlatButton(
-                    child: Text('Save Filter'),
-                    onPressed: () {
-                      if (entriesChart == EntriesCharts.entries) {
-                        Env.store.dispatch(EntriesSetEntriesFilter());
-                      } else if (entriesChart == EntriesCharts.charts) {
-                        Env.store.dispatch(EntriesSetChartFilter());
-                      }
-                      Get.back();
-                    }),
-              ],
-            ),
+            title: 'Filter',
+            actions: _actions(entriesChart: entriesChart, save: filterState.updated),
+            shrinkWrap: true,
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: SingleChildScrollView(
@@ -104,15 +84,43 @@ class _FilterDialogState extends State<FilterDialog> {
                     SizedBox(height: 16.0),
                     _dateFilter(),
                     SizedBox(height: 16.0),
-                    _categoryFilter(),
+                    _categoryFilter(filterState: filterState),
                     SizedBox(height: 16.0),
                     _paidSpentFilter(filterState: filterState),
+                    _logFilter(filterState: filterState),
                   ],
                 ),
               ),
             ),
           );
         });
+  }
+
+  Widget _actions({@required EntriesCharts entriesChart, @required bool save}) {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        FlatButton(
+          child: Text('Cancel'),
+          onPressed: () => Get.back(),
+        ),
+        FlatButton(
+          child: Text('Reset'),
+          onPressed: () => Env.store.dispatch(FilterSetReset()),
+        ),
+        FlatButton(
+            child: Text(save ? 'Save Filter' : 'Done'),
+            onPressed: () {
+              if (entriesChart == EntriesCharts.entries) {
+                Env.store.dispatch(EntriesSetEntriesFilter());
+              } else if (entriesChart == EntriesCharts.charts) {
+                Env.store.dispatch(EntriesSetChartFilter());
+              }
+              Get.back();
+            }),
+      ],
+    );
   }
 
   Widget _amountFilter({Filter filter}) {
@@ -216,7 +224,10 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  Widget _categoryFilter() {
+  Widget _categoryFilter({@required FilterState filterState}) {
+
+    //TODO build list of filtered categories
+
     return CategoryButton(
       label: 'Select Filter Categories',
       onPressed: () => {
@@ -232,24 +243,24 @@ class _FilterDialogState extends State<FilterDialog> {
 
   //TODO make app button show list of who paid
   Widget _paidSpentFilter({@required FilterState filterState}) {
-    String membersPaidName = '';
-    String membersSpentName = '';
+    String membersPaidString = '';
+    String membersSpentString = '';
 
     //build paid button String
     filterState.filter.value.membersPaid.forEach((memberId) {
-      if (membersPaidName.length > 0) {
-        membersPaidName += filterState.allMembers[memberId];
+      if (membersPaidString.length > 0) {
+        membersPaidString += '\, ${filterState.allMembers[memberId]}';
       } else {
-        membersPaidName += '\, ${filterState.allMembers[memberId]}';
+        membersPaidString += filterState.allMembers[memberId];
       }
     });
 
     //build spent button string
     filterState.filter.value.membersSpent.forEach((memberId) {
-      if (membersSpentName.length > 0) {
-        membersSpentName += filterState.allMembers[memberId];
+      if (membersSpentString.length > 0) {
+        membersSpentString += '\, ${filterState.allMembers[memberId]}';
       } else {
-        membersSpentName += '\, ${filterState.allMembers[memberId]}';
+        membersSpentString += filterState.allMembers[memberId];
       }
     });
 
@@ -264,17 +275,50 @@ class _FilterDialogState extends State<FilterDialog> {
                     builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
                   ),
                 },
-            child: null),
+            child: Text(membersPaidString.length > 0 ? membersPaidString : 'Who paid?')),
         SizedBox(width: 8.0),
         AppButton(
             onPressed: () => {
                   showDialog(
                     context: context,
-                    builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+                    builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
                   ),
                 },
-            child: null),
+            child: Text(membersSpentString.length > 0 ? membersSpentString : 'Who spent?')),
       ],
     );
+  }
+
+  Widget _logFilter({@required FilterState filterState}) {
+    if (Env.store.state.logsState.logs.length > 0) {
+      String selectedLogString = '';
+      Map<String, Log> logs = Env.store.state.logsState.logs;
+
+      filterState.filter.value.selectedLogs.forEach((logId) {
+        if (selectedLogString.length > 0) {
+          selectedLogString += '\, ${logs[logId].name}';
+        } else {
+          selectedLogString += logs[logId].name;
+        }
+      });
+
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          AppButton(
+            child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
+            onPressed: () => {
+              showDialog(
+                context: context,
+                builder: (_) => FilterLogDialog(),
+              ),
+            },
+          ),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 }

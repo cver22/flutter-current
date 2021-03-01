@@ -86,7 +86,6 @@ class FilterSetReset implements AppAction {
       });
     }
 
-
     //create list of all tags so it can be sorted as desired by the user
     appState.tagState.tags.forEach((key, tag) {
       if ((allTags.singleWhere((it) => it.name == tag.name, orElse: () => null)) != null) {
@@ -337,6 +336,14 @@ class FilterSelectPaid implements AppAction {
   }
 }
 
+class FilterClearPaidSelection implements AppAction {
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: const [])));
+  }
+}
+
 class FilterSelectSpent implements AppAction {
   final String id;
 
@@ -352,7 +359,42 @@ class FilterSelectSpent implements AppAction {
       membersSpent.add(id);
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: membersSpent)));
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersSpent: membersSpent)));
+  }
+}
+
+class FilterClearSpentSelection implements AppAction {
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersSpent: const [])));
+  }
+}
+
+class FilterSelectLog implements AppAction {
+  final String logId;
+
+  FilterSelectLog({@required this.logId});
+
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+    List<String> selectedLogs = List.from(filter.selectedLogs);
+
+    if (selectedLogs.contains(logId)) {
+      selectedLogs.remove(logId);
+    } else {
+      selectedLogs.add(logId);
+    }
+
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedLogs: selectedLogs)));
+  }
+}
+
+class FilterClearLogSelection implements AppAction {
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedLogs: const [])));
   }
 }
 

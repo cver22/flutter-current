@@ -5,7 +5,6 @@ import 'package:expenses/utils/maybe.dart';
 class Filter extends Equatable {
   final Maybe<DateTime> startDate;
   final Maybe<DateTime> endDate;
-  final List<String> logId; //id, name
   final Map<String, String> currency; // code, name
   final List<String> selectedCategoryNames; //name
   final List<String> selectedSubcategoryIds; //id
@@ -19,7 +18,6 @@ class Filter extends Equatable {
   Filter({
     this.startDate,
     this.endDate,
-    this.logId,
     this.currency,
     this.selectedCategoryNames,
     this.selectedSubcategoryIds,
@@ -35,7 +33,6 @@ class Filter extends Equatable {
     return Filter(
       startDate: Maybe.none(),
       endDate: Maybe.none(),
-      logId: const [],
       currency: LinkedHashMap(),
       selectedCategoryNames: const [],
       selectedSubcategoryIds: const [],
@@ -52,7 +49,6 @@ class Filter extends Equatable {
   List<Object> get props => [
         startDate,
         endDate,
-        logId,
         currency,
         selectedCategoryNames,
         selectedSubcategoryIds,
@@ -70,7 +66,6 @@ class Filter extends Equatable {
   Filter copyWith({
     Maybe<DateTime> startDate,
     Maybe<DateTime> endDate,
-    List<String> logId,
     Map<String, String> currency,
     List<String> selectedCategoryNames,
     List<String> selectedSubcategoryIds,
@@ -83,7 +78,6 @@ class Filter extends Equatable {
   }) {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
-        (logId == null || identical(logId, this.logId)) &&
         (currency == null || identical(currency, this.currency)) &&
         (selectedCategoryNames == null || identical(selectedCategoryNames, this.selectedCategoryNames)) &&
         (selectedSubcategoryIds == null || identical(selectedSubcategoryIds, this.selectedSubcategoryIds)) &&
@@ -99,7 +93,6 @@ class Filter extends Equatable {
     return new Filter(
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      logId: logId ?? this.logId,
       currency: currency ?? this.currency,
       selectedCategoryNames: selectedCategoryNames ?? this.selectedCategoryNames,
       selectedSubcategoryIds: selectedSubcategoryIds ?? this.selectedSubcategoryIds,

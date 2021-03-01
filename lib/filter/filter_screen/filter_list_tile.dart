@@ -12,6 +12,7 @@ class FilterListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListTile(
+      onTap: onSelect,
       title: Text(title),
       trailing: FilterListTileTrailing(selected: selected, onSelect: onSelect,),
     );

@@ -7,6 +7,7 @@ import 'package:expenses/entries/entries_screen/entries_screen_build_list_view.d
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/log/log_model/log.dart';
+import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
@@ -50,7 +51,7 @@ class EntriesScreen extends StatelessWidget {
             }
 
             return EntriesScreenBuildListView(
-                entries: _buildFilteredEntries(entries: List.from(entries), filter: entriesState.entriesFilter));
+                entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter));
           } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
             return EmptyContent();
           } else {
@@ -65,32 +66,42 @@ class EntriesScreen extends StatelessWidget {
 
 List<MyEntry> _buildFilteredEntries({
   List<MyEntry> entries,
-  Maybe<Filter> filter,
+  Maybe<Filter> entriesFilter,
 }) {
   //only processes filters if a filter is present
-  if (filter.isSome) {
+  if (entriesFilter.isSome) {
+    Filter filter = entriesFilter.value;
     //minimum entry date
-    if (filter.value.startDate.isSome) {
-      entries.removeWhere((entry) => entry.dateTime.isBefore(filter.value.startDate.value));
+    if (filter.startDate.isSome) {
+      entries.removeWhere((entry) => entry.dateTime.isBefore(filter.startDate.value));
     }
     //maximum entry date
-    if (filter.value.endDate.isSome) {
-      entries.removeWhere((entry) => entry.dateTime.isAfter(filter.value.endDate.value));
+    if (filter.endDate.isSome) {
+      entries.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value));
     }
     //is the entry logId found in the list of logIds selected
-    if (filter.value.logId.length > 0) {
-      entries.removeWhere((entry) => !filter.value.logId.contains(entry.logId));
+    if (filter.selectedLogs.length > 0) {
+      entries.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
     }
     //TODO currency filter
+
+    if (filter.minAmount.isSome) {
+      entries.removeWhere((entry) => entry.amount < filter.minAmount.value);
+    }
+    //is the entry amount more than the max amount
+    if (filter.maxAmount.isSome) {
+      entries.removeWhere((entry) => entry.amount > filter.maxAmount.value);
+    }
+
     //is the entry categoryID found in the list of categories selected
-    if (filter.value.selectedCategoryNames.length > 0) {
+    if (filter.selectedCategoryNames.length > 0) {
       Map<String, Log> logs = Env.store.state.logsState.logs;
 
       entries.removeWhere((entry) {
         List<AppCategory> categories = logs[entry.logId].categories;
         String categoryName = categories.firstWhere((category) => category.id == entry.categoryId).name;
 
-        if (filter.value.selectedCategoryNames.contains(categoryName)) {
+        if (filter.selectedCategoryNames.contains(categoryName)) {
           //filter contains category, show entry
           return false;
         } else {
@@ -99,16 +110,18 @@ List<MyEntry> _buildFilteredEntries({
         }
       });
     }
+
     //is the entry subcategoryId found in the list of subcategories selected
-    if (filter.value.selectedSubcategoryIds.length > 0) {
+    if (filter.selectedSubcategoryIds.length > 0) {
       Map<String, Log> logs = Env.store.state.logsState.logs;
 
       entries.removeWhere((entry) {
         List<AppCategory> subcategories = logs[entry.logId].subcategories;
 
-        AppCategory subcategory = subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
+        AppCategory subcategory =
+            subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
 
-        if (subcategory != null && filter.value.selectedSubcategoryIds.contains(subcategory.id)) {
+        if (subcategory != null && filter.selectedSubcategoryIds.contains(subcategory.id)) {
           //filter contains subcategory, show entry
           return false;
         } else {
@@ -117,16 +130,54 @@ List<MyEntry> _buildFilteredEntries({
         }
       });
     }
-    //is the entry amount less than the min amount
-    if (filter.value.minAmount.isSome) {
-      entries.removeWhere((entry) => entry.amount < filter.value.minAmount.value);
+
+    //filter entries by who spent
+    if (filter.membersPaid.length > 0) {
+      entries.retainWhere((entry) {
+        List<String> uids = [];
+        bool retain = false;
+        entry.entryMembers.values.forEach((entryMember) {
+          if (entryMember.paying) {
+            uids.add(entryMember.uid);
+          }
+        });
+
+        filter.membersPaid.forEach((element) {
+          if (uids.contains(element)) {
+            retain = true;
+          }
+        });
+
+        return retain;
+      });
     }
-    //is the entry amount more than the max amount
-    if (filter.value.maxAmount.isSome) {
-      entries.removeWhere((entry) => entry.amount > filter.value.maxAmount.value);
+
+    //filter entries by who paid
+    if (filter.membersSpent.length > 0) {
+      entries.retainWhere((entry) {
+        List<String> uids = [];
+        bool retain = false;
+        entry.entryMembers.values.forEach((entryMember) {
+          if (entryMember.spending) {
+            uids.add(entryMember.uid);
+          }
+        });
+        print('all uids: $uids');
+        print('spentFilter: ${filter.membersSpent}');
+
+        filter.membersSpent.forEach((element) {
+          if (uids.contains(element)) {
+            print('triggered');
+            retain = true;
+          }
+        });
+
+        return retain;
+      });
     }
-    //does the entry contain one of the selected members
-    //TODO entryMember filter
+
+
+
     //TODO tag filter
 
   }
