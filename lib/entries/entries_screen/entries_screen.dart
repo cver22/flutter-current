@@ -93,15 +93,35 @@ List<MyEntry> _buildFilteredEntries({
       entries.removeWhere((entry) => entry.amount > filter.maxAmount.value);
     }
 
+    //is the entry subcategoryId found in the list of subcategories selected
+    if (filter.selectedSubcategories.length > 0) {
+      Map<String, Log> logs = Env.store.state.logsState.logs;
+
+      entries.removeWhere((entry) {
+        List<AppCategory> subcategories = logs[entry.logId].subcategories;
+
+        AppCategory subcategory =
+        subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
+
+        if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
+          //filter contains subcategory, show entry
+          return false;
+        } else {
+          //filter does not contain subcategory, remove entry
+          return true;
+        }
+      });
+    }
+
     //is the entry categoryID found in the list of categories selected
-    if (filter.selectedCategoryNames.length > 0) {
+    if (filter.selectedCategories.length > 0) {
       Map<String, Log> logs = Env.store.state.logsState.logs;
 
       entries.removeWhere((entry) {
         List<AppCategory> categories = logs[entry.logId].categories;
         String categoryName = categories.firstWhere((category) => category.id == entry.categoryId).name;
 
-        if (filter.selectedCategoryNames.contains(categoryName)) {
+        if (filter.selectedCategories.contains(categoryName)) {
           //filter contains category, show entry
           return false;
         } else {
@@ -111,25 +131,7 @@ List<MyEntry> _buildFilteredEntries({
       });
     }
 
-    //is the entry subcategoryId found in the list of subcategories selected
-    if (filter.selectedSubcategoryIds.length > 0) {
-      Map<String, Log> logs = Env.store.state.logsState.logs;
 
-      entries.removeWhere((entry) {
-        List<AppCategory> subcategories = logs[entry.logId].subcategories;
-
-        AppCategory subcategory =
-            subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
-
-        if (subcategory != null && filter.selectedSubcategoryIds.contains(subcategory.id)) {
-          //filter contains subcategory, show entry
-          return false;
-        } else {
-          //filter does not contain subcategory, remove entry
-          return true;
-        }
-      });
-    }
 
     //filter entries by who spent
     if (filter.membersPaid.length > 0) {

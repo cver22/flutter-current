@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/filter/filter_model/filter.dart';
@@ -47,17 +49,33 @@ class FilterExpandCollapseCategory implements AppAction {
 
 class FilterSetReset implements AppAction {
   final EntriesCharts entriesChart;
+  final Log log;
 
-  FilterSetReset({this.entriesChart});
+  FilterSetReset({this.entriesChart, this.log});
 
   AppState updateState(AppState appState) {
     Filter updatedFilter = Filter.initial();
-    List<Log> logs = List.from(appState.logsState.logs.values.toList());
-    List<AppCategory> allCategories = [];
-    List<AppCategory> allSubcategories = [];
+    List<Log> logs = [];
+    Map<String, AppCategory> allCategories = LinkedHashMap();
+    Map<String, AppCategory> allSubcategories = LinkedHashMap();
+    Map<String, AppCategory> consolidatedCategories = LinkedHashMap();
+    Map<String, AppCategory> consolidatedSubcategories = LinkedHashMap();
     List<bool> expandedCategories = [];
-    Map<String, String> members = {};
+    Map<String, String> members = LinkedHashMap();
     List<Tag> allTags = [];
+    Maybe<Log> selectedLog = Maybe.none();
+    List<String> selectedLogs = [];
+    bool updated = false;
+
+    if (log != null) {
+      //action was triggered directly from a log and user wishes to filter for only that log
+      logs.add(log);
+      selectedLog = Maybe.some(log);
+      selectedLogs.add(log.id);
+    } else {
+      //action was triggered from generic location, include all logs
+      logs = List.from(appState.logsState.logs.values.toList());
+    }
 
     //creates lists the user can select from an overwrites the list every time because these elements are dynamic
     if (logs.length > 0) {
@@ -68,24 +86,54 @@ class FilterSetReset implements AppAction {
             members.putIfAbsent(key, () => member.name);
           }
         });
-        //create allCategory list replacing the id with the name
+
+        //complete list of all categories
         log.categories.forEach((category) {
-          if ((allCategories.singleWhere((cat) => cat.name == category.name, orElse: () => null)) == null) {
-            //list does not contain this category, add it and change its id to its name
-            allCategories.add(category.copyWith(id: category.name));
-          }
-          //create allSubcategory list
-          log.subcategories.forEach((subcategory) {
-            if (category.id == subcategory.parentCategoryId &&
-                (allSubcategories.singleWhere((e) => e.name == subcategory.name, orElse: () => null)) == null) {
-              //adds the subcategory if allSubcategories does not currently contain it in the list and change the parent Id to the name of the parent
-              allSubcategories.add(subcategory.copyWith(parentCategoryId: category.name));
-            }
-          });
+          allCategories.putIfAbsent(category.id, () => category);
+        });
+
+        //complete list of all categories
+        log.subcategories.forEach((subcategory) {
+          allSubcategories.putIfAbsent(subcategory.id, () => subcategory);
         });
       });
     }
 
+    if (log == null) {
+      //update all parentIds to parent name
+      allSubcategories.updateAll((key, subcategory) {
+        return subcategory.copyWith(parentCategoryId: allCategories[subcategory.parentCategoryId].name);
+      });
+
+      allSubcategories.forEach((key, subcategory) {
+        bool insert = true;
+        consolidatedSubcategories.forEach((key, cSub) {
+          //check if the subcategory is a duplicate for its category
+          if (subcategory.name == cSub.name && subcategory.parentCategoryId == cSub.parentCategoryId) {
+            insert = false;
+          }
+        });
+        if (insert) {
+          consolidatedSubcategories.putIfAbsent(subcategory.id, () => subcategory);
+        }
+      });
+
+      allCategories.forEach((key, category) {
+        bool insert = true;
+        consolidatedCategories.forEach((key, cCat) {
+          //check for name duplication
+          if (category.name == key) {
+            insert = false;
+          }
+        });
+        if (insert) {
+          //add category to consolidated list and update id from name
+          consolidatedCategories.putIfAbsent(category.name, () => category.copyWith(id: category.name));
+        }
+      });
+    }
+
+    //TODO should be filtered by log if navigated to from log
     //create list of all tags so it can be sorted as desired by the user
     appState.tagState.tags.forEach((key, tag) {
       if ((allTags.singleWhere((it) => it.name == tag.name, orElse: () => null)) != null) {
@@ -98,35 +146,39 @@ class FilterSetReset implements AppAction {
         allTags.add(tag);
       }
     });
+
     allTags = _sortTags(sortMethod: SortMethod.alphabetical, ascending: true, allTags: allTags);
 
     //create list of expanded categories the same size as the list of categories and set expanded to false
-    allCategories.forEach((element) {
+    consolidatedCategories.forEach((key, value) {
       expandedCategories.add(false);
     });
 
     //check if user is updating an existing filter
     if (entriesChart == EntriesCharts.entries && appState.entriesState.entriesFilter.isSome) {
       updatedFilter = appState.entriesState.entriesFilter.value;
+      updated = true;
     } else if (entriesChart == EntriesCharts.charts && appState.entriesState.chartFilter.isSome) {
       updatedFilter = appState.entriesState.chartFilter.value;
+      updated = true;
+    } else if (log != null){
+      updatedFilter = updatedFilter.copyWith(selectedLogs: selectedLogs);
     }
 
     if (entriesChart != null) {
       //TODO remove any references to selected items that are no longer present
     }
 
-    print(members);
-
     return _updateFilterState(
         appState,
         (filterState) => filterState.copyWith(
               expandedCategories: expandedCategories,
-              allCategories: allCategories,
-              allSubcategories: allSubcategories,
+              consolidatedCategories: consolidatedCategories.values.toList(),
+              consolidatedSubcategories: consolidatedSubcategories.values.toList(),
               allMembers: members,
               filter: Maybe.some(updatedFilter),
-              updated: false,
+              updated: updated,
+              selectedLog: selectedLog,
             ));
   }
 }
@@ -144,23 +196,23 @@ class FilterSelectDeselectCategory implements AppAction {
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    List<String> selectedCategoryNames = List.from(filter.selectedCategoryNames);
-    List<String> selectedSubcategoryIds = List.from(filter.selectedSubcategoryIds);
+    List<String> selectedCategories = List.from(filter.selectedCategories);
+    List<String> selectedSubcategories = List.from(filter.selectedSubcategories);
 
-    if (selectedCategoryNames.contains(id)) {
+    if (selectedCategories.contains(id)) {
       //deselection of a category deselects all subcategories
-      selectedCategoryNames.remove(id);
-      appState.filterState.allSubcategories.forEach((subcategory) {
+      selectedCategories.remove(id);
+      appState.filterState.consolidatedSubcategories.forEach((subcategory) {
         if (subcategory.parentCategoryId == id) {
-          selectedSubcategoryIds.removeWhere((id) => id == subcategory.id);
+          selectedSubcategories.removeWhere((subCatId) => subCatId == subcategory.id);
         }
       });
     } else {
       //select category
-      selectedCategoryNames.add(id);
-      appState.filterState.allSubcategories.forEach((subcategory) {
+      selectedCategories.add(id);
+      appState.filterState.consolidatedSubcategories.forEach((subcategory) {
         if (subcategory.parentCategoryId == id) {
-          selectedSubcategoryIds.add(subcategory.id);
+          selectedSubcategories.add(subcategory.id);
         }
       });
     }
@@ -168,40 +220,58 @@ class FilterSelectDeselectCategory implements AppAction {
     return _updateFilter(
       appState: appState,
       filter: Maybe.some(filter.copyWith(
-        selectedCategoryNames: selectedCategoryNames,
-        selectedSubcategoryIds: selectedSubcategoryIds,
+        selectedCategories: selectedCategories,
+        selectedSubcategories: selectedSubcategories,
       )),
     );
   }
 }
 
 class FilterSelectDeselectSubcategory implements AppAction {
-  final AppCategory subcategory;
+  final String id;
 
-  FilterSelectDeselectSubcategory({@required this.subcategory});
+  FilterSelectDeselectSubcategory({@required this.id});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    List<String> selectedCategoryNames = List.from(filter.selectedCategoryNames);
-    List<String> selectedSubcategoryIds = List.from(filter.selectedSubcategoryIds);
+    List<String> selectedCategories = List.from(filter.selectedCategories);
+    List<String> selectedSubcategories = List.from(filter.selectedSubcategories);
+    AppCategory subcategory =
+        appState.filterState.consolidatedSubcategories.firstWhere((subcategory) => subcategory.id == id);
+    AppCategory category =
+        appState.filterState.consolidatedCategories.firstWhere((element) => element.id == subcategory.parentCategoryId);
 
-    if (selectedSubcategoryIds.contains(subcategory.id)) {
+    if (selectedSubcategories.contains(id)) {
       //deselect subcategory
-      selectedSubcategoryIds.remove(subcategory.id);
+      selectedSubcategories.remove(id);
+
+      //check if all subcategories have been unchecked, if so, uncheck the category
+      bool categorySelected = false;
+      appState.filterState.consolidatedSubcategories.forEach((cSub) {
+        if (selectedSubcategories.contains(cSub.id)) {
+          categorySelected = true;
+        }
+      });
+
+      //no children subcategories are present to the parent category, remove the category
+      if (!categorySelected && selectedCategories.contains(category.id)) {
+        selectedCategories.remove(category.id);
+      }
+
       //TODO if this is the last subcategory we are deselecting, then deselect the parent category
     } else {
       //select subcategory and its parent category if not already selected
-      selectedSubcategoryIds.add(subcategory.id);
-      if (!selectedCategoryNames.contains(subcategory.parentCategoryId)) {
-        selectedCategoryNames.add(subcategory.parentCategoryId);
+      selectedSubcategories.add(id);
+      if (!selectedCategories.contains(category.id)) {
+        selectedCategories.add(category.id);
       }
     }
 
     return _updateFilter(
         appState: appState,
         filter: Maybe.some(filter.copyWith(
-          selectedCategoryNames: selectedCategoryNames,
-          selectedSubcategoryIds: selectedSubcategoryIds,
+          selectedCategories: selectedCategories,
+          selectedSubcategories: selectedSubcategories,
         )));
   }
 }

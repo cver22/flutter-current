@@ -1,12 +1,15 @@
 import 'package:expenses/app/app_drawer.dart';
+import 'package:expenses/entries/entries_model/entries_state.dart';
 import 'package:expenses/entries/entries_screen/entries_screen.dart';
 import 'package:expenses/filter/filter_screen/filter_dialog.dart';
 import 'package:expenses/log/log_ui/logs_screen.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
+import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
+import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -82,7 +85,35 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                     if (index == 0) {
                       return _buildLogPopupMenuButton();
                     } else if (index == 1) {
-                      return _buildEntriesPopupMenuButton();
+                      return ConnectState<EntriesState>(
+                          where: notIdentical,
+                          map: (state) => state.entriesState,
+                          builder: (state) {
+                            return Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                state.entriesFilter.isSome
+                                    ? IconButton(
+                                        icon: Stack(
+                                          children: [
+                                            Icon(Icons.filter_alt_outlined),
+                                            Positioned(
+                                                bottom: 3.0,
+                                                child: Icon(
+                                                  Icons.close_outlined,
+                                                  color: Colors.black,
+                                                )),
+                                          ],
+                                        ),
+                                        onPressed: () {
+                                          Env.store.dispatch(EntriesClearEntriesFilter());
+                                        },
+                                      )
+                                    : Container(),
+                                _buildEntriesPopupMenuButton(state: state),
+                              ],
+                            );
+                          });
                     } else {
                       return Container();
                     }
@@ -108,14 +139,14 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     );
   }
 
-  PopupMenuButton<String> _buildEntriesPopupMenuButton() {
+  PopupMenuButton<String> _buildEntriesPopupMenuButton({@required EntriesState state}) {
     return PopupMenuButton<String>(
       onSelected: handleClick,
       itemBuilder: (BuildContext context) {
         Set<String> menuOptions;
 
         //TODO need to make this so it work with all languages
-        if (Env.store.state.entriesState.descending) {
+        if (state.descending) {
           menuOptions = {'Filter', 'Ascending'};
         } else {
           menuOptions = {'Filter', 'Descending'};

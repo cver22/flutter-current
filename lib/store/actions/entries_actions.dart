@@ -14,6 +14,7 @@ import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/utils/maybe.dart';
 
+
 import '../../env.dart';
 
 AppState _updateEntriesLogTotalsState(
@@ -127,21 +128,40 @@ class EntriesDeleteSelectedEntry implements AppAction {
 }
 
 class EntriesSetEntriesFilter implements AppAction {
+  final String logId;
+
+  EntriesSetEntriesFilter({this.logId});
 
   @override
   AppState updateState(AppState appState) {
     FilterState filterState = appState.filterState;
 
-    //if filter has been changed, save new filter, if reset, pass no filter
-    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+    Maybe<Filter> updatedFilter = Maybe.some(Filter.initial());
 
-    return _updateEntriesState(
-        appState, (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
+
+    if(logId == null){
+      //if filter has been changed, save new filter, if reset, pass no filter
+      updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+    } else {
+      //filter was set fro a logListTile and should only filter based on the log
+      List<String> selectedLogs = [];
+      selectedLogs.add(logId);
+      updatedFilter = Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
+    }
+
+
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
+  }
+}
+
+class EntriesClearEntriesFilter implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entriesFilter: Maybe.none()));
   }
 }
 
 class EntriesSetChartFilter implements AppAction {
-
   @override
   AppState updateState(AppState appState) {
     FilterState filterState = appState.filterState;
@@ -149,7 +169,13 @@ class EntriesSetChartFilter implements AppAction {
     //if filter has been changed, save new filter, if reset, pass no filter
     Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
 
-    return _updateEntriesState(
-        appState, (entriesState) => entriesState.copyWith(chartFilter: updatedFilter));
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(chartFilter: updatedFilter));
+  }
+}
+
+class EntriesClearChartFilter implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(chartFilter: Maybe.none()));
   }
 }

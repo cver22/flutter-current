@@ -1,13 +1,14 @@
 import 'dart:collection';
 import 'package:equatable/equatable.dart';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/utils/maybe.dart';
 
 class Filter extends Equatable {
   final Maybe<DateTime> startDate;
   final Maybe<DateTime> endDate;
   final Map<String, String> currency; // code, name
-  final List<String> selectedCategoryNames; //name
-  final List<String> selectedSubcategoryIds; //id
+  final List<String> selectedCategories; //name
+  final List<String> selectedSubcategories; //id
   final Maybe<int> minAmount;
   final Maybe<int> maxAmount;
   final List<String> membersPaid; //id
@@ -19,8 +20,8 @@ class Filter extends Equatable {
     this.startDate,
     this.endDate,
     this.currency,
-    this.selectedCategoryNames,
-    this.selectedSubcategoryIds,
+    this.selectedCategories,
+    this.selectedSubcategories,
     this.minAmount,
     this.maxAmount,
     this.membersPaid,
@@ -34,8 +35,8 @@ class Filter extends Equatable {
       startDate: Maybe.none(),
       endDate: Maybe.none(),
       currency: LinkedHashMap(),
-      selectedCategoryNames: const [],
-      selectedSubcategoryIds: const [],
+      selectedCategories: const [],
+      selectedSubcategories: const [],
       minAmount: Maybe.none(),
       maxAmount: Maybe.none(),
       membersPaid: const [],
@@ -50,8 +51,8 @@ class Filter extends Equatable {
         startDate,
         endDate,
         currency,
-        selectedCategoryNames,
-        selectedSubcategoryIds,
+        selectedCategories,
+        selectedSubcategories,
         minAmount,
         maxAmount,
         membersPaid,
@@ -67,8 +68,8 @@ class Filter extends Equatable {
     Maybe<DateTime> startDate,
     Maybe<DateTime> endDate,
     Map<String, String> currency,
-    List<String> selectedCategoryNames,
-    List<String> selectedSubcategoryIds,
+    List<String> selectedCategories,
+    List<String> selectedSubcategories,
     Maybe<int> minAmount,
     Maybe<int> maxAmount,
     List<String> membersPaid,
@@ -79,8 +80,8 @@ class Filter extends Equatable {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
         (currency == null || identical(currency, this.currency)) &&
-        (selectedCategoryNames == null || identical(selectedCategoryNames, this.selectedCategoryNames)) &&
-        (selectedSubcategoryIds == null || identical(selectedSubcategoryIds, this.selectedSubcategoryIds)) &&
+        (selectedCategories == null || identical(selectedCategories, this.selectedCategories)) &&
+        (selectedSubcategories == null || identical(selectedSubcategories, this.selectedSubcategories)) &&
         (minAmount == null || identical(minAmount, this.minAmount)) &&
         (maxAmount == null || identical(maxAmount, this.maxAmount)) &&
         (membersPaid == null || identical(membersPaid, this.membersPaid)) &&
@@ -94,8 +95,8 @@ class Filter extends Equatable {
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
       currency: currency ?? this.currency,
-      selectedCategoryNames: selectedCategoryNames ?? this.selectedCategoryNames,
-      selectedSubcategoryIds: selectedSubcategoryIds ?? this.selectedSubcategoryIds,
+      selectedCategories: selectedCategories ?? this.selectedCategories,
+      selectedSubcategories: selectedSubcategories ?? this.selectedSubcategories,
       minAmount: minAmount ?? this.minAmount,
       maxAmount: maxAmount ?? this.maxAmount,
       membersPaid: membersPaid ?? this.membersPaid,

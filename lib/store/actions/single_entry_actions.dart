@@ -637,7 +637,11 @@ class AddUpdateTagFromEntryScreen implements AppAction {
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry), selectedTag: Maybe.some(Tag()), tags: tags, userUpdated: true));
+            selectedEntry: Maybe.some(entry),
+            selectedTag: Maybe.some(Tag()),
+            tags: tags,
+            userUpdated: true,
+            searchedTags: const []));
   }
 }
 
@@ -686,6 +690,65 @@ class SelectDeselectEntryTag implements AppAction {
         appState,
         (singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)), tags: tags, userUpdated: true));
+  }
+}
+
+class Test implements AppAction {
+
+
+  @override
+  AppState updateState(AppState appState) {
+
+
+    print('test');
+
+
+    return _updateSingleEntryState(
+        appState,
+            (singleEntryState) => singleEntryState);
+  }
+}
+
+
+
+class EntryStateSetSearchedTags implements AppAction {
+
+  final String search;
+
+  EntryStateSetSearchedTags({this.search});
+
+
+  @override
+  AppState updateState(AppState appState) {
+    Map<String, Tag> logTags = Map.from(appState.singleEntryState.tags);
+    List<Tag> tagsList = logTags.values.toList();
+    List<Tag> searchedTags = [];
+
+    print('search: $search');
+
+    int tagCount = 0;
+    if (search != null) {
+      for (int i = 0; i < tagsList.length; i++) {
+        Tag tag = tagsList[i];
+
+        //add tag to searched list if it is not already in the entry tag list
+        if (tag.name.contains(search) && !appState.singleEntryState.selectedEntry.value.tagIDs.contains(tag.id)) {
+          searchedTags.add(tag);
+          tagCount++;
+        }
+
+        //limit number of search results to 10
+        if (tagCount >= MAX_TAGS) {
+          break;
+        }
+      }
+    }
+
+
+    print('searchedTags: $searchedTags');
+
+    return _updateSingleEntryState(
+        appState, (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags));
   }
 }
 

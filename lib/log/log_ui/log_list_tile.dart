@@ -3,11 +3,14 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_totals_model/log_total.dart';
 import 'package:expenses/member/member_ui/log_member_detailed_ui/log_member_month_list.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
+import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:expenses/store/actions/filter_actions.dart';
+
 
 class LogListTile extends StatelessWidget {
   final Log log;
@@ -32,7 +35,10 @@ class LogListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(log.name),
+                FlatButton(child: Text(log.name), onPressed: (){
+                  Env.store.dispatch(EntriesSetEntriesFilter(logId: log.id));
+                  Env.store.dispatch(FilterSetReset(log: log));
+                }),
                 IconButton(
                   onPressed: () => {
                     Env.store.dispatch(SelectLog(logId: log.id)),

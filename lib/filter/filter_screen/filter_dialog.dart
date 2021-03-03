@@ -107,7 +107,11 @@ class _FilterDialogState extends State<FilterDialog> {
         ),
         FlatButton(
           child: Text('Reset'),
-          onPressed: () => Env.store.dispatch(FilterSetReset()),
+          onPressed: () {
+            _minAmountController.clear();
+            _maxAmountController.clear();
+            Env.store.dispatch(FilterSetReset());
+          },
         ),
         FlatButton(
             child: Text(save ? 'Save Filter' : 'Done'),
@@ -225,9 +229,6 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   Widget _categoryFilter({@required FilterState filterState}) {
-
-    //TODO build list of filtered categories
-
     return CategoryButton(
       label: 'Select Filter Categories',
       onPressed: () => {
@@ -241,7 +242,6 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  //TODO make app button show list of who paid
   Widget _paidSpentFilter({@required FilterState filterState}) {
     String membersPaidString = '';
     String membersSpentString = '';

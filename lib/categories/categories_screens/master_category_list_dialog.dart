@@ -54,14 +54,14 @@ class MasterCategoryListDialog extends StatelessWidget {
         builder: (filterState) {
           print('Rendering Filter Category Dialog');
           Filter filter = filterState.filter.value;
-          categories = filterState.allCategories;
-          subcategories = filterState.allSubcategories;
+          categories = filterState.consolidatedCategories;
+          subcategories = filterState.consolidatedSubcategories;
 
           return _buildDialog(
             categories: categories,
             subcategories: subcategories,
-            selectedSubcategories: filter.selectedSubcategoryIds,
-            selectedCategories: filter.selectedCategoryNames,
+            selectedSubcategories: filter.selectedSubcategories,
+            selectedCategories: filter.selectedCategories,
           );
         },
       );

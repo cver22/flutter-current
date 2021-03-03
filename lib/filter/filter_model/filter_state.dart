@@ -3,37 +3,41 @@ import 'dart:collection';
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/filter/filter_model/filter.dart';
+import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/maybe.dart';
 
 class FilterState extends Equatable {
   final Maybe<Filter> filter;
   final List<bool> expandedCategories;
-  final List<AppCategory> allCategories;
-  final List<AppCategory> allSubcategories;
+  final List<AppCategory> consolidatedCategories;
+  final List<AppCategory> consolidatedSubcategories;
   final Map<String, String> allMembers; //id, name
   final List<Tag> allTags;
   final bool updated;
+  final Maybe<Log> selectedLog;
 
   FilterState({
     this.filter,
     this.expandedCategories,
-    this.allCategories,
-    this.allSubcategories,
+    this.consolidatedCategories,
+    this.consolidatedSubcategories,
     this.allMembers,
     this.allTags,
     this.updated,
+    this.selectedLog,
   });
 
   factory FilterState.initial() {
     return FilterState(
       filter: Maybe.none(),
       expandedCategories: List(),
-      allCategories: const [],
-      allSubcategories: const [],
+      consolidatedCategories: const [],
+      consolidatedSubcategories: const [],
       allMembers: LinkedHashMap(),
       allTags: const [],
       updated: false,
+      selectedLog: Maybe.none(),
     );
   }
 
@@ -41,11 +45,12 @@ class FilterState extends Equatable {
   List<Object> get props => [
         filter,
         expandedCategories,
-        allCategories,
-        allSubcategories,
+        consolidatedCategories,
+        consolidatedSubcategories,
         allMembers,
         allTags,
         updated,
+        selectedLog,
       ];
 
   @override
@@ -54,30 +59,33 @@ class FilterState extends Equatable {
   FilterState copyWith({
     Maybe<Filter> filter,
     List<bool> expandedCategories,
-    List<AppCategory> allCategories,
-    List<AppCategory> allSubcategories,
+    List<AppCategory> consolidatedCategories,
+    List<AppCategory> consolidatedSubcategories,
     Map<String, String> allMembers,
     List<Tag> allTags,
     bool updated,
+    Maybe<Log> selectedLog,
   }) {
     if ((filter == null || identical(filter, this.filter)) &&
         (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
-        (allCategories == null || identical(allCategories, this.allCategories)) &&
-        (allSubcategories == null || identical(allSubcategories, this.allSubcategories)) &&
+        (consolidatedCategories == null || identical(consolidatedCategories, this.consolidatedCategories)) &&
+        (consolidatedSubcategories == null || identical(consolidatedSubcategories, this.consolidatedSubcategories)) &&
         (allMembers == null || identical(allMembers, this.allMembers)) &&
         (allTags == null || identical(allTags, this.allTags)) &&
-        (updated == null || identical(updated, this.updated))) {
+        (updated == null || identical(updated, this.updated)) &&
+        (selectedLog == null || identical(selectedLog, this.selectedLog))) {
       return this;
     }
 
     return new FilterState(
       filter: filter ?? this.filter,
       expandedCategories: expandedCategories ?? this.expandedCategories,
-      allCategories: allCategories ?? this.allCategories,
-      allSubcategories: allSubcategories ?? this.allSubcategories,
+      consolidatedCategories: consolidatedCategories ?? this.consolidatedCategories,
+      consolidatedSubcategories: consolidatedSubcategories ?? this.consolidatedSubcategories,
       allMembers: allMembers ?? this.allMembers,
       allTags: allTags ?? this.allTags,
       updated: updated ?? this.updated,
+      selectedLog: selectedLog ?? this.selectedLog,
     );
   }
 }

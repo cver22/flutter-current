@@ -35,7 +35,9 @@
 //TODO entries tiles seem to be of inconsistent size
 //TODO start splash screen earlier?
 //TODO changing hte name of a category or subcategory should change the filter for the entries state if .isSome
-
+//TODO clicking on a log names takes you to the entries and filters for that log only, may have to use the button to pass the filter state information and then back to the entries state
+//TODO move tag list creators from UI (tag picker) to actions and state
+//filter should be pre set with only the logs categories/subcategories if navigating from a log directly
 
 //TODO VISUAL
 //TODO appDialog needs and invisible icon on the trailing side if there is no trailing
@@ -50,12 +52,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//filter category - if all subs deselected, remove category as well
-//UI - build list of filtered categories
-//clicking on a log names takes you to the entries and filters for that log only
-//clear log button at the top
-//filter should be pre set with only the logs categories/subcategories if navigating from a log directly
-//there is an issue with how the categories and logs are filtered, subcategories should come before categories and categories can only filter out of none of the subs are present for any log with that sub
+//build the tag search function
 
 
 //TODO ASK BORIS

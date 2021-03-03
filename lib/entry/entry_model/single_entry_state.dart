@@ -13,6 +13,7 @@ class SingleEntryState extends Equatable {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
   final Map<String, Tag> tags; //collection of all log tags for updating if required
+  final List<Tag> searchedTags;
   final List<AppCategory> categories; // collection of all log categories for updating if required;
   final List<AppCategory> subcategories; //collection of all log subcategories for updating if required;
   final bool processing;
@@ -23,6 +24,7 @@ class SingleEntryState extends Equatable {
   SingleEntryState({
     this.selectedTag,
     this.tags,
+    this.searchedTags,
     this.selectedEntry,
     this.categories,
     this.subcategories,
@@ -37,6 +39,7 @@ class SingleEntryState extends Equatable {
       selectedEntry: Maybe.none(),
       selectedTag: Maybe.none(),
       tags: LinkedHashMap(),
+      searchedTags: const [],
       categories: List<AppCategory>(),
       subcategories: List<AppCategory>(),
       processing: true,
@@ -51,6 +54,7 @@ class SingleEntryState extends Equatable {
         selectedEntry,
         selectedTag,
         tags,
+    searchedTags,
         categories,
         subcategories,
         processing,
@@ -66,6 +70,7 @@ class SingleEntryState extends Equatable {
     Maybe<MyEntry> selectedEntry,
     Maybe<Tag> selectedTag,
     Map<String, Tag> tags,
+    List<Tag> searchedTags,
     List<AppCategory> categories,
     List<AppCategory> subcategories,
     bool processing,
@@ -76,15 +81,13 @@ class SingleEntryState extends Equatable {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
         (tags == null || identical(tags, this.tags)) &&
+        (searchedTags == null || identical(searchedTags, this.searchedTags)) &&
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null || identical(subcategories, this.subcategories)) &&
         (processing == null || identical(processing, this.processing)) &&
-        (userUpdated == null ||
-            identical(
-                userUpdated,
-                this.userUpdated &&
-                    (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
-                    (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode))))) {
+        (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
+        (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
+        (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode))) {
       return this;
     }
 
@@ -92,6 +95,7 @@ class SingleEntryState extends Equatable {
       selectedEntry: selectedEntry ?? this.selectedEntry,
       selectedTag: selectedTag ?? this.selectedTag,
       tags: tags ?? this.tags,
+      searchedTags: searchedTags ?? this.searchedTags,
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       processing: processing ?? this.processing,

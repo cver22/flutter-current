@@ -66,6 +66,7 @@ class _TagCreatorState extends State<TagCreator> {
             },
             onChanged: (value) {
               setState(() {
+                Env.store.dispatch(EntryStateSetSearchedTags(search: value));
                 canSave = value != null && value.length > 0;
               });
             },
