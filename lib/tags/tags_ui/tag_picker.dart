@@ -4,7 +4,7 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_collection.dart';
-import 'package:expenses/tags/tags_ui/tag_creator.dart';
+import 'package:expenses/tags/tags_ui/tag_field.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -17,10 +17,7 @@ class TagPicker extends StatefulWidget {
 }
 
 class _TagPickerState extends State<TagPicker> {
-  List<Tag> logAllTags = [],
-      selectedEntryTags = [],
-      categoryRecentTags = [],
-      logRecentTags = [];
+  List<Tag> logAllTags = [], selectedEntryTags = [], categoryRecentTags = [], logRecentTags = [];
 
   MyEntry entry;
   Log log;
@@ -49,15 +46,15 @@ class _TagPickerState extends State<TagPicker> {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              TagCreator(tagFocusNode: singleEntryState.tagFocusNode.value),
+              TagField(tagFocusNode: singleEntryState.tagFocusNode.value),
               SizedBox(height: 10.0),
-              _buildTagCollections(searchedTags: singleEntryState.searchedTags), //log tag collection
+              _buildTagCollections(singleEntryState: singleEntryState), //log tag collection
             ],
           );
         });
   }
 
-  SingleChildScrollView _buildTagCollections({@required List<Tag> searchedTags}) {
+  SingleChildScrollView _buildTagCollections({@required SingleEntryState singleEntryState}) {
     return SingleChildScrollView(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,21 +64,22 @@ class _TagPickerState extends State<TagPicker> {
             collectionName: 'Entry Tags',
           ),
           //currently selected tags
-          searchedTags.isNotEmpty
+          singleEntryState.searchedTags.isNotEmpty
               ? TagCollection(
-                  tags: searchedTags,
+                  search: singleEntryState.search.value,
+                  tags: singleEntryState.searchedTags,
                   collectionName: 'Searched Tags',
                 )
               : Container(),
 
-          categoryRecentTags.isNotEmpty && searchedTags.isEmpty
+          categoryRecentTags.isNotEmpty && singleEntryState.searchedTags.isEmpty
               ? TagCollection(
                   tags: categoryRecentTags,
                   collectionName: 'Category Recent',
                 )
               : Container(),
           //category recent tag collection
-          logRecentTags.isNotEmpty && searchedTags.isEmpty
+          logRecentTags.isNotEmpty && singleEntryState.searchedTags.isEmpty
               ? TagCollection(
                   tags: logRecentTags,
                   collectionName: 'Log Recent',
@@ -190,7 +188,6 @@ class _TagPickerState extends State<TagPicker> {
       categoryRecentTags = [];
     }
   }
-
 
   void _buildEntryTagList() {
     List<String> entryTagIDs = entry?.tagIDs == null ? null : entry.tagIDs;

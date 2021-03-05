@@ -20,6 +20,7 @@ class SingleEntryState extends Equatable {
   final bool userUpdated;
   final Maybe<FocusNode> commentFocusNode;
   final Maybe<FocusNode> tagFocusNode;
+  final Maybe<String> search;
 
   SingleEntryState({
     this.selectedTag,
@@ -32,6 +33,7 @@ class SingleEntryState extends Equatable {
     this.userUpdated,
     this.commentFocusNode,
     this.tagFocusNode,
+    this.search,
   });
 
   factory SingleEntryState.initial() {
@@ -46,21 +48,24 @@ class SingleEntryState extends Equatable {
       userUpdated: false,
       commentFocusNode: Maybe.none(),
       tagFocusNode: Maybe.none(),
+      search: Maybe.none(),
     );
   }
 
   @override
-  List<Object> get props => [
+  List<Object> get props =>
+      [
         selectedEntry,
         selectedTag,
         tags,
-    searchedTags,
+        searchedTags,
         categories,
         subcategories,
         processing,
         userUpdated,
         commentFocusNode,
-        tagFocusNode
+        tagFocusNode,
+        search,
       ];
 
   @override
@@ -77,6 +82,7 @@ class SingleEntryState extends Equatable {
     bool userUpdated,
     Maybe<FocusNode> commentFocusNode,
     Maybe<FocusNode> tagFocusNode,
+    Maybe<String> search,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
@@ -87,7 +93,8 @@ class SingleEntryState extends Equatable {
         (processing == null || identical(processing, this.processing)) &&
         (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
         (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
-        (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode))) {
+        (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode)) &&
+        (search == null || identical(search, this.search))) {
       return this;
     }
 
@@ -102,6 +109,7 @@ class SingleEntryState extends Equatable {
       userUpdated: userUpdated ?? this.userUpdated,
       commentFocusNode: commentFocusNode ?? this.commentFocusNode,
       tagFocusNode: tagFocusNode ?? this.tagFocusNode,
+      search: search ?? this.search,
     );
   }
 }

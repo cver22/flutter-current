@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/app_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
@@ -252,11 +253,14 @@ class AddEditLogScreen extends StatelessWidget {
   }*/
 
   Widget _buildCurrencyPicker({@required Log log, @required String currency}) {
+
+    Currency _currency = CurrencyService().findByCode(currency);
+
     return log.uid == null
         ? MyCurrencyPicker(
             currency: currency,
             returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
-        : Text('Currency: $currency');
+        : Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');
   }
 }
 

@@ -1,5 +1,4 @@
-import 'package:currency_pickers/country.dart';
-import 'package:currency_pickers/currency_pickers.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 
 class MyCurrencyPicker extends StatefulWidget {
@@ -13,33 +12,27 @@ class MyCurrencyPicker extends StatefulWidget {
 }
 
 class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
-  String _currency;
+  Currency _currency;
 
   @override
   Widget build(BuildContext context) {
-    _currency = widget.currency;
-    return CurrencyPickerDropdown(
-      //TODO change default local currency based on phone
-      initialValue: _currency == null
-          ? CurrencyPickerUtils.getCountryByCurrencyCode('CAD').isoCode
-          : CurrencyPickerUtils.getCountryByCurrencyCode(_currency).isoCode,
-      itemBuilder: _buildDropdownItem,
-      onValuePicked: (Country country) {
-        _currency = country.currencyCode;
-        widget.returnCurrency(_currency);
+    _currency = CurrencyService().findByCode(widget.currency);
+
+
+    return RaisedButton(
+      onPressed: () {
+        showCurrencyPicker(
+          context: context,
+          showFlag: true,
+          showCurrencyName: true,
+          showCurrencyCode: true,
+          onSelect: (Currency currency) {
+            _currency = currency;
+            widget.returnCurrency(currency.code);
+          },
+        );
       },
+      child: Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}'),
     );
   }
-
-  Widget _buildDropdownItem(Country country) => Container(
-        child: Row(
-          children: <Widget>[
-            CurrencyPickerUtils.getDefaultFlagImage(country),
-            SizedBox(
-              width: 8.0,
-            ),
-            Text("${country.currencyCode}"),
-          ],
-        ),
-      );
 }

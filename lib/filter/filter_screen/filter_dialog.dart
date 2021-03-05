@@ -7,6 +7,7 @@ import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/filter/filter_model/filter_state.dart';
 import 'package:expenses/filter/filter_screen/filter_log_dialog.dart';
 import 'package:expenses/filter/filter_screen/filter_member_dialog.dart';
+import 'package:expenses/filter/filter_screen/filter_tag_dialog.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/filter_actions.dart';
@@ -88,6 +89,8 @@ class _FilterDialogState extends State<FilterDialog> {
                     SizedBox(height: 16.0),
                     _paidSpentFilter(filterState: filterState),
                     _logFilter(filterState: filterState),
+                    SizedBox(height: 16.0),
+                    _tagFilter(filterState: filterState),
                   ],
                 ),
               ),
@@ -320,5 +323,32 @@ class _FilterDialogState extends State<FilterDialog> {
     } else {
       return Container();
     }
+  }
+
+  Widget _tagFilter({FilterState filterState}) {
+    List<String> selectedTags = filterState.filter.value.selectedTags;
+    String tagString = '';
+    if(selectedTags.isNotEmpty){
+      filterState.filter.value.selectedTags.forEach((tagName) {
+        if (tagString.length > 0) {
+          tagString += '\, #$tagName';
+        } else {
+          tagString += '#$tagName';
+        }
+      });
+
+    } else {
+      tagString = '#Tags';
+    }
+
+    return AppButton(
+      child: Text(tagString),
+      onPressed: () => {
+        showDialog(
+          context: context,
+          builder: (_) => FilterTagDialog(),
+        ),
+      },
+    );
   }
 }

@@ -78,7 +78,7 @@ class FilterSetReset implements AppAction {
     }
 
     //creates lists the user can select from an overwrites the list every time because these elements are dynamic
-    if (logs.length > 0) {
+    if (logs.isNotEmpty) {
       logs.forEach((log) {
         //create map of allMembers
         log.logMembers.forEach((key, member) {
@@ -133,21 +133,12 @@ class FilterSetReset implements AppAction {
       });
     }
 
-    //TODO should be filtered by log if navigated to from log
-    //create list of all tags so it can be sorted as desired by the user
-    appState.tagState.tags.forEach((key, tag) {
-      if ((allTags.singleWhere((it) => it.name == tag.name, orElse: () => null)) != null) {
-        //tag exists in the list, add to its frequency from another log
-        Tag tagToUpdate = allTags.firstWhere((element) => element.name == tag.name);
-        allTags[allTags.indexOf(tagToUpdate)] =
-            tagToUpdate.copyWith(tagLogFrequency: tagToUpdate.tagLogFrequency + tag.tagLogFrequency);
-      } else {
-        //tag does not exist in the list, add it
-        allTags.add(tag);
-      }
-    });
-
-    allTags = _sortTags(sortMethod: SortMethod.alphabetical, ascending: true, allTags: allTags);
+    allTags = _sortTags(
+        filter: appState.filterState.filter,
+        sortMethod: SortMethod.frequency,
+        ascending: false,
+        tags: Map.from(appState.tagState.tags),
+        selectedLogs: selectedLogs);
 
     //create list of expanded categories the same size as the list of categories and set expanded to false
     consolidatedCategories.forEach((key, value) {
@@ -161,7 +152,7 @@ class FilterSetReset implements AppAction {
     } else if (entriesChart == EntriesCharts.charts && appState.entriesState.chartFilter.isSome) {
       updatedFilter = appState.entriesState.chartFilter.value;
       updated = true;
-    } else if (log != null){
+    } else if (log != null) {
       updatedFilter = updatedFilter.copyWith(selectedLogs: selectedLogs);
     }
 
@@ -468,17 +459,78 @@ class FilterClearLogSelection implements AppAction {
   }
 }
 
-List<Tag> _sortTags({SortMethod sortMethod = SortMethod.alphabetical, List<Tag> allTags, bool ascending = true}) {
-  List<Tag> orderTags = List.from(allTags);
+class FilterSelectTag implements AppAction {
+  final String name;
+
+  FilterSelectTag({@required this.name});
+
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+    List<String> selectedTags = List.from(filter.selectedTags);
+
+    //remove if tag present
+    if (selectedTags.contains(name)) {
+      selectedTags.remove(name);
+    } else {
+      //add if tag selected
+      selectedTags.add(name);
+    }
+
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedTags: selectedTags)));
+  }
+}
+
+class FilterClearTagSelection implements AppAction {
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+
+    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedTags: const [])));
+  }
+}
+
+List<Tag> _sortTags(
+    {SortMethod sortMethod = SortMethod.frequency,
+    bool ascending = false,
+    List<String> selectedLogs,
+    Map<String, Tag> tags,
+    Maybe<Filter> filter}) {
+  List<Tag> orderTags = [];
+
+  //removes tags from logs not selected if any are selected
+  if (selectedLogs.isNotEmpty) {
+    tags.removeWhere((key, element) {
+      bool remove = true;
+      selectedLogs.forEach((logId) {
+        if (element.logId == logId) {
+          remove = false;
+        }
+      });
+
+      return remove;
+    });
+  }
+
+  //create list of all tags so it can be sorted as desired by the user
+  tags.forEach((key, tag) {
+    if ((orderTags.singleWhere((it) => it.name == tag.name, orElse: () => null)) != null) {
+      //tag exists in the list, add to its frequency from another log
+      Tag tagToUpdate = orderTags.firstWhere((element) => element.name == tag.name);
+      orderTags[orderTags.indexOf(tagToUpdate)] =
+          tagToUpdate.copyWith(tagLogFrequency: tagToUpdate.tagLogFrequency + tag.tagLogFrequency);
+    } else {
+      //tag does not exist in the list, add it
+      orderTags.add(tag);
+    }
+  });
 
   if (sortMethod == SortMethod.alphabetical) {
     orderTags.sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
   } else if (sortMethod == SortMethod.frequency) {
-    orderTags.sort((a, b) => a.tagLogFrequency..compareTo(b.tagLogFrequency));
+    orderTags.sort((a, b) => a.tagLogFrequency.compareTo(b.tagLogFrequency));
   }
 
   if (!ascending) {
-    orderTags = orderTags.reversed;
+    orderTags = orderTags.reversed.toList();
   }
 
   return orderTags;

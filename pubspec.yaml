@@ -28,7 +28,7 @@ dependencies:
   rxdart: ^0.24.0
   font_awesome_flutter: ^8.8.1
   cloud_firestore: ^0.13.5
-  currency_pickers: ^1.0.6
+  currency_picker: ^1.0.6
   intl: ^0.16.1
   uuid: ^2.0.4
   cached_network_image: ^2.2.0
@@ -36,7 +36,7 @@ dependencies:
   json_annotation: ^3.0.1
   provider: ^4.1.2
   shared_preferences: ^0.5.12
-  get: ^3.13.2
+  get: ^3.26.0
   emojis: ^0.9.3
   date_time_picker: ^1.1.0
   qr_flutter: ^3.1.0

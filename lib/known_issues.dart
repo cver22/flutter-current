@@ -39,8 +39,9 @@
 //TODO move tag list creators from UI (tag picker) to actions and state
 //filter should be pre set with only the logs categories/subcategories if navigating from a log directly
 
+
 //TODO VISUAL
-//TODO appDialog needs and invisible icon on the trailing side if there is no trailing
+//TODO appDialog needs an invisible icon on the trailing side if there is no trailing
 
 
 
@@ -52,7 +53,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//build the tag search function
+//tag search, order by frequency and alphabetical, start with frequency, button is just a hash tag
 
 
 //TODO ASK BORIS

@@ -1,6 +1,5 @@
 import 'dart:collection';
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/utils/maybe.dart';
 
 class Filter extends Equatable {
@@ -14,7 +13,7 @@ class Filter extends Equatable {
   final List<String> membersPaid; //id
   final List<String> membersSpent; //id
   final List<String> selectedLogs;
-  final List<String> tags;
+  final List<String> selectedTags;
 
   Filter({
     this.startDate,
@@ -27,7 +26,7 @@ class Filter extends Equatable {
     this.membersPaid,
     this.membersSpent,
     this.selectedLogs,
-    this.tags,
+    this.selectedTags,
   });
 
   factory Filter.initial() {
@@ -42,7 +41,7 @@ class Filter extends Equatable {
       membersPaid: const [],
       membersSpent: const [],
       selectedLogs: const [],
-      tags: const [],
+      selectedTags: const [],
     );
   }
 
@@ -58,7 +57,7 @@ class Filter extends Equatable {
         membersPaid,
         membersSpent,
         selectedLogs,
-        tags
+        selectedTags
       ]; //id, name
 
   @override
@@ -75,7 +74,7 @@ class Filter extends Equatable {
     List<String> membersPaid,
     List<String> membersSpent,
     List<String> selectedLogs,
-    List<String> tags,
+    List<String> selectedTags,
   }) {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
@@ -87,7 +86,7 @@ class Filter extends Equatable {
         (membersPaid == null || identical(membersPaid, this.membersPaid)) &&
         (membersSpent == null || identical(membersSpent, this.membersSpent)) &&
         (selectedLogs == null || identical(selectedLogs, this.selectedLogs)) &&
-        (tags == null || identical(tags, this.tags))) {
+        (selectedTags == null || identical(selectedTags, this.selectedTags))) {
       return this;
     }
 
@@ -102,7 +101,7 @@ class Filter extends Equatable {
       membersPaid: membersPaid ?? this.membersPaid,
       membersSpent: membersSpent ?? this.membersSpent,
       selectedLogs: selectedLogs ?? this.selectedLogs,
-      tags: tags ?? this.tags,
+      selectedTags: selectedTags ?? this.selectedTags,
     );
   }
 }

@@ -6,21 +6,24 @@ import 'package:flutter/services.dart';
 
 import '../../env.dart';
 
-class TagCreator extends StatefulWidget {
+class TagField extends StatefulWidget {
   final FocusNode tagFocusNode;
+  final bool searchOnly;
 
-  TagCreator({
+  TagField({
     Key key,
     @required this.tagFocusNode,
+    this.searchOnly = false,
   }) : super(key: key);
 
   @override
-  _TagCreatorState createState() => _TagCreatorState();
+  _TagFieldState createState() => _TagFieldState();
 }
 
-class _TagCreatorState extends State<TagCreator> {
+class _TagFieldState extends State<TagField> {
   TextEditingController _controller;
   bool canSave = false;
+  bool searchOnly = false;
 
   void initState() {
     _controller = TextEditingController();
@@ -35,6 +38,12 @@ class _TagCreatorState extends State<TagCreator> {
   @override
   Widget build(BuildContext context) {
     FocusNode tagFocusNode = widget.tagFocusNode;
+    searchOnly = widget.searchOnly;
+
+    //clears text from field after a tag is selected as the action clears the search state
+    if (Env.store.state.singleEntryState.search.isNone) {
+      _controller.clear();
+    }
 
     return Row(
       mainAxisSize: MainAxisSize.max,
@@ -56,7 +65,7 @@ class _TagCreatorState extends State<TagCreator> {
             textCapitalization: TextCapitalization.words,
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))],
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: (_) {
+            onFieldSubmitted: searchOnly ? null : (_) {
               setState(() {
                 if (canSave) {
                   _saveTag();
@@ -64,7 +73,7 @@ class _TagCreatorState extends State<TagCreator> {
                 }
               });
             },
-            onChanged: (value) {
+            onChanged: searchOnly ? null /*TODO do something here to search tags*/: (value) {
               setState(() {
                 Env.store.dispatch(EntryStateSetSearchedTags(search: value));
                 canSave = value != null && value.length > 0;

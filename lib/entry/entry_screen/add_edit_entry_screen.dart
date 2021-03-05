@@ -176,6 +176,7 @@ class AddEditEntryScreen extends StatelessWidget {
         _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
         _commentFormField(entry: entry, commentFocusNode: entryState.commentFocusNode.value),
         TagPicker(),
+        SizedBox(height: 400.0),
       ],
     );
   }
