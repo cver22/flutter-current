@@ -19,6 +19,7 @@ class EntriesListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Log log;
+    DateTime date = entry.dateTime;
 
     if (entry?.logId != null) {
       log = Env.store.state.logsState.logs?.values
@@ -48,7 +49,15 @@ class EntriesListTile extends StatelessWidget {
                 ],
               ),
             ),
-            trailing: Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
+            trailing: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text('${MONTHS_SHORT[date.month - 1]} ${date.day.toString()}, ${date.year.toString()}'),
+                SizedBox(height: 8.0),
+                Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
+              ],
+            ),
             onTap: () => {
               Env.store.dispatch(SelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),

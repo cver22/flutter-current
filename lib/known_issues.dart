@@ -56,7 +56,6 @@
 
 //TODO START HERE
 //add date to entry
-//implement filter of tags in entries view
 
 //TODO ASK BORIS
 // is having methods in the models bad practice, should they be extracted to the action - if it can be in an action, move it there - Answer - Yes
