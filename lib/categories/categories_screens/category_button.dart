@@ -7,25 +7,32 @@ class CategoryButton extends StatelessWidget {
   final AppCategory category;
   final Function onPressed;
   final String label;
+  final bool filter;
 
-  const CategoryButton({Key key, this.category, this.onPressed, this.label}) : super(key: key);
+  const CategoryButton({Key key, this.category, this.onPressed, this.label, this.filter = false}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AppButton(onPressed: onPressed, child: Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: <Widget>[
-        category?.emojiChar != null
-            ? Text(
-          category.emojiChar,
-          textAlign: TextAlign.center,
-          style: TextStyle(fontSize: EMOJI_SIZE),
-        )
-            : Icon(Icons.edit_outlined),
-        SizedBox(width: 10.0),
-        Text(category?.name ?? label),
-      ],
-    ),);
+    return AppButton(
+      onPressed: onPressed,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          _leadingWidget(),
+          SizedBox(width: 10.0),
+          Text(category?.name ?? label),
+        ],
+      ),
+    );
+  }
+
+  Widget _leadingWidget() {
+    Widget leadingWidget = Container();
+    if (category?.emojiChar != null) {
+      leadingWidget = Text(category.emojiChar, textAlign: TextAlign.center, style: TextStyle(fontSize: EMOJI_SIZE));
+    } else if (!filter) {
+      leadingWidget = Icon(Icons.edit_outlined);
+    }
+    return leadingWidget;
   }
 }
-

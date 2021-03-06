@@ -55,8 +55,9 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//show category names on category button
-
+//add date to entry
+//show category names on category button for filter
+//implement filter of tags in entries view
 
 //TODO ASK BORIS
 // is having methods in the models bad practice, should they be extracted to the action - if it can be in an action, move it there - Answer - Yes

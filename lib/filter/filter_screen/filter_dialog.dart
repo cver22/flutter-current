@@ -227,8 +227,19 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   Widget _categoryFilter({@required FilterState filterState}) {
+    String categories = '';
+
+    filterState.filter.value.selectedCategories.forEach((categoryName) {
+      if (categories.length > 0) {
+        categories += ', $categoryName';
+      } else {
+        categories += categoryName;
+      }
+    });
+
     return CategoryButton(
-      label: 'Select Filter Categories',
+      label: categories.length > 0 ? categories : 'Select Filter Categories',
+      filter: true,
       onPressed: () => {
         showDialog(
           context: context,
@@ -323,7 +334,7 @@ class _FilterDialogState extends State<FilterDialog> {
   Widget _tagFilter({FilterState filterState}) {
     List<String> selectedTags = filterState.filter.value.selectedTags;
     String tagString = '';
-    if(selectedTags.isNotEmpty){
+    if (selectedTags.isNotEmpty) {
       filterState.filter.value.selectedTags.forEach((tagName) {
         if (tagString.length > 0) {
           tagString += '\, #$tagName';
@@ -331,7 +342,6 @@ class _FilterDialogState extends State<FilterDialog> {
           tagString += '#$tagName';
         }
       });
-
     } else {
       tagString = '#Tags';
     }
