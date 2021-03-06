@@ -38,10 +38,12 @@
 //TODO clicking on a log names takes you to the entries and filters for that log only, may have to use the button to pass the filter state information and then back to the entries state
 //TODO move tag list creators from UI (tag picker) to actions and state
 //filter should be pre set with only the logs categories/subcategories if navigating from a log directly
+//button on tags to visualize stats for that tag, spent, average, etc
 
 
 //TODO VISUAL
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
+//TODO filter dialog and tag filter should be full size
 
 
 
@@ -53,7 +55,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//tag search, order by frequency and alphabetical, start with frequency, button is just a hash tag
+//show category names on category button
 
 
 //TODO ASK BORIS

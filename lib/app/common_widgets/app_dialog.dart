@@ -30,6 +30,7 @@ class AppDialogWithActions extends StatelessWidget {
   final String title;
   final Widget actions;
   final bool shrinkWrap;
+  final bool scrollParent;
 
   const AppDialogWithActions(
       {Key key,
@@ -38,7 +39,8 @@ class AppDialogWithActions extends StatelessWidget {
       this.actions,
       this.backChevron,
       this.trailingTitleWidget,
-      this.shrinkWrap = false})
+      this.shrinkWrap = false,
+      this.scrollParent = true})
       : super(key: key);
 
   @override
@@ -47,21 +49,27 @@ class AppDialogWithActions extends StatelessWidget {
       insetPadding: EdgeInsets.all(DIALOG_EDGE_INSETS),
       elevation: DIALOG_ELEVATION,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
-      child: Column(
-        mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          DialogContent(
-              backChevron: backChevron,
-              title: title,
-              trailingTitleWidget: trailingTitleWidget,
-              child: child,
-              shrinkWrap: shrinkWrap),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: actions ?? Container(),
-          ),
-        ],
+      child: SingleChildScrollView(
+        physics: scrollParent ? ScrollPhysics() : NeverScrollableScrollPhysics(),
+        child: Column(
+          mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            DialogContent(
+                backChevron: backChevron,
+                title: title,
+                trailingTitleWidget: trailingTitleWidget,
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: child,
+                ),
+                shrinkWrap: shrinkWrap),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: actions ?? Container(),
+            ),
+          ],
+        ),
       ),
     );
   }

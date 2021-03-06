@@ -5,6 +5,7 @@ import 'package:expenses/categories/categories_model/app_category/app_category.d
 import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 
 class FilterState extends Equatable {
@@ -15,7 +16,10 @@ class FilterState extends Equatable {
   final Map<String, String> allMembers; //id, name
   final List<Tag> allTags;
   final bool updated;
-  final Maybe<Log> selectedLog;
+  final Maybe<String> search;
+  final List<Tag> searchedTags;
+  final Maybe<SortMethod> sortMethod; //currently unused , implement later
+
 
   FilterState({
     this.filter,
@@ -25,7 +29,9 @@ class FilterState extends Equatable {
     this.allMembers,
     this.allTags,
     this.updated,
-    this.selectedLog,
+    this.search,
+    this.searchedTags,
+    this.sortMethod,
   });
 
   factory FilterState.initial() {
@@ -37,7 +43,9 @@ class FilterState extends Equatable {
       allMembers: LinkedHashMap(),
       allTags: const [],
       updated: false,
-      selectedLog: Maybe.none(),
+      search: Maybe.none(),
+      searchedTags: const [],
+      sortMethod: Maybe.none(),
     );
   }
 
@@ -50,7 +58,9 @@ class FilterState extends Equatable {
         allMembers,
         allTags,
         updated,
-        selectedLog,
+        search,
+        searchedTags,
+        sortMethod,
       ];
 
   @override
@@ -64,7 +74,9 @@ class FilterState extends Equatable {
     Map<String, String> allMembers,
     List<Tag> allTags,
     bool updated,
-    Maybe<Log> selectedLog,
+    Maybe<String> search,
+    List<Tag> searchedTags,
+    Maybe<SortMethod> sortMethod,
   }) {
     if ((filter == null || identical(filter, this.filter)) &&
         (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
@@ -73,7 +85,9 @@ class FilterState extends Equatable {
         (allMembers == null || identical(allMembers, this.allMembers)) &&
         (allTags == null || identical(allTags, this.allTags)) &&
         (updated == null || identical(updated, this.updated)) &&
-        (selectedLog == null || identical(selectedLog, this.selectedLog))) {
+        (search == null || identical(search, this.search)) &&
+        (searchedTags == null || identical(searchedTags, this.searchedTags)) &&
+        (sortMethod == null || identical(sortMethod, this.sortMethod))) {
       return this;
     }
 
@@ -85,7 +99,9 @@ class FilterState extends Equatable {
       allMembers: allMembers ?? this.allMembers,
       allTags: allTags ?? this.allTags,
       updated: updated ?? this.updated,
-      selectedLog: selectedLog ?? this.selectedLog,
+      search: search ?? this.search,
+      searchedTags: searchedTags ?? this.searchedTags,
+      sortMethod: sortMethod ?? this.sortMethod,
     );
   }
 }

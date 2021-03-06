@@ -5,6 +5,7 @@ import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_collection.dart';
 import 'package:expenses/tags/tags_ui/tag_field.dart';
+import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -62,11 +63,12 @@ class _TagPickerState extends State<TagPicker> {
           TagCollection(
             tags: selectedEntryTags,
             collectionName: 'Entry Tags',
+            search: Maybe.none(),
           ),
           //currently selected tags
           singleEntryState.searchedTags.isNotEmpty
               ? TagCollection(
-                  search: singleEntryState.search.value,
+                  search: singleEntryState.search,
                   tags: singleEntryState.searchedTags,
                   collectionName: 'Searched Tags',
                 )
@@ -76,6 +78,7 @@ class _TagPickerState extends State<TagPicker> {
               ? TagCollection(
                   tags: categoryRecentTags,
                   collectionName: 'Category Recent',
+                  search: Maybe.none(),
                 )
               : Container(),
           //category recent tag collection
@@ -83,6 +86,7 @@ class _TagPickerState extends State<TagPicker> {
               ? TagCollection(
                   tags: logRecentTags,
                   collectionName: 'Log Recent',
+                  search: Maybe.none(),
                 )
               : Container(),
           //log recent tag collection

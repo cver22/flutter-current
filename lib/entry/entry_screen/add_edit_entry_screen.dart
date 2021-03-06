@@ -151,7 +151,7 @@ class AddEditEntryScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            MyCurrencyPicker(
+            AppCurrencyPicker(
                 currency: entry?.currency,
                 returnCurrency: (currency) => Env.store.dispatch(UpdateEntryCurrency(currency: currency))),
             Text(

@@ -26,14 +26,15 @@ class MasterCategoryListDialog extends StatelessWidget {
     if (setLogFilter == SettingsLogFilter.log) {
       return ConnectState(
         where: notIdentical,
-        map: (state) => {state.logsState},
-        builder: (state) {
-          print('Rendering Log Category Dialog');
-          Log log = state.selectedLog.value;
+        map: (state) => state.logsState,
+        builder: (logsState) {
+
+          Log log = logsState.selectedLog.value;
 
           return _buildDialog(categories: log.categories, subcategories: log.subcategories);
         },
       );
+
     } else if (setLogFilter == SettingsLogFilter.settings) {
       return ConnectState(
         where: notIdentical,

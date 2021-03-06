@@ -45,7 +45,7 @@ class SettingsScreen extends StatelessWidget {
                     children: [
                       Text('Default Currency:'),
                       SizedBox(width: 10),
-                      MyCurrencyPicker(
+                      AppCurrencyPicker(
                           currency: settingsState.settings.value.homeCurrency,
                           returnCurrency: (currency) => Env.store.dispatch(UpdateSettings(
                               settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),

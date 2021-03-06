@@ -30,7 +30,6 @@ class FilterMemberDialog extends StatelessWidget {
               child: ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
-                  padding: const EdgeInsets.all(16.0),
                   itemCount: allMemberList.length,
                   itemBuilder: (BuildContext context, int index) {
                     final String id = allMemberList[index];

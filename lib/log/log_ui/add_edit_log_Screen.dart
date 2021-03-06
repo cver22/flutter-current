@@ -257,7 +257,7 @@ class AddEditLogScreen extends StatelessWidget {
     Currency _currency = CurrencyService().findByCode(currency);
 
     return log.uid == null
-        ? MyCurrencyPicker(
+        ? AppCurrencyPicker(
             currency: currency,
             returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
         : Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');

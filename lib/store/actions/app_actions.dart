@@ -342,3 +342,29 @@ bool _canReorderSubcategory({@required AppCategory subcategory, @required String
   }
   return true;
 }
+
+
+List<Tag> buildSearchedTagsList(
+    {@required List<Tag> tags, @required List<String> tagIds, int maxTags = -1, @required String search}) {
+  int tagCount = 0;
+  List<Tag> searchedTags = [];
+
+  if (search != null && search.length > 0) {
+    for (int i = 0; i < tags.length; i++) {
+      Tag tag = tags[i];
+
+      //add tag to searched list if it is not already in the entry tag list
+      if (tag.name.contains(search) && !tagIds.contains(tag.id)) {
+        searchedTags.add(tag);
+        tagCount++;
+      }
+
+      //limit number of search results to 10
+      if (maxTags > -1 && tagCount >= maxTags) {
+        break;
+      }
+    }
+  }
+
+  return searchedTags;
+}

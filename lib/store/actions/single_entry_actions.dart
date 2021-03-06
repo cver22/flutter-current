@@ -656,7 +656,6 @@ class SelectDeselectEntryTag implements AppAction {
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     List<String> entryTagIds = List.from(entry.tagIDs);
-    List<Tag> searchedTags = List.from(appState.singleEntryState.searchedTags);
     bool entryHasTag = false;
 
     //determines if the tag is in the entry or in another list
@@ -674,7 +673,6 @@ class SelectDeselectEntryTag implements AppAction {
 
       //remove the tag from the entry tag list
       entryTagIds.remove(tag.id);
-
     } else {
       //add tag to entry if not present
 
@@ -684,7 +682,6 @@ class SelectDeselectEntryTag implements AppAction {
 
       //remove the tag from the entry tag list
       entryTagIds.add(tag.id);
-
     }
 
     tags.update(selectedDeselectedTag.id, (value) => selectedDeselectedTag, ifAbsent: () => selectedDeselectedTag);
@@ -696,16 +693,7 @@ class SelectDeselectEntryTag implements AppAction {
             tags: tags,
             searchedTags: const [],
             userUpdated: true,
-        search: Maybe.none()));
-  }
-}
-
-class Test implements AppAction {
-  @override
-  AppState updateState(AppState appState) {
-    print('test');
-
-    return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState);
+            search: Maybe.none()));
   }
 }
 
@@ -716,34 +704,14 @@ class EntryStateSetSearchedTags implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Map<String, Tag> logTags = Map.from(appState.singleEntryState.tags);
-    List<Tag> tagsList = logTags.values.toList();
+    Map<String, Tag> tagMap = Map.from(appState.singleEntryState.tags);
+    List<Tag> tags = tagMap.values.toList();
     List<Tag> searchedTags = [];
-    Maybe<String> searchMaybe = Maybe.none();
+    Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe.some(search) : Maybe.none();
+    int maxTags = MAX_TAGS;
+    List<String> selectedTagIds = List.from(appState.singleEntryState.selectedEntry.value.tagIDs);
 
-    print('search: $search');
-
-    int tagCount = 0;
-    if (search != null && search.length > 0) {
-      for (int i = 0; i < tagsList.length; i++) {
-        Tag tag = tagsList[i];
-
-        //add tag to searched list if it is not already in the entry tag list
-        if (tag.name.contains(search) && !appState.singleEntryState.selectedEntry.value.tagIDs.contains(tag.id)) {
-          searchedTags.add(tag);
-          tagCount++;
-        }
-
-        //limit number of search results to 10
-        if (tagCount >= MAX_TAGS) {
-          break;
-        }
-      }
-    }
-
-    print('tags $searchedTags');
-
-    searchMaybe = search != null && search.length > 0 ? Maybe.some(search) : Maybe.none();
+    searchedTags = buildSearchedTagsList(tags: tags, tagIds: selectedTagIds, maxTags: maxTags, search: search);
 
     return _updateSingleEntryState(
         appState, (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, search: searchMaybe));
@@ -754,7 +722,7 @@ class EntryMemberFocus implements AppAction {
   final String memberId;
   final PaidOrSpent paidOrSpent;
 
-  //TODO this does not work
+  //TODO this does not work or did I fix it?
 
   EntryMemberFocus({@required this.memberId, @required this.paidOrSpent});
 

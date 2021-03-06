@@ -18,7 +18,7 @@ AppState _updateFilterState(
   return appState.copyWith(filterState: update(appState.filterState));
 }
 
-AppState _updateFilter({
+AppState _updateFilterAndFlagUpdated({
   AppState appState,
   Maybe<Filter> filter,
 }) {
@@ -63,14 +63,12 @@ class FilterSetReset implements AppAction {
     List<bool> expandedCategories = [];
     Map<String, String> members = LinkedHashMap();
     List<Tag> allTags = [];
-    Maybe<Log> selectedLog = Maybe.none();
     List<String> selectedLogs = [];
     bool updated = false;
 
     if (log != null) {
       //action was triggered directly from a log and user wishes to filter for only that log
       logs.add(log);
-      selectedLog = Maybe.some(log);
       selectedLogs.add(log.id);
     } else {
       //action was triggered from generic location, include all logs
@@ -134,6 +132,7 @@ class FilterSetReset implements AppAction {
     }
 
     allTags = _sortTags(
+        allCategories: allCategories,
         filter: appState.filterState.filter,
         sortMethod: SortMethod.frequency,
         ascending: false,
@@ -169,7 +168,7 @@ class FilterSetReset implements AppAction {
               allMembers: members,
               filter: Maybe.some(updatedFilter),
               updated: updated,
-              selectedLog: selectedLog,
+              allTags: allTags,
             ));
   }
 }
@@ -208,7 +207,7 @@ class FilterSelectDeselectCategory implements AppAction {
       });
     }
 
-    return _updateFilter(
+    return _updateFilterAndFlagUpdated(
       appState: appState,
       filter: Maybe.some(filter.copyWith(
         selectedCategories: selectedCategories,
@@ -258,7 +257,7 @@ class FilterSelectDeselectSubcategory implements AppAction {
       }
     }
 
-    return _updateFilter(
+    return _updateFilterAndFlagUpdated(
         appState: appState,
         filter: Maybe.some(filter.copyWith(
           selectedCategories: selectedCategories,
@@ -293,7 +292,8 @@ class FilterSetStartDate implements AppAction {
       }
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(startDate: updatedDateTime)));
+    return _updateFilterAndFlagUpdated(
+        appState: appState, filter: Maybe.some(filter.copyWith(startDate: updatedDateTime)));
   }
 }
 
@@ -322,7 +322,8 @@ class FilterSetEndDate implements AppAction {
       }
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(endDate: updatedDateTime)));
+    return _updateFilterAndFlagUpdated(
+        appState: appState, filter: Maybe.some(filter.copyWith(endDate: updatedDateTime)));
   }
 }
 
@@ -344,7 +345,7 @@ class FilterUpdateMinAmount implements AppAction {
       }
     }
 
-    return _updateFilter(
+    return _updateFilterAndFlagUpdated(
         appState: appState,
         filter: Maybe.some(filter.copyWith(
           minAmount: min,
@@ -370,7 +371,7 @@ class FilterUpdateMaxAmount implements AppAction {
       }
     }
 
-    return _updateFilter(
+    return _updateFilterAndFlagUpdated(
         appState: appState,
         filter: Maybe.some(filter.copyWith(
           maxAmount: max,
@@ -393,7 +394,8 @@ class FilterSelectPaid implements AppAction {
       membersPaid.add(id);
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: membersPaid)));
+    return _updateFilterAndFlagUpdated(
+        appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: membersPaid)));
   }
 }
 
@@ -401,7 +403,7 @@ class FilterClearPaidSelection implements AppAction {
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: const [])));
+    return _updateFilterAndFlagUpdated(appState: appState, filter: Maybe.some(filter.copyWith(membersPaid: const [])));
   }
 }
 
@@ -420,7 +422,8 @@ class FilterSelectSpent implements AppAction {
       membersSpent.add(id);
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersSpent: membersSpent)));
+    return _updateFilterAndFlagUpdated(
+        appState: appState, filter: Maybe.some(filter.copyWith(membersSpent: membersSpent)));
   }
 }
 
@@ -428,7 +431,7 @@ class FilterClearSpentSelection implements AppAction {
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(membersSpent: const [])));
+    return _updateFilterAndFlagUpdated(appState: appState, filter: Maybe.some(filter.copyWith(membersSpent: const [])));
   }
 }
 
@@ -447,7 +450,8 @@ class FilterSelectLog implements AppAction {
       selectedLogs.add(logId);
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedLogs: selectedLogs)));
+    return _updateFilterAndFlagUpdated(
+        appState: appState, filter: Maybe.some(filter.copyWith(selectedLogs: selectedLogs)));
   }
 }
 
@@ -455,14 +459,14 @@ class FilterClearLogSelection implements AppAction {
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedLogs: const [])));
+    return _updateFilterAndFlagUpdated(appState: appState, filter: Maybe.some(filter.copyWith(selectedLogs: const [])));
   }
 }
 
-class FilterSelectTag implements AppAction {
+class FilterSelectDeselectTag implements AppAction {
   final String name;
 
-  FilterSelectTag({@required this.name});
+  FilterSelectDeselectTag({@required this.name});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
@@ -476,7 +480,48 @@ class FilterSelectTag implements AppAction {
       selectedTags.add(name);
     }
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedTags: selectedTags)));
+    return _updateFilterState(
+        appState,
+        (filterState) => filterState.copyWith(
+              filter: Maybe.some(filter.copyWith(selectedTags: selectedTags)),
+              search: Maybe.none(), // clear search bar
+            ));
+  }
+}
+
+class FilterSetSearchedTags implements AppAction {
+  final String search;
+
+  FilterSetSearchedTags({@required this.search});
+
+  @override
+  AppState updateState(AppState appState) {
+    List<Tag> tags = List.from(appState.filterState.allTags);
+    List<Tag> searchedTags = [];
+    Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe.some(search) : Maybe.none();
+    List<String> selectedTagIds = List.from(appState.filterState.filter.value.selectedTags);
+
+    searchedTags = buildSearchedTagsList(tags: tags, tagIds: selectedTagIds, search: search);
+
+    return _updateFilterState(
+        appState,
+        (filterState) => filterState.copyWith(
+              searchedTags: searchedTags,
+              search: searchMaybe,
+            ));
+  }
+}
+
+class FilterClearTagSearch implements AppAction {
+
+  @override
+  AppState updateState(AppState appState) {
+       return _updateFilterState(
+        appState,
+            (filterState) => filterState.copyWith(
+          searchedTags: const [],
+          search: Maybe.none(),
+        ));
   }
 }
 
@@ -484,19 +529,21 @@ class FilterClearTagSelection implements AppAction {
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
 
-    return _updateFilter(appState: appState, filter: Maybe.some(filter.copyWith(selectedTags: const [])));
+    return _updateFilterAndFlagUpdated(appState: appState, filter: Maybe.some(filter.copyWith(selectedTags: const [])));
   }
 }
 
-List<Tag> _sortTags(
-    {SortMethod sortMethod = SortMethod.frequency,
-    bool ascending = false,
-    List<String> selectedLogs,
-    Map<String, Tag> tags,
-    Maybe<Filter> filter}) {
+List<Tag> _sortTags({
+  SortMethod sortMethod = SortMethod.frequency,
+  bool ascending = false,
+  List<String> selectedLogs,
+  Map<String, Tag> tags,
+  Maybe<Filter> filter,
+  Map<String, AppCategory> allCategories,
+}) {
   List<Tag> orderTags = [];
 
-  //removes tags from logs not selected if any are selected
+  //removes tags from unselected logs
   if (selectedLogs.isNotEmpty) {
     tags.removeWhere((key, element) {
       bool remove = true;
@@ -509,6 +556,18 @@ List<Tag> _sortTags(
       return remove;
     });
   }
+
+  //updates filter tags to reference category names
+  tags.updateAll((key, tag) {
+    Map<String, int> categoryFrequency = {};
+
+    tag.tagCategoryFrequency.forEach((categoryId, frequency) {
+      String categoryName = allCategories[categoryId].name;
+      categoryFrequency.putIfAbsent(categoryName, () => frequency);
+    });
+
+    return tag.copyWith(tagCategoryFrequency: categoryFrequency);
+  });
 
   //create list of all tags so it can be sorted as desired by the user
   tags.forEach((key, tag) {

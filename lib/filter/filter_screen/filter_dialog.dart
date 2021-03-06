@@ -72,28 +72,23 @@ class _FilterDialogState extends State<FilterDialog> {
           return AppDialogWithActions(
             title: 'Filter',
             actions: _actions(entriesChart: entriesChart, save: filterState.updated),
-            shrinkWrap: true,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    _amountFilter(filter: filter),
-                    SizedBox(height: 16.0),
-                    _dateFilter(),
-                    SizedBox(height: 16.0),
-                    _categoryFilter(filterState: filterState),
-                    SizedBox(height: 16.0),
-                    _paidSpentFilter(filterState: filterState),
-                    _logFilter(filterState: filterState),
-                    SizedBox(height: 16.0),
-                    _tagFilter(filterState: filterState),
-                  ],
-                ),
-              ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _amountFilter(filter: filter),
+                SizedBox(height: 8.0),
+                _dateFilter(),
+                SizedBox(height: 8.0),
+                _categoryFilter(filterState: filterState),
+                SizedBox(height: 8.0),
+                _paidSpentFilter(filterState: filterState),
+                SizedBox(height: 8.0),
+                _logFilter(filterState: filterState),
+                SizedBox(height: 8.0),
+                _tagFilter(filterState: filterState),
+              ],
             ),
           );
         });
@@ -109,7 +104,7 @@ class _FilterDialogState extends State<FilterDialog> {
           onPressed: () => Get.back(),
         ),
         FlatButton(
-          child: Text('Reset'),
+          child: Text('Clear'),
           onPressed: () {
             _minAmountController.clear();
             _maxAmountController.clear();
@@ -341,14 +336,20 @@ class _FilterDialogState extends State<FilterDialog> {
       tagString = '#Tags';
     }
 
-    return AppButton(
-      child: Text(tagString),
-      onPressed: () => {
-        showDialog(
-          context: context,
-          builder: (_) => FilterTagDialog(),
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        AppButton(
+          child: Text(tagString),
+          onPressed: () => {
+            showDialog(
+              context: context,
+              builder: (_) => FilterTagDialog(),
+            ),
+          },
         ),
-      },
+      ],
     );
   }
 }

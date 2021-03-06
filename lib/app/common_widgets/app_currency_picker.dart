@@ -1,22 +1,22 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 
-class MyCurrencyPicker extends StatefulWidget {
+class AppCurrencyPicker extends StatefulWidget {
   final String currency;
   final Function(String) returnCurrency;
 
-  const MyCurrencyPicker({Key key, this.currency, this.returnCurrency}) : super(key: key);
+  const AppCurrencyPicker({Key key, this.currency, this.returnCurrency}) : super(key: key);
 
   @override
-  _MyCurrencyPickerState createState() => _MyCurrencyPickerState();
+  _AppCurrencyPickerState createState() => _AppCurrencyPickerState();
 }
 
-class _MyCurrencyPickerState extends State<MyCurrencyPicker> {
+class _AppCurrencyPickerState extends State<AppCurrencyPicker> {
   Currency _currency;
 
   @override
   Widget build(BuildContext context) {
-    _currency = CurrencyService().findByCode(widget.currency);
+    _currency = CurrencyService().findByCode(widget.currency ?? 'CAD');
 
 
     return RaisedButton(

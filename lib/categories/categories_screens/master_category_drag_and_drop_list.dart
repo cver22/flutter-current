@@ -75,7 +75,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
           (index) => _buildItem(
               subcategory: subs[index],
               categories: categories,
-              selected: selectedSubcategories.contains(subs[index].id))),
+              selected: selectedSubcategories != null && selectedSubcategories.isNotEmpty ? selectedSubcategories.contains(subs[index].id) : false)),
       listKey: ObjectKey(subs),
     );
   }
@@ -116,7 +116,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     return expandedCategories;
   }
 
-  _buildItem({@required AppCategory subcategory, @required List<AppCategory> categories, bool selected}) {
+  _buildItem({@required AppCategory subcategory, @required List<AppCategory> categories, bool selected = false}) {
     return DragAndDropItem(
         canDrag: setLogFilter != SettingsLogFilter.filter,
         child: CategoryListTile(

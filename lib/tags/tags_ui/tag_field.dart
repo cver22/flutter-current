@@ -1,3 +1,4 @@
+import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -22,7 +23,7 @@ class TagField extends StatefulWidget {
 
 class _TagFieldState extends State<TagField> {
   TextEditingController _controller;
-  bool canSave = false;
+  bool hasData = false;
   bool searchOnly = false;
 
   void initState() {
@@ -40,8 +41,11 @@ class _TagFieldState extends State<TagField> {
     FocusNode tagFocusNode = widget.tagFocusNode;
     searchOnly = widget.searchOnly;
 
-    //clears text from field after a tag is selected as the action clears the search state
-    if (Env.store.state.singleEntryState.search.isNone) {
+    if (Env.store.state.singleEntryState.search.isNone && !searchOnly) {
+      //clears text for the entry search if a tag is selected
+      _controller.clear();
+    } else if (Env.store.state.filterState.search.isNone && searchOnly) {
+      //clears text for filter state if a tag is selected
       _controller.clear();
     }
 
@@ -65,28 +69,42 @@ class _TagFieldState extends State<TagField> {
             textCapitalization: TextCapitalization.words,
             inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))],
             textInputAction: TextInputAction.done,
-            onFieldSubmitted: searchOnly ? null : (_) {
+            onFieldSubmitted: searchOnly
+                ? null
+                : (_) {
+                    setState(() {
+                      if (hasData) {
+                        _saveTag();
+                        widget.tagFocusNode.requestFocus();
+                      }
+                    });
+                  },
+            onChanged: (value) {
               setState(() {
-                if (canSave) {
-                  _saveTag();
-                  widget.tagFocusNode.requestFocus();
+                hasData = value != null && value.length > 0;
+
+                if (searchOnly) {
+                  Env.store.dispatch(FilterSetSearchedTags(search: value));
+                } else {
+                  Env.store.dispatch(EntryStateSetSearchedTags(search: value));
                 }
-              });
-            },
-            onChanged: searchOnly ? null /*TODO do something here to search tags*/: (value) {
-              setState(() {
-                Env.store.dispatch(EntryStateSetSearchedTags(search: value));
-                canSave = value != null && value.length > 0;
               });
             },
           ),
         ),
-        IconButton(
-            icon: Icon(
-              Icons.add,
-              color: canSave ? Colors.black : Colors.grey,
-            ),
-            onPressed: canSave ? _saveTag : null),
+        searchOnly
+            ? IconButton(
+                icon: Icon(
+                  Icons.cancel_outlined,
+                  color: hasData ? Colors.black : Colors.grey,
+                ),
+                onPressed: hasData ? _clearSearch : null)
+            : IconButton(
+                icon: Icon(
+                  Icons.add,
+                  color: hasData ? Colors.black : Colors.grey,
+                ),
+                onPressed: hasData ? _saveTag : null),
       ],
     );
   }
@@ -95,6 +113,13 @@ class _TagFieldState extends State<TagField> {
     //create new tag
     Env.store.dispatch(AddUpdateTagFromEntryScreen(tag: Tag(name: _controller.text)));
     _controller.clear();
-    canSave = false;
+    hasData = false;
+  }
+
+  _clearSearch() {
+    //create search
+    Env.store.dispatch(FilterClearTagSearch());
+    _controller.clear();
+    hasData = false;
   }
 }

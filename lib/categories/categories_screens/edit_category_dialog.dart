@@ -92,6 +92,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
+      insetPadding: EdgeInsets.all(DIALOG_EDGE_INSETS),
+      elevation: DIALOG_ELEVATION,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
       title: Text(dialogTitle(categoryOrSubcategory, newCategory)),
       content: Column(
         mainAxisSize: MainAxisSize.min,
