@@ -56,7 +56,6 @@
 
 //TODO START HERE
 //add date to entry
-//show category names on category button for filter
 //implement filter of tags in entries view
 
 //TODO ASK BORIS

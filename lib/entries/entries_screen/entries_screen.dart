@@ -10,6 +10,7 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
@@ -101,7 +102,7 @@ List<MyEntry> _buildFilteredEntries({
         List<AppCategory> subcategories = logs[entry.logId].subcategories;
 
         AppCategory subcategory =
-        subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
+            subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
 
         if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
           //filter contains subcategory, show entry
@@ -130,8 +131,6 @@ List<MyEntry> _buildFilteredEntries({
         }
       });
     }
-
-
 
     //filter entries by who spent
     if (filter.membersPaid.length > 0) {
@@ -178,10 +177,36 @@ List<MyEntry> _buildFilteredEntries({
       });
     }
 
+    //is the entry categoryID found in the list of categories selected
+    if (filter.selectedTags.isNotEmpty) {
+      entries.retainWhere((entry) {
+        Map<String, Tag> allTags = Env.store.state.tagState.tags;
+        List<String> entryTagIds = entry.tagIDs;
+        List<String> entryTagNames = [];
+        bool retain = false;
 
+       if(entryTagIds.isNotEmpty){
+         //get name of all tags in the entry
+         entryTagIds.forEach((id) {
+           //error checking for improperly deleted tags
+           if(allTags.keys.contains(id)) {
+             entryTagNames.add(allTags[id].name);
+           }
 
-    //TODO tag filter
+         });
 
+         for (int i = 0; i < entryTagNames.length; i++) {
+           if (filter.selectedTags.contains(entryTagNames[i])) {
+             //entry contains at least one instance of a filtered tag
+             retain = true;
+             break;
+           }
+         }
+       }
+
+        return retain;
+      });
+    }
   }
 
   return entries;

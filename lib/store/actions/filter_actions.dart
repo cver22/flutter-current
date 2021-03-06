@@ -485,6 +485,7 @@ class FilterSelectDeselectTag implements AppAction {
         (filterState) => filterState.copyWith(
               filter: Maybe.some(filter.copyWith(selectedTags: selectedTags)),
               search: Maybe.none(), // clear search bar
+              updated: true,
             ));
   }
 }
@@ -513,15 +514,14 @@ class FilterSetSearchedTags implements AppAction {
 }
 
 class FilterClearTagSearch implements AppAction {
-
   @override
   AppState updateState(AppState appState) {
-       return _updateFilterState(
+    return _updateFilterState(
         appState,
-            (filterState) => filterState.copyWith(
-          searchedTags: const [],
-          search: Maybe.none(),
-        ));
+        (filterState) => filterState.copyWith(
+              searchedTags: const [],
+              search: Maybe.none(),
+            ));
   }
 }
 
