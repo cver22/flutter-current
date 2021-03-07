@@ -14,7 +14,9 @@ import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
 class LogsScreen extends StatelessWidget {
-  LogsScreen({Key key}) : super(key: key);
+  final TabController tabController;
+
+  LogsScreen({Key key, @required this.tabController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,7 @@ class LogsScreen extends StatelessWidget {
                   logs = logsState.logs.entries.map((e) => e.value).toList();
                   logs.sort((a, b) => a.order.compareTo(b.order)); //display based on order
 
-                  return _buildReorderableList(logs: logs, logTotalsState: logTotalsState, context: context);
+                  return _buildReorderableList(logs: logs, logTotalsState: logTotalsState, context: context, tabController: tabController);
                 } else if (logsState.isLoading == false && logsState.logs.isEmpty) {
                   return Column(
                       mainAxisAlignment: MainAxisAlignment.start,
@@ -55,7 +57,7 @@ class LogsScreen extends StatelessWidget {
   }
 
   Widget _buildReorderableList(
-      {@required List<Log> logs, @required LogTotalsState logTotalsState, BuildContext context}) {
+      {@required List<Log> logs, @required LogTotalsState logTotalsState, BuildContext context, @required TabController tabController}) {
     //TODO need better way of handling size of reorderablelist
     return DragAndDropLists(
       onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) {
@@ -65,7 +67,7 @@ class LogsScreen extends StatelessWidget {
         Env.store.dispatch(ReorderLog(oldIndex: oldIndex, newIndex: newIndex, logs: logs)),
       },
       children: List.generate(
-          logs.length, (index) => _buildList(outerIndex: index, logs: logs, logTotalsState: logTotalsState)),
+          logs.length, (index) => _buildList(outerIndex: index, logs: logs, logTotalsState: logTotalsState, tabController: tabController)),
       listGhost: Padding(
         padding: const EdgeInsets.symmetric(vertical: 30.0),
         child: Center(
@@ -82,13 +84,14 @@ class LogsScreen extends StatelessWidget {
     );
   }
 
-  _buildList({int outerIndex, @required List<Log> logs, @required LogTotalsState logTotalsState}) {
+  _buildList({int outerIndex, @required List<Log> logs, @required LogTotalsState logTotalsState, @required TabController tabController}) {
     Log log = logs[outerIndex];
     return DragAndDropList(
         header: LogListTile(
           key: Key(log.id),
           log: log,
           logTotal: logTotalsState.logTotals[log.id],
+          tabController: tabController,
         ),
         children: [
           DragAndDropItem(child: Container()),

@@ -26,7 +26,6 @@ class AppScreen extends StatefulWidget {
 }
 
 class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMixin {
-  int index = 0;
   TabController _controller;
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
@@ -41,15 +40,12 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     super.initState();
     _controller = TabController(length: tabs.length, vsync: this, initialIndex: 0);
     _controller.addListener(() {
-      setState(() {
-        index = _controller.index;
-      });
+      setState(() {});
     });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.dispose();
   }
@@ -57,19 +53,18 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     print('Rendering App Screen');
+    print(_controller.index);
+
     return DefaultTabController(
       length: 3,
       child: Builder(
         builder: (BuildContext context) {
           return WillPopScope(
-            //TODO this works the first time but does not work when the app comes back from sleeping
             onWillPop: () async {
-              if (index == 0) {
+              if (_controller.index == 0) {
                 return true;
-              } else if (index != 0) {
-                setState(() {
-                  _controller.animateTo(0);
-                });
+              } else if (_controller.index != 0) {
+                _controller.animateTo(0);
                 return false;
               } else if (_key.currentState.isDrawerOpen) {
                 Navigator.of(context).pop();
@@ -82,38 +77,10 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
               appBar: AppBar(
                 actions: <Widget>[
                   Builder(builder: (BuildContext context) {
-                    if (index == 0) {
+                    if (_controller.index == 0) {
                       return _buildLogPopupMenuButton();
-                    } else if (index == 1) {
-                      return ConnectState<EntriesState>(
-                          where: notIdentical,
-                          map: (state) => state.entriesState,
-                          builder: (state) {
-                            return Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                state.entriesFilter.isSome
-                                    ? IconButton(
-                                        icon: Stack(
-                                          children: [
-                                            Icon(Icons.filter_alt_outlined),
-                                            Positioned(
-                                                bottom: 3.0,
-                                                child: Icon(
-                                                  Icons.close_outlined,
-                                                  color: Colors.black,
-                                                )),
-                                          ],
-                                        ),
-                                        onPressed: () {
-                                          Env.store.dispatch(EntriesClearEntriesFilter());
-                                        },
-                                      )
-                                    : Container(),
-                                _buildEntriesPopupMenuButton(state: state),
-                              ],
-                            );
-                          });
+                    } else if (_controller.index == 1) {
+                      return _buildEntriesActions();
                     } else {
                       return Container();
                     }
@@ -127,7 +94,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
               body: TabBarView(
                 controller: _controller,
                 children: [
-                  LogsScreen(key: ExpenseKeys.logsScreen),
+                  LogsScreen(key: ExpenseKeys.logsScreen, tabController: _controller),
                   EntriesScreen(key: ExpenseKeys.entriesScreen),
                   Icon(Icons.assessment),
                 ],
@@ -198,5 +165,37 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
         Get.toNamed(ExpenseRoutes.addEditLog);
         break;
     }
+  }
+
+  Widget _buildEntriesActions() {
+    return ConnectState<EntriesState>(
+        where: notIdentical,
+        map: (state) => state.entriesState,
+        builder: (state) {
+          return Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              state.entriesFilter.isSome
+                  ? IconButton(
+                      icon: Stack(
+                        children: [
+                          Icon(Icons.filter_alt_outlined),
+                          Positioned(
+                              bottom: 3.0,
+                              child: Icon(
+                                Icons.close_outlined,
+                                color: Colors.black,
+                              )),
+                        ],
+                      ),
+                      onPressed: () {
+                        Env.store.dispatch(EntriesClearEntriesFilter());
+                      },
+                    )
+                  : Container(),
+              _buildEntriesPopupMenuButton(state: state),
+            ],
+          );
+        });
   }
 }

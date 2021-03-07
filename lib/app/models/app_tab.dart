@@ -1,1 +1,0 @@
-enum AppTab { logs, entries }

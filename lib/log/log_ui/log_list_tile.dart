@@ -9,14 +9,13 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:expenses/store/actions/filter_actions.dart';
-
 
 class LogListTile extends StatelessWidget {
   final Log log;
   final LogTotal logTotal;
+  final TabController tabController;
 
-  const LogListTile({Key key, @required this.log, @required this.logTotal}) : super(key: key);
+  const LogListTile({Key key, @required this.log, @required this.logTotal, @required this.tabController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,16 +34,31 @@ class LogListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                FlatButton(child: Text(log.name), onPressed: (){
-                  Env.store.dispatch(EntriesSetEntriesFilter(logId: log.id));
-                  Env.store.dispatch(FilterSetReset(log: log));
-                }),
-                IconButton(
-                  onPressed: () => {
-                    Env.store.dispatch(SelectLog(logId: log.id)),
-                    Get.toNamed(ExpenseRoutes.addEditLog),
-                  },
-                  icon: Icon(Icons.edit_outlined),
+                Text(log.name),
+                Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Env.store.dispatch(EntriesSetEntriesFilter(logId: log.id));
+                        tabController.animateTo(1);
+                      },
+                      icon: Icon(Icons.assignment_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        tabController.animateTo(2);
+                      },
+                      icon: Icon(Icons.assessment_outlined),
+                    ),
+                    IconButton(
+                      onPressed: () {
+                        Env.store.dispatch(SelectLog(logId: log.id));
+                        Get.toNamed(ExpenseRoutes.addEditLog);
+                      },
+                      icon: Icon(Icons.info_outline),
+                    ),
+                  ],
                 ),
               ],
             ),

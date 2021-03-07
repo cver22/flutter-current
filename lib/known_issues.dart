@@ -9,11 +9,8 @@
 //TODO give each person an emoji Icon option
 //TODO do I want to move to null safety?
 
-//TODO LONG TERM DESIGN IDEAS
-//TODO selectable shadow color on logs
 
 //TODO GENERAL
-//TODO organize and filter entries in various ways
 //TODO implement currency exchange rates
 //TODO recover password
 //TODO don't show the currency on a log in the list if it is the default currency
@@ -33,7 +30,7 @@
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
 //TODO add calculator
 //TODO start splash screen earlier?
-//TODO changing hte name of a category or subcategory should change the filter for the entries state if .isSome
+//TODO changing hte name of a category or subcategory should change the entriesfilter and chartfilter for the entries state
 //TODO clicking on a log names takes you to the entries and filters for that log only, may have to use the button to pass the filter state information and then back to the entries state
 //TODO move tag list creators from UI (tag picker) to actions and state
 //filter should be pre set with only the logs categories/subcategories if navigating from a log directly
@@ -43,6 +40,7 @@
 //TODO VISUAL
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
 //TODO filter dialog and tag filter should be full size
+//TODO selectable shadow color on logs
 
 
 
@@ -54,6 +52,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
+//build tabState for controlling navigation, this will be used from the log card
 
 
 
