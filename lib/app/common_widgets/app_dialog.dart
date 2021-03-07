@@ -105,7 +105,7 @@ class DialogContent extends StatelessWidget {
             IconButton(
               icon: Icon(Icons.chevron_left),
               //if no back action is passed, automatically set to pop context
-              onPressed: () => backChevron ?? Get.back(),
+              onPressed: backChevron ?? () => Get.back(),
             ),
             Text(
               title,

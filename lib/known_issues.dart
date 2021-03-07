@@ -32,7 +32,6 @@
 //TODO track subcategory tag frequency
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
 //TODO add calculator
-//TODO entries tiles seem to be of inconsistent size
 //TODO start splash screen earlier?
 //TODO changing hte name of a category or subcategory should change the filter for the entries state if .isSome
 //TODO clicking on a log names takes you to the entries and filters for that log only, may have to use the button to pass the filter state information and then back to the entries state
@@ -55,7 +54,9 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//add date to entry
+
+
+
 
 //TODO ASK BORIS
 // is having methods in the models bad practice, should they be extracted to the action - if it can be in an action, move it there - Answer - Yes

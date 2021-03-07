@@ -116,7 +116,6 @@ class EntryCategoryListDialog extends StatelessWidget {
 
   Future<dynamic> _entrySelectCategory({@required AppCategory category}) {
     Env.store.dispatch(UpdateEntryCategory(newCategory: category.id));
-    Get.back();
     if (_entryHasSubcategories(category: category)) {
       return Get.dialog(
         EntryCategoryListDialog(

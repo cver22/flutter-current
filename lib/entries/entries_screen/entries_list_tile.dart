@@ -49,15 +49,7 @@ class EntriesListTile extends StatelessWidget {
                 ],
               ),
             ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text('${MONTHS_SHORT[date.month - 1]} ${date.day.toString()}, ${date.year.toString()}'),
-                SizedBox(height: 8.0),
-                Text('\$${formattedAmount(value: entry?.amount, withSeparator: true)}'),
-              ],
-            ),
+            trailing: _buildTrailingContents(date: date),
             onTap: () => {
               Env.store.dispatch(SelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
@@ -69,6 +61,21 @@ class EntriesListTile extends StatelessWidget {
     } else {
       return Container();
     }
+  }
+
+  Widget _buildTrailingContents({@required DateTime date}) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Text(
+          '\$${formattedAmount(value: entry?.amount, withSeparator: true)}',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+        ),
+        SizedBox(height: 8.0),
+        Text('${MONTHS_SHORT[date.month - 1]} ${date.day.toString()}, ${date.year.toString()}',style: TextStyle(fontSize: 12.0),),
+      ],
+    );
   }
 
   String displayChar({@required Log log}) {
@@ -88,24 +95,32 @@ class EntriesListTile extends StatelessWidget {
     return emojiChar;
   }
 
-  Text categoriesSubcategories({@required Log log}) {
+  Widget categoriesSubcategories({@required Log log}) {
     AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
         orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
     AppCategory subcategory =
         log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
-    String categoryText = '';
-    String subcategoryText = '';
 
-    categoryText = '${category.name}';
-    if (subcategory?.emojiChar != null) {
-      categoryText = '${category.emojiChar} $categoryText';
-    }
+    bool hasSubcategory = subcategory != null;
 
-    if (subcategory != null) {
-      subcategoryText = '${subcategory.name}, ';
-    }
-
-    return Text('$subcategoryText$categoryText');
+    return Wrap(
+      children: [
+        hasSubcategory
+            ? Text(
+                '${subcategory.name}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )
+            : Container(),
+        hasSubcategory
+            ? Text(
+                '${category.emojiChar} ${category.name}',
+              )
+            : Text(
+                '${category.name}',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+      ],
+    );
   }
 
   Widget _buildTagWidget({@required String logId}) {
