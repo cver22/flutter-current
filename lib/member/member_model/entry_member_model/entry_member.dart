@@ -12,6 +12,7 @@ class EntryMember extends Member {
   final TextEditingController spendingController;
   final FocusNode payingFocusNode;
   final FocusNode spendingFocusNode;
+  final bool userEditedSpent;
 
   EntryMember({
     uid,
@@ -24,6 +25,7 @@ class EntryMember extends Member {
     this.spendingController,
     this.payingFocusNode,
     this.spendingFocusNode,
+    this.userEditedSpent = false,
   }) : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
@@ -33,7 +35,7 @@ class EntryMember extends Member {
   String toString() {
     return 'EntryMember {$UID: $uid, paid: $paid, spent: $spent, paying: $paying, spending: $spending, '
         'payingController: $payingController, spendingController: $spendingController, '
-        'payingFocusNode: $payingFocusNode, spendingFocusNode: $spendingFocusNode, $ORDER: $order}';
+        'payingFocusNode: $payingFocusNode, spendingFocusNode: $spendingFocusNode, $ORDER: $order, userEditedSpent: $userEditedSpent}';
   }
 
   EntryMemberEntity toEntity() {
@@ -69,6 +71,7 @@ class EntryMember extends Member {
     TextEditingController spendingController,
     FocusNode payingFocusNode,
     FocusNode spendingFocusNode,
+    bool userEditedSpent,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (paid == null || identical(paid, this.paid)) &&
@@ -79,7 +82,8 @@ class EntryMember extends Member {
         (spendingController == null || identical(spendingController, this.spendingController)) &&
         (payingFocusNode == null || identical(payingFocusNode, this.payingFocusNode)) &&
         (spendingFocusNode == null || identical(spendingFocusNode, this.spendingFocusNode)) &&
-        (order == null || identical(order, this.order))) {
+        (order == null || identical(order, this.order)) &&
+        (userEditedSpent == null || identical(userEditedSpent, this.userEditedSpent))) {
       return this;
     }
 
@@ -94,6 +98,7 @@ class EntryMember extends Member {
       spendingController: spendingController ?? this.spendingController,
       payingFocusNode: payingFocusNode ?? this.payingFocusNode,
       spendingFocusNode: spendingFocusNode ?? this.spendingFocusNode,
+      userEditedSpent: userEditedSpent ?? this.userEditedSpent,
     );
   }
 }
