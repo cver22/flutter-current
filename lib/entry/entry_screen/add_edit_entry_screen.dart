@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/app/common_widgets/date_button.dart';
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
@@ -9,6 +10,7 @@ import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
+import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/member/member_ui/entry_member_ui/entry_member_list.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
@@ -52,6 +54,7 @@ class AddEditEntryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MyEntry entry;
+    bool canSubmit = false;
     return ConnectState<SingleEntryState>(
         where: notIdentical,
         map: (state) => state.singleEntryState,
@@ -66,6 +69,7 @@ class AddEditEntryScreen extends StatelessWidget {
             }
             Log log;
             log = Env.store.state.logsState.logs[entry.logId];
+            canSubmit = _canSubmit(entry: entry);
 
             return WillPopScope(
               onWillPop: () async {
@@ -79,8 +83,10 @@ class AddEditEntryScreen extends StatelessWidget {
               child: Stack(
                 children: [
                   Scaffold(
-                    appBar: _buildAppBar(entry, singleEntryState, log),
-                    body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
+                    appBar:
+                        _buildAppBar(entry: entry, singleEntryState: singleEntryState, log: log, canSubmit: canSubmit),
+                    body: _buildContents(
+                        context: context, entryState: singleEntryState, log: log, entry: entry, canSubmit: canSubmit),
                   ),
                   ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.processing),
                 ],
@@ -90,7 +96,11 @@ class AddEditEntryScreen extends StatelessWidget {
         });
   }
 
-  AppBar _buildAppBar(MyEntry entry, SingleEntryState singleEntryState, Log log) {
+  AppBar _buildAppBar(
+      {@required MyEntry entry,
+      @required SingleEntryState singleEntryState,
+      @required Log log,
+      @required bool canSubmit}) {
     return AppBar(
       title: Text('Entry'),
       leading: IconButton(
@@ -107,9 +117,9 @@ class AddEditEntryScreen extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.check,
-            color: _canSubmit(entry: entry) ? Colors.white : Colors.grey,
+            color: canSubmit ? Colors.white : Colors.grey,
           ),
-          onPressed: _canSubmit(entry: entry) ? () => {_submit(entry: entry)} : null,
+          onPressed: canSubmit ? () => {_submit(entry: entry)} : null,
         ),
         _buildDeleteEntryButton(entry: entry),
       ],
@@ -120,13 +130,14 @@ class AddEditEntryScreen extends StatelessWidget {
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
-      @required MyEntry entry}) {
+      @required MyEntry entry,
+      @required bool canSubmit}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: _buildForm(context: context, entryState: entryState, log: log, entry: entry),
+          child: _buildForm(context: context, entryState: entryState, log: log, entry: entry, canSubmit: canSubmit),
         ),
       ),
     );
@@ -136,7 +147,8 @@ class AddEditEntryScreen extends StatelessWidget {
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
-      @required MyEntry entry}) {
+      @required MyEntry entry,
+      @required bool canSubmit}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -164,6 +176,8 @@ class AddEditEntryScreen extends StatelessWidget {
             log: log,
             userUpdated: entryState.userUpdated,
             entryId: entry.id),
+        canSubmit ? Container() : SizedBox(height: 10.0),
+        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSubmit: canSubmit),
         SizedBox(height: 10.0),
         DateButton(
           initialDateTime: entry.dateTime,
@@ -293,6 +307,54 @@ class AddEditEntryScreen extends StatelessWidget {
   _updateCategoriesOnClose() {
     Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose());
     Env.store.dispatch(ClearEntryState());
+  }
+
+  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSubmit}) {
+    int remainingSpending = 0;
+    members.forEach((key, member) {
+      if (member.paying && member.paid != null) {
+        remainingSpending += member.paid;
+      }
+      if (member.spending && member.spent != null) {
+        remainingSpending -= member.spent;
+      }
+    });
+
+    if (!canSubmit && remainingSpending != 0) {
+      return Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          AppButton(
+              onPressed: () {
+                Env.store.dispatch(EntryDivideRemainingSpending());
+              },
+              buttonColor: Colors.red[100],
+              child: RichText(
+                text: TextSpan(children: [
+                  TextSpan(text: 'Distribute Remaining ', style: TextStyle(color: Colors.black)),
+                  TextSpan(
+                      text: '\$${formattedAmount(value: remainingSpending)}',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      )),
+                ]),
+              )),
+          AppButton(
+              onPressed: () {
+                Env.store.dispatch(EntryResetMemberSpendingToAll());
+              },
+              buttonColor: Colors.red[100],
+              child: Text(
+                'Reset',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              )),
+        ],
+      );
+    } else {
+      return Container();
+    }
   }
 
 //currently not in use due to high level of complications of switching an entry from one log to another, also due to multiple user issues

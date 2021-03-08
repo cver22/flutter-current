@@ -53,7 +53,6 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
   @override
   Widget build(BuildContext context) {
     print('Rendering App Screen');
-    print(_controller.index);
 
     return DefaultTabController(
       length: 3,

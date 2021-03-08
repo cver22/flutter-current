@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:flutter/material.dart';
 
 class AppCurrencyPicker extends StatefulWidget {
@@ -19,7 +20,7 @@ class _AppCurrencyPickerState extends State<AppCurrencyPicker> {
     _currency = CurrencyService().findByCode(widget.currency ?? 'CAD');
 
 
-    return RaisedButton(
+    return AppButton(
       onPressed: () {
         showCurrencyPicker(
           context: context,

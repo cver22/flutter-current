@@ -483,7 +483,7 @@ class UpdateMemberSpentAmount implements AppAction {
   final int spentValue;
   final EntryMember member;
 
-  UpdateMemberSpentAmount({@required this.spentValue, @required this.member});
+  UpdateMemberSpentAmount({this.spentValue = 0, @required this.member});
 
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -492,6 +492,44 @@ class UpdateMemberSpentAmount implements AppAction {
 
     //update amount spent by individual member
     members.update(member.uid, (value) => member.copyWith(spent: spentValue, userEditedSpent: true));
+
+    members = _divideSpendingEvenly(amount: entry.amount, members: members);
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              userUpdated: true,
+            ));
+  }
+}
+
+class EntryDivideRemainingSpending implements AppAction {
+  //if user has updated all members spent amounts and there is some remaining value, distribute the remaining amount evenly
+
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> members = Map.from(entry.entryMembers);
+
+    members = _distributeRemainingSpending(amount: entry.amount, members: members);
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              userUpdated: true,
+            ));
+  }
+}
+
+class EntryResetMemberSpendingToAll implements AppAction {
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> members = Map.from(entry.entryMembers);
+
+    members.updateAll((key, member) {
+      return member.copyWith(userEditedSpent: false);
+    });
 
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
 
@@ -888,19 +926,22 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
     }
   });
 
+  print('amount $divisibleAmount');
+
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
   //TODO, randomly assign the remainder
 
+  if (divisibleAmount != null && divisibleAmount != 0 && membersSpending > 0) {
 
-  if (divisibleAmount != null && divisibleAmount != 0) {
     remainder = divisibleAmount.remainder(membersSpending);
 
     //if member spent is user set, deduct it from the divisibleAmount
     entryMembers.forEach((key, member) {
-      if (member.userEditedSpent && member.spending) {
+      if (member.userEditedSpent && member.spending && member.spent != null) {
         divisibleAmount -= member.spent;
       }
     });
+
 
     //spread remaining amount evenly among other spending members
     entryMembers.updateAll((key, member) {
@@ -920,20 +961,49 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
     });
   }
 
-  /*entryMembers.forEach((key, member) {
-    int memberSpentAmount = 0;
-    if (member.spending == true && amount != null && amount != 0 && !member.userEditedSpent) {
-      memberSpentAmount = (amount / membersSpending).truncate();
+  return entryMembers;
+}
 
-      if (remainder > 0) {
-        memberSpentAmount += 1;
-        remainder--;
-      }
+Map<String, EntryMember> _distributeRemainingSpending(
+    {@required int amount, @required Map<String, EntryMember> members}) {
+  Map<String, EntryMember> entryMembers = Map.from(members);
+  int membersSpending = 0;
+  int remainder = 0;
+  int divisibleAmount = amount;
+  int memberSpentAmount = 0;
+
+  entryMembers.forEach((key, member) {
+    //member is spending and user has not manually edited the spent value
+    if (member.spending == true) {
+      membersSpending += 1;
+      divisibleAmount -= member.spent;
     }
+  });
 
-    member.spendingController.value = TextEditingValue(text: formattedAmount(value: memberSpentAmount));
-    entryMembers.update(key, (value) => value.copyWith(spent: memberSpentAmount));
-  });*/
+
+  //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
+  //TODO, randomly assign the remainder
+
+  if (divisibleAmount != null && divisibleAmount != 0) {
+    remainder = divisibleAmount.remainder(membersSpending);
+
+    //spread remaining amount evenly among other spending members
+    entryMembers.updateAll((key, member) {
+      if (member.spending == true && divisibleAmount != 0) {
+        int memberSpentAmount = member.spent + (divisibleAmount / membersSpending).truncate();
+
+        if (remainder > 0) {
+          memberSpentAmount += 1;
+          remainder--;
+        }
+
+        member.spendingController.value = TextEditingValue(text: formattedAmount(value: memberSpentAmount));
+        return member.copyWith(spent: memberSpentAmount);
+      } else {
+        return member;
+      }
+    });
+  }
 
   return entryMembers;
 }
