@@ -19,8 +19,10 @@ class CategoryButton extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: <Widget>[
           _leadingWidget(),
-          SizedBox(width: 10.0),
+          SizedBox(width: 16.0),
           Text(category?.name ?? label),
+          SizedBox(width: 16.0),
+          _trailingWidget(),
         ],
       ),
     );
@@ -30,9 +32,15 @@ class CategoryButton extends StatelessWidget {
     Widget leadingWidget = Container();
     if (category?.emojiChar != null) {
       leadingWidget = Text(category.emojiChar, textAlign: TextAlign.center, style: TextStyle(fontSize: EMOJI_SIZE));
-    } else if (!filter) {
-      leadingWidget = Icon(Icons.edit_outlined);
     }
     return leadingWidget;
+  }
+
+  Widget _trailingWidget() {
+    if (!filter && category?.emojiChar == null) {
+    return Icon(Icons.edit_outlined);
+    } else {
+      return Container();
+    }
   }
 }

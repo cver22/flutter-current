@@ -6,6 +6,7 @@ import 'package:expenses/categories/categories_screens/master_category_list_dial
 import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
+import 'package:expenses/log/log_ui/log_name_form.dart';
 import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list.dart';
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
@@ -149,9 +150,8 @@ class AddEditLogScreen extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                _buildLogNameForm(log: log),
-                SizedBox(height: 16.0),
-
+                LogNameForm(log: log),
+                log.uid == null ? SizedBox(height: 16.0) : Container(),
                 log.uid == null ? NewLogCategorySourceWidget(logs: logs, log: log) : Container(),
                 SizedBox(height: 16.0),
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
@@ -169,19 +169,6 @@ class AddEditLogScreen extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildLogNameForm({@required Log log}) {
-    return TextFormField(
-      decoration: InputDecoration(labelText: 'Log Title'),
-      initialValue: log.name,
-      onChanged: (name) => Env.store.dispatch(UpdateSelectedLog(
-          log: log.copyWith(
-        name: name,
-      ))),
-      //TODO validate name cannot be empty
-      //TODO need controllers
     );
   }
 
@@ -222,7 +209,15 @@ class AddEditLogScreen extends StatelessWidget {
         : RaisedButton(
             elevation: RAISED_BUTTON_ELEVATION,
             shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
-            child: Text('Add new log member'),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text('Add new log member'),
+                SizedBox(width: 16.0),
+                Icon(Icons.camera_alt_outlined),
+              ],
+            ),
             onPressed: () {
               Get.to(QRReader());
             },
@@ -253,7 +248,6 @@ class AddEditLogScreen extends StatelessWidget {
   }*/
 
   Widget _buildCurrencyPicker({@required Log log, @required String currency}) {
-
     Currency _currency = CurrencyService().findByCode(currency);
 
     return log.uid == null
