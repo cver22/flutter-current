@@ -22,7 +22,7 @@ class AppCategoryEntity extends Equatable {
     return 'MyCategoryEntity {id: $id, name: $name, emojiChar $emojiChar parentCategoryId: $parentCategoryId}';
   }
 
-  factory AppCategoryEntity.fromJson(Map<String, dynamic> json) => _$MyCategoryEntityFromJson(json);
+  factory AppCategoryEntity.fromJson(Map<String, dynamic> json) => _$AppCategoryEntityFromJson(json);
 
-  Map<String, dynamic> toJson() => _$MyCategoryEntityToJson(this);
+  Map<String, dynamic> toJson() => _$AppCategoryEntityToJson(this);
 }

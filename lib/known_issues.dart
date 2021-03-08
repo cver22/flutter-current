@@ -1,5 +1,4 @@
 //TODO KNOWN ISSUES
-//TODO app_screen willPopScope does not work if the app is closed and then opened again
 
 // TODO LONG TERM GOALS
 // TODO setting option for auto insert decimal
@@ -16,11 +15,8 @@
 //TODO don't show the currency on a log in the list if it is the default currency
 //TODO find an api to get the currency exchange rate information
 //TODO Settings are not being retrieved? JSON error?
-//TODO add_edit_entries_screen, keyboard data stream should be cleared when entering values that are not accepted
-//TODO spent - distribute to others methods
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
 // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
-//TODO change all data models to Maybe
 //TODO spent redistribution methods that account for multiple people
 //TODO method to change the photo
 //TODO how to handle auto scroll on the account screen and login screen
@@ -30,8 +26,6 @@
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
 //TODO add calculator
 //TODO start splash screen earlier?
-//TODO changing hte name of a category or subcategory should change the entriesfilter and chartfilter for the entries state
-//TODO clicking on a log names takes you to the entries and filters for that log only, may have to use the button to pass the filter state information and then back to the entries state
 //TODO move tag list creators from UI (tag picker) to actions and state
 //filter should be pre set with only the logs categories/subcategories if navigating from a log directly
 //button on tags to visualize stats for that tag, spent, average, etc
@@ -63,3 +57,8 @@
 //HELPFUL COMMANDS
 //flutter pub run build_runner build
 //flutter packages pub run build_runner build --delete-conflicting-import 'package:qr_flutter/qr_flutter.dart';
+
+//Conflicting outputs issue
+// flutter clean
+// flutter pub get
+// flutter packages pub run build_runner build --delete-conflicting-outputs

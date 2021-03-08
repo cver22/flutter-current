@@ -6,37 +6,24 @@ import 'package:meta/meta.dart';
 
 @immutable
 class Settings extends Equatable {
-  Settings(
-      {this.homeCurrency,
-      this.defaultCategories,
-      this.defaultSubcategories,
-      this.defaultLogId,
-      this.autoInsertDecimalPoint});
-
   final String homeCurrency;
   final List<AppCategory> defaultCategories;
   final List<AppCategory> defaultSubcategories;
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
+  final List<String> logOrder;
 
-  Settings copyWith(
-      {String homeCurrency,
-      List<AppCategory> defaultCategories,
-      List<AppCategory> defaultSubcategories,
-      String defaultLogId,
-      String autoInsertDecimalPoint}) {
-    return Settings(
-      homeCurrency: homeCurrency ?? this.homeCurrency,
-      defaultCategories: defaultCategories ?? this.defaultCategories,
-      defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,
-      defaultLogId: defaultLogId ?? this.defaultLogId,
-      autoInsertDecimalPoint: autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
-    );
-  }
+  Settings(
+      {this.homeCurrency,
+      this.defaultCategories,
+      this.defaultSubcategories,
+      this.defaultLogId,
+      this.autoInsertDecimalPoint,
+      this.logOrder});
 
   @override
   List<Object> get props =>
-      [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId, autoInsertDecimalPoint];
+      [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId, autoInsertDecimalPoint, logOrder];
 
   @override
   bool get stringify => true;
@@ -60,6 +47,7 @@ class Settings extends Equatable {
       defaultSubcategoryEntities: defaultSubcategoryEntities,
       defaultLogId: defaultLogId,
       autoInsertDecimalPoint: autoInsertDecimalPoint,
+      logOrder: logOrder,
     );
   }
 
@@ -83,6 +71,33 @@ class Settings extends Equatable {
       defaultSubcategories: returnedDefaultSubcategories,
       defaultLogId: entity.defaultLogId,
       autoInsertDecimalPoint: entity.autoInsertDecimalPoint,
+    );
+  }
+
+  Settings copyWith({
+    String homeCurrency,
+    List<AppCategory> defaultCategories,
+    List<AppCategory> defaultSubcategories,
+    String defaultLogId,
+    bool autoInsertDecimalPoint,
+    List<String> logOrder,
+  }) {
+    if ((homeCurrency == null || identical(homeCurrency, this.homeCurrency)) &&
+        (defaultCategories == null || identical(defaultCategories, this.defaultCategories)) &&
+        (defaultSubcategories == null || identical(defaultSubcategories, this.defaultSubcategories)) &&
+        (defaultLogId == null || identical(defaultLogId, this.defaultLogId)) &&
+        (autoInsertDecimalPoint == null || identical(autoInsertDecimalPoint, this.autoInsertDecimalPoint)) &&
+        (logOrder == null || identical(logOrder, this.logOrder))) {
+      return this;
+    }
+
+    return new Settings(
+      homeCurrency: homeCurrency ?? this.homeCurrency,
+      defaultCategories: defaultCategories ?? this.defaultCategories,
+      defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,
+      defaultLogId: defaultLogId ?? this.defaultLogId,
+      autoInsertDecimalPoint: autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
+      logOrder: logOrder ?? this.logOrder,
     );
   }
 }

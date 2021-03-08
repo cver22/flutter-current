@@ -14,6 +14,7 @@ class SettingsEntity implements Equatable {
     this.defaultSubcategoryEntities,
     this.defaultLogId,
     this.autoInsertDecimalPoint,
+    this.logOrder,
   });
 
   final String homeCurrency;
@@ -21,10 +22,11 @@ class SettingsEntity implements Equatable {
   final List<AppCategoryEntity> defaultSubcategoryEntities;
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
+  final List<String> logOrder;
 
   @override
   List<Object> get props =>
-      [homeCurrency, defaultCategoryEntities, defaultSubcategoryEntities, defaultLogId, autoInsertDecimalPoint];
+      [homeCurrency, defaultCategoryEntities, defaultSubcategoryEntities, defaultLogId, autoInsertDecimalPoint, logOrder];
 
   @override
   bool get stringify => true;
