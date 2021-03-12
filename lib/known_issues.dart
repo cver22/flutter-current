@@ -10,14 +10,12 @@
 
 
 //TODO GENERAL
-//TODO implement currency exchange rates
 //TODO recover password
 //TODO don't show the currency on a log in the list if it is the default currency
 //TODO find an api to get the currency exchange rate information
 //TODO Settings are not being retrieved? JSON error?
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
 // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
-//TODO spent redistribution methods that account for multiple people
 //TODO method to change the photo
 //TODO how to handle auto scroll on the account screen and login screen
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
@@ -27,7 +25,6 @@
 //TODO add calculator
 //TODO start splash screen earlier?
 //TODO move tag list creators from UI (tag picker) to actions and state
-//filter should be pre set with only the logs categories/subcategories if navigating from a log directly
 //button on tags to visualize stats for that tag, spent, average, etc
 
 
@@ -35,6 +32,7 @@
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
 //TODO filter dialog and tag filter should be full size
 //TODO selectable shadow color on logs
+//TODO settings for month/day separator on the entries screen
 
 
 
@@ -46,7 +44,8 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//build tabState for controlling navigation, this will be used from the log card
+//tag search should have #
+//filter dialog and tag filter should be full size, tag filter also need buttons more visible
 
 
 

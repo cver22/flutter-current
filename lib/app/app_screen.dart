@@ -90,14 +90,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                   tabs: tabs,
                 ),
               ),
-              body: TabBarView(
-                controller: _controller,
-                children: [
-                  LogsScreen(key: ExpenseKeys.logsScreen, tabController: _controller),
-                  EntriesScreen(key: ExpenseKeys.entriesScreen),
-                  Icon(Icons.assessment),
-                ],
-              ),
+              body: _tab(_controller),
             ),
           );
         },
@@ -196,5 +189,23 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
             ],
           );
         });
+  }
+
+  Widget _tab(TabController controller) {
+    if (_controller.index == 0) {
+      return LogsScreen(key: ExpenseKeys.logsScreen, tabController: _controller);
+    } else if (_controller.index == 1) {
+      return EntriesScreen(key: ExpenseKeys.entriesScreen);
+    } else {
+      return Center(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.assessment),
+          ],
+        ),
+      );
+    }
   }
 }

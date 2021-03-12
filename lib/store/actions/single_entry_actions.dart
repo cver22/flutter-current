@@ -970,7 +970,6 @@ Map<String, EntryMember> _distributeRemainingSpending(
   int membersSpending = 0;
   int remainder = 0;
   int divisibleAmount = amount;
-  int memberSpentAmount = 0;
 
   entryMembers.forEach((key, member) {
     //member is spending and user has not manually edited the spent value

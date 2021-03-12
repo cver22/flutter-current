@@ -58,23 +58,16 @@ class _TagPickerState extends State<TagPicker> {
   SingleChildScrollView _buildTagCollections({@required SingleEntryState singleEntryState}) {
     return SingleChildScrollView(
       child: Column(
+        //currently selected tags
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          _SearchCollectionOrError(singleEntryState: singleEntryState),
           TagCollection(
             tags: selectedEntryTags,
             collectionName: 'Entry Tags',
             search: Maybe.none(),
           ),
-          //currently selected tags
-          singleEntryState.searchedTags.isNotEmpty
-              ? TagCollection(
-                  search: singleEntryState.search,
-                  tags: singleEntryState.searchedTags,
-                  collectionName: 'Searched Tags',
-                )
-              : Container(),
-
-          categoryRecentTags.isNotEmpty && singleEntryState.searchedTags.isEmpty
+          categoryRecentTags.isNotEmpty && singleEntryState.search.isNone
               ? TagCollection(
                   tags: categoryRecentTags,
                   collectionName: 'Category Recent',
@@ -82,7 +75,7 @@ class _TagPickerState extends State<TagPicker> {
                 )
               : Container(),
           //category recent tag collection
-          logRecentTags.isNotEmpty && singleEntryState.searchedTags.isEmpty
+          logRecentTags.isNotEmpty && singleEntryState.search.isNone
               ? TagCollection(
                   tags: logRecentTags,
                   collectionName: 'Log Recent',
@@ -207,6 +200,20 @@ class _TagPickerState extends State<TagPicker> {
       }
     } else {
       selectedEntryTags = [];
+    }
+  }
+
+  Widget _SearchCollectionOrError({SingleEntryState singleEntryState}) {
+    if (singleEntryState.search.isSome && singleEntryState.searchedTags.isNotEmpty) {
+      return TagCollection(
+        search: singleEntryState.search,
+        tags: singleEntryState.searchedTags,
+        collectionName: 'Searched Tags',
+      );
+    } else if (singleEntryState.search.isSome && singleEntryState.searchedTags.isEmpty) {
+      return Text('Search: No matching #Tags, please add a #Tag');
+    } else {
+      return Container();
     }
   }
 }

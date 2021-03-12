@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/error_widget.dart';
 import 'package:expenses/app/splash_screen.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/env.dart';
@@ -15,14 +16,18 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    print('Rendering Home Screen 1');
     return ConnectState<AuthState>(
       where: notIdentical,
       map: (state) => state.authState,
       builder: (authState) {
-        print('Rendering Home Screen');
+        print('Rendering Home Screen 2');
 
-        //Prevents calling in the current build cycle
-        if (authState.user.isSome && authState.isLoading == false) {
+        //TODO add prints main, home, splash
+
+        if (authState.isLoading == true) {
+          return SplashScreen();
+        } else if (authState.user.isSome) {
           Env.settingsFetcher.readResetAppSettings(resetSettings: false);
           Env.logsFetcher.loadLogs();
           Env.tagFetcher.loadTags();
@@ -34,7 +39,7 @@ class HomeScreen extends StatelessWidget {
           });
           /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
                 ModalRoute.withName(ExpenseRoutes.home));*/
-        } else if (authState.user.isNone && authState.isLoading == false) {
+        } else if (authState.user.isNone) {
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.loginRegister);
           });
@@ -43,7 +48,7 @@ class HomeScreen extends StatelessWidget {
                 ExpenseRoutes.loginRegister,
                 ModalRoute.withName(ExpenseRoutes.home));*/
         }
-        return SplashScreen();
+        return ErrorContent();
       },
     );
   }

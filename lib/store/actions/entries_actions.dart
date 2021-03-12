@@ -52,6 +52,7 @@ AppState _updateEntriesState(
 class EntriesSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
+
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: true));
   }
 }
@@ -127,6 +128,13 @@ class EntriesDeleteSelectedEntry implements AppAction {
   }
 }
 
+/*AppState _updateFilterState(
+    AppState appState,
+    FilterState update(FilterState filterState),
+    ) {
+  return appState.copyWith(filterState: update(appState.filterState));
+}*/
+
 class EntriesSetEntriesFilter implements AppAction {
   final String logId;
 
@@ -138,7 +146,6 @@ class EntriesSetEntriesFilter implements AppAction {
 
     Maybe<Filter> updatedFilter = Maybe.some(Filter.initial());
 
-
     if(logId == null){
       //if filter has been changed, save new filter, if reset, pass no filter
       updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
@@ -149,7 +156,7 @@ class EntriesSetEntriesFilter implements AppAction {
       updatedFilter = Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 
-
+    /*AppState updated = _updateFilterState(appState, (filterState) => null)*/
     return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
   }
 }
