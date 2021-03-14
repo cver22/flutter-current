@@ -2,13 +2,13 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
-class User extends Equatable {
+class AppUser extends Equatable {
   final String id;
   final String displayName;
   final String email;
   final String photoUrl;
 
-  User({this.id, this.displayName, this.email, this.photoUrl});
+  AppUser({this.id, this.displayName, this.email, this.photoUrl});
 
   @override
   List<Object> get props => [id, displayName, email, photoUrl];
@@ -18,7 +18,7 @@ class User extends Equatable {
     return 'UserEntity{id: $id, displayName: $displayName, email: $email, photoUrl: $photoUrl}';
   }
 
-  User copyWith({
+  AppUser copyWith({
     String displayName,
     String email,
     String photoUrl,
@@ -30,7 +30,7 @@ class User extends Equatable {
       return this;
     }
 
-    return new User(
+    return new AppUser(
       id: id ?? this.id,
       displayName: displayName ?? this.displayName,
       email: email ?? this.email,

@@ -1,6 +1,5 @@
 import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/log_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -8,7 +7,7 @@ import 'package:expenses/utils/db_consts.dart';
 abstract class LogsRepository {
   Future<void> addNewLog(Log log);
 
-  Stream<List<Log>> loadLogs(User user);
+  Stream<List<Log>> loadLogs(AppUser user);
 
   Future<void> updateLog(Log log);
 
@@ -24,7 +23,7 @@ class FirebaseLogsRepository implements LogsRepository {
   }
 
   @override
-  Stream<List<Log>> loadLogs(User user) {
+  Stream<List<Log>> loadLogs(AppUser user) {
     return logsCollection.where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
       var snapshots = snapshot.documents.map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc))).toList();
 

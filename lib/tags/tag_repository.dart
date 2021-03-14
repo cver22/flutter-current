@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tag_model/tag_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -7,7 +7,7 @@ import 'package:expenses/utils/db_consts.dart';
 abstract class TagRepository {
   Future<void> addNewTag(Tag tag);
 
-  Stream<List<Tag>> loadTags(User user);
+  Stream<List<Tag>> loadTags(AppUser user);
 
   Future<void> updateTag(Tag tag);
 
@@ -30,7 +30,7 @@ class FirebaseTagRepository implements TagRepository {
 
   //TODO need to filter by UID for groups
   @override
-  Stream<List<Tag>> loadTags(User user) {
+  Stream<List<Tag>> loadTags(AppUser user) {
     return db.collection(TAG_COLLECTION).where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
       var snapshots = snapshot.documents.map((doc) => Tag.fromEntity(TagEntity.fromSnapshot(doc))).toList();
 
@@ -65,7 +65,7 @@ class FirebaseTagRepository implements TagRepository {
     WriteBatch batch = db.batch();
 
     updatedTags.forEach((tag) {
-      batch.updateData(db.collection(TAG_COLLECTION).document(tag.id), tag.toEntity().toJson());
+      batch.update(db.collection(TAG_COLLECTION).document(tag.id), tag.toEntity().toJson());
     });
 
 //TODO maybe add a whenComplete to this?

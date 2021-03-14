@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:expenses/account/account_ui/change_password_controller.dart';
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
 import 'package:expenses/store/actions/auth_actions.dart';
@@ -28,7 +28,7 @@ class _AccountScreenState extends State<AccountScreen> {
   bool showQRCode = false;
   bool showPasswordFields = false;
   bool editDisplayName = false;
-  User user;
+  AppUser user;
 
   @override
   void initState() {

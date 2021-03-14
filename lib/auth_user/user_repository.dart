@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:meta/meta.dart';
@@ -17,9 +17,9 @@ abstract class UserRepository {
 
   Future<bool> isSignedIn();
 
-  Future<User> getUser();
+  Future<AppUser> getUser();
 
-  Future<User> updateUserProfile({@required String displayName});
+  Future<AppUser> updateUserProfile({@required String displayName});
 
   Future<bool> updatePassword({@required String currentPassword, @required String newPassword});
 
@@ -79,15 +79,15 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<User> updateUserProfile({@required String displayName}) async {
-    FirebaseUser user = await _firebaseAuth.currentUser();
+  Future<AppUser> updateUserProfile({@required String displayName}) async {
+    User user = await _firebaseAuth.currentUser;
     UserUpdateInfo userUpdateInfo = UserUpdateInfo();
     userUpdateInfo.displayName = displayName;
     user.updateProfile(userUpdateInfo);
     await user.reload();
-    user = await _firebaseAuth.currentUser();
+    user = await _firebaseAuth.currentUser;
 
-    return User(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoUrl);
+    return AppUser(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoURL);
   }
 
   //only available if user has signed in with email

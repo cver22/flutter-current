@@ -1,10 +1,10 @@
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
 
 @immutable
 class AuthState {
-  final Maybe<User> user;
+  final Maybe<AppUser> user;
   final bool isLoading;
 
   AuthState({
@@ -13,7 +13,7 @@ class AuthState {
   });
 
   AuthState copyWith({
-    Maybe<User> user,
+    Maybe<AppUser> user,
     bool isLoading,
   }) {
     return AuthState(

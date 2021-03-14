@@ -1,4 +1,4 @@
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/auth_user/user_repository.dart';
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
@@ -23,7 +23,7 @@ class UserFetcher {
   _getCurrentUser(LoginRegState loginRegState) async {
     final isSignedIn = await _userRepository.isSignedIn();
     if (isSignedIn) {
-      final User user = await _userRepository.getUser();
+      final AppUser user = await _userRepository.getUser();
       _store.dispatch(AuthSuccess(user: user));
       _store.dispatch(LoginRegSuccess());
       print('User authenticated: $user');
@@ -81,7 +81,7 @@ class UserFetcher {
   }
 
   Future<void> updateDisplayName({@required String displayName}) async {
-    User user = await _userRepository.updateUserProfile(displayName: displayName);
+    AppUser user = await _userRepository.updateUserProfile(displayName: displayName);
     _store.dispatch(AuthSuccess(user: user));
   }
 

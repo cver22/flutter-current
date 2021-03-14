@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/auth_user/models/user.dart';
+import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/entry/entry_model/app_entry_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -7,7 +7,7 @@ import 'package:expenses/utils/db_consts.dart';
 abstract class EntriesRepository {
   Future<void> addNewEntry(MyEntry entry);
 
-  Stream<List<MyEntry>> loadEntries(User user);
+  Stream<List<MyEntry>> loadEntries(AppUser user);
 
   Future<void> updateEntry(MyEntry entry);
 
@@ -29,7 +29,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
 
   //TODO need to filter by contains UID
   @override
-  Stream<List<MyEntry>> loadEntries(User user) {
+  Stream<List<MyEntry>> loadEntries(AppUser user) {
     return db.collection(ENTRY_COLLECTION).where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
       // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
       return snapshot.documents.map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc))).toList();
