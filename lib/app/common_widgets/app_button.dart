@@ -5,22 +5,24 @@ class AppButton extends StatelessWidget {
   const AppButton({
     Key key,
     @required this.onPressed,
-    @required this.child, this.buttonColor,
+    @required this.child,
+    this.buttonColor,
   }) : super(key: key);
 
   final Function onPressed;
   final Widget child;
   final Color buttonColor;
 
-
   @override
   Widget build(BuildContext context) {
-    return RaisedButton(
-      elevation: RAISED_BUTTON_ELEVATION,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+    return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        elevation: RAISED_BUTTON_ELEVATION,
+        primary: buttonColor ?? ThemeData.light().primaryColor,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+      ),
       onPressed: onPressed,
       child: child,
-      color: buttonColor ?? Theme.of(context).buttonColor,
     );
   }
 }

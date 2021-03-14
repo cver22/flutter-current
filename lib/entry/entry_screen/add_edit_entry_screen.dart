@@ -348,7 +348,7 @@ class AddEditEntryScreen extends StatelessWidget {
               buttonColor: Colors.red[100],
               child: Text(
                 'Reset',
-                style: TextStyle(fontWeight: FontWeight.bold),
+                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               )),
         ],
       );

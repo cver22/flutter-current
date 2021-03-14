@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/app/common_widgets/app_currency_picker.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
@@ -56,7 +57,7 @@ class SettingsScreen extends StatelessWidget {
                   SizedBox(
                     height: 50,
                   ),
-                  RaisedButton(
+                  AppButton(
                       //TODO convert to Get or not necessary?
                       child: Text('Reset All Settings'),
                       onPressed: () => {
@@ -85,7 +86,7 @@ class SettingsScreen extends StatelessWidget {
                                   );
                                 })
                           }),
-                  RaisedButton(
+                  AppButton(
                     child: Text('Reload settings'),
                     onPressed: () {
                       Env.settingsFetcher.readResetAppSettings(resetSettings: false);

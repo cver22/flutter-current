@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:currency_picker/currency_picker.dart';
 import 'package:expenses/app/common_widgets/app_currency_picker.dart';
 import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
@@ -206,9 +207,7 @@ class AddEditLogScreen extends StatelessWidget {
   Widget _buildAddMemberButton({@required Log log}) {
     return log.uid == null
         ? Container()
-        : RaisedButton(
-            elevation: RAISED_BUTTON_ELEVATION,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+        : AppButton(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,

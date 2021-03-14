@@ -1,3 +1,4 @@
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -126,10 +127,10 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         Row(
           children: <Widget>[
             _canDelete(categoryId: category.id)
-                ? FlatButton(child: Text('Delete'), onPressed: widget.delete)
+                ? TextButton(child: Text('Delete'), onPressed: widget.delete)
                 : Container(),
 
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () => {
                 Get.back(),
@@ -151,7 +152,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                   }
               },
             ),*/
-            FlatButton(
+            TextButton(
               child: Text('Save'),
               onPressed: canSave
                   ? () => {
@@ -189,7 +190,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   Expanded _buildEmojiButton() {
     return Expanded(
       flex: 1,
-      child: RaisedButton(
+      child: AppButton(
         child: Text(
           emojiChar,
           textAlign: TextAlign.center,
