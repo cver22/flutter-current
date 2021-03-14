@@ -8,11 +8,13 @@ import 'file:///C:/version-control/flutter-current/lib/account/account_ui/accoun
 import 'package:expenses/settings/settings_ui/settings_screen.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 
-void main() {
+void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   Env.userFetcher.startApp(); // allows code before runApp
   runApp(App());
 }

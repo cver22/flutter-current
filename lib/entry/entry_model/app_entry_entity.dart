@@ -57,16 +57,16 @@ class MyEntryEntity extends Equatable {
 
   static MyEntryEntity fromSnapshot(DocumentSnapshot snap) {
     return MyEntryEntity(
-      id: snap.documentID,
-      logId: snap.data[LOG_ID],
-      currency: snap.data[CURRENCY_NAME],
-      category: snap.data[CATEGORY],
-      subcategory: snap.data[SUBCATEGORY],
-      amount: snap.data[AMOUNT],
-      comment: snap.data[COMMENT],
-      dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data[DATE_TIME]),
-      tagIDs: (snap.data[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-      entryMembers: (snap.data[MEMBERS] as Map<String, dynamic>)
+      id: snap.id,
+      logId: snap.data()[LOG_ID],
+      currency: snap.data()[CURRENCY_NAME],
+      category: snap.data()[CATEGORY],
+      subcategory: snap.data()[SUBCATEGORY],
+      amount: snap.data()[AMOUNT],
+      comment: snap.data()[COMMENT],
+      dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()[DATE_TIME]),
+      tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
           ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }

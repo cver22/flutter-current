@@ -21,7 +21,7 @@ abstract class TagRepository {
 }
 
 class FirebaseTagRepository implements TagRepository {
-  Firestore db = Firestore.instance;
+  FirebaseFirestore db = FirebaseFirestore.instance;
 
   @override
   Future<void> addNewTag(Tag tag) {
@@ -32,7 +32,7 @@ class FirebaseTagRepository implements TagRepository {
   @override
   Stream<List<Tag>> loadTags(AppUser user) {
     return db.collection(TAG_COLLECTION).where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
-      var snapshots = snapshot.documents.map((doc) => Tag.fromEntity(TagEntity.fromSnapshot(doc))).toList();
+      var snapshots = snapshot.docs.map((doc) => Tag.fromEntity(TagEntity.fromSnapshot(doc))).toList();
 
       return snapshots;
     });
@@ -40,12 +40,12 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> updateTag(Tag tag) {
-    return db.collection(TAG_COLLECTION).document(tag.id).updateData(tag.toEntity().toJson());
+    return db.collection(TAG_COLLECTION).doc(tag.id).update(tag.toEntity().toJson());
   }
 
   @override
   Future<void> deleteTag(Tag tag) {
-    return db.collection(TAG_COLLECTION).document(tag.id).delete();
+    return db.collection(TAG_COLLECTION).doc(tag.id).delete();
   }
 
   @override
@@ -53,7 +53,7 @@ class FirebaseTagRepository implements TagRepository {
     WriteBatch batch = db.batch();
 
     addedTags.forEach((tag) {
-      batch.setData(db.collection(TAG_COLLECTION).document(tag.id), tag.toEntity().toJson());
+      batch.set(db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
     });
 
 //TODO maybe add a whenComplete to this?
@@ -65,7 +65,7 @@ class FirebaseTagRepository implements TagRepository {
     WriteBatch batch = db.batch();
 
     updatedTags.forEach((tag) {
-      batch.update(db.collection(TAG_COLLECTION).document(tag.id), tag.toEntity().toJson());
+      batch.update(db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
     });
 
 //TODO maybe add a whenComplete to this?
@@ -77,7 +77,7 @@ class FirebaseTagRepository implements TagRepository {
     WriteBatch batch = db.batch();
 
     deletedTags.forEach((tag) {
-      batch.delete(db.collection(TAG_COLLECTION).document(tag.id));
+      batch.delete(db.collection(TAG_COLLECTION).doc(tag.id));
     });
 
 //TODO maybe add a whenComplete to this?

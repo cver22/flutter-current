@@ -49,19 +49,19 @@ class LogEntity extends Equatable {
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
     return LogEntity(
-      uid: snap.data[UID],
-      id: snap.documentID,
-      name: snap.data[LOG_NAME],
-      currency: snap.data[CURRENCY_NAME],
-      categories: (snap.data[CATEGORIES] as LinkedHashMap<String, dynamic>)
+      uid: snap.data()[UID],
+      id: snap.id,
+      name: snap.data()[LOG_NAME],
+      currency: snap.data()[CURRENCY_NAME],
+      categories: (snap.data()[CATEGORIES] as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
-      subcategories: (snap.data[SUBCATEGORIES] as LinkedHashMap<String, dynamic>)
+      subcategories: (snap.data()[SUBCATEGORIES] as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
-      archive: snap.data[ARCHIVE],
-      defaultCategory: snap.data[DEFAULT_CATEGORY],
-      logMembers: (snap.data[MEMBERS] as Map<String, dynamic>)
+      archive: snap.data()[ARCHIVE],
+      defaultCategory: snap.data()[DEFAULT_CATEGORY],
+      logMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
           .map((key, value) => MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
-      order: snap.data[ORDER],
+      order: snap.data()[ORDER],
     );
   }
 

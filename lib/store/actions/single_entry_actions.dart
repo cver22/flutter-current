@@ -680,11 +680,13 @@ class AddUpdateTagFromEntryScreen implements AppAction {
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe.some(entry),
-            selectedTag: Maybe.some(Tag()),
-            tags: tags,
-            userUpdated: true,
-            searchedTags: const []));
+              selectedEntry: Maybe.some(entry),
+              selectedTag: Maybe.some(Tag()),
+              tags: tags,
+              userUpdated: true,
+              searchedTags: const [],
+              search: Maybe.none(),
+            ));
   }
 }
 
@@ -932,7 +934,6 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
   //TODO, randomly assign the remainder
 
   if (divisibleAmount != null && divisibleAmount != 0 && membersSpending > 0) {
-
     remainder = divisibleAmount.remainder(membersSpending);
 
     //if member spent is user set, deduct it from the divisibleAmount
@@ -941,7 +942,6 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
         divisibleAmount -= member.spent;
       }
     });
-
 
     //spread remaining amount evenly among other spending members
     entryMembers.updateAll((key, member) {
@@ -978,7 +978,6 @@ Map<String, EntryMember> _distributeRemainingSpending(
       divisibleAmount -= member.spent;
     }
   });
-
 
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
   //TODO, randomly assign the remainder

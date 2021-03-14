@@ -354,7 +354,7 @@ List<Tag> buildSearchedTagsList(
       Tag tag = tags[i];
 
       //add tag to searched list if it is not already in the entry tag list
-      if (tag.name.contains(search) && !tagIds.contains(tag.id)) {
+      if (tag.name.toLowerCase().contains(search.toLowerCase()) && !tagIds.contains(tag.id)) {
         searchedTags.add(tag);
         tagCount++;
       }

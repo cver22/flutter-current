@@ -33,13 +33,13 @@ class TagEntity extends Equatable {
 
   static TagEntity fromSnapshot(DocumentSnapshot snap) {
     return TagEntity(
-      logId: snap.data[LOG_ID],
-      id: snap.documentID,
-      name: snap.data[NAME],
-      tagLogFrequency: snap.data[TAG_LOG_FREQUENCY],
+      logId: snap.data()[LOG_ID],
+      id: snap.id,
+      name: snap.data()[NAME],
+      tagLogFrequency: snap.data()[TAG_LOG_FREQUENCY],
       tagCategoryFrequency:
-          (snap.data[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-      memberList: List<String>.from(snap.data[MEMBER_LIST] as List<dynamic>),
+          (snap.data()[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      memberList: List<String>.from(snap.data()[MEMBER_LIST] as List<dynamic>),
     );
   }
 }
