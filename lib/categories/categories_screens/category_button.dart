@@ -20,7 +20,7 @@ class CategoryButton extends StatelessWidget {
         children: <Widget>[
           _leadingWidget(),
           SizedBox(width: 16.0),
-          Text(category?.name ?? label),
+          Flexible(child: Text(category?.name ?? label)),
           SizedBox(width: 16.0),
           _trailingWidget(),
         ],

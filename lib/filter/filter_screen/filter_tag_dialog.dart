@@ -18,35 +18,52 @@ class FilterTagDialog extends StatelessWidget {
     return ConnectState<FilterState>(
         where: notIdentical,
         map: (state) => state.filterState,
-        builder: (state) {
+        builder: (filterState) {
           //TODO build dialog with two tag clouds for selected and other, sorting options, and a search bar
           return AppDialogWithActions(
-              title: 'Tags',
-              actions: _actions(),
-              child: SingleChildScrollView(
-                child: Column(
+            title: 'Tags',
+            actions: _actions(),
+            child: Expanded(
+              flex: 10,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Flex(
+                  direction: Axis.vertical,
                   mainAxisAlignment: MainAxisAlignment.start,
                   mainAxisSize: MainAxisSize.max,
                   children: [
-                    TagField(
-                      tagFocusNode: FocusNode(),
-                      searchOnly: true,
+                    Expanded(
+                      flex: 1,
+                      child: TagField(
+                        tagFocusNode: FocusNode(),
+                        searchOnly: true,
+                      ),
                     ),
                     SizedBox(height: 8.0),
-                    _buildSelectedTags(
-                      allTags: state.allTags,
-                      selectedTagIds: state.filter.value.selectedTags,
+                    Text('Selected Tags'),
+                    Expanded(
+                      flex: filterState.filter.value.selectedTags.isNotEmpty ? (filterState.filter.value.selectedTags.length/3).ceil() : 0,
+                      child: _buildSelectedTags(
+                        allTags: filterState.allTags,
+                        selectedTagIds: filterState.filter.value.selectedTags,
+                      ),
                     ),
                     SizedBox(height: 8.0),
-                    _buildAllTags(
-                        selectedCategories: state.filter.value.selectedCategories,
-                        search: state.search,
-                        allTags: state.allTags,
-                        searchedTags: state.searchedTags,
-                        selectedTagNames: state.filter.value.selectedTags),
+                    Text(filterState.search.isNone ? 'Tags by Frequency' : 'Searched Tags'),
+                    Expanded(
+                      flex: 4,
+                      child: _buildAllTags(
+                          selectedCategories: filterState.filter.value.selectedCategories,
+                          search: filterState.search,
+                          allTags: filterState.allTags,
+                          searchedTags: filterState.searchedTags,
+                          selectedTagNames: filterState.filter.value.selectedTags),
+                    ),
                   ],
                 ),
-              ));
+              ),
+            ),
+          );
         });
   }
 
@@ -88,12 +105,13 @@ class FilterTagDialog extends StatelessWidget {
       return retain;
     });
 
-    return TagCollection(
-      tags: collectionTags,
-      collectionName: 'Selected Tags',
-      chipsEditable: false,
-      search: Maybe.none(),
-      filterSelect: true,
+    return SingleChildScrollView(
+      child: TagCollection(
+        tags: collectionTags,
+        chipsEditable: false,
+        search: Maybe.none(),
+        filterSelect: true,
+      ),
     );
   }
 
@@ -131,15 +149,17 @@ class FilterTagDialog extends StatelessWidget {
         return remove;
       });
     }
-
-    return SingleChildScrollView(
-      child: TagCollection(
-        tags: collectionTags,
-        collectionName: search.isNone ? 'Tags by Frequency' : 'Searched Tags',
-        search: search,
-        chipsEditable: false,
-        filterSelect: true,
-      ),
-    );
+    if (search.isNone || search.isSome && collectionTags.length > 1) {
+      return SingleChildScrollView(
+        child: TagCollection(
+          tags: collectionTags,
+          search: search,
+          chipsEditable: false,
+          filterSelect: true,
+        ),
+      );
+    } else {
+      return Text('No search results');
+    }
   }
 }

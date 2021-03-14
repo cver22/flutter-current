@@ -27,26 +27,29 @@ class FilterMemberDialog extends StatelessWidget {
               title: paidOrSpent == PaidOrSpent.paid ? 'Who Paid' : 'Who Spent',
               shrinkWrap: true,
               actions: _actions(),
-              child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: allMemberList.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final String id = allMemberList[index];
-                    return FilterListTile(
-                      selected: paidOrSpent == PaidOrSpent.paid
-                          ? state.filter.value.membersPaid.contains(id)
-                          : state.filter.value.membersSpent.contains(id),
-                      onSelect: () {
-                        if (paidOrSpent == PaidOrSpent.paid) {
-                          Env.store.dispatch(FilterSelectPaid(id: id));
-                        } else {
-                          Env.store.dispatch(FilterSelectSpent(id: id));
-                        }
-                      },
-                      title: state.allMembers[id],
-                    );
-                  }));
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: allMemberList.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final String id = allMemberList[index];
+                      return FilterListTile(
+                        selected: paidOrSpent == PaidOrSpent.paid
+                            ? state.filter.value.membersPaid.contains(id)
+                            : state.filter.value.membersSpent.contains(id),
+                        onSelect: () {
+                          if (paidOrSpent == PaidOrSpent.paid) {
+                            Env.store.dispatch(FilterSelectPaid(id: id));
+                          } else {
+                            Env.store.dispatch(FilterSelectSpent(id: id));
+                          }
+                        },
+                        title: state.allMembers[id],
+                      );
+                    }),
+              ));
         });
   }
 

@@ -13,7 +13,7 @@ class TagCollection extends StatelessWidget {
   const TagCollection(
       {Key key,
       @required this.tags,
-      @required this.collectionName,
+      this.collectionName,
       @required this.search,
       this.chipsEditable = true,
       this.filterSelect = false})
@@ -33,7 +33,7 @@ class TagCollection extends StatelessWidget {
     });
     return Column(
       children: [
-        Text(collectionName),
+        collectionName == null ? Container() :Text(collectionName),
         Wrap(
           spacing: 5.0,
           runSpacing: 3.0,

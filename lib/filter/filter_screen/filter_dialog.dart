@@ -72,23 +72,26 @@ class _FilterDialogState extends State<FilterDialog> {
           return AppDialogWithActions(
             title: 'Filter',
             actions: _actions(entriesChart: entriesChart, save: filterState.updated),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _amountFilter(filter: filter),
-                SizedBox(height: 8.0),
-                _dateFilter(),
-                SizedBox(height: 8.0),
-                _categoryFilter(filterState: filterState),
-                SizedBox(height: 8.0),
-                _paidSpentFilter(filterState: filterState),
-                SizedBox(height: 8.0),
-                _logFilter(filterState: filterState),
-                SizedBox(height: 8.0),
-                _tagFilter(filterState: filterState),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  _amountFilter(filter: filter),
+                  SizedBox(height: 8.0),
+                  _dateFilter(),
+                  SizedBox(height: 8.0),
+                  _categoryFilter(filterState: filterState),
+                  SizedBox(height: 8.0),
+                  _paidSpentFilter(filterState: filterState),
+                  SizedBox(height: 8.0),
+                  _logFilter(filterState: filterState),
+                  SizedBox(height: 8.0),
+                  _tagFilter(filterState: filterState),
+                ],
+              ),
             ),
           );
         });
@@ -130,15 +133,16 @@ class _FilterDialogState extends State<FilterDialog> {
     if (filter.minAmount.isSome && filter.maxAmount.isSome) {
       minExceedMax = filter.minAmount.value > filter.maxAmount.value;
     }
-    return Row(
+    return Flex(
+      direction: Axis.horizontal,
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         Text('Amount'),
         SizedBox(width: 20.0),
         Text('\$ '),
-        Container(
-          width: 100.0,
+        Expanded(
+          flex: 1,
           child: _minMaxTextField(
             minExceedMax: minExceedMax,
             label: 'Min',
@@ -152,8 +156,8 @@ class _FilterDialogState extends State<FilterDialog> {
         ),
         SizedBox(width: 10.0),
         Text('\$ '),
-        Container(
-          width: 100.0,
+        Expanded(
+          flex: 1,
           child: _minMaxTextField(
             minExceedMax: minExceedMax,
             label: 'Max',
@@ -311,20 +315,14 @@ class _FilterDialogState extends State<FilterDialog> {
         }
       });
 
-      return Row(
-        mainAxisSize: MainAxisSize.max,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          AppButton(
-            child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
-            onPressed: () => {
-              showDialog(
-                context: context,
-                builder: (_) => FilterLogDialog(),
-              ),
-            },
+      return AppButton(
+        child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
+        onPressed: () => {
+          showDialog(
+            context: context,
+            builder: (_) => FilterLogDialog(),
           ),
-        ],
+        },
       );
     } else {
       return Container();
@@ -346,20 +344,14 @@ class _FilterDialogState extends State<FilterDialog> {
       tagString = '#Tags';
     }
 
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        AppButton(
-          child: Text(tagString),
-          onPressed: () => {
-            showDialog(
-              context: context,
-              builder: (_) => FilterTagDialog(),
-            ),
-          },
+    return AppButton(
+      child: Text(tagString),
+      onPressed: () => {
+        showDialog(
+          context: context,
+          builder: (_) => FilterTagDialog(),
         ),
-      ],
+      },
     );
   }
 }

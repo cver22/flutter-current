@@ -24,20 +24,23 @@ class FilterLogDialog extends StatelessWidget {
               title: 'Logs',
               shrinkWrap: true,
               actions: _actions(),
-              child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: allLogs.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    final String id = allLogs[index].id;
-                    return FilterListTile(
-                      selected: selectedLogs.contains(id),
-                      onSelect: () {
-                        Env.store.dispatch(FilterSelectLog(logId: id));
-                      },
-                      title: allLogs[index].name,
-                    );
-                  }));
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: allLogs.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      final String id = allLogs[index].id;
+                      return FilterListTile(
+                        selected: selectedLogs.contains(id),
+                        onSelect: () {
+                          Env.store.dispatch(FilterSelectLog(logId: id));
+                        },
+                        title: allLogs[index].name,
+                      );
+                    }),
+              ));
         });
   }
 

@@ -26,6 +26,7 @@
 //TODO start splash screen earlier?
 //TODO move tag list creators from UI (tag picker) to actions and state
 //button on tags to visualize stats for that tag, spent, average, etc
+//add blank option to new log
 
 
 //TODO VISUAL
@@ -44,8 +45,8 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//tag search should have #
-//filter dialog and tag filter should be full size, tag filter also need buttons more visible
+//filter dialog and tag dialog may need to be custom built dialogs as they do not compress well, maybe try an alert dialog
+
 
 
 

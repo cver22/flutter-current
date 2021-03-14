@@ -7,10 +7,14 @@ import 'package:expenses/categories/categories_screens/master_category_drag_and_
 import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
+import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+
+import '../../env.dart';
 
 class MasterCategoryListDialog extends StatelessWidget {
   final SettingsLogFilter setLogFilter;
@@ -76,11 +80,13 @@ class MasterCategoryListDialog extends StatelessWidget {
       @required List<AppCategory> subcategories,
       List<String> selectedCategories,
       List<String> selectedSubcategories}) {
-    return AppDialog(
-      trailingTitleWidget: setLogFilter == SettingsLogFilter.filter ? Container() : _displayAddButton(),
+    return AppDialogWithActions(
+      trailingTitleWidget: setLogFilter == SettingsLogFilter.filter ? null : _displayAddButton(),
       title: CATEGORY,
+      actions: setLogFilter == SettingsLogFilter.filter ? _actions() : null,
       child: categories.length > 0
           ? Expanded(
+        flex: 10,
               child: MasterCategoryDragAndDropList(
                 selectedCategories: selectedCategories,
                 selectedSubcategories: selectedSubcategories,
@@ -109,6 +115,26 @@ class MasterCategoryListDialog extends StatelessWidget {
             ErrorContent(),
           }
       },
+    );
+  }
+
+  Widget _actions() {
+    return Row(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        FlatButton(
+          child: Text('Clear'),
+          onPressed: () {
+            Env.store.dispatch(FilterClearLogSelection());
+          },
+        ),
+        FlatButton(
+            child: Text('Done'),
+            onPressed: () {
+              Get.back();
+            }),
+      ],
     );
   }
 }

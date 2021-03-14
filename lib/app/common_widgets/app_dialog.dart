@@ -30,7 +30,6 @@ class AppDialogWithActions extends StatelessWidget {
   final String title;
   final Widget actions;
   final bool shrinkWrap;
-  final bool scrollParent;
 
   const AppDialogWithActions(
       {Key key,
@@ -39,8 +38,7 @@ class AppDialogWithActions extends StatelessWidget {
       this.actions,
       this.backChevron,
       this.trailingTitleWidget,
-      this.shrinkWrap = false,
-      this.scrollParent = true})
+      this.shrinkWrap = false})
       : super(key: key);
 
   @override
@@ -49,26 +47,15 @@ class AppDialogWithActions extends StatelessWidget {
       insetPadding: EdgeInsets.all(DIALOG_EDGE_INSETS),
       elevation: DIALOG_ELEVATION,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
-      child: SingleChildScrollView(
-        physics: scrollParent ? ScrollPhysics() : NeverScrollableScrollPhysics(),
-        child: Column(
-          mainAxisSize: shrinkWrap ? MainAxisSize.min : MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            DialogContent(
-                backChevron: backChevron,
-                title: title,
-                trailingTitleWidget: trailingTitleWidget,
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: child,
-                ),
-                shrinkWrap: shrinkWrap),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: actions ?? Container(),
-            ),
-          ],
+      child: DialogContent(
+        backChevron: backChevron,
+        title: title,
+        trailingTitleWidget: trailingTitleWidget,
+        child: child,
+        shrinkWrap: shrinkWrap,
+        actions: actions == null ? null : Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: actions,
         ),
       ),
     );
@@ -82,6 +69,7 @@ class DialogContent extends StatelessWidget {
     @required this.title,
     @required this.trailingTitleWidget,
     @required this.child,
+    this.actions,
     this.shrinkWrap = false,
   }) : super(key: key);
 
@@ -89,6 +77,7 @@ class DialogContent extends StatelessWidget {
   final String title;
   final Widget trailingTitleWidget;
   final Widget child;
+  final Widget actions;
   final bool shrinkWrap;
 
   @override
@@ -111,12 +100,35 @@ class DialogContent extends StatelessWidget {
               title,
               style: TextStyle(fontSize: 20.0),
             ),
-            trailingTitleWidget == null ? Opacity(opacity: 0.0, child: IconButton(icon: Icon(Icons.add),) ) : trailingTitleWidget,
+            trailingTitleWidget == null
+                ? Opacity(
+                    opacity: 0.0,
+                    child: IconButton(
+                      icon: Icon(Icons.add),
+                    ))
+                : trailingTitleWidget,
           ],
         ),
         //shows this list view if the category list comes from the log
         child,
+        _displayActions(shrinkWrap: shrinkWrap, actions: actions),
       ],
     );
+  }
+
+  Widget _displayActions({bool shrinkWrap, Widget actions}) {
+    if (shrinkWrap && actions != null) {
+      return actions;
+    } else if (actions != null) {
+      return Expanded(
+        flex: 1,
+        child: Align(
+          alignment: FractionalOffset.bottomCenter,
+          child: actions ?? Container(),
+        ),
+      );
+    } else {
+      return Container();
+    }
   }
 }
