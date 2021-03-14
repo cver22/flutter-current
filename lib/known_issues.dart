@@ -46,7 +46,7 @@
 
 //TODO START HERE
 //filter dialog and tag dialog may need to be custom built dialogs as they do not compress well, maybe try an alert dialog
-//saving a tag should clear the search
+//add constraints to filter min/max and date to ensure min/max and before/after are not reversed
 
 
 

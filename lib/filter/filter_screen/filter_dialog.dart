@@ -50,6 +50,17 @@ class _FilterDialogState extends State<FilterDialog> {
       setState(() {});
     });
 
+
+    if (Env.store.state.filterState.filter.value.minAmount.isSome) {
+      _minAmountController.value =
+          TextEditingValue(text: formattedAmount(value: Env.store.state.filterState.filter.value.minAmount.value));
+    }
+
+    if (Env.store.state.filterState.filter.value.maxAmount.isSome) {
+      _maxAmountController.value =
+          TextEditingValue(text: formattedAmount(value: Env.store.state.filterState.filter.value.maxAmount.value));
+    }
+
     super.initState();
   }
 
@@ -71,7 +82,7 @@ class _FilterDialogState extends State<FilterDialog> {
 
           return AppDialogWithActions(
             title: 'Filter',
-            actions: _actions(entriesChart: entriesChart, save: filterState.updated),
+            actions: _actions(filterState: filterState, entriesChart: entriesChart),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Column(
@@ -97,7 +108,7 @@ class _FilterDialogState extends State<FilterDialog> {
         });
   }
 
-  Widget _actions({@required EntriesCharts entriesChart, @required bool save}) {
+  Widget _actions({@required FilterState filterState, @required EntriesCharts entriesChart}) {
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -115,8 +126,8 @@ class _FilterDialogState extends State<FilterDialog> {
           },
         ),
         FlatButton(
-            child: Text(save ? 'Save Filter' : 'Done'),
-            onPressed: () {
+            child: Text(filterState.updated ? 'Save Filter' : 'Done'),
+            onPressed: _minExceedMax(filter: filterState.filter.value) ? null : () {
               if (entriesChart == EntriesCharts.entries) {
                 Env.store.dispatch(EntriesSetEntriesFilter());
               } else if (entriesChart == EntriesCharts.charts) {
@@ -128,11 +139,16 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  Widget _amountFilter({Filter filter}) {
-    bool minExceedMax = false;
-    if (filter.minAmount.isSome && filter.maxAmount.isSome) {
-      minExceedMax = filter.minAmount.value > filter.maxAmount.value;
+  bool _minExceedMax({@required Filter filter}) {
+    bool canSave = false;
+    if (filter.minAmount.isSome && filter.maxAmount.isSome && filter.minAmount.value >= filter.maxAmount.value) {
+      canSave = true;
     }
+    return canSave;
+  }
+
+  Widget _amountFilter({Filter filter}) {
+    bool minExceedMax = _minExceedMax(filter: filter);
     return Flex(
       direction: Axis.horizontal,
       mainAxisSize: MainAxisSize.max,
@@ -173,13 +189,12 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  TextField _minMaxTextField(
-      {@required TextEditingController controller,
-      @required String label,
-      @required FocusNode focusNode,
-      Function(int) onChange,
-      TextInputAction textInputAction,
-      bool minExceedMax}) {
+  TextField _minMaxTextField({@required TextEditingController controller,
+    @required String label,
+    @required FocusNode focusNode,
+    Function(int) onChange,
+    TextInputAction textInputAction,
+    bool minExceedMax}) {
     return TextField(
       style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),
       controller: controller,
@@ -211,7 +226,7 @@ class _FilterDialogState extends State<FilterDialog> {
           label: 'Start Date',
           pickTime: false,
           onSave: (dateTime) {
-            Env.store.dispatch(FilterSetStartDate(dateTime: dateTime));
+            Env.store.dispatch(FilterSetStartDate(date: dateTime));
           },
         ),
         SizedBox(width: 8.0),
@@ -223,7 +238,7 @@ class _FilterDialogState extends State<FilterDialog> {
           label: 'End Date',
           pickTime: false,
           onSave: (dateTime) {
-            Env.store.dispatch(FilterSetEndDate(dateTime: dateTime));
+            Env.store.dispatch(FilterSetEndDate(date: dateTime));
           },
         )
       ],
@@ -237,19 +252,21 @@ class _FilterDialogState extends State<FilterDialog> {
       if (categories.length > 0) {
         categories += ', $categoryName';
       } else {
-        categories += categoryName;
+        categories += 'Categories: $categoryName';
       }
     });
 
     return CategoryButton(
       label: categories.length > 0 ? categories : 'Select Filter Categories',
       filter: true,
-      onPressed: () => {
+      onPressed: () =>
+      {
         showDialog(
           context: context,
-          builder: (_) => MasterCategoryListDialog(
-            setLogFilter: SettingsLogFilter.filter,
-          ),
+          builder: (_) =>
+              MasterCategoryListDialog(
+                setLogFilter: SettingsLogFilter.filter,
+              ),
         ),
       },
     );
@@ -264,7 +281,7 @@ class _FilterDialogState extends State<FilterDialog> {
       if (membersPaidString.length > 0) {
         membersPaidString += '\, ${filterState.allMembers[memberId]}';
       } else {
-        membersPaidString += filterState.allMembers[memberId];
+        membersPaidString += 'Paying ${filterState.allMembers[memberId]}';
       }
     });
 
@@ -273,7 +290,7 @@ class _FilterDialogState extends State<FilterDialog> {
       if (membersSpentString.length > 0) {
         membersSpentString += '\, ${filterState.allMembers[memberId]}';
       } else {
-        membersSpentString += filterState.allMembers[memberId];
+        membersSpentString += 'Spending: ${filterState.allMembers[memberId]}';
       }
     });
 
@@ -282,21 +299,23 @@ class _FilterDialogState extends State<FilterDialog> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         AppButton(
-            onPressed: () => {
-                  showDialog(
-                    context: context,
-                    builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
-                  ),
-                },
+            onPressed: () =>
+            {
+              showDialog(
+                context: context,
+                builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+              ),
+            },
             child: Text(membersPaidString.length > 0 ? membersPaidString : 'Who paid?')),
         SizedBox(width: 8.0),
         AppButton(
-            onPressed: () => {
-                  showDialog(
-                    context: context,
-                    builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
-                  ),
-                },
+            onPressed: () =>
+            {
+              showDialog(
+                context: context,
+                builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
+              ),
+            },
             child: Text(membersSpentString.length > 0 ? membersSpentString : 'Who spent?')),
       ],
     );
@@ -311,13 +330,14 @@ class _FilterDialogState extends State<FilterDialog> {
         if (selectedLogString.length > 0) {
           selectedLogString += '\, ${logs[logId].name}';
         } else {
-          selectedLogString += logs[logId].name;
+          selectedLogString += 'Logs: ${logs[logId].name}';
         }
       });
 
       return AppButton(
         child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
-        onPressed: () => {
+        onPressed: () =>
+        {
           showDialog(
             context: context,
             builder: (_) => FilterLogDialog(),
@@ -337,7 +357,7 @@ class _FilterDialogState extends State<FilterDialog> {
         if (tagString.length > 0) {
           tagString += '\, #$tagName';
         } else {
-          tagString += '#$tagName';
+          tagString += 'Tags: #$tagName';
         }
       });
     } else {
@@ -346,7 +366,8 @@ class _FilterDialogState extends State<FilterDialog> {
 
     return AppButton(
       child: Text(tagString),
-      onPressed: () => {
+      onPressed: () =>
+      {
         showDialog(
           context: context,
           builder: (_) => FilterTagDialog(),

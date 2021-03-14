@@ -57,7 +57,7 @@ int parseNewValue({@required String newValue}) {
 
     if (absoluteString.contains('\.')) {
       int decimalIndex = absoluteString.indexOf('\.');
-      value = (int.parse(absoluteString.substring(0, decimalIndex))) * 100;
+      value = decimalIndex > 0 ? (int.parse(absoluteString.substring(0, decimalIndex))) * 100 : 0;
       String smallUnitsString = absoluteString.substring(decimalIndex + 1);
       int smallUnitsInt = smallUnitsString.length < 2 ? int.parse('${smallUnitsString}0') : int.parse(smallUnitsString);
 

@@ -126,7 +126,7 @@ class MasterCategoryListDialog extends StatelessWidget {
         FlatButton(
           child: Text('Clear'),
           onPressed: () {
-            Env.store.dispatch(FilterClearLogSelection());
+            Env.store.dispatch(FilterClearCategorySelection());
           },
         ),
         FlatButton(

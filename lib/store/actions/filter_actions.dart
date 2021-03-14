@@ -266,64 +266,60 @@ class FilterSelectDeselectSubcategory implements AppAction {
   }
 }
 
-class FilterSetStartDate implements AppAction {
-  final DateTime dateTime;
+class FilterClearCategorySelection implements AppAction {
+  AppState updateState(AppState appState) {
 
-  FilterSetStartDate({this.dateTime});
+    return _updateFilterAndFlagUpdated(
+        appState: appState,
+        filter: Maybe.some(appState.filterState.filter.value.copyWith(
+          selectedCategories: const [],
+          selectedSubcategories: const [],
+        )));
+  }
+}
+
+
+class FilterSetStartDate implements AppAction {
+  final DateTime date;
+
+  FilterSetStartDate({this.date});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
     Maybe<DateTime> previousDate = filter.startDate;
-    Maybe<DateTime> updatedDateTime = Maybe.some(dateTime);
+    Maybe<DateTime> updatedDate = Maybe.none();
 
-    //check if there is an end date
-    if (filter.endDate.isSome) {
-      //if so, start date can not be after the end date
-      if (updatedDateTime.value.isAfter(filter.endDate.value) && previousDate.isSome) {
-        if (previousDate.isSome) {
-          //update with previous acceptable start date
-          updatedDateTime = Maybe.some(previousDate.value);
-        } else {
-          //user needs to enter a valid start date
-          updatedDateTime = Maybe.none();
-        }
-        //TODO toast error message
-
-      }
+    if (filter.endDate.isNone || date.isBefore(filter.endDate.value)) {
+      //either no end date is set or start date must be before end date
+      updatedDate = Maybe.some(date);
+    } else if (previousDate.isSome) {
+      //if a previous date exists, revert to it, otherwise, no date has been set
+      updatedDate = previousDate;
     }
 
-    return _updateFilterAndFlagUpdated(
-        appState: appState, filter: Maybe.some(filter.copyWith(startDate: updatedDateTime)));
+    return _updateFilterAndFlagUpdated(appState: appState, filter: Maybe.some(filter.copyWith(startDate: updatedDate)));
   }
 }
 
 class FilterSetEndDate implements AppAction {
-  final DateTime dateTime;
+  final DateTime date;
 
-  FilterSetEndDate({this.dateTime});
+  FilterSetEndDate({this.date});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
     Maybe<DateTime> previousDate = filter.endDate;
-    Maybe<DateTime> updatedDateTime = Maybe.some(dateTime);
+    Maybe<DateTime> updatedDate = Maybe.none();
 
-    //check if there is an start date
-    if (filter.startDate.isSome) {
-      //if so, end date can not be before the end date
-      if (updatedDateTime.value.isBefore(filter.startDate.value)) {
-        if (previousDate.isSome) {
-          //update with previous acceptable end date
-          updatedDateTime = Maybe.some(previousDate.value);
-        } else {
-          //user needs to enter a valid end date
-          updatedDateTime = Maybe.none();
-        }
-        //TODO toast error message
-      }
+    if (filter.startDate.isNone || date.isAfter(filter.startDate.value)) {
+      //either no start date is set or end date must be after start date
+      updatedDate = Maybe.some(date);
+    } else if (previousDate.isSome) {
+      //if a previous date exists, revert to it, otherwise, no date has been set
+      updatedDate = previousDate;
     }
 
-    return _updateFilterAndFlagUpdated(
-        appState: appState, filter: Maybe.some(filter.copyWith(endDate: updatedDateTime)));
+    return _updateFilterAndFlagUpdated(appState: appState, filter: Maybe.some(filter.copyWith(endDate: updatedDate)));
   }
 }
 
