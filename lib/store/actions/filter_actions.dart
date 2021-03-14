@@ -497,6 +497,10 @@ class FilterSetSearchedTags implements AppAction {
     List<Tag> searchedTags = [];
     Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe.some(search) : Maybe.none();
     List<String> selectedTagIds = List.from(appState.filterState.filter.value.selectedTags);
+    print('tags $tags');
+    print('selectedTagsId $selectedTagIds');
+    print('search: $search');
+
 
     searchedTags = buildSearchedTagsList(tags: tags, tagIds: selectedTagIds, search: search);
 

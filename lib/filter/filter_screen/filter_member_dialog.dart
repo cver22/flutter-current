@@ -53,11 +53,8 @@ class FilterMemberDialog extends StatelessWidget {
         });
   }
 
-  Row _actions() {
-    return Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
+  List<Widget> _actions() {
+    return [
 
                 TextButton(
                   child: Text('Clear'),
@@ -74,7 +71,6 @@ class FilterMemberDialog extends StatelessWidget {
                     onPressed: () {
                       Get.back();
                     }),
-              ],
-            );
+              ];
   }
 }

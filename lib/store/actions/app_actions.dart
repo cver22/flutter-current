@@ -335,7 +335,7 @@ List<AppCategory> reorderSubcategoriesLogSetting(
   return subcategories;
 }
 
-//determine if the subcategory is special and connot be reOrdered
+//determine if the subcategory is special and cannot be reOrdered
 bool _canReorderSubcategory({@required AppCategory subcategory, @required String newParentId}) {
   if (newParentId == NO_CATEGORY || subcategory.id.contains(OTHER) || newParentId == TRANSFER_FUNDS) {
     return false;
@@ -359,12 +359,14 @@ List<Tag> buildSearchedTagsList(
         tagCount++;
       }
 
-      //limit number of search results to 10
+      //limit number of search results to 10 if maxTags passed
       if (maxTags > -1 && tagCount >= maxTags) {
         break;
       }
     }
   }
+
+  print('inside searched Tags: $searchedTags');
 
   return searchedTags;
 }

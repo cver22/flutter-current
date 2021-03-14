@@ -40,7 +40,8 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget buildDialog({singleEntryState, BuildContext context, List<AppCategory> categories}) {
-    return AppDialog(
+    return AppDialogWithActions(
+      padContent: false,
       title: categoryOrSubcategory == CategoryOrSubcategory.category ? CATEGORY : SUBCATEGORY,
       backChevron: backChevron,
       trailingTitleWidget: _displayAddButton(selectedEntry: singleEntryState.selectedEntry.value),
@@ -59,21 +60,18 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget _categoryListView({BuildContext context, List<AppCategory> categories}) {
-    return Expanded(
-      flex: 1,
-      child: ReorderableListView(
-          scrollController: PrimaryScrollController.of(context) ?? ScrollController(),
-          onReorder: (oldIndex, newIndex) {
-            //reorder for categories
-            if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-              Env.store.dispatch(ReorderCategoriesFromEntryScreen(oldIndex: oldIndex, newIndex: newIndex));
-            } else {
-              Env.store.dispatch(ReorderSubcategoriesFromEntryScreen(
-                  newIndex: newIndex, oldIndex: oldIndex, reorderedSubcategories: categories));
-            }
-          },
-          children: _categoryList(context: context, categories: categories)),
-    );
+    return ReorderableListView(
+        scrollController: PrimaryScrollController.of(context) ?? ScrollController(),
+        onReorder: (oldIndex, newIndex) {
+          //reorder for categories
+          if (categoryOrSubcategory == CategoryOrSubcategory.category) {
+            Env.store.dispatch(ReorderCategoriesFromEntryScreen(oldIndex: oldIndex, newIndex: newIndex));
+          } else {
+            Env.store.dispatch(ReorderSubcategoriesFromEntryScreen(
+                newIndex: newIndex, oldIndex: oldIndex, reorderedSubcategories: categories));
+          }
+        },
+        children: _categoryList(context: context, categories: categories));
   }
 
   List<CategoryListTile> _categoryList({List<AppCategory> categories, BuildContext context}) {

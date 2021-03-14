@@ -37,6 +37,7 @@ class _EditTagDialogState extends State<EditTagDialog> {
 
   @override
   Widget build(BuildContext context) {
+    //TODO move to app dialog
     return AlertDialog(
       title: Text('Tag Editor'),
       content: TextField(

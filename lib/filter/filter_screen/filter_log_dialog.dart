@@ -24,43 +24,36 @@ class FilterLogDialog extends StatelessWidget {
               title: 'Logs',
               shrinkWrap: true,
               actions: _actions(),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: ListView.builder(
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: allLogs.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      final String id = allLogs[index].id;
-                      return FilterListTile(
-                        selected: selectedLogs.contains(id),
-                        onSelect: () {
-                          Env.store.dispatch(FilterSelectLog(logId: id));
-                        },
-                        title: allLogs[index].name,
-                      );
-                    }),
-              ));
+              child: ListView.builder(
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: allLogs.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    final String id = allLogs[index].id;
+                    return FilterListTile(
+                      selected: selectedLogs.contains(id),
+                      onSelect: () {
+                        Env.store.dispatch(FilterSelectLog(logId: id));
+                      },
+                      title: allLogs[index].name,
+                    );
+                  }));
         });
   }
 
-  Row _actions() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
-        TextButton(
-          child: Text('Clear'),
+  List<Widget> _actions() {
+    return [
+      TextButton(
+        child: Text('Clear'),
+        onPressed: () {
+          Env.store.dispatch(FilterClearLogSelection());
+        },
+      ),
+      TextButton(
+          child: Text('Done'),
           onPressed: () {
-            Env.store.dispatch(FilterClearLogSelection());
-          },
-        ),
-        TextButton(
-            child: Text('Done'),
-            onPressed: () {
-              Get.back();
-            }),
-      ],
-    );
+            Get.back();
+          }),
+    ];
   }
 }

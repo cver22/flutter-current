@@ -22,43 +22,35 @@ class FilterTagDialog extends StatelessWidget {
           //TODO build dialog with two tag clouds for selected and other, sorting options, and a search bar
           return AppDialogWithActions(
             title: 'Tags',
+            topWidget: TagField(
+              tagFocusNode: FocusNode(),
+              searchOnly: true,
+            ),
             actions: _actions(),
-            child: Expanded(
-              flex: 10,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Flex(
-                  direction: Axis.vertical,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.max,
+            child: SingleChildScrollView(
+              child: SingleChildScrollView(
+                child: Column(
                   children: [
-                    Expanded(
-                      flex: 1,
-                      child: TagField(
-                        tagFocusNode: FocusNode(),
-                        searchOnly: true,
-                      ),
-                    ),
-                    SizedBox(height: 8.0),
-                    Text('Selected Tags'),
-                    Expanded(
-                      flex: filterState.filter.value.selectedTags.isNotEmpty ? (filterState.filter.value.selectedTags.length/3).ceil() : 0,
-                      child: _buildSelectedTags(
+                    filterState.search.isSome ? Text('Searched Tags') : Container(),
+                    filterState.search.isSome ? _buildAllTags(
+                        selectedCategories: filterState.filter.value.selectedCategories,
+                        search: filterState.search,
                         allTags: filterState.allTags,
-                        selectedTagIds: filterState.filter.value.selectedTags,
-                      ),
+                        searchedTags: filterState.searchedTags,
+                        selectedTagNames: filterState.filter.value.selectedTags) : Container(),
+                    Text('Selected Tags'),
+                    _buildSelectedTags(
+                      allTags: filterState.allTags,
+                      selectedTagIds: filterState.filter.value.selectedTags,
                     ),
                     SizedBox(height: 8.0),
-                    Text(filterState.search.isNone ? 'Tags by Frequency' : 'Searched Tags'),
-                    Expanded(
-                      flex: 4,
-                      child: _buildAllTags(
-                          selectedCategories: filterState.filter.value.selectedCategories,
-                          search: filterState.search,
-                          allTags: filterState.allTags,
-                          searchedTags: filterState.searchedTags,
-                          selectedTagNames: filterState.filter.value.selectedTags),
-                    ),
+                    filterState.search.isNone ? Text('Tags by Frequency') : Container(),
+                    filterState.search.isNone ? _buildAllTags(
+                        selectedCategories: filterState.filter.value.selectedCategories,
+                        search: filterState.search,
+                        allTags: filterState.allTags,
+                        searchedTags: filterState.searchedTags,
+                        selectedTagNames: filterState.filter.value.selectedTags) : Container(),
                   ],
                 ),
               ),
@@ -67,11 +59,8 @@ class FilterTagDialog extends StatelessWidget {
         });
   }
 
-  Row _actions() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
+  List<Widget> _actions() {
+    return [
         TextButton(
           child: Text('Clear'),
           onPressed: () {
@@ -83,8 +72,7 @@ class FilterTagDialog extends StatelessWidget {
             onPressed: () {
               Get.back();
             }),
-      ],
-    );
+      ];
   }
 
   Widget _buildSelectedTags({
@@ -105,13 +93,11 @@ class FilterTagDialog extends StatelessWidget {
       return retain;
     });
 
-    return SingleChildScrollView(
-      child: TagCollection(
-        tags: collectionTags,
-        chipsEditable: false,
-        search: Maybe.none(),
-        filterSelect: true,
-      ),
+    return TagCollection(
+      tags: collectionTags,
+      chipsEditable: false,
+      search: Maybe.none(),
+      filterSelect: true,
     );
   }
 
@@ -149,14 +135,12 @@ class FilterTagDialog extends StatelessWidget {
         return remove;
       });
     }
-    if (search.isNone || search.isSome && collectionTags.length > 1) {
-      return SingleChildScrollView(
-        child: TagCollection(
-          tags: collectionTags,
-          search: search,
-          chipsEditable: false,
-          filterSelect: true,
-        ),
+    if (search.isNone || search.isSome && collectionTags.length > 0) {
+      return TagCollection(
+        tags: collectionTags,
+        search: search,
+        chipsEditable: false,
+        filterSelect: true,
       );
     } else {
       return Text('No search results');

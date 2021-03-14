@@ -50,7 +50,6 @@ class _FilterDialogState extends State<FilterDialog> {
       setState(() {});
     });
 
-
     if (Env.store.state.filterState.filter.value.minAmount.isSome) {
       _minAmountController.value =
           TextEditingValue(text: formattedAmount(value: Env.store.state.filterState.filter.value.minAmount.value));
@@ -83,10 +82,9 @@ class _FilterDialogState extends State<FilterDialog> {
           return AppDialogWithActions(
             title: 'Filter',
             actions: _actions(filterState: filterState, entriesChart: entriesChart),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+            child: SingleChildScrollView(
               child: Column(
-                mainAxisSize: MainAxisSize.min,
+                mainAxisSize: MainAxisSize.max,
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
@@ -108,11 +106,8 @@ class _FilterDialogState extends State<FilterDialog> {
         });
   }
 
-  Widget _actions({@required FilterState filterState, @required EntriesCharts entriesChart}) {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
+  List<Widget> _actions({@required FilterState filterState, @required EntriesCharts entriesChart}) {
+    return [
         TextButton(
           child: Text('Cancel'),
           onPressed: () => Get.back(),
@@ -127,16 +122,17 @@ class _FilterDialogState extends State<FilterDialog> {
         ),
         TextButton(
             child: Text(filterState.updated ? 'Save Filter' : 'Done'),
-            onPressed: _minExceedMax(filter: filterState.filter.value) ? null : () {
-              if (entriesChart == EntriesCharts.entries) {
-                Env.store.dispatch(EntriesSetEntriesFilter());
-              } else if (entriesChart == EntriesCharts.charts) {
-                Env.store.dispatch(EntriesSetChartFilter());
-              }
-              Get.back();
-            }),
-      ],
-    );
+            onPressed: _minExceedMax(filter: filterState.filter.value)
+                ? null
+                : () {
+                    if (entriesChart == EntriesCharts.entries) {
+                      Env.store.dispatch(EntriesSetEntriesFilter());
+                    } else if (entriesChart == EntriesCharts.charts) {
+                      Env.store.dispatch(EntriesSetChartFilter());
+                    }
+                    Get.back();
+                  }),
+      ];
   }
 
   bool _minExceedMax({@required Filter filter}) {
@@ -189,12 +185,13 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  TextField _minMaxTextField({@required TextEditingController controller,
-    @required String label,
-    @required FocusNode focusNode,
-    Function(int) onChange,
-    TextInputAction textInputAction,
-    bool minExceedMax}) {
+  TextField _minMaxTextField(
+      {@required TextEditingController controller,
+      @required String label,
+      @required FocusNode focusNode,
+      Function(int) onChange,
+      TextInputAction textInputAction,
+      bool minExceedMax}) {
     return TextField(
       style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),
       controller: controller,
@@ -214,13 +211,13 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  //TODO this may not work, i may need to redo this  or entry to handle maybes
   Widget _dateFilter() {
     return Row(
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         DateButton(
+          //TODO add remove focus action to these buttons
           initialDateTime: filter.startDate.isSome ? filter.startDate.value : null,
           useShortDate: true,
           label: 'Start Date',
@@ -259,14 +256,13 @@ class _FilterDialogState extends State<FilterDialog> {
     return CategoryButton(
       label: categories.length > 0 ? categories : 'Select Filter Categories',
       filter: true,
-      onPressed: () =>
-      {
+      onPressed: () => {
+        _removeFocus(),
         showDialog(
           context: context,
-          builder: (_) =>
-              MasterCategoryListDialog(
-                setLogFilter: SettingsLogFilter.filter,
-              ),
+          builder: (_) => MasterCategoryListDialog(
+            setLogFilter: SettingsLogFilter.filter,
+          ),
         ),
       },
     );
@@ -281,7 +277,7 @@ class _FilterDialogState extends State<FilterDialog> {
       if (membersPaidString.length > 0) {
         membersPaidString += '\, ${filterState.allMembers[memberId]}';
       } else {
-        membersPaidString += 'Paying ${filterState.allMembers[memberId]}';
+        membersPaidString += 'Paying: ${filterState.allMembers[memberId]}';
       }
     });
 
@@ -298,25 +294,39 @@ class _FilterDialogState extends State<FilterDialog> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        AppButton(
-            onPressed: () =>
-            {
-              showDialog(
-                context: context,
-                builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
-              ),
-            },
-            child: Text(membersPaidString.length > 0 ? membersPaidString : 'Who paid?')),
+        Expanded(
+          flex: 1,
+          child: AppButton(
+              onPressed: () => {
+                _removeFocus(),
+                    showDialog(
+                      context: context,
+                      builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+                    ),
+                  },
+              child: Text(
+                membersPaidString.length > 0 ? membersPaidString : 'Who paid?',
+                overflow: TextOverflow.visible,
+                softWrap: true,
+              )),
+        ),
         SizedBox(width: 8.0),
-        AppButton(
-            onPressed: () =>
-            {
-              showDialog(
-                context: context,
-                builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
-              ),
-            },
-            child: Text(membersSpentString.length > 0 ? membersSpentString : 'Who spent?')),
+        Expanded(
+          flex: 1,
+          child: AppButton(
+              onPressed: () => {
+                _removeFocus(),
+                    showDialog(
+                      context: context,
+                      builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
+                    ),
+                  },
+              child: Text(
+                membersSpentString.length > 0 ? membersSpentString : 'Who spent?',
+                overflow: TextOverflow.visible,
+                softWrap: true,
+              )),
+        ),
       ],
     );
   }
@@ -336,8 +346,8 @@ class _FilterDialogState extends State<FilterDialog> {
 
       return AppButton(
         child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
-        onPressed: () =>
-        {
+        onPressed: () => {
+          _removeFocus(),
           showDialog(
             context: context,
             builder: (_) => FilterLogDialog(),
@@ -366,8 +376,8 @@ class _FilterDialogState extends State<FilterDialog> {
 
     return AppButton(
       child: Text(tagString),
-      onPressed: () =>
-      {
+      onPressed: () => {
+        _removeFocus(),
         showDialog(
           context: context,
           builder: (_) => FilterTagDialog(),
@@ -375,4 +385,10 @@ class _FilterDialogState extends State<FilterDialog> {
       },
     );
   }
+
+  void _removeFocus(){
+    _minFocusNode.unfocus();
+    _maxFocusNode.unfocus();
+  }
+
 }

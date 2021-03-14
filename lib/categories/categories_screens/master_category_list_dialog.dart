@@ -85,16 +85,13 @@ class MasterCategoryListDialog extends StatelessWidget {
       title: CATEGORY,
       actions: setLogFilter == SettingsLogFilter.filter ? _actions() : null,
       child: categories.length > 0
-          ? Expanded(
-        flex: 10,
-              child: MasterCategoryDragAndDropList(
-                selectedCategories: selectedCategories,
-                selectedSubcategories: selectedSubcategories,
-                categories: categories,
-                subcategories: subcategories,
-                setLogFilter: setLogFilter,
-              ),
-            )
+          ? MasterCategoryDragAndDropList(
+            selectedCategories: selectedCategories,
+            selectedSubcategories: selectedSubcategories,
+            categories: categories,
+            subcategories: subcategories,
+            setLogFilter: setLogFilter,
+          )
           : EmptyContent(),
     );
   }
@@ -118,11 +115,8 @@ class MasterCategoryListDialog extends StatelessWidget {
     );
   }
 
-  Widget _actions() {
-    return Row(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: [
+  List<Widget> _actions() {
+    return[
         TextButton(
           child: Text('Clear'),
           onPressed: () {
@@ -134,7 +128,6 @@ class MasterCategoryListDialog extends StatelessWidget {
             onPressed: () {
               Get.back();
             }),
-      ],
-    );
+      ];
   }
 }
