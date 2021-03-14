@@ -1,14 +1,14 @@
-import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tags_ui/tag_collection.dart';
 import 'package:expenses/tags/tags_ui/tag_field.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
-import 'package:expenses/utils/db_consts.dart';
 
 import '../../env.dart';
 

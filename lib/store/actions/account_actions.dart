@@ -1,7 +1,7 @@
 import 'package:expenses/account/account_model/account_state.dart';
+import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
 import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/validators.dart';
 
 AppState _updateAccountState(

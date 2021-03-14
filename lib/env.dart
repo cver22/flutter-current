@@ -1,6 +1,6 @@
 import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/auth_user/user_repository.dart';
 import 'package:expenses/auth_user/user_fetcher.dart';
+import 'package:expenses/auth_user/user_repository.dart';
 import 'package:expenses/entries/entries_fetcher.dart';
 import 'package:expenses/entries/entries_repository.dart';
 import 'package:expenses/log/logs_fetcher.dart';

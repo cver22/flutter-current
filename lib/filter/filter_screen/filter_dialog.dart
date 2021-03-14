@@ -12,11 +12,11 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:expenses/utils/currency.dart';
 import 'package:get/get.dart';
 
 import '../../env.dart';

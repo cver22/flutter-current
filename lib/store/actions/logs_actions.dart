@@ -1,3 +1,4 @@
+import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
@@ -5,7 +6,6 @@ import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';

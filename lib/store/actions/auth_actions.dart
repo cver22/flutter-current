@@ -1,6 +1,6 @@
 import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/auth_user/models/app_user.dart';
+import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';

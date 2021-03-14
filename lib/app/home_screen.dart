@@ -1,4 +1,3 @@
-import 'package:expenses/app/common_widgets/error_widget.dart';
 import 'package:expenses/app/splash_screen.dart';
 import 'package:expenses/auth_user/models/auth_state.dart';
 import 'package:expenses/env.dart';

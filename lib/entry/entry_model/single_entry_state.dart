@@ -5,8 +5,8 @@ import 'package:expenses/categories/categories_model/app_category/app_category.d
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/maybe.dart';
-import 'package:meta/meta.dart';
 import 'package:flutter/material.dart';
+import 'package:meta/meta.dart';
 
 @immutable
 class SingleEntryState extends Equatable {

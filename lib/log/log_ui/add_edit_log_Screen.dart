@@ -1,6 +1,6 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/app/common_widgets/app_currency_picker.dart';
+import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
 import 'package:expenses/categories/categories_screens/category_button.dart';
 import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
 import 'package:expenses/env.dart';
@@ -10,8 +10,8 @@ import 'package:expenses/log/log_ui/log_name_form.dart';
 import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list.dart';
 import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
 import 'package:expenses/settings/settings_model/settings.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/actions/app_actions.dart';
+import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';

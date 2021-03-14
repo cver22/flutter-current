@@ -1,7 +1,7 @@
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
+import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
-import 'package:expenses/categories/categories_screens/category_list_tools.dart';
 
 //leading and trailing components for category list tiles
 

@@ -9,7 +9,6 @@ import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
-
 import 'package:meta/meta.dart';
 
 @immutable

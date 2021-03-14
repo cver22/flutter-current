@@ -1,9 +1,9 @@
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/entry/entry_model/app_entry_entity.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 abstract class EntriesRepository {
   Future<void> addNewEntry(MyEntry entry);

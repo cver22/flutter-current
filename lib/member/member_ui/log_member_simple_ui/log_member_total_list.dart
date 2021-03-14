@@ -1,7 +1,6 @@
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list_tile.dart';
-
 import 'package:flutter/material.dart';
 
 class LogMemberTotalList extends StatelessWidget {

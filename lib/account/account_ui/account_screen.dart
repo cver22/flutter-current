@@ -11,9 +11,9 @@ import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:flutter/services.dart';
 
 //AccountScreen contains user information, picture, QR code, password changes, logout
 class AccountScreen extends StatefulWidget {

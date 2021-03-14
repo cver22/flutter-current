@@ -2,7 +2,6 @@ import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-
 import 'package:expenses/log/log_model/log_entity.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/utils/db_consts.dart';

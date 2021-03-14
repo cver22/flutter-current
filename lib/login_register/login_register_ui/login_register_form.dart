@@ -7,10 +7,10 @@ import 'package:expenses/login_register/login_register_ui/google_login_button.da
 import 'package:expenses/login_register/login_register_ui/login_register_button.dart';
 import 'package:expenses/store/actions/login_reg_actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:expenses/utils/expense_routes.dart';
 
 class LoginRegisterForm extends StatefulWidget {
   @override

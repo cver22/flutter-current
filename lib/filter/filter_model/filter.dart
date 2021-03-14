@@ -1,4 +1,5 @@
 import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
 import 'package:expenses/utils/maybe.dart';
 

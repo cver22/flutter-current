@@ -1,3 +1,4 @@
+import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
@@ -8,7 +9,6 @@ import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/currency.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
-import 'package:expenses/app/models/app_state.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 

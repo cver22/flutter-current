@@ -1,9 +1,9 @@
 import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/utils/maybe.dart';
-
 import 'package:meta/meta.dart';
 
 @immutable

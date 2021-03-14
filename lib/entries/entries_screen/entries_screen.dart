@@ -7,7 +7,6 @@ import 'package:expenses/entries/entries_screen/entries_screen_build_list_view.d
 import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/filter/filter_model/filter.dart';
 import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
 import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/store/connect_state.dart';
 import 'package:expenses/tags/tag_model/tag.dart';

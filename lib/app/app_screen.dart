@@ -7,12 +7,12 @@ import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:expenses/store/actions/filter_actions.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/store/connect_state.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/expense_routes.dart';
 import 'package:expenses/utils/keys.dart';
 import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:expenses/utils/db_consts.dart';
 
 import '../env.dart';
 

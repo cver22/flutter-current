@@ -1,7 +1,7 @@
+import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
 import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/utils/validators.dart';
 
 AppState _updateLoginRegState(
