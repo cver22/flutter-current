@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
 import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -84,7 +85,7 @@ class _QRReaderState extends State<QRReader> {
                     children: <Widget>[
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: RaisedButton(
+                        child: AppButton(
                           onPressed: () {
                             controller?.pauseCamera();
                           },
@@ -93,7 +94,7 @@ class _QRReaderState extends State<QRReader> {
                       ),
                       Container(
                         margin: EdgeInsets.all(8),
-                        child: RaisedButton(
+                        child: AppButton(
                           onPressed: () {
                             controller?.resumeCamera();
                           },

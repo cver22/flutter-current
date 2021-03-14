@@ -11,7 +11,7 @@ class CreateAccountButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return FlatButton(
+    return TextButton(
       child: loginState.loginOrRegister == LoginOrRegister.login ? Text('Create an Account') : Text('Go to Login'),
       onPressed: () {
         Env.store.dispatch(LoginOrCreateUser());

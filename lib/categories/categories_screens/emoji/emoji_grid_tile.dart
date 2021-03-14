@@ -13,7 +13,7 @@ class EmojiGridTile extends StatelessWidget {
     //TODO make button with onPressed
     return GridTile(
       child: Center(
-        child: FlatButton(
+        child: TextButton(
           onPressed: () => {emojiSelection(emojiChar), print('$emojiChar ${Emoji.byChar(emojiChar).name}')},
           child: Text(
             '${Emoji.byChar(emojiChar)}',

@@ -49,13 +49,13 @@ class FilterLogDialog extends StatelessWidget {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
-        FlatButton(
+        TextButton(
           child: Text('Clear'),
           onPressed: () {
             Env.store.dispatch(FilterClearLogSelection());
           },
         ),
-        FlatButton(
+        TextButton(
             child: Text('Done'),
             onPressed: () {
               Get.back();

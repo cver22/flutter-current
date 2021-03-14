@@ -113,11 +113,11 @@ class _FilterDialogState extends State<FilterDialog> {
       mainAxisSize: MainAxisSize.max,
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        FlatButton(
+        TextButton(
           child: Text('Cancel'),
           onPressed: () => Get.back(),
         ),
-        FlatButton(
+        TextButton(
           child: Text('Clear'),
           onPressed: () {
             _minAmountController.clear();
@@ -125,7 +125,7 @@ class _FilterDialogState extends State<FilterDialog> {
             Env.store.dispatch(FilterSetReset());
           },
         ),
-        FlatButton(
+        TextButton(
             child: Text(filterState.updated ? 'Save Filter' : 'Done'),
             onPressed: _minExceedMax(filter: filterState.filter.value) ? null : () {
               if (entriesChart == EntriesCharts.entries) {

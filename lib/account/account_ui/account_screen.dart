@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:expenses/account/account_ui/change_password_controller.dart';
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/env.dart';
 import 'package:expenses/qr_reader/qr_model/qr_model.dart';
@@ -177,9 +178,7 @@ class _AccountScreenState extends State<AccountScreen> {
               ),
             ],
           )
-        : RaisedButton(
-            elevation: RAISED_BUTTON_ELEVATION,
-            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+        : AppButton(
             child: Text('Show my QR Code'),
             onPressed: () {
               setState(() {
@@ -190,7 +189,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _logoutButton() {
-    return FlatButton(
+    return TextButton(
       child: Text('Logout'),
       onPressed: () {
         Env.userFetcher.signOut();

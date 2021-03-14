@@ -1,11 +1,10 @@
 import 'package:expenses/account/account_model/account_state.dart';
 import 'package:expenses/account/account_ui/change_password_form.dart';
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
 import 'package:expenses/store/actions/account_actions.dart';
 import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/utils.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../env.dart';
@@ -32,9 +31,7 @@ class ChangePasswordController extends StatelessWidget {
                 ],
               );
             } else {
-              return RaisedButton(
-                elevation: RAISED_BUTTON_ELEVATION,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+              return AppButton(
                 child: Text('Change Password'),
                 onPressed: () {
                   Env.store.dispatch(ShowHidePasswordForm());

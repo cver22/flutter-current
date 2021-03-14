@@ -1,6 +1,5 @@
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
 import 'package:expenses/utils/currency.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../env.dart';

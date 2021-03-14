@@ -54,19 +54,19 @@ class _EditTagDialogState extends State<EditTagDialog> {
       actions: <Widget>[
         Row(
           children: <Widget>[
-            FlatButton(
+            TextButton(
                 child: Text('Delete'),
                 onPressed: () => {
                       Env.store.dispatch(DeleteTagFromEntryScreen(tag: widget.tag)),
                       Get.back(),
                     }),
-            FlatButton(
+            TextButton(
               child: Text('Cancel'),
               onPressed: () => {
                 Get.back(),
               },
             ),
-            FlatButton(
+            TextButton(
               child: Text('Save'),
               //TODO this does not work
               onPressed: canSave

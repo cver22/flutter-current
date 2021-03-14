@@ -74,8 +74,8 @@ const String MEMBER_NAME = 'memberName';
 
 //UI constants
 const double EMOJI_SIZE = 22.0;
-const double RAISED_BUTTON_ELEVATION = 3.0;
-const double RAISED_BUTTON_CIRCULAR_RADIUS = 5.0;
+const double ELEVATED_BUTTON_ELEVATION = 3.0;
+const double ELEVATED_BUTTON_CIRCULAR_RADIUS = 5.0;
 const double DIALOG_ELEVATION = 5.0;
 const double DIALOG_BORDER_RADIUS = 10.0;
 const double DIALOG_EDGE_INSETS = 25.0;

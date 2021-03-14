@@ -59,7 +59,7 @@ class FilterMemberDialog extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
 
-                FlatButton(
+                TextButton(
                   child: Text('Clear'),
                   onPressed: () {
                     if (paidOrSpent == PaidOrSpent.paid) {
@@ -69,7 +69,7 @@ class FilterMemberDialog extends StatelessWidget {
                     }
                   },
                 ),
-                FlatButton(
+                TextButton(
                     child: Text('Done'),
                     onPressed: () {
                       Get.back();

@@ -138,7 +138,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
             ),
 
             //TODO implement default category system, option to turn it on
-            /*FlatButton(
+            /*TextButton(
               child: Text('Set Default'),
               onPressed: () => {
                 if (_category?.isDefault == true)

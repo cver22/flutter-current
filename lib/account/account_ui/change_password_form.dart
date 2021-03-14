@@ -1,7 +1,7 @@
 import 'package:expenses/account/account_model/account_state.dart';
+import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
 import 'package:expenses/store/actions/account_actions.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 import '../../env.dart';
@@ -92,9 +92,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
             mainAxisAlignment: MainAxisAlignment.end,
             mainAxisSize: MainAxisSize.max,
             children: [
-              RaisedButton(
-                elevation: RAISED_BUTTON_ELEVATION,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+              AppButton(
                 child: Text('Submit'),
                 onPressed: accountState.loginStatus == LoginStatus.submitting ||
                         !accountState.newPasswordsMatch ||

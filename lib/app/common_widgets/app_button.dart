@@ -17,9 +17,9 @@ class AppButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        elevation: RAISED_BUTTON_ELEVATION,
+        elevation: ELEVATED_BUTTON_ELEVATION,
         primary: buttonColor ?? ThemeData.light().primaryColor,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(ELEVATED_BUTTON_CIRCULAR_RADIUS)),
       ),
       onPressed: onPressed,
       child: child,

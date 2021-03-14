@@ -19,13 +19,13 @@ class SimpleConfirmationDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.max,
           mainAxisAlignment: MainAxisAlignment.end,
           children: <Widget>[
-            FlatButton(
+            TextButton(
                 child: Text('Cancel'),
                 onPressed: () {
                   onTapYes(false); //does not exit calling screen if used in willPopScope
                   Get.back();
                 }),
-            FlatButton(
+            TextButton(
               child: Text('Yes'),
               onPressed: () {
                 onTapYes(true);

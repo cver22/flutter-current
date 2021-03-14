@@ -156,7 +156,6 @@ class AddEditLogScreen extends StatelessWidget {
                 log.uid == null ? NewLogCategorySourceWidget(logs: logs, log: log) : Container(),
                 SizedBox(height: 16.0),
                 log.uid == null ? Container() : _categoryButton(context: context, log: log),
-                //log.uid == null ? Container() : _subcategoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
                 _buildLogMemberList(log: log),
                 SizedBox(height: 8.0),
@@ -188,7 +187,6 @@ class AddEditLogScreen extends StatelessWidget {
         : CategoryButton(
             label: 'Edit Log Categories',
             onPressed: () => {
-              /*Get.dialog(CategoryListDialog()),*/
               showDialog(
                 context: context,
                 builder: (_) => MasterCategoryListDialog(
@@ -224,27 +222,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
-  /*Widget _buildMakeDefaultButton({@required Log log}) {
-    if (log?.id == null) {
-      return Container();
-    }
 
-    bool isDefault = log.id == Env.store.state.settingsState.settings.value.defaultLogId ? true : false;
-
-    return RaisedButton(
-      elevation: RAISED_BUTTON_ELEVATION,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(RAISED_BUTTON_CIRCULAR_RADIUS)),
-      child: Text(
-        isDefault ? 'Default Log' : 'Make Log Default',
-        //style: TextStyle(color: isDefault ? Colors.grey : Colors.black),
-      ),
-      onPressed: isDefault
-          ? null
-          : () {
-              Env.store.dispatch(ChangeDefaultLog(log: log));
-            },
-    );
-  }*/
 
   Widget _buildCurrencyPicker({@required Log log, @required String currency}) {
     Currency _currency = CurrencyService().findByCode(currency);

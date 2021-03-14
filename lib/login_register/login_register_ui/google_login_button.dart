@@ -11,16 +11,18 @@ class GoogleLoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return RaisedButton.icon(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(30.0),
+    return ElevatedButton.icon(
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(30.0),
+        ),
+        primary: enabled ? Colors.redAccent : Colors.grey,
       ),
       icon: Icon(
         FontAwesomeIcons.google,
         color: Colors.white,
       ),
       label: Text('Sign in with Google', style: TextStyle(color: Colors.white)),
-      color: enabled ? Colors.redAccent : Colors.grey,
       onPressed: () => enabled ? Env.userFetcher.signInWithGoogle(loginRegState) : null,
     );
   }
