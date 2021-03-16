@@ -27,6 +27,7 @@
 //TODO move tag list creators from UI (tag picker) to actions and state
 //button on tags to visualize stats for that tag, spent, average, etc
 //add blank option to new log
+//multi select delete
 
 
 //TODO VISUAL
@@ -45,7 +46,9 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
+//clicking no category and money transfer should close the dialog
 //fix category editor to add back button and also fix the emoji picker, its very broken
+//money transfer should not show up in monthly totals
 
 
 

@@ -73,7 +73,7 @@ class LogListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                        'Daily Average for ${MONTHS_SHORT[currentMonth - 1]}: \$ ${formattedAmount(value: logTotal?.averagePerDay, emptyReturnZeroed: true)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: \$ ${formattedAmount(value: logTotal?.averagePerDay, emptyReturnZeroed: true)}'),
                     Text(
                         '${MONTHS_SHORT[currentMonth - 1]} Total: \$ ${formattedAmount(value: logTotal?.thisMonthTotalPaid, emptyReturnZeroed: true)}'),
                     Text(

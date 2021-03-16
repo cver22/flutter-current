@@ -248,7 +248,7 @@ LogTotal updateLogMemberTotals({@required List<MyEntry> entries, @required Log l
   int sameMonthLastYearTotalPaid = 0;
   int daysSoFar = now.day > 0 ? now.day : 1;
 
-  entries.removeWhere((entry) => entry.logId != log.id);
+  entries.removeWhere((entry) => entry.logId != log.id || entry.categoryId == TRANSFER_FUNDS);
 
   logMembers.updateAll((key, value) => value.copyWith(paid: 0, spent: 0));
 
