@@ -1,5 +1,6 @@
 import 'package:emojis/emoji.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_grid.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 class EmojiPicker extends StatelessWidget {
@@ -9,17 +10,22 @@ class EmojiPicker extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DefaultTabController(
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8.0, 8.0, 8.0, 0),
+      child: DefaultTabController(
       length: 8,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.only(topLeft: Radius.circular(ELEVATED_BUTTON_CIRCULAR_RADIUS),
+            topRight: Radius.circular(ELEVATED_BUTTON_CIRCULAR_RADIUS),),),
           //TODO handle back button
           automaticallyImplyLeading: false,
           flexibleSpace: Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: <Widget>[
               TabBar(
+                labelPadding: EdgeInsets.all(0),
                 tabs: [
                   Tab(child: Icon(Icons.emoji_people_outlined)),
                   Tab(child: Icon(Icons.emoji_nature_outlined)),
@@ -47,6 +53,6 @@ class EmojiPicker extends StatelessWidget {
           ],
         ),
       ),
-    );
+      ),);
   }
 }

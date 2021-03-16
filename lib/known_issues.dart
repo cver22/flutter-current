@@ -32,9 +32,10 @@
 
 //TODO VISUAL
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
-//TODO filter dialog and tag filter should be full size
 //TODO selectable shadow color on logs
 //TODO settings for month/day separator on the entries screen
+//TODO make note that transfer funds do not show up in monthly totals
+//TODO is there a better way to handle "Other" in entries tiles
 
 
 
@@ -46,9 +47,8 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//clicking no category and money transfer should close the dialog
-//fix category editor to add back button and also fix the emoji picker, its very broken
-//money transfer should not show up in monthly totals
+//make date time
+
 
 
 

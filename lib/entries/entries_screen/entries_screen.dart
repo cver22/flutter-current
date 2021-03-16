@@ -162,12 +162,9 @@ List<MyEntry> _buildFilteredEntries({
             uids.add(entryMember.uid);
           }
         });
-        print('all uids: $uids');
-        print('spentFilter: ${filter.membersSpent}');
 
         filter.membersSpent.forEach((element) {
           if (uids.contains(element)) {
-            print('triggered');
             retain = true;
           }
         });
@@ -184,24 +181,23 @@ List<MyEntry> _buildFilteredEntries({
         List<String> entryTagNames = [];
         bool retain = false;
 
-       if(entryTagIds.isNotEmpty){
-         //get name of all tags in the entry
-         entryTagIds.forEach((id) {
-           //error checking for improperly deleted tags
-           if(allTags.keys.contains(id)) {
-             entryTagNames.add(allTags[id].name);
-           }
+        if (entryTagIds.isNotEmpty) {
+          //get name of all tags in the entry
+          entryTagIds.forEach((id) {
+            //error checking for improperly deleted tags
+            if (allTags.keys.contains(id)) {
+              entryTagNames.add(allTags[id].name);
+            }
+          });
 
-         });
-
-         for (int i = 0; i < entryTagNames.length; i++) {
-           if (filter.selectedTags.contains(entryTagNames[i])) {
-             //entry contains at least one instance of a filtered tag
-             retain = true;
-             break;
-           }
-         }
-       }
+          for (int i = 0; i < entryTagNames.length; i++) {
+            if (filter.selectedTags.contains(entryTagNames[i])) {
+              //entry contains at least one instance of a filtered tag
+              retain = true;
+              break;
+            }
+          }
+        }
 
         return retain;
       });

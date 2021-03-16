@@ -54,6 +54,9 @@ class EntriesListTile extends StatelessWidget {
               Env.store.dispatch(SelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
             },
+           /* onLongPress: () => {
+              //TODO multi select
+            },*/
           ),
           Divider(height: 0.0),
         ],

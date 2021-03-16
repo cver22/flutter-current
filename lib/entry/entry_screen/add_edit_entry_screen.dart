@@ -1,3 +1,4 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/app/common_widgets/app_currency_picker.dart';
 import 'package:expenses/app/common_widgets/date_button.dart';
@@ -180,6 +181,7 @@ class AddEditEntryScreen extends StatelessWidget {
         _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSubmit: canSubmit),
         SizedBox(height: 10.0),
         DateButton(
+          datePickerType: DatePickerType.entry,
           initialDateTime: entry.dateTime,
           label: 'Select Date',
           onSave: (newDateTIme) => Env.store.dispatch(UpdateEntryDateTime(dateTime: newDateTIme)),
@@ -201,6 +203,7 @@ class AddEditEntryScreen extends StatelessWidget {
         : CategoryButton(
             label: 'Select a Category',
             onPressed: () => {
+              Env.store.dispatch(EntryClearAllFocus()),
               Get.dialog(
                 EntryCategoryListDialog(
                   categoryOrSubcategory: CategoryOrSubcategory.category,
@@ -216,11 +219,13 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _subcategoryButton({@required MyEntry entry, @required List<AppCategory> subcategories}) {
+
     return entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
         ? Container()
         : CategoryButton(
             label: 'Select a Subcategory',
             onPressed: () => {
+            Env.store.dispatch(EntryClearAllFocus()),
               Get.dialog(
                 EntryCategoryListDialog(
                   categoryOrSubcategory: CategoryOrSubcategory.subcategory,

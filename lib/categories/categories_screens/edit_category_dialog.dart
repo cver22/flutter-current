@@ -1,4 +1,5 @@
 import 'package:expenses/app/common_widgets/app_button.dart';
+import 'package:expenses/app/common_widgets/app_dialog.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
 import 'package:expenses/utils/db_consts.dart';
@@ -92,53 +93,49 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      insetPadding: EdgeInsets.all(DIALOG_EDGE_INSETS),
-      elevation: DIALOG_ELEVATION,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
-      title: Text(dialogTitle(categoryOrSubcategory, newCategory)),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Row(
-            children: <Widget>[
-              _buildEmojiButton(),
-              SizedBox(width: 20),
-              _buildNameField(),
-            ],
-          ),
-          categoryOrSubcategory == CategoryOrSubcategory.category
-              ? Container()
-              : _selectParentCategory(selectedCategory),
-          SizedBox(height: 10),
-          showEmojiGrid
-              ? Expanded(
-                  child: EmojiPicker(
-                      emojiSelection: (emoji) => {
-                            setState(() {
-                              emojiChar = emoji;
-                            })
-                          }),
-                )
-              : Container(),
-        ],
-      ),
-      actions: <Widget>[
-        Row(
-          children: <Widget>[
-            _canDelete(categoryId: category.id)
-                ? TextButton(child: Text('Delete'), onPressed: widget.delete)
-                : Container(),
-
-            TextButton(
-              child: Text('Cancel'),
-              onPressed: () => {
-                Get.back(),
-              },
+    return AppDialogWithActions(
+      title: dialogTitle(categoryOrSubcategory, newCategory),
+      topWidget: Padding(
+        padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              children: <Widget>[
+                _buildEmojiButton(),
+                SizedBox(width: 20),
+                _buildNameField(),
+              ],
             ),
+            categoryOrSubcategory == CategoryOrSubcategory.category
+                ? Container()
+                : _selectParentCategory(selectedCategory),
+          ],
+        ),
+      ),
+      shrinkWrap: true,
+      child: showEmojiGrid
+          ? EmojiPicker(
+              emojiSelection: (emoji) => {
+                    setState(() {
+                      emojiChar = emoji;
+                    })
+                  })
+          : Container(
+              height: 0.0,
+            ),
+      actions: <Widget>[
+        _canDelete(categoryId: category.id) ? TextButton(child: Text('Delete'), onPressed: widget.delete) : Container(),
 
-            //TODO implement default category system, option to turn it on
-            /*TextButton(
+        TextButton(
+          child: Text('Cancel'),
+          onPressed: () => {
+            Get.back(),
+          },
+        ),
+
+        //TODO implement default category system, option to turn it on
+        /*TextButton(
               child: Text('Set Default'),
               onPressed: () => {
                 if (_category?.isDefault == true)
@@ -152,20 +149,17 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                   }
               },
             ),*/
-            TextButton(
-              child: Text('Save'),
-              onPressed: canSave
-                  ? () => {
-                        //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
+        TextButton(
+          child: Text('Save'),
+          onPressed: canSave
+              ? () => {
+                    //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
 
-                        print('${controller.text}, $emojiChar, $parentCategoryId'),
-                        widget?.save(controller.text, emojiChar, parentCategoryId),
-                        Get.back(),
-                      }
-                  : null,
-            ),
-          ],
-        )
+                    widget?.save(controller.text, emojiChar, parentCategoryId),
+                    Get.back(),
+                  }
+              : null,
+        ),
       ],
     );
   }

@@ -320,15 +320,20 @@ class AddEditCategoryFromEntryScreen implements AppAction {
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
+    List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
     if (category.id == null) {
-      categories.add(category.copyWith(id: Uuid().v4()));
+      AppCategory newCategory = category.copyWith(id: Uuid().v4());
+      categories.add(newCategory);
+      subcategories.add(
+          AppCategory(parentCategoryId: newCategory.id, name: 'Other', emojiChar: '🤷', id: '$OTHER${Uuid().v4()}'));
     } else {
       categories[categories.indexWhere((entry) => entry.id == category.id)] = category;
     }
 
     return _updateSingleEntryState(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(categories: categories, userUpdated: true),
+      (singleEntryState) =>
+          singleEntryState.copyWith(categories: categories, subcategories: subcategories, userUpdated: true),
     );
   }
 }
@@ -782,7 +787,6 @@ class EntryMemberFocus implements AppAction {
       focusNode = member.payingFocusNode;
       focusNode.requestFocus();
       member = member.copyWith(payingFocusNode: focusNode);
-      print(member.payingFocusNode.hasFocus);
     } else if (paidOrSpent == PaidOrSpent.spent) {
       focusNode = member.spendingFocusNode;
       focusNode.requestFocus();
@@ -858,6 +862,40 @@ class EntryNextFocus implements AppAction {
         tagFocusNode.requestFocus();
       }
     }
+
+    return _updateSingleEntryState(
+        appState,
+        (singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(entry.copyWith(entryMembers: memberMap)),
+              commentFocusNode: Maybe.some(commentFocusNode),
+              tagFocusNode: Maybe.some(tagFocusNode),
+            ));
+  }
+}
+
+class EntryClearAllFocus implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
+    List<EntryMember> memberList = memberMap.values.toList();
+    FocusNode commentFocusNode = appState.singleEntryState.commentFocusNode.value;
+    FocusNode tagFocusNode = appState.singleEntryState.tagFocusNode.value;
+
+    for (int i = 0; i < memberList.length; i++) {
+      FocusNode spendingFocus;
+      FocusNode payingFocus;
+
+      spendingFocus = memberList[i].spendingFocusNode;
+      spendingFocus.unfocus();
+      payingFocus = memberList[i].payingFocusNode;
+      payingFocus.unfocus();
+      memberMap.update(memberList[i].uid,
+          (value) => memberList[i].copyWith(spendingFocusNode: spendingFocus, payingFocusNode: payingFocus));
+    }
+
+    commentFocusNode.unfocus();
+    tagFocusNode.unfocus();
 
     return _updateSingleEntryState(
         appState,

@@ -34,7 +34,6 @@ String formattedAmount({@required int value, bool withSeparator = false, bool em
       int j = i - 3 < 0 ? 0 : i - 3;
       bigUnitsString = '${oldString.substring(j, i)},$bigUnitsString';
       i = j;
-      print(bigUnitsString);
     }
   } else {
     bigUnitsString = bigUnits.toString();
@@ -53,7 +52,6 @@ int parseNewValue({@required String newValue}) {
       isNegative = !isNegative;
       absoluteString = absoluteString.substring(1);
     }
-    print('absoluteString $absoluteString');
 
     if (absoluteString.contains('\.')) {
       int decimalIndex = absoluteString.indexOf('\.');
@@ -61,7 +59,6 @@ int parseNewValue({@required String newValue}) {
       String smallUnitsString = absoluteString.substring(decimalIndex + 1);
       int smallUnitsInt = smallUnitsString.length < 2 ? int.parse('${smallUnitsString}0') : int.parse(smallUnitsString);
 
-      print('small units $smallUnitsInt');
 
       value = value + smallUnitsInt; //adds trailing zero if the last digit has not been added
     } else {

@@ -1,3 +1,4 @@
+import 'package:date_time_picker/date_time_picker.dart';
 import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/app/common_widgets/app_dialog.dart';
 import 'package:expenses/app/common_widgets/date_button.dart';
@@ -108,31 +109,31 @@ class _FilterDialogState extends State<FilterDialog> {
 
   List<Widget> _actions({@required FilterState filterState, @required EntriesCharts entriesChart}) {
     return [
-        TextButton(
-          child: Text('Cancel'),
-          onPressed: () => Get.back(),
-        ),
-        TextButton(
-          child: Text('Clear'),
-          onPressed: () {
-            _minAmountController.clear();
-            _maxAmountController.clear();
-            Env.store.dispatch(FilterSetReset());
-          },
-        ),
-        TextButton(
-            child: Text(filterState.updated ? 'Save Filter' : 'Done'),
-            onPressed: _minExceedMax(filter: filterState.filter.value)
-                ? null
-                : () {
-                    if (entriesChart == EntriesCharts.entries) {
-                      Env.store.dispatch(EntriesSetEntriesFilter());
-                    } else if (entriesChart == EntriesCharts.charts) {
-                      Env.store.dispatch(EntriesSetChartFilter());
-                    }
-                    Get.back();
-                  }),
-      ];
+      TextButton(
+        child: Text('Cancel'),
+        onPressed: () => Get.back(),
+      ),
+      TextButton(
+        child: Text('Clear'),
+        onPressed: () {
+          _minAmountController.clear();
+          _maxAmountController.clear();
+          Env.store.dispatch(FilterSetReset());
+        },
+      ),
+      TextButton(
+          child: Text(filterState.updated ? 'Save Filter' : 'Done'),
+          onPressed: _minExceedMax(filter: filterState.filter.value)
+              ? null
+              : () {
+                  if (entriesChart == EntriesCharts.entries) {
+                    Env.store.dispatch(EntriesSetEntriesFilter());
+                  } else if (entriesChart == EntriesCharts.charts) {
+                    Env.store.dispatch(EntriesSetChartFilter());
+                  }
+                  Get.back();
+                }),
+    ];
   }
 
   bool _minExceedMax({@required Filter filter}) {
@@ -219,9 +220,9 @@ class _FilterDialogState extends State<FilterDialog> {
         DateButton(
           //TODO add remove focus action to these buttons
           initialDateTime: filter.startDate.isSome ? filter.startDate.value : null,
-          useShortDate: true,
+
           label: 'Start Date',
-          pickTime: false,
+          datePickerType: DatePickerType.start,
           onSave: (dateTime) {
             Env.store.dispatch(FilterSetStartDate(date: dateTime));
           },
@@ -231,9 +232,8 @@ class _FilterDialogState extends State<FilterDialog> {
         SizedBox(width: 8.0),
         DateButton(
           initialDateTime: filter.endDate.isSome ? filter.endDate.value : null,
-          useShortDate: true,
           label: 'End Date',
-          pickTime: false,
+          datePickerType: DatePickerType.end,
           onSave: (dateTime) {
             Env.store.dispatch(FilterSetEndDate(date: dateTime));
           },
@@ -298,7 +298,7 @@ class _FilterDialogState extends State<FilterDialog> {
           flex: 1,
           child: AppButton(
               onPressed: () => {
-                _removeFocus(),
+                    _removeFocus(),
                     showDialog(
                       context: context,
                       builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
@@ -315,7 +315,7 @@ class _FilterDialogState extends State<FilterDialog> {
           flex: 1,
           child: AppButton(
               onPressed: () => {
-                _removeFocus(),
+                    _removeFocus(),
                     showDialog(
                       context: context,
                       builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
@@ -386,9 +386,8 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  void _removeFocus(){
+  void _removeFocus() {
     _minFocusNode.unfocus();
     _maxFocusNode.unfocus();
   }
-
 }
