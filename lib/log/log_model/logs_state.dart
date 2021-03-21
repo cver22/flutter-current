@@ -14,8 +14,9 @@ class LogsState extends Equatable {
   final bool isLoading;
   final Maybe<Log> selectedLog;
   final List<bool> expandedCategories;
-  final bool reorder;
+  final bool reorder; //TODO is this even used anymore?
   final bool userUpdated;
+  final bool canSave;
 
   LogsState({
     this.logs,
@@ -24,6 +25,7 @@ class LogsState extends Equatable {
     this.expandedCategories,
     this.reorder,
     this.userUpdated,
+    this.canSave
   });
 
   factory LogsState.initial() {
@@ -34,11 +36,12 @@ class LogsState extends Equatable {
       expandedCategories: List(),
       reorder: false,
       userUpdated: false,
+      canSave: false,
     );
   }
 
   @override
-  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories, reorder, userUpdated];
+  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories, reorder, userUpdated, canSave];
 
   @override
   bool get stringify => true;
@@ -50,13 +53,15 @@ class LogsState extends Equatable {
     List<bool> expandedCategories,
     bool reorder,
     bool userUpdated,
+    bool canSave,
   }) {
     if ((logs == null || identical(logs, this.logs)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
         (selectedLog == null || identical(selectedLog, this.selectedLog)) &&
         (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
         (reorder == null || identical(reorder, this.reorder)) &&
-        (userUpdated == null || identical(userUpdated, this.userUpdated))) {
+        (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
+        (canSave == null || identical(canSave, this.canSave))) {
       return this;
     }
 
@@ -67,6 +72,7 @@ class LogsState extends Equatable {
       expandedCategories: expandedCategories ?? this.expandedCategories,
       reorder: reorder ?? this.reorder,
       userUpdated: userUpdated ?? this.userUpdated,
+      canSave: canSave ?? this.canSave,
     );
   }
 }

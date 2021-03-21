@@ -21,6 +21,7 @@ class SingleEntryState extends Equatable {
   final Maybe<FocusNode> commentFocusNode;
   final Maybe<FocusNode> tagFocusNode;
   final Maybe<String> search;
+  final bool canSave;
 
   SingleEntryState({
     this.selectedTag,
@@ -34,6 +35,7 @@ class SingleEntryState extends Equatable {
     this.commentFocusNode,
     this.tagFocusNode,
     this.search,
+    this.canSave,
   });
 
   factory SingleEntryState.initial() {
@@ -49,6 +51,7 @@ class SingleEntryState extends Equatable {
       commentFocusNode: Maybe.none(),
       tagFocusNode: Maybe.none(),
       search: Maybe.none(),
+      canSave: false,
     );
   }
 
@@ -66,6 +69,7 @@ class SingleEntryState extends Equatable {
         commentFocusNode,
         tagFocusNode,
         search,
+        canSave,
       ];
 
   @override
@@ -83,6 +87,7 @@ class SingleEntryState extends Equatable {
     Maybe<FocusNode> commentFocusNode,
     Maybe<FocusNode> tagFocusNode,
     Maybe<String> search,
+    bool canSave,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
@@ -94,7 +99,8 @@ class SingleEntryState extends Equatable {
         (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
         (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
         (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode)) &&
-        (search == null || identical(search, this.search))) {
+        (search == null || identical(search, this.search)) &&
+        (canSave == null || identical(canSave, this.canSave))) {
       return this;
     }
 
@@ -110,6 +116,7 @@ class SingleEntryState extends Equatable {
       commentFocusNode: commentFocusNode ?? this.commentFocusNode,
       tagFocusNode: tagFocusNode ?? this.tagFocusNode,
       search: search ?? this.search,
+      canSave: canSave ?? this.canSave,
     );
   }
 }

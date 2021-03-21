@@ -1,4 +1,3 @@
-import 'package:date_time_picker/date_time_picker.dart';
 import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:expenses/app/common_widgets/app_currency_picker.dart';
 import 'package:expenses/app/common_widgets/date_button.dart';
@@ -30,17 +29,25 @@ import 'package:get/get.dart';
 class AddEditEntryScreen extends StatelessWidget {
   AddEditEntryScreen({Key key}) : super(key: key);
 
-  void _submit({@required MyEntry entry}) {
+  void _save({@required MyEntry entry}) {
     Env.store.dispatch(AddUpdateSingleEntryAndTags(entry: entry));
     Get.back();
   }
 
-  Future<bool> _closeConfirmationDialog() async {
+  Future<bool> _closeConfirmationDialog({@required bool canSave, @required MyEntry entry}) async {
     bool onWillPop = false;
     await Get.dialog(
       SimpleConfirmationDialog(
-        title: 'Discard changes?',
-        onTapYes: (pop) {
+        title: canSave ? 'Save changes?' : 'Discard changes?',
+        confirmText: 'Save',
+        canConfirm: canSave,
+        onTapConfirm: (pop) {
+          onWillPop = pop;
+          if (onWillPop) {
+            _save(entry: entry);
+          }
+        },
+        onTapDiscard: (pop) {
           onWillPop = pop;
           if (onWillPop) {
             _updateCategoriesOnClose();
@@ -55,7 +62,6 @@ class AddEditEntryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     MyEntry entry;
-    bool canSubmit = false;
     return ConnectState<SingleEntryState>(
         where: notIdentical,
         map: (state) => state.singleEntryState,
@@ -70,12 +76,11 @@ class AddEditEntryScreen extends StatelessWidget {
             }
             Log log;
             log = Env.store.state.logsState.logs[entry.logId];
-            canSubmit = _canSubmit(entry: entry);
 
             return WillPopScope(
               onWillPop: () async {
                 if (singleEntryState.userUpdated) {
-                  return _closeConfirmationDialog();
+                  return _closeConfirmationDialog(canSave: singleEntryState.canSave, entry: entry);
                 } else {
                   _updateCategoriesOnClose();
                   return true;
@@ -84,10 +89,8 @@ class AddEditEntryScreen extends StatelessWidget {
               child: Stack(
                 children: [
                   Scaffold(
-                    appBar:
-                        _buildAppBar(entry: entry, singleEntryState: singleEntryState, log: log, canSubmit: canSubmit),
-                    body: _buildContents(
-                        context: context, entryState: singleEntryState, log: log, entry: entry, canSubmit: canSubmit),
+                    appBar: _buildAppBar(entry: entry, singleEntryState: singleEntryState, log: log),
+                    body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
                   ),
                   ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.processing),
                 ],
@@ -97,18 +100,16 @@ class AddEditEntryScreen extends StatelessWidget {
         });
   }
 
-  AppBar _buildAppBar(
-      {@required MyEntry entry,
-      @required SingleEntryState singleEntryState,
-      @required Log log,
-      @required bool canSubmit}) {
+  AppBar _buildAppBar({@required MyEntry entry, @required SingleEntryState singleEntryState, @required Log log}) {
+    bool canSave = singleEntryState.canSave;
+
     return AppBar(
       title: Text('Entry'),
       leading: IconButton(
         icon: Icon(Icons.arrow_back),
         onPressed: () {
           if (singleEntryState.userUpdated) {
-            _closeConfirmationDialog();
+            _closeConfirmationDialog(canSave: canSave, entry: entry);
           } else {
             Get.back();
           }
@@ -118,9 +119,9 @@ class AddEditEntryScreen extends StatelessWidget {
         IconButton(
           icon: Icon(
             Icons.check,
-            color: canSubmit ? Colors.white : Colors.grey,
+            color: canSave ? Colors.white : Colors.grey,
           ),
-          onPressed: canSubmit ? () => {_submit(entry: entry)} : null,
+          onPressed: canSave ? () => {_save(entry: entry)} : null,
         ),
         _buildDeleteEntryButton(entry: entry),
       ],
@@ -131,14 +132,13 @@ class AddEditEntryScreen extends StatelessWidget {
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
-      @required MyEntry entry,
-      @required bool canSubmit}) {
+      @required MyEntry entry}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: _buildForm(context: context, entryState: entryState, log: log, entry: entry, canSubmit: canSubmit),
+          child: _buildForm(context: context, entryState: entryState, log: log, entry: entry),
         ),
       ),
     );
@@ -148,8 +148,8 @@ class AddEditEntryScreen extends StatelessWidget {
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
-      @required MyEntry entry,
-      @required bool canSubmit}) {
+      @required MyEntry entry}) {
+    bool canSave = entryState.canSave;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -177,8 +177,8 @@ class AddEditEntryScreen extends StatelessWidget {
             log: log,
             userUpdated: entryState.userUpdated,
             entryId: entry.id),
-        canSubmit ? Container() : SizedBox(height: 10.0),
-        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSubmit: canSubmit),
+        canSave ? Container() : SizedBox(height: 10.0),
+        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSave: canSave),
         SizedBox(height: 10.0),
         DateButton(
           datePickerType: DatePickerType.entry,
@@ -219,13 +219,12 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _subcategoryButton({@required MyEntry entry, @required List<AppCategory> subcategories}) {
-
     return entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
         ? Container()
         : CategoryButton(
             label: 'Select a Subcategory',
             onPressed: () => {
-            Env.store.dispatch(EntryClearAllFocus()),
+              Env.store.dispatch(EntryClearAllFocus()),
               Get.dialog(
                 EntryCategoryListDialog(
                   categoryOrSubcategory: CategoryOrSubcategory.subcategory,
@@ -263,7 +262,7 @@ class AddEditEntryScreen extends StatelessWidget {
         await Get.dialog(
           SimpleConfirmationDialog(
             title: 'Are you sure you want to delete this Entry?',
-            onTapYes: (confirmDelete) {
+            onTapConfirm: (confirmDelete) {
               if (confirmDelete) {
                 Env.store.dispatch(EntriesDeleteSelectedEntry());
                 _updateCategoriesOnClose();
@@ -274,23 +273,6 @@ class AddEditEntryScreen extends StatelessWidget {
         );
         break;
     }
-  }
-
-  bool _canSubmit({MyEntry entry}) {
-    bool canSubmit = false;
-    if (entry?.amount != null && entry.amount != 0) {
-      int totalMemberSpend = 0;
-
-      entry.entryMembers.forEach((key, value) {
-        if (value.spending) {
-          totalMemberSpend += value.spent;
-        }
-      });
-      if (totalMemberSpend == entry.amount) {
-        canSubmit = true;
-      }
-    }
-    return canSubmit;
   }
 
   Widget _buildDeleteEntryButton({MyEntry entry}) {
@@ -314,7 +296,7 @@ class AddEditEntryScreen extends StatelessWidget {
     Env.store.dispatch(ClearEntryState());
   }
 
-  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSubmit}) {
+  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave}) {
     int remainingSpending = 0;
     members.forEach((key, member) {
       if (member.paying && member.paid != null) {
@@ -325,7 +307,7 @@ class AddEditEntryScreen extends StatelessWidget {
       }
     });
 
-    if (!canSubmit && remainingSpending != 0) {
+    if (!canSave && remainingSpending != 0) {
       return Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,

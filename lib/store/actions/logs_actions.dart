@@ -53,12 +53,32 @@ class SetNewLog implements AppAction {
 class UpdateSelectedLog implements AppAction {
   final Log log;
 
-  UpdateSelectedLog({this.log});
+  UpdateSelectedLog({@required this.log});
 
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(
         appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true));
+  }
+}
+
+class LogUpdateName implements AppAction {
+  final String name;
+
+  LogUpdateName({@required this.name});
+
+  @override
+  AppState updateState(AppState appState) {
+    Log log = appState.logsState.selectedLog.value;
+    bool canSave = false;
+    log = log.copyWith(name: name);
+
+    if(name.isNotEmpty) {
+      canSave = true;
+    }
+
+    return _updateLogState(
+        appState, (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true, canSave: canSave));
   }
 }
 
@@ -101,15 +121,17 @@ class SelectLog implements AppAction {
 
     return _updateLogState(
         appState,
-        (logsState) =>
-            logsState.copyWith(selectedLog: Maybe.some(logsState.logs[logId]), expandedCategories: expandedCategories));
+        (logsState) => logsState.copyWith(
+            selectedLog: Maybe.some(appState.logsState.logs[logId]),
+            expandedCategories: expandedCategories,
+            canSave: true));
   }
 }
 
 class ClearSelectedLog implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none()));
+    return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none(), canSave: false));
   }
 }
 

@@ -484,12 +484,14 @@ class UpdateMemberPaidAmount implements AppAction {
     });
 
     members = _divideSpendingEvenly(amount: amount, members: members);
+    entry = entry.copyWith(amount: amount, entryMembers: members);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(amount: amount, entryMembers: members)),
+              selectedEntry: Maybe.some(entry),
               userUpdated: true,
+              canSave: _canSave(entry: entry),
             ));
   }
 }
@@ -509,12 +511,14 @@ class UpdateMemberSpentAmount implements AppAction {
     members.update(member.uid, (value) => member.copyWith(spent: spentValue, userEditedSpent: true));
 
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    entry = entry.copyWith(entryMembers: members);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry),
               userUpdated: true,
+              canSave: _canSave(entry: entry),
             ));
   }
 }
@@ -527,12 +531,14 @@ class EntryDivideRemainingSpending implements AppAction {
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
 
     members = _distributeRemainingSpending(amount: entry.amount, members: members);
+    entry = entry.copyWith(entryMembers: members);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry),
               userUpdated: true,
+              canSave: _canSave(entry: entry),
             ));
   }
 }
@@ -547,12 +553,14 @@ class EntryResetMemberSpendingToAll implements AppAction {
     });
 
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    entry = entry.copyWith(entryMembers: members);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry),
               userUpdated: true,
+              canSave: _canSave(entry: entry),
             ));
   }
 }
@@ -601,12 +609,14 @@ class ToggleMemberPaying implements AppAction {
 
     //redistributes expense based on revision of who is paying
     members = _divideSpendingEvenly(amount: amount, members: members);
+    entry = entry.copyWith(entryMembers: members, amount: amount);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members, amount: amount)),
+              selectedEntry: Maybe.some(entry),
               userUpdated: true,
+              canSave: _canSave(entry: entry),
             ));
   }
 }
@@ -637,12 +647,14 @@ class ToggleMemberSpending implements AppAction {
 
     //redistributes expense based on revision of who is paying
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    entry = entry.copyWith(entryMembers: members);
 
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: members)),
+              selectedEntry: Maybe.some(entry),
               userUpdated: true,
+              canSave: _canSave(entry: entry),
             ));
   }
 }
@@ -1086,4 +1098,21 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
   }
 
   return members;
+}
+
+bool _canSave({MyEntry entry}) {
+  bool canSubmit = false;
+  if (entry?.amount != null && entry.amount != 0) {
+    int totalMemberSpend = 0;
+
+    entry.entryMembers.forEach((key, value) {
+      if (value.spending) {
+        totalMemberSpend += value.spent;
+      }
+    });
+    if (totalMemberSpend == entry.amount) {
+      canSubmit = true;
+    }
+  }
+  return canSubmit;
 }

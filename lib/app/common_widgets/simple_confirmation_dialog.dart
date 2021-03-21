@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-//used by the enty and log for confirming exit, delete actions
 class SimpleConfirmationDialog extends StatelessWidget {
-  final Function(bool) onTapYes;
+  final Function(bool) onTapConfirm;
+  final Function(bool) onTapDiscard;
   final String title;
   final String content;
+  final String confirmText;
+  final bool canConfirm;
 
-  const SimpleConfirmationDialog({Key key, this.onTapYes, this.title, this.content}) : super(key: key);
+  const SimpleConfirmationDialog({Key key, this.onTapConfirm, this.onTapDiscard, this.title, this.content, this.confirmText, this.canConfirm = true}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,16 +24,22 @@ class SimpleConfirmationDialog extends StatelessWidget {
             TextButton(
                 child: Text('Cancel'),
                 onPressed: () {
-                  onTapYes(false); //does not exit calling screen if used in willPopScope
+                  onTapConfirm(false); //does not exit calling screen if used in willPopScope
                   Get.back();
                 }),
-            TextButton(
-              child: Text('Yes'),
+            onTapDiscard != null ? TextButton(
+                child: Text('Discard'),
+                onPressed: () {
+                  onTapDiscard(true); //does not exit calling screen if used in willPopScope
+                  Get.back();
+                }) : Container(),
+            canConfirm ? TextButton(
+              child: Text(confirmText ??'Yes'),
               onPressed: () {
-                onTapYes(true);
+                onTapConfirm(true);
                 Get.back();
               },
-            ),
+            ) : Container(),
           ],
         )
       ],

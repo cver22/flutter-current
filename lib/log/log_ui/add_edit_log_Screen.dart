@@ -28,14 +28,22 @@ class AddEditLogScreen extends StatelessWidget {
     Get.back();
   }
 
-  Future<bool> _exitConfirmationDialog() async {
+  Future<bool> _exitConfirmationDialog({@required bool canSave}) async {
     bool onWillPop = false;
     if (Env.store.state.logsState.userUpdated) {
       //user has made changes, confirm they wish to exit
       await Get.dialog(
         SimpleConfirmationDialog(
-          title: 'Discard changes?',
-          onTapYes: (pop) => {onWillPop = pop},
+          title: canSave ? 'Save changes?' : 'Discard changes?',
+          onTapDiscard: (pop) {
+            onWillPop = pop;
+          },
+          confirmText: canSave ? 'Save' : null,
+          canConfirm: canSave,
+          onTapConfirm: (pop) {
+            onWillPop = pop;
+            if (canSave) _submit();
+          },
         ),
       );
     } else {
@@ -58,7 +66,7 @@ class AddEditLogScreen extends StatelessWidget {
         title: 'Are you sure you want to delete this log?',
         content:
             'You will also lose all entries, tags and categories associated with this log. This CANNOT be undone! ',
-        onTapYes: (delete) {
+        onTapConfirm: (delete) {
           deleteConfirmed = delete;
         },
       ),
@@ -68,7 +76,7 @@ class AddEditLogScreen extends StatelessWidget {
       await Get.dialog(
         SimpleConfirmationDialog(
           title: 'Please confirm you wish to delete this log?',
-          onTapYes: (delete) {
+          onTapConfirm: (delete) {
             deleteConfirmed = delete;
             if (deleteConfirmed) {
               Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
@@ -84,7 +92,7 @@ class AddEditLogScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     Log log;
     String currency;
-    String name;
+    bool canSave = false;
     return ConnectState<LogsState>(
       where: notIdentical,
       map: (state) => state.logsState,
@@ -95,26 +103,26 @@ class AddEditLogScreen extends StatelessWidget {
 
         log = logsState.selectedLog.value;
         currency = log?.currency; //TODO change to home currency as default
-        name = log?.name ?? null;
+        canSave = logsState.canSave;
 
         return WillPopScope(
           onWillPop: () async {
-            return _exitConfirmationDialog();
+            return _exitConfirmationDialog(canSave: canSave);
           },
           child: Scaffold(
             appBar: AppBar(
               title: Text('Log'),
               leading: IconButton(
                 icon: Icon(Icons.arrow_back),
-                onPressed: () => _exitConfirmationDialog(),
+                onPressed: () => _exitConfirmationDialog(canSave: canSave),
               ),
               actions: <Widget>[
                 IconButton(
                   icon: Icon(
                     Icons.check,
-                    color: canSave(name) ? Colors.white : Colors.grey,
+                    color: canSave ? Colors.white : Colors.grey,
                   ),
-                  onPressed: canSave(name) ? () => _submit() : null,
+                  onPressed: canSave ? () => _submit() : null,
                 ),
                 log.id == null
                     ? Container()
@@ -137,8 +145,6 @@ class AddEditLogScreen extends StatelessWidget {
       },
     );
   }
-
-  bool canSave(String name) => name != null && name != '';
 
   Widget _buildContents(
       {@required BuildContext context, @required Log log, @required String currency, @required Map<String, Log> logs}) {
@@ -222,7 +228,6 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
-
 
   Widget _buildCurrencyPicker({@required Log log, @required String currency}) {
     Currency _currency = CurrencyService().findByCode(currency);

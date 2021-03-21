@@ -44,31 +44,11 @@ class _LogNameFormState extends State<LogNameForm> {
           initialValue: log.name,
           autofocus: true,
           onChanged: (name) {
-            if (name.isNotEmpty) {
-              Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: name)));
-            }
+              Env.store.dispatch(LogUpdateName(name: name));
           }
           //TODO validate name cannot be empty
           //TODO need controllers
           );
     }
-  }
-}
-
-Widget _buildLogNameForm({@required Log log}) {
-  if (log.name.isNotEmpty) {
-    return AppButton(onPressed: null, child: null);
-  } else {
-    return TextFormField(
-        decoration: InputDecoration(labelText: 'Log Title'),
-        initialValue: log.name,
-        onChanged: (name) {
-          if (name.isNotEmpty) {
-            Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(name: name)));
-          }
-        }
-        //TODO validate name cannot be empty
-        //TODO need controllers
-        );
   }
 }
