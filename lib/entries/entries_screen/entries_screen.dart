@@ -53,7 +53,7 @@ class EntriesScreen extends StatelessWidget {
             return EntriesScreenBuildListView(
                 entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter));
           } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
-            return EmptyContent();
+            return Env.store.state.logsState.logs.isEmpty ? LogEmptyContent() : EntriesEmptyContent();
           } else {
             //TODO pass meaningful error message
             return ErrorContent();

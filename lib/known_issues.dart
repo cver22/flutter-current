@@ -27,7 +27,7 @@
 //TODO move tag list creators from UI (tag picker) to actions and state
 //button on tags to visualize stats for that tag, spent, average, etc
 //add blank option to new log
-//multi select delete
+//multi select delete, if selected, they turn red, will need to add multiSelect to entries state, add icons to the tabBar, and have a confirmation dialog
 
 
 //TODO VISUAL
@@ -40,14 +40,13 @@
 
 
 //TODO WARNINGS AND TOASTS to build
-//TODO filter, min must be less than max
-
+//add validation to min/max filter
 
 
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//make date time
+
 
 
 

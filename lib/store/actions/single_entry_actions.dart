@@ -54,12 +54,22 @@ class SetNewSelectedEntry implements AppAction {
   @override
   AppState updateState(AppState appState) {
     //TODO can probably abstract away to either settings model or to settings actions, i think model would be better, only update if needed
+    //TODO if log in the settings is not present, this should also update the setting default
 
     MyEntry entry = MyEntry();
-    //if a log is not passed to the action it is assumed to have been triggered from the FAB and creates and entry for the default log
+    Log log;
+    Map<String, Log> logs = Map.from(appState.logsState.logs);
+    String defaultLogId = appState.settingsState.settings?.value?.defaultLogId;
 
-    Log log = appState.logsState
-        .logs[logId ?? appState.settingsState.settings?.value?.defaultLogId ?? appState.logsState.logs.keys.first];
+    if (logId != null) {
+      //add entry triggered from a selected log
+      log = logs[logId];
+    } else if (defaultLogId != null && logs.containsKey(defaultLogId)) {
+      log = logs[defaultLogId];
+    } else {
+      log = logs[logs.keys.first];
+    }
+
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> members =
         _setMembersList(log: log, memberId: memberId, userId: appState.authState.user.value.id);
@@ -650,6 +660,7 @@ class AddUpdateTagFromEntryScreen implements AppAction {
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     Tag existingTag;
+    bool duplicateNewTag = false;
 
     for (Tag value in tags.values.toList()) {
       if (value.name.toLowerCase() == tag.name.toLowerCase()) {
@@ -658,29 +669,37 @@ class AddUpdateTagFromEntryScreen implements AppAction {
       }
     }
 
-    if (addedUpdatedTag.id == null) {
-      if (existingTag == null) {
-        //save new tag using the user id to help minimize chance of duplication of entry ids in the database
-        addedUpdatedTag = addedUpdatedTag.copyWith(
-          id: '${Uuid().v4()}-${appState.authState.user.value.id}',
-          logId: entry.logId,
-          tagLogFrequency: 1,
-          memberList: entry.entryMembers.keys.toList(),
-        );
-      } else {
-        //the tag already exists in the log, add to the entry and increment the log frequency
-        addedUpdatedTag = existingTag.incrementTagLogFrequency();
+    for (Tag value in appState.singleEntryState.tags.values.toList()) {
+      if (value.name.toLowerCase() == tag.name.toLowerCase()) {
+        //user attempting to add duplicate new tags
+        duplicateNewTag = true;
+        break;
+      }
+    }
+    if (!duplicateNewTag) {
+      if (addedUpdatedTag.id == null) {
+        if (existingTag == null) {
+          //save new tag using the user id to help minimize chance of duplication of entry ids in the database
+          addedUpdatedTag = addedUpdatedTag.copyWith(
+            id: '${Uuid().v4()}-${appState.authState.user.value.id}',
+            logId: entry.logId,
+            tagLogFrequency: 1,
+            memberList: entry.entryMembers.keys.toList(),
+          );
+        } else {
+          //the tag already exists in the log, add to the entry and increment the log frequency
+          addedUpdatedTag = existingTag.incrementTagLogFrequency();
+        }
+
+        entry.tagIDs.add(addedUpdatedTag.id);
+
+        addedUpdatedTag =
+            _incrementCategoryFrequency(updatedTag: addedUpdatedTag, categoryId: entry.categoryId ?? NO_CATEGORY);
       }
 
-      entry.tagIDs.add(addedUpdatedTag.id);
-
-      addedUpdatedTag =
-          _incrementCategoryFrequency(updatedTag: addedUpdatedTag, categoryId: entry.categoryId ?? NO_CATEGORY);
-      print('tag: $addedUpdatedTag');
+      //updates existing tag or add it
+      tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
-
-    //updates existing tag or add it
-    tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
 
     return _updateSingleEntryState(
         appState,
@@ -965,8 +984,6 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
       membersSpending += 1;
     }
   });
-
-  print('amount $divisibleAmount');
 
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
   //TODO, randomly assign the remainder

@@ -121,6 +121,6 @@ class FirebaseUserRepository implements UserRepository {
     User user = _firebaseAuth.currentUser;
 
     //returns true if user has signed into the app with their email
-    return user.providerData[1].providerId == EmailAuthProvider.PROVIDER_ID;
+    return user.providerData[0].providerId == EmailAuthProvider.PROVIDER_ID;
   }
 }
