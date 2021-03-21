@@ -61,7 +61,7 @@ class LogsScreen extends StatelessWidget {
         //unused function
       },
       onListReorder: (oldIndex, newIndex) => {
-        Env.store.dispatch(ReorderLog(oldIndex: oldIndex, newIndex: newIndex, logs: logs)),
+        Env.store.dispatch(LogReorder(oldIndex: oldIndex, newIndex: newIndex, logs: logs)),
       },
       children: List.generate(
           logs.length,

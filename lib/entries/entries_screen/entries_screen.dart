@@ -28,7 +28,7 @@ class EntriesScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          Env.store.dispatch(SetNewSelectedEntry());
+          Env.store.dispatch(EntrySetNewSelect());
           Get.toNamed(ExpenseRoutes.addEditEntries);
         },
         child: Icon(Icons.add),

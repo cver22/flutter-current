@@ -82,11 +82,11 @@ class LogUpdateName implements AppAction {
   }
 }
 
-class NewLogSetCategories implements AppAction {
+class LogSetCategories implements AppAction {
   final Log log;
   final bool userUpdated;
 
-  NewLogSetCategories({@required this.log, this.userUpdated = false});
+  LogSetCategories({@required this.log, this.userUpdated = false});
 
   @override
   AppState updateState(AppState appState) {
@@ -107,10 +107,10 @@ class NewLogSetCategories implements AppAction {
   }
 }
 
-class SelectLog implements AppAction {
+class LogSelectLog implements AppAction {
   final String logId;
 
-  SelectLog({this.logId});
+  LogSelectLog({this.logId});
 
   @override
   AppState updateState(AppState appState) {
@@ -128,7 +128,7 @@ class SelectLog implements AppAction {
   }
 }
 
-class ClearSelectedLog implements AppAction {
+class LogClearSelected implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateLogState(appState, (logsState) => logsState.copyWith(selectedLog: Maybe.none(), canSave: false));
@@ -152,35 +152,12 @@ class SetLogs implements AppAction {
   }
 }
 
-class CanReorder implements AppAction {
-  final bool save;
-
-  CanReorder({this.save = false});
-
-  @override
-  AppState updateState(AppState appState) {
-    bool reorder = appState.logsState.reorder;
-
-    if (reorder && save) {
-      //app is in reorder state and user wishes to save
-      appState.logsState.logs.forEach((key, log) {
-        Env.logsFetcher.updateLog(log);
-      });
-    } else if (reorder && !save) {
-      //app is in reorder state and user does not wish to save, reload previous logs
-      Env.logsFetcher.loadLogs();
-    }
-
-    return _updateLogState(appState, (logsState) => logsState.copyWith(reorder: !reorder));
-  }
-}
-
-class ReorderLog implements AppAction {
+class LogReorder implements AppAction {
   final int oldIndex;
   final int newIndex;
   final List<Log> logs;
 
-  ReorderLog({this.oldIndex, this.newIndex, this.logs});
+  LogReorder({this.oldIndex, this.newIndex, this.logs});
 
   @override
   AppState updateState(AppState appState) {
@@ -198,7 +175,7 @@ class ReorderLog implements AppAction {
   }
 }
 
-class AddUpdateLog implements AppAction {
+class LogAddUpdate implements AppAction {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
@@ -253,11 +230,11 @@ class AddUpdateLog implements AppAction {
   }
 }
 
-class AddMemberToSelectedLog implements AppAction {
+class LogAddMemberToSelectedLog implements AppAction {
   final String uid;
   final String name;
 
-  AddMemberToSelectedLog({this.uid, this.name});
+  LogAddMemberToSelectedLog({this.uid, this.name});
 
   @override
   AppState updateState(AppState appState) {
@@ -274,7 +251,7 @@ class AddMemberToSelectedLog implements AppAction {
 }
 
 //used for name changes
-class UpdateLogMember implements AppAction {
+class LogUpdateLogMember implements AppAction {
   @override
   AppState updateState(AppState appState) {
     AppUser user = appState.authState.user.value;
@@ -294,10 +271,10 @@ class UpdateLogMember implements AppAction {
   }
 }
 
-class AddEditCategoryFromLog implements AppAction {
+class LogAddEditCategory implements AppAction {
   final AppCategory category;
 
-  AddEditCategoryFromLog({@required this.category});
+  LogAddEditCategory({@required this.category});
 
   @override
   AppState updateState(AppState appState) {
@@ -330,10 +307,10 @@ class AddEditCategoryFromLog implements AppAction {
   }
 }
 
-class DeleteCategoryFromLog implements AppAction {
+class LogDeleteCategory implements AppAction {
   final AppCategory category;
 
-  DeleteCategoryFromLog({@required this.category});
+  LogDeleteCategory({@required this.category});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -357,10 +334,10 @@ class DeleteCategoryFromLog implements AppAction {
   }
 }
 
-class AddEditSubcategoryFromLog implements AppAction {
+class LogAddEditSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  AddEditSubcategoryFromLog({@required this.subcategory});
+  LogAddEditSubcategory({@required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
@@ -381,10 +358,10 @@ class AddEditSubcategoryFromLog implements AppAction {
   }
 }
 
-class DeleteSubcategoryFromLog implements AppAction {
+class LogDeleteSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  DeleteSubcategoryFromLog({@required this.subcategory});
+  LogDeleteSubcategory({@required this.subcategory});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -400,10 +377,10 @@ class DeleteSubcategoryFromLog implements AppAction {
   }
 }
 
-class ExpandCollapseLogCategory implements AppAction {
+class LogExpandCollapseCategory implements AppAction {
   final int index;
 
-  ExpandCollapseLogCategory({@required this.index});
+  LogExpandCollapseCategory({@required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
@@ -413,11 +390,11 @@ class ExpandCollapseLogCategory implements AppAction {
   }
 }
 
-class ReorderCategoryFromLogScreen implements AppAction {
+class LogReorderCategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
-  ReorderCategoryFromLogScreen({@required this.oldCategoryIndex, @required this.newCategoryIndex});
+  LogReorderCategory({@required this.oldCategoryIndex, @required this.newCategoryIndex});
 
   AppState updateState(AppState appState) {
     //reorder categories
@@ -440,13 +417,13 @@ class ReorderCategoryFromLogScreen implements AppAction {
   }
 }
 
-class ReorderSubcategoryFromLogScreen implements AppAction {
+class LogReorderSubcategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
   final int oldSubcategoryIndex;
   final int newSubcategoryIndex;
 
-  ReorderSubcategoryFromLogScreen(
+  LogReorderSubcategory(
       {@required this.oldCategoryIndex,
       @required this.newCategoryIndex,
       @required this.oldSubcategoryIndex,
@@ -478,7 +455,7 @@ class ReorderSubcategoryFromLogScreen implements AppAction {
 }
 
 //TODO this should be combined with ClearEntryState()
-class UpdateLogCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
+class LogUpdateCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Map<String, Log> logs = Map.from(appState.logsState.logs);

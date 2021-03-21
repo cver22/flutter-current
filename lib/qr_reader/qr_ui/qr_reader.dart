@@ -139,7 +139,7 @@ class _QRReaderState extends State<QRReader> {
             resultCode.contains(EXPENSE_APP)) {
           int initialMemberCount = Env.store.state.logsState.selectedLog.value.logMembers.length;
           QRModel qrModel = QRModel.fromJson(jsonDecode(resultCode));
-          Env.store.dispatch(AddMemberToSelectedLog(uid: qrModel.uid, name: qrModel.name));
+          Env.store.dispatch(LogAddMemberToSelectedLog(uid: qrModel.uid, name: qrModel.name));
           if (Env.store.state.logsState.selectedLog.value.logMembers.length > initialMemberCount) {
             print('New member added: ${qrModel.name}');
             Get.back();

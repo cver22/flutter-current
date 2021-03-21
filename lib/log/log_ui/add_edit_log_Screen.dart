@@ -24,7 +24,7 @@ class AddEditLogScreen extends StatelessWidget {
 
   void _submit() {
     print('submit pressed');
-    Env.store.dispatch(AddUpdateLog());
+    Env.store.dispatch(LogAddUpdate());
     Get.back();
   }
 
@@ -52,7 +52,7 @@ class AddEditLogScreen extends StatelessWidget {
 
     if (onWillPop) {
       //close without saving
-      Env.store.dispatch(ClearSelectedLog());
+      Env.store.dispatch(LogClearSelected());
       Get.back();
     }
 
@@ -273,7 +273,7 @@ class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget>
         subcategories: settings.defaultSubcategories);
     temporaryLogs = widget.logs.entries.map((e) => e.value).toList();
     temporaryLogs.insert(0, defaultLog);
-    Env.store.dispatch(NewLogSetCategories(log: defaultLog));
+    Env.store.dispatch(LogSetCategories(log: defaultLog));
     currentDropDownSelection = defaultLog;
   }
 
@@ -294,7 +294,7 @@ class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget>
             value: currentDropDownSelection,
             isExpanded: true,
             onChanged: (Log log) {
-              Env.store.dispatch(NewLogSetCategories(log: log, userUpdated: true));
+              Env.store.dispatch(LogSetCategories(log: log, userUpdated: true));
               currentDropDownSelection = log;
             },
             items: temporaryLogs.map((Log log) {

@@ -42,6 +42,8 @@
 //TODO WARNINGS AND TOASTS to build
 //add validation to min/max filter
 
+//TODO PERFORMANCE
+//make entry list tiles the same size and trail off too many tags
 
 //TODO GENERAL IMPORTANT *************************
 

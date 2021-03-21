@@ -30,24 +30,24 @@ class AuthSuccess implements AppAction {
   }
 }
 
-class SignOutState implements AppAction {
+class AuthSignOut implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return AppState.initial();
   }
 }
 
-class LoadingUser implements AppAction {
+class AuthLoadingUser implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAuthState(appState, (authState) => authState.copyWith(isLoading: true));
   }
 }
 
-class UpdateDisplayName implements AppAction {
+class AuthUpdateDisplayName implements AppAction {
   final String displayName;
 
-  UpdateDisplayName({@required this.displayName});
+  AuthUpdateDisplayName({@required this.displayName});
 
   @override
   AppState updateState(AppState appState) {

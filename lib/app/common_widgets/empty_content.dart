@@ -90,7 +90,7 @@ class EntriesEmptyContent extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          Env.store.dispatch(SetNewSelectedEntry());
+          Env.store.dispatch(EntrySetNewSelect());
           Get.toNamed(ExpenseRoutes.addEditEntries);
         },
       ),

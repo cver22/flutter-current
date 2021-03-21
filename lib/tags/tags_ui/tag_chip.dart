@@ -33,7 +33,7 @@ class TagChip extends StatelessWidget {
         if (filterSelect) {
           Env.store.dispatch(FilterSelectDeselectTag(name: tag.name));
         } else {
-          Env.store.dispatch(SelectDeselectEntryTag(tag: tag));
+          Env.store.dispatch(EntrySelectDeselectTag(tag: tag));
         }
       },
       onDeleted: editable

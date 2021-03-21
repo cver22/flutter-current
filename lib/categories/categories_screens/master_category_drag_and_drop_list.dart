@@ -97,9 +97,9 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   void _onExpansionChanged(int outerIndex) {
     if (setLogFilter == SettingsLogFilter.log) {
-      Env.store.dispatch(ExpandCollapseLogCategory(index: outerIndex));
+      Env.store.dispatch(LogExpandCollapseCategory(index: outerIndex));
     } else if (setLogFilter == SettingsLogFilter.settings) {
-      Env.store.dispatch(ExpandCollapseSettingsCategory(index: outerIndex));
+      Env.store.dispatch(SettingsExpandCollapseCategory(index: outerIndex));
     } else if (setLogFilter == SettingsLogFilter.filter) {
       Env.store.dispatch(FilterExpandCollapseCategory(index: outerIndex));
     }
@@ -142,13 +142,13 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   void _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
     if (setLogFilter == SettingsLogFilter.log) {
-      Env.store.dispatch(ReorderSubcategoryFromLogScreen(
+      Env.store.dispatch(LogReorderSubcategory(
           oldCategoryIndex: oldCategoryIndex,
           newCategoryIndex: newCategoryIndex,
           oldSubcategoryIndex: oldSubcategoryIndex,
           newSubcategoryIndex: newSubcategoryIndex));
     } else if (setLogFilter == SettingsLogFilter.settings) {
-      Env.store.dispatch(ReorderSubcategoryFromSettingsScreen(
+      Env.store.dispatch(SettingsReorderSubcategory(
           oldCategoryIndex: oldCategoryIndex,
           newCategoryIndex: newCategoryIndex,
           oldSubcategoryIndex: oldSubcategoryIndex,
@@ -159,10 +159,10 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   void _onListReorder(int oldCategoryIndex, int newCategoryIndex) {
     if (setLogFilter == SettingsLogFilter.log) {
       Env.store.dispatch(
-          ReorderCategoryFromLogScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
+          LogReorderCategory(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     } else if (setLogFilter == SettingsLogFilter.settings) {
       Env.store.dispatch(
-          ReorderCategoryFromSettingsScreen(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
+          SettingsReorderCategory(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     }
   }
 

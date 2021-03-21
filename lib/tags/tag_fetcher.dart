@@ -18,12 +18,12 @@ class TagFetcher {
         _tagRepository = tagRepository;
 
   Future<void> loadTags() async {
-    _store.dispatch(SetTagsLoading());
+    _store.dispatch(TagsSetLoading());
     _tagSubscription?.cancel();
     _tagSubscription = _tagRepository.loadTags(_store.state.authState.user.value).listen(
-          (tags) => _store.dispatch(SetTags(tagList: tags)),
+          (tags) => _store.dispatch(TagsSetTags(tagList: tags)),
         );
-    _store.dispatch(SetTagsLoaded());
+    _store.dispatch(TagsSetLoaded());
   }
 
   Future<void> addTag(Tag tag) async {

@@ -63,10 +63,10 @@ class EntriesSetLoaded implements AppAction {
   }
 }
 
-class SetEntries implements AppAction {
+class EntriesSetEntries implements AppAction {
   final Iterable<MyEntry> entryList;
 
-  SetEntries({this.entryList});
+  EntriesSetEntries({this.entryList});
 
   @override
   AppState updateState(AppState appState) {
@@ -98,7 +98,7 @@ class EntriesSetOrder implements AppAction {
 class EntriesDeleteSelectedEntry implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    Env.store.dispatch(SingleEntryProcessing());
+    Env.store.dispatch(EntryProcessing());
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     List<AppCategory> categories = appState.singleEntryState.categories;
     Map<String, Tag> tags = appState.singleEntryState.tags;
@@ -110,7 +110,7 @@ class EntriesDeleteSelectedEntry implements AppAction {
       Tag tag = tags[tagId];
 
       //decrement use of tag for this category and log
-      tag = decrementCategoryAndLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
+      tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
 
       tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
     });
@@ -121,7 +121,7 @@ class EntriesDeleteSelectedEntry implements AppAction {
     //Map<String, Tag> stateTags = appState.tagState.tags;
 
     //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
-    Env.store.dispatch(ClearEntryState());
+    Env.store.dispatch(EntryClearState());
 
     return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
   }

@@ -48,7 +48,7 @@ class SettingsScreen extends StatelessWidget {
                       SizedBox(width: 10),
                       AppCurrencyPicker(
                           currency: settingsState.settings.value.homeCurrency,
-                          returnCurrency: (currency) => Env.store.dispatch(UpdateSettings(
+                          returnCurrency: (currency) => Env.store.dispatch(SettingsUpdate(
                               settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
                     ],
                   ),
@@ -117,7 +117,7 @@ class SettingsScreen extends StatelessWidget {
         value: _logs?.firstWhere((e) => e.id == _defaultLogId),
         onChanged: (Log log) {
           _defaultLogId = log.id;
-          _store.dispatch(ChangeDefaultLog(log: log));
+          _store.dispatch(SettingsChangeDefaultLog(log: log));
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(
@@ -144,7 +144,7 @@ class SettingsScreen extends StatelessWidget {
               showDialog(
                 context: context,
                 builder: (_) {
-                  Env.store.dispatch(SetExpandedSettingsCategories());
+                  Env.store.dispatch(SettingSetExpandedCategories());
                   return MasterCategoryListDialog(setLogFilter: SettingsLogFilter.settings);
                 },
               ),

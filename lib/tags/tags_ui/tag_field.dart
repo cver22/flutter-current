@@ -86,7 +86,7 @@ class _TagFieldState extends State<TagField> {
                 if (searchOnly) {
                   Env.store.dispatch(FilterSetSearchedTags(search: value));
                 } else {
-                  Env.store.dispatch(EntryStateSetSearchedTags(search: value));
+                  Env.store.dispatch(EntrySetSearchedTags(search: value));
                 }
               });
             },
@@ -111,7 +111,7 @@ class _TagFieldState extends State<TagField> {
 
   _saveTag() {
     //create new tag
-    Env.store.dispatch(AddUpdateTagFromEntryScreen(tag: Tag(name: _controller.text)));
+    Env.store.dispatch(EntryAddUpdateTag(tag: Tag(name: _controller.text)));
     _controller.clear();
     hasData = false;
   }

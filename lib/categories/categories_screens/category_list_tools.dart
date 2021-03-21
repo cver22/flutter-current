@@ -12,7 +12,7 @@ Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) => {
-        Env.store.dispatch(AddEditCategoryFromLog(category: category.copyWith(name: name, emojiChar: emojiChar))),
+        Env.store.dispatch(LogAddEditCategory(category: category.copyWith(name: name, emojiChar: emojiChar))),
       },
 
       //TODO default function
@@ -21,7 +21,7 @@ Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
         },*/
 
       delete: () => {
-        Env.store.dispatch(DeleteCategoryFromLog(category: category)),
+        Env.store.dispatch(LogDeleteCategory(category: category)),
         Get.back(),
       },
       category: category,
@@ -36,14 +36,14 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
     EditCategoryDialog(
       categories: categories,
       save: (name, emojiChar, parentCategoryId) => {
-        Env.store.dispatch(AddEditSubcategoryFromLog(
+        Env.store.dispatch(LogAddEditSubcategory(
             subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
       },
 
       //TODO default function
 
       delete: () => {
-        Env.store.dispatch(DeleteSubcategoryFromLog(subcategory: subcategory)),
+        Env.store.dispatch(LogDeleteSubcategory(subcategory: subcategory)),
         Get.back(),
       },
       initialParent: subcategory.parentCategoryId,

@@ -73,7 +73,7 @@ class _EditTagDialogState extends State<EditTagDialog> {
               onPressed: canSave
                   ? () => {
                         Env.store.dispatch(
-                            AddUpdateTagFromEntryScreen(tag: widget.tag.copyWith(name: _controller.text.trimRight()))),
+                            EntryAddUpdateTag(tag: widget.tag.copyWith(name: _controller.text.trimRight()))),
                         Get.back(),
                       }
                   : null,

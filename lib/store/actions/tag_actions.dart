@@ -19,24 +19,24 @@ AppState _updateTags(
   return _updateTagState(appState, (tagState) => tagState.copyWith(tags: cloneMap));
 }
 
-class SetTagsLoading implements AppAction {
+class TagsSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: true));
   }
 }
 
-class SetTagsLoaded implements AppAction {
+class TagsSetLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: false));
   }
 }
 
-class SetTags implements AppAction {
+class TagsSetTags implements AppAction {
   final Iterable<Tag> tagList;
 
-  SetTags({this.tagList});
+  TagsSetTags({this.tagList});
 
   @override
   AppState updateState(AppState appState) {

@@ -24,7 +24,7 @@ class EntriesFetcher {
     _store.dispatch(EntriesSetLoading());
     _entriesSubscription?.cancel();
     _entriesSubscription = _entriesRepository.loadEntries(_store.state.authState.user.value).listen(
-          (entries) => _store.dispatch(SetEntries(entryList: entries)),
+          (entries) => _store.dispatch(EntriesSetEntries(entryList: entries)),
         );
     _store.dispatch(EntriesSetLoaded());
   }

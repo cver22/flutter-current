@@ -138,8 +138,8 @@ class _AccountScreenState extends State<AccountScreen> {
               String displayName = _displayNameController.value.text;
               if (displayName != user.displayName) {
                 Env.userFetcher.updateDisplayName(displayName: displayName);
-                Env.store.dispatch(UpdateDisplayName(displayName: displayName));
-                Env.store.dispatch(UpdateLogMember());
+                Env.store.dispatch(AuthUpdateDisplayName(displayName: displayName));
+                Env.store.dispatch(LogUpdateLogMember());
                 user = Env.store.state.authState.user.value;
               }
               setState(() {

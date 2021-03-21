@@ -120,11 +120,11 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
   }
 
   void _onEmailChanged() {
-    Env.store.dispatch(EmailValidation(_emailController.text));
+    Env.store.dispatch(LoginRegisterEmailValidation(_emailController.text));
   }
 
   void _onPasswordChanged() {
-    Env.store.dispatch(PasswordValidation(_passwordController.text));
+    Env.store.dispatch(LoginRegisterPasswordValidation(_passwordController.text));
   }
 
   @override

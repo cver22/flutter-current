@@ -51,7 +51,7 @@ class EntriesListTile extends StatelessWidget {
             ),
             trailing: _buildTrailingContents(date: date),
             onTap: () => {
-              Env.store.dispatch(SelectEntry(entryId: entry.id)),
+              Env.store.dispatch(EntrySelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
             },
            /* onLongPress: () => {

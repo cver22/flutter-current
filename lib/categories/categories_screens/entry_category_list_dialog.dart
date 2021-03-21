@@ -65,9 +65,9 @@ class EntryCategoryListDialog extends StatelessWidget {
         onReorder: (oldIndex, newIndex) {
           //reorder for categories
           if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-            Env.store.dispatch(ReorderCategoriesFromEntryScreen(oldIndex: oldIndex, newIndex: newIndex));
+            Env.store.dispatch(EntryReorderCategories(oldIndex: oldIndex, newIndex: newIndex));
           } else {
-            Env.store.dispatch(ReorderSubcategoriesFromEntryScreen(
+            Env.store.dispatch(EntryReorderSubcategories(
                 newIndex: newIndex, oldIndex: oldIndex, reorderedSubcategories: categories));
           }
         },
@@ -97,7 +97,7 @@ class EntryCategoryListDialog extends StatelessWidget {
       EditCategoryDialog(
         save: (name, emojiChar, unused) {
           Env.store
-              .dispatch(AddEditCategoryFromEntryScreen(category: category.copyWith(name: name, emojiChar: emojiChar)));
+              .dispatch(EntryAddEditCategory(category: category.copyWith(name: name, emojiChar: emojiChar)));
         },
 
         /*setDefault: (category) => {
@@ -105,7 +105,7 @@ class EntryCategoryListDialog extends StatelessWidget {
         },*/
 
         delete: () => {
-          Env.store.dispatch(DeleteCategoryFromEntryScreen(category: category)),
+          Env.store.dispatch(EntryDeleteCategory(category: category)),
           Get.back(),
         },
         category: category,
@@ -115,7 +115,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Future<dynamic> _entrySelectCategory({@required AppCategory category}) {
-    Env.store.dispatch(UpdateEntryCategory(newCategory: category.id));
+    Env.store.dispatch(EntrySelectCategory(newCategory: category.id));
     Get.back();
     if (_entryHasSubcategories(category: category)) {
       return Get.dialog(
@@ -143,14 +143,14 @@ class EntryCategoryListDialog extends StatelessWidget {
       EditCategoryDialog(
         categories: Env.store.state.singleEntryState.categories,
         save: (name, emojiChar, parentCategoryId) => {
-          Env.store.dispatch(AddEditSubcategoryFromEntryScreen(
+          Env.store.dispatch(EntryAddEditSubcategory(
               subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
         },
 
         //TODO default function
 
         delete: () => {
-          Env.store.dispatch(DeleteSubcategoryFromEntryScreen(subcategory: subcategory)),
+          Env.store.dispatch(EntryDeleteSubcategory(subcategory: subcategory)),
           Get.back(),
         },
         initialParent: Env.store.state.singleEntryState.selectedEntry.value.categoryId,
@@ -162,7 +162,7 @@ class EntryCategoryListDialog extends StatelessWidget {
 
   Future<void> _entrySelectSubcategory({@required AppCategory subcategory}) async {
     //onTap method for Entry Subcategories
-    Env.store.dispatch(UpdateEntrySubcategory(subcategory: subcategory.id));
+    Env.store.dispatch(EntrySelectSubcategory(subcategory: subcategory.id));
     Get.back();
   }
 

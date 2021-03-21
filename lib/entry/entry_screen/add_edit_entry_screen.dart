@@ -166,7 +166,7 @@ class AddEditEntryScreen extends StatelessWidget {
           children: <Widget>[
             AppCurrencyPicker(
                 currency: entry?.currency,
-                returnCurrency: (currency) => Env.store.dispatch(UpdateEntryCurrency(currency: currency))),
+                returnCurrency: (currency) => Env.store.dispatch(EntryUpdateCurrency(currency: currency))),
             Text(
                 'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
@@ -184,7 +184,7 @@ class AddEditEntryScreen extends StatelessWidget {
           datePickerType: DatePickerType.entry,
           initialDateTime: entry.dateTime,
           label: 'Select Date',
-          onSave: (newDateTIme) => Env.store.dispatch(UpdateEntryDateTime(dateTime: newDateTIme)),
+          onSave: (newDateTIme) => Env.store.dispatch(EntryUpdateDateTime(dateTime: newDateTIme)),
         ),
         SizedBox(height: 10.0),
         _categoryButton(categories: entryState?.categories, entry: entry),
@@ -245,7 +245,7 @@ class AddEditEntryScreen extends StatelessWidget {
       focusNode: commentFocusNode,
       textCapitalization: TextCapitalization.sentences,
       onChanged: (value) => Env.store.dispatch(
-        UpdateEntryComment(comment: value),
+        EntryUpdateComment(comment: value),
       ),
       maxLines: 1,
       textInputAction: TextInputAction.next,
@@ -292,8 +292,8 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   _updateCategoriesOnClose() {
-    Env.store.dispatch(UpdateLogCategoriesSubcategoriesOnEntryScreenClose());
-    Env.store.dispatch(ClearEntryState());
+    Env.store.dispatch(LogUpdateCategoriesSubcategoriesOnEntryScreenClose());
+    Env.store.dispatch(EntryClearState());
   }
 
   Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave}) {

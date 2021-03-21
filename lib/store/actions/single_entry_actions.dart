@@ -19,37 +19,14 @@ AppState _updateSingleEntryState(
   return appState.copyWith(singleEntryState: update(appState.singleEntryState));
 }
 
-class UpdateSingleEntryState implements AppAction {
-  final Maybe<MyEntry> selectedEntry;
-  final Maybe<Tag> selectedTag;
-  final Map<String, Tag> tags;
-  final List<AppCategory> logCategoryList;
-  final bool savingEntry;
+///*SET OR SELECT ENTRY*//
 
-  UpdateSingleEntryState({this.selectedEntry, this.selectedTag, this.tags, this.logCategoryList, this.savingEntry});
-
-  @override
-  AppState updateState(AppState appState) {
-    return _updateSingleEntryState(
-        appState,
-        (entryState) => entryState.copyWith(
-              selectedEntry: selectedEntry,
-              selectedTag: selectedTag,
-              tags: tags,
-              categories: logCategoryList,
-              processing: savingEntry,
-            ));
-  }
-}
-
-/*SET OR SELECT ENTRY*/
-
-class SetNewSelectedEntry implements AppAction {
+class EntrySetNewSelect implements AppAction {
   //sets new entry and resets all entry data not yet available
   final String logId;
   final String memberId;
 
-  SetNewSelectedEntry({this.logId, this.memberId});
+  EntrySetNewSelect({this.logId, this.memberId});
 
   @override
   AppState updateState(AppState appState) {
@@ -92,11 +69,11 @@ class SetNewSelectedEntry implements AppAction {
   }
 }
 
-class SelectEntry implements AppAction {
+class EntrySelectEntry implements AppAction {
   //sets selected entry and resets all entry data not yet available
   final String entryId;
 
-  SelectEntry({@required this.entryId});
+  EntrySelectEntry({@required this.entryId});
 
   @override
   AppState updateState(AppState appState) {
@@ -128,14 +105,14 @@ class SelectEntry implements AppAction {
 
 /*ADD UPDATE DELETE ENTRY SECTION*/
 
-class SingleEntryProcessing implements AppAction {
+class EntryProcessing implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState.copyWith(processing: true));
   }
 }
 
-class ClearEntryState implements AppAction {
+class EntryClearState implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateSingleEntryState(appState, (entryState) => SingleEntryState.initial());
@@ -144,10 +121,10 @@ class ClearEntryState implements AppAction {
 
 /*CHANGE ENTRY VALUES*/
 
-class UpdateEntryCurrency implements AppAction {
+class EntryUpdateCurrency implements AppAction {
   final String currency;
 
-  UpdateEntryCurrency({@required this.currency});
+  EntryUpdateCurrency({@required this.currency});
 
   @override
   AppState updateState(AppState appState) {
@@ -158,10 +135,10 @@ class UpdateEntryCurrency implements AppAction {
   }
 }
 
-class UpdateEntryComment implements AppAction {
+class EntryUpdateComment implements AppAction {
   final String comment;
 
-  UpdateEntryComment({@required this.comment});
+  EntryUpdateComment({@required this.comment});
 
   @override
   AppState updateState(AppState appState) {
@@ -172,10 +149,10 @@ class UpdateEntryComment implements AppAction {
   }
 }
 
-class UpdateEntryDateTime implements AppAction {
+class EntryUpdateDateTime implements AppAction {
   final DateTime dateTime;
 
-  UpdateEntryDateTime({this.dateTime});
+  EntryUpdateDateTime({this.dateTime});
 
   @override
   AppState updateState(AppState appState) {
@@ -186,18 +163,28 @@ class UpdateEntryDateTime implements AppAction {
   }
 }
 
-class UpdateEntrySubcategory implements AppAction {
+class EntrySelectSubcategory implements AppAction {
   final String subcategory;
 
-  UpdateEntrySubcategory({this.subcategory});
+  EntrySelectSubcategory({this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
+    String updatedSubcategory = subcategory;
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
+    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    String oldSubcategoryId = entry?.subcategoryId;
+
+    tags = categorySubcategoryUpdateAllTagFrequencies(
+        tags: tags, oldAppCategory: oldSubcategoryId, newAppCategory: updatedSubcategory, entry: entry);
+
     return _updateSingleEntryState(
         appState,
         (entryState) => entryState.copyWith(
-            selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
-            userUpdated: true));
+              selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
+              userUpdated: true,
+              tags: tags,
+            ));
   }
 }
 
@@ -231,44 +218,36 @@ class UpdateEntrySubcategory implements AppAction {
   }
 }*/
 
-class UpdateEntryCategory implements AppAction {
+class EntrySelectCategory implements AppAction {
   final String newCategory;
 
-  UpdateEntryCategory({@required this.newCategory});
+  EntrySelectCategory({@required this.newCategory});
 
   @override
   AppState updateState(AppState appState) {
+    String updatedCategory = newCategory ?? NO_CATEGORY;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
     String oldCategoryId = entry.categoryId;
 
-    if (entry.tagIDs.length > 0) {
-      entry.tagIDs.forEach((tagId) {
-        Tag tag = tags[tagId];
+    tags = categorySubcategoryUpdateAllTagFrequencies(
+        entry: entry, oldAppCategory: oldCategoryId, newAppCategory: updatedCategory, tags: tags);
 
-        //uses NO_CATEGORY for increment and decrement default as the actions utilize NO_CATEGORY until it is confirmed by the user
-        tag = _decrementCategoryFrequency(categoryId: oldCategoryId ?? NO_CATEGORY, updatedTag: tag);
-
-        tag = _incrementCategoryFrequency(categoryId: newCategory ?? NO_CATEGORY, updatedTag: tag);
-
-        tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
-      });
-    }
     return _updateSingleEntryState(
         appState,
         (singleEntryState) => singleEntryState.copyWith(
               tags: tags,
-              selectedEntry: Maybe.some(entry.changeCategories(category: newCategory ?? NO_CATEGORY)),
+              selectedEntry: Maybe.some(entry.changeCategories(category: updatedCategory)),
               userUpdated: true,
             ));
   }
 }
 
-class ReorderCategoriesFromEntryScreen implements AppAction {
+class EntryReorderCategories implements AppAction {
   final int newIndex;
   final int oldIndex;
 
-  ReorderCategoriesFromEntryScreen({@required this.newIndex, @required this.oldIndex});
+  EntryReorderCategories({@required this.newIndex, @required this.oldIndex});
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
@@ -288,13 +267,12 @@ class ReorderCategoriesFromEntryScreen implements AppAction {
   }
 }
 
-class ReorderSubcategoriesFromEntryScreen implements AppAction {
+class EntryReorderSubcategories implements AppAction {
   final List<AppCategory> reorderedSubcategories;
   final int newIndex;
   final int oldIndex;
 
-  ReorderSubcategoriesFromEntryScreen(
-      {@required this.newIndex, @required this.oldIndex, @required this.reorderedSubcategories});
+  EntryReorderSubcategories({@required this.newIndex, @required this.oldIndex, @required this.reorderedSubcategories});
 
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
@@ -323,10 +301,10 @@ class ReorderSubcategoriesFromEntryScreen implements AppAction {
   }
 }
 
-class AddEditCategoryFromEntryScreen implements AppAction {
+class EntryAddEditCategory implements AppAction {
   final AppCategory category;
 
-  AddEditCategoryFromEntryScreen({@required this.category});
+  EntryAddEditCategory({@required this.category});
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
@@ -348,10 +326,10 @@ class AddEditCategoryFromEntryScreen implements AppAction {
   }
 }
 
-class DeleteCategoryFromEntryScreen implements AppAction {
+class EntryDeleteCategory implements AppAction {
   final AppCategory category;
 
-  DeleteCategoryFromEntryScreen({@required this.category});
+  EntryDeleteCategory({@required this.category});
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
@@ -386,10 +364,10 @@ class DeleteCategoryFromEntryScreen implements AppAction {
   }
 }
 
-class AddEditSubcategoryFromEntryScreen implements AppAction {
+class EntryAddEditSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  AddEditSubcategoryFromEntryScreen({@required this.subcategory});
+  EntryAddEditSubcategory({@required this.subcategory});
 
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
@@ -404,14 +382,13 @@ class AddEditSubcategoryFromEntryScreen implements AppAction {
       //edit subcategory
       subcategories[subcategories.indexWhere((entry) => entry.id == subcategory.id)] = subcategory;
 
-      //if the parent category of the subcategory was changed and thus the entry category changed, update the tag frequency
+      //if the parent category of the subcategory was changed and thus the entry category changed, decrement the previous category and increment the new category
       if (previousParentId != subcategory.parentCategoryId && entry.subcategoryId == subcategory.id) {
         entry.tagIDs.forEach((tagId) {
           Tag tag = tags[tagId];
 
-          tag = _decrementCategoryFrequency(categoryId: previousParentId, updatedTag: tag);
-
-          tag = _incrementCategoryFrequency(categoryId: subcategory.parentCategoryId, updatedTag: tag);
+          tag = _decrementAppCategoryFrequency(categoryId: previousParentId, updatedTag: tag);
+          tag = _incrementAppCategoryFrequency(appCategoryId: subcategory.parentCategoryId, updatedTag: tag);
 
           tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
         });
@@ -428,10 +405,10 @@ class AddEditSubcategoryFromEntryScreen implements AppAction {
   }
 }
 
-class DeleteSubcategoryFromEntryScreen implements AppAction {
+class EntryDeleteSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  DeleteSubcategoryFromEntryScreen({@required this.subcategory});
+  EntryDeleteSubcategory({@required this.subcategory});
 
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
@@ -456,11 +433,11 @@ class DeleteSubcategoryFromEntryScreen implements AppAction {
 
 /*MEMBER ACTIONS*/
 
-class UpdateMemberPaidAmount implements AppAction {
+class EntryUpdateMemberPaidAmount implements AppAction {
   final int paidValue;
   final EntryMember member;
 
-  UpdateMemberPaidAmount({@required this.paidValue, @required this.member});
+  EntryUpdateMemberPaidAmount({@required this.paidValue, @required this.member});
 
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -496,11 +473,11 @@ class UpdateMemberPaidAmount implements AppAction {
   }
 }
 
-class UpdateMemberSpentAmount implements AppAction {
+class EntryUpdateMemberSpentAmount implements AppAction {
   final int spentValue;
   final EntryMember member;
 
-  UpdateMemberSpentAmount({this.spentValue = 0, @required this.member});
+  EntryUpdateMemberSpentAmount({this.spentValue = 0, @required this.member});
 
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -565,10 +542,10 @@ class EntryResetMemberSpendingToAll implements AppAction {
   }
 }
 
-class ToggleMemberPaying implements AppAction {
+class EntryToggleMemberPaying implements AppAction {
   final EntryMember member;
 
-  ToggleMemberPaying({@required this.member});
+  EntryToggleMemberPaying({@required this.member});
 
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -621,10 +598,10 @@ class ToggleMemberPaying implements AppAction {
   }
 }
 
-class ToggleMemberSpending implements AppAction {
+class EntryToggleMemberSpending implements AppAction {
   final EntryMember member;
 
-  ToggleMemberSpending({@required this.member});
+  EntryToggleMemberSpending({@required this.member});
 
   AppState updateState(AppState appState) {
     MyEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -661,10 +638,10 @@ class ToggleMemberSpending implements AppAction {
 
 /*TAGS SECTION*/
 
-class AddUpdateTagFromEntryScreen implements AppAction {
+class EntryAddUpdateTag implements AppAction {
   final Tag tag;
 
-  AddUpdateTagFromEntryScreen({@required this.tag});
+  EntryAddUpdateTag({@required this.tag});
 
   @override
   AppState updateState(AppState appState) {
@@ -705,8 +682,8 @@ class AddUpdateTagFromEntryScreen implements AppAction {
 
         entry.tagIDs.add(addedUpdatedTag.id);
 
-        addedUpdatedTag =
-            _incrementCategoryFrequency(updatedTag: addedUpdatedTag, categoryId: entry.categoryId ?? NO_CATEGORY);
+        addedUpdatedTag = _incrementCategorySubcategoryFrequency(
+            updatedTag: addedUpdatedTag, categoryId: entry?.categoryId, subcategoryId: entry?.subcategoryId);
       }
 
       //updates existing tag or add it
@@ -726,10 +703,10 @@ class AddUpdateTagFromEntryScreen implements AppAction {
   }
 }
 
-class SelectDeselectEntryTag implements AppAction {
+class EntrySelectDeselectTag implements AppAction {
   final Tag tag;
 
-  SelectDeselectEntryTag({@required this.tag});
+  EntrySelectDeselectTag({@required this.tag});
 
   @override
   AppState updateState(AppState appState) {
@@ -749,8 +726,8 @@ class SelectDeselectEntryTag implements AppAction {
     if (entryHasTag) {
       //remove tag from entry if present
 
-      selectedDeselectedTag = decrementCategoryAndLogFrequency(
-          updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId ?? NO_CATEGORY);
+      selectedDeselectedTag = decrementCategorySubcategoryLogFrequency(
+          updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId, subcategoryId: entry?.subcategoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.remove(tag.id);
@@ -758,8 +735,8 @@ class SelectDeselectEntryTag implements AppAction {
       //add tag to entry if not present
 
       //increment use of tag for this category
-      selectedDeselectedTag = incrementCategoryAndLogFrequency(
-          updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId ?? NO_CATEGORY);
+      selectedDeselectedTag = _incrementCategoryAndLogFrequency(
+          updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId, subcategoryId: entry?.subcategoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.add(tag.id);
@@ -778,10 +755,10 @@ class SelectDeselectEntryTag implements AppAction {
   }
 }
 
-class EntryStateSetSearchedTags implements AppAction {
+class EntrySetSearchedTags implements AppAction {
   final String search;
 
-  EntryStateSetSearchedTags({this.search});
+  EntrySetSearchedTags({this.search});
 
   @override
   AppState updateState(AppState appState) {
@@ -802,8 +779,6 @@ class EntryStateSetSearchedTags implements AppAction {
 class EntryMemberFocus implements AppAction {
   final String memberId;
   final PaidOrSpent paidOrSpent;
-
-  //TODO this does not work or did I fix it?
 
   EntryMemberFocus({@required this.memberId, @required this.paidOrSpent});
 
@@ -938,20 +913,10 @@ class EntryClearAllFocus implements AppAction {
   }
 }
 
-Tag _incrementCategoryFrequency({@required String categoryId, @required Tag updatedTag}) {
-  Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
-
-  //adds frequency to tag for the category if present, adds it otherwise
-  tagCategoryFrequency.update(categoryId, (value) => value + 1, ifAbsent: () => 1);
-  updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
-
-  return updatedTag;
-}
-
-Tag incrementCategoryAndLogFrequency({@required Tag updatedTag, String categoryId}) {
-  //increment use of tag for this category
-
-  updatedTag = _incrementCategoryFrequency(categoryId: categoryId, updatedTag: updatedTag);
+Tag _incrementCategoryAndLogFrequency(
+    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+  updatedTag = _incrementCategorySubcategoryFrequency(
+      updatedTag: updatedTag, categoryId: categoryId, subcategoryId: subcategoryId);
 
   //increment use of tag for this log
   updatedTag = updatedTag.incrementTagLogFrequency();
@@ -959,28 +924,82 @@ Tag incrementCategoryAndLogFrequency({@required Tag updatedTag, String categoryI
   return updatedTag;
 }
 
-Tag _decrementCategoryFrequency({@required String categoryId, @required Tag updatedTag}) {
+Tag _incrementCategorySubcategoryFrequency(
+    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+  //increment use of tag for this category if present
+  updatedTag = _incrementAppCategoryFrequency(appCategoryId: categoryId, updatedTag: updatedTag);
+
+  //increment use of tag for this subcategory if present
+  updatedTag = _incrementAppCategoryFrequency(appCategoryId: subcategoryId, updatedTag: updatedTag);
+
+  return updatedTag;
+}
+
+Tag _incrementAppCategoryFrequency({@required String appCategoryId, @required Tag updatedTag}) {
   Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
 
-  //subtracts frequency to tag for the category if present, adds it otherwise
-  tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
-  tagCategoryFrequency.removeWhere(
-      (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
+  if (appCategoryId != null) {
+    //adds frequency to tag for the category if present, adds it otherwise
+    tagCategoryFrequency.update(appCategoryId, (value) => value + 1, ifAbsent: () => 1);
+    updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
+  }
+
+  return updatedTag;
+}
+
+Tag decrementCategorySubcategoryLogFrequency(
+    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+  updatedTag =
+      _decrementCategorySubcategory(updatedTag: updatedTag, categoryId: categoryId, subcategoryId: subcategoryId);
+
+  //decrement use of tag for this log
+  updatedTag = updatedTag.decrementTagLogFrequency();
+
+  return updatedTag;
+}
+
+Tag _decrementCategorySubcategory(
+    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+  //decrement use of tag for this category if present
+  updatedTag = _decrementAppCategoryFrequency(categoryId: categoryId, updatedTag: updatedTag);
+  //decrement use of tag for this subcategory if present
+  updatedTag = _decrementAppCategoryFrequency(categoryId: subcategoryId, updatedTag: updatedTag);
+  return updatedTag;
+}
+
+Tag _decrementAppCategoryFrequency({@required String categoryId, @required Tag updatedTag}) {
+  Map<String, int> tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
+
+  if (categoryId != null) {
+    //subtracts frequency to tag for the category if present, adds it otherwise
+    tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
+    tagCategoryFrequency.removeWhere(
+        (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
+  }
 
   updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
 
   return updatedTag;
 }
 
-Tag decrementCategoryAndLogFrequency({@required Tag updatedTag, @required String categoryId}) {
-  //decrement use of tag for this category
+Map<String, Tag> categorySubcategoryUpdateAllTagFrequencies(
+    {@required MyEntry entry,
+    String oldAppCategory,
+    @required String newAppCategory,
+    @required Map<String, Tag> tags}) {
+  if (entry.tagIDs.length > 0) {
+    entry.tagIDs.forEach((tagId) {
+      Tag tag = tags[tagId];
 
-  updatedTag = _decrementCategoryFrequency(categoryId: categoryId, updatedTag: updatedTag);
+      tag = _decrementAppCategoryFrequency(categoryId: oldAppCategory, updatedTag: tag);
 
-  //decrement use of tag for this log
-  updatedTag = updatedTag.decrementTagLogFrequency();
+      tag = _incrementAppCategoryFrequency(appCategoryId: newAppCategory, updatedTag: tag);
 
-  return updatedTag;
+      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+    });
+  }
+
+  return tags;
 }
 
 Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required Map<String, EntryMember> members}) {

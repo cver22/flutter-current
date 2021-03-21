@@ -69,7 +69,7 @@ class SettingsFetcher {
         //if no settings have ever been loaded, load the default
         String jsonString = await rootBundle.loadString('assets/default_settings.txt');
 
-        _store.dispatch(UpdateSettings(
+        _store.dispatch(SettingsUpdate(
           settings: Maybe.some(Settings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)))),
         ));
 
@@ -82,7 +82,7 @@ class SettingsFetcher {
         Map<String, dynamic> jsonData = LinkedHashMap();
         jsonData = json.decode(await file.readAsString());
 
-        _store.dispatch(UpdateSettings(
+        _store.dispatch(SettingsUpdate(
           settings: Maybe.some(Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
         ));
       }

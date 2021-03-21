@@ -72,7 +72,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildCheckBox(
-                  checked: member.paying, onChanged: (value) => Env.store.dispatch(ToggleMemberPaying(member: member))),
+                  checked: member.paying, onChanged: (value) => Env.store.dispatch(EntryToggleMemberPaying(member: member))),
               _buildTextFormField(
                 paidOrSpent: PaidOrSpent.paid,
                 controller: _payingController,
@@ -88,7 +88,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   children: [
                     _buildCheckBox(
                         checked: member.spending,
-                        onChanged: (value) => Env.store.dispatch(ToggleMemberSpending(member: member))),
+                        onChanged: (value) => Env.store.dispatch(EntryToggleMemberSpending(member: member))),
                     _buildTextFormField(
                       paidOrSpent: PaidOrSpent.spent,
                       controller: _spendingController,
@@ -143,7 +143,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
                   //user now paying, update focus and toggle
-                  Env.store.dispatch(ToggleMemberPaying(member: member));
+                  Env.store.dispatch(EntryToggleMemberPaying(member: member));
                 }
               } else if (paidOrSpent == PaidOrSpent.spent) {
                 if (member.spending) {
@@ -151,7 +151,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
                   //user now spending, update focus and toggle
-                  Env.store.dispatch(ToggleMemberSpending(member: member));
+                  Env.store.dispatch(EntryToggleMemberSpending(member: member));
                 }
               }
 
@@ -160,9 +160,9 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             onChanged: (newValue) {
               int intValue = parseNewValue(newValue: newValue);
               if (paidOrSpent == PaidOrSpent.paid) {
-                Env.store.dispatch(UpdateMemberPaidAmount(paidValue: intValue, member: member));
+                Env.store.dispatch(EntryUpdateMemberPaidAmount(paidValue: intValue, member: member));
               } else {
-                Env.store.dispatch(UpdateMemberSpentAmount(spentValue: intValue, member: member));
+                Env.store.dispatch(EntryUpdateMemberSpentAmount(spentValue: intValue, member: member));
               }
             },
           ),

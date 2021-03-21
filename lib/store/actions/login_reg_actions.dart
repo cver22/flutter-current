@@ -43,10 +43,10 @@ class LoginOrCreateUser implements AppAction {
   }
 }
 
-class PasswordValidation implements AppAction {
+class LoginRegisterPasswordValidation implements AppAction {
   final String password;
 
-  PasswordValidation(this.password);
+  LoginRegisterPasswordValidation(this.password);
 
   @override
   AppState updateState(AppState appState) {
@@ -55,10 +55,10 @@ class PasswordValidation implements AppAction {
   }
 }
 
-class EmailValidation implements AppAction {
+class LoginRegisterEmailValidation implements AppAction {
   final String email;
 
-  EmailValidation(this.email);
+  LoginRegisterEmailValidation(this.email);
 
   @override
   AppState updateState(AppState appState) {

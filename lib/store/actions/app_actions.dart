@@ -151,7 +151,7 @@ class AddUpdateSingleEntryAndTags implements AppAction {
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     MyEntry updatedEntry = entry;
 
-    Env.store.dispatch(SingleEntryProcessing());
+    Env.store.dispatch(EntryProcessing());
 
     //update entry for state and database
     if (updatedEntry.id != null &&
@@ -175,6 +175,9 @@ class AddUpdateSingleEntryAndTags implements AppAction {
         subcategoryId = subcategories
             .firstWhere((element) => element.parentCategoryId == categoryId && element.id.contains(OTHER))
             .id;
+
+        addedUpdatedTags = categorySubcategoryUpdateAllTagFrequencies(entry: entry, newAppCategory: subcategoryId, tags: addedUpdatedTags);
+
       }
 
       //save new entry using the user id to help minimize chance of duplication of entry ids in the database

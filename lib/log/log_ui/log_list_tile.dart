@@ -53,7 +53,7 @@ class LogListTile extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        Env.store.dispatch(SelectLog(logId: log.id));
+                        Env.store.dispatch(LogSelectLog(logId: log.id));
                         Get.toNamed(ExpenseRoutes.addEditLog);
                       },
                       icon: Icon(Icons.info_outline),

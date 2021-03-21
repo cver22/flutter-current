@@ -33,7 +33,7 @@ class UserFetcher {
 
   _setLoadingAndSubmitting(LoginRegState loginRegState) {
     _store.dispatch(LoginRegSubmitting());
-    _store.dispatch(LoadingUser());
+    _store.dispatch(AuthLoadingUser());
   }
 
   _loginRegisterFail(LoginRegState loginRegState) {
@@ -42,12 +42,12 @@ class UserFetcher {
   }
 
   Future<void> startApp() async {
-    _store.dispatch(LoadingUser());
+    _store.dispatch(AuthLoadingUser());
     _getCurrentUser(_store.state.loginRegState);
   }
 
   Future<void> signOut() async {
-    _store.dispatch(SignOutState());
+    _store.dispatch(AuthSignOut());
     await _userRepository.signOut();
   }
 

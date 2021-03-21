@@ -20,10 +20,10 @@ AppState _updateSettingsState(
   return appState.copyWith(settingsState: update(appState.settingsState));
 }
 
-class UpdateSettings implements AppAction {
+class SettingsUpdate implements AppAction {
   final Maybe<Settings> settings;
 
-  UpdateSettings({@required this.settings});
+  SettingsUpdate({@required this.settings});
 
   @override
   AppState updateState(AppState appState) {
@@ -37,10 +37,10 @@ class UpdateSettings implements AppAction {
   }
 }
 
-class ChangeDefaultLog implements AppAction {
+class SettingsChangeDefaultLog implements AppAction {
   final Log log;
 
-  ChangeDefaultLog({this.log});
+  SettingsChangeDefaultLog({this.log});
 
   @override
   AppState updateState(AppState appState) {
@@ -143,7 +143,7 @@ class SettingsDeleteSubcategory implements AppAction {
   }
 }
 
-class SetExpandedSettingsCategories implements AppAction {
+class SettingSetExpandedCategories implements AppAction {
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = [];
     appState.settingsState.settings.value.defaultCategories.forEach((element) {
@@ -155,10 +155,10 @@ class SetExpandedSettingsCategories implements AppAction {
   }
 }
 
-class ExpandCollapseSettingsCategory implements AppAction {
+class SettingsExpandCollapseCategory implements AppAction {
   final int index;
 
-  ExpandCollapseSettingsCategory({@required this.index});
+  SettingsExpandCollapseCategory({@required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.settingsState.expandedCategories);
@@ -169,11 +169,11 @@ class ExpandCollapseSettingsCategory implements AppAction {
   }
 }
 
-class ReorderCategoryFromSettingsScreen implements AppAction {
+class SettingsReorderCategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
-  ReorderCategoryFromSettingsScreen({@required this.oldCategoryIndex, @required this.newCategoryIndex});
+  SettingsReorderCategory({@required this.oldCategoryIndex, @required this.newCategoryIndex});
 
   AppState updateState(AppState appState) {
     //reorder categories list
@@ -195,13 +195,13 @@ class ReorderCategoryFromSettingsScreen implements AppAction {
   }
 }
 
-class ReorderSubcategoryFromSettingsScreen implements AppAction {
+class SettingsReorderSubcategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
   final int oldSubcategoryIndex;
   final int newSubcategoryIndex;
 
-  ReorderSubcategoryFromSettingsScreen(
+  SettingsReorderSubcategory(
       {@required this.oldCategoryIndex,
       @required this.newCategoryIndex,
       @required this.oldSubcategoryIndex,
