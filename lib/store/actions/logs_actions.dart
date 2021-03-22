@@ -2,10 +2,13 @@ import 'package:expenses/app/models/app_state.dart';
 import 'package:expenses/auth_user/models/app_user.dart';
 import 'package:expenses/categories/categories_model/app_category/app_category.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
+import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/store/actions/app_actions.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
@@ -73,7 +76,7 @@ class LogUpdateName implements AppAction {
     bool canSave = false;
     log = log.copyWith(name: name);
 
-    if(name.isNotEmpty) {
+    if (name.isNotEmpty) {
       canSave = true;
     }
 
@@ -399,21 +402,20 @@ class LogReorderCategory implements AppAction {
   AppState updateState(AppState appState) {
     //reorder categories
     List<AppCategory> categories = List.from(appState.logsState.selectedLog.value.categories);
-    //TODO this is the same as the settings method, remove duplication
-    AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
-    categories.insert(newCategoryIndex, movedCategory);
+    categories = reorderLogSettingsCategories(
+        categories: categories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
 
     //reorder expanded list
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
-    //TODO this is the same as the settings method, remove duplication on this as well
-    bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
-    expandedCategories.insert(newCategoryIndex, movedExpansion);
+    expandedCategories = reorderLogSettingsExpandedCategories(
+        expandedCategories: expandedCategories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
 
     return _updateLogState(
         appState,
         (logsState) => logsState.copyWith(
             selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
-            expandedCategories: expandedCategories));
+            expandedCategories: expandedCategories,
+        userUpdated: true));
   }
 }
 
@@ -454,7 +456,6 @@ class LogReorderSubcategory implements AppAction {
   }
 }
 
-//TODO this should be combined with ClearEntryState()
 class LogUpdateCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
   @override
   AppState updateState(AppState appState) {
@@ -463,6 +464,71 @@ class LogUpdateCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
     logs = updateLogCategoriesSubcategoriesFromEntry(
         appState: appState, logId: appState.singleEntryState.selectedEntry.value.logId, logs: logs);
 
-    return _updateLogState(appState, (logsState) => logsState.copyWith(logs: logs));
+    return updateSubstates(
+      appState,
+      [
+        updateLogsState((logsState) => logsState.copyWith(logs: logs)),
+        updateSingleEntryState((singleEntryState) => SingleEntryState.initial())
+      ],
+    );
+  }
+}
+
+class DeleteLog implements AppAction {
+  final Log log;
+
+  DeleteLog({this.log});
+
+  @override
+  AppState updateState(AppState appState) {
+    LogsState updatedLogsState = appState.logsState;
+    Settings settings = appState.settingsState.settings.value;
+    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
+
+    List<MyEntry> deletedEntriesList = [];
+    List<Tag> deletedTagsList = [];
+    Map<String, MyEntry> entriesMap = Map.from(appState.entriesState.entries);
+    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
+
+    entriesMap.forEach((key, entry) {
+      if (entry.logId == log.id) {
+        deletedEntriesList.add(entry);
+      }
+    });
+
+    entriesMap.removeWhere((key, entry) => entry.logId == log.id);
+
+    tagsMap.forEach((key, tag) {
+      if (tag.logId == log.id) {
+        deletedTagsList.add(tag);
+      }
+    });
+
+    tagsMap.removeWhere((key, tag) => tag.logId == log.id);
+
+    //ensures the default log is updated if the current log is default and deleted
+    if (appState.settingsState.settings.value.defaultLogId == log.id) {
+      if (updatedLogsState.logs.isNotEmpty) {
+        settings = settings.copyWith(
+            defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id);
+      } else {
+        settings = settings.copyWith(defaultLogId: '');
+      }
+    }
+
+    Env.entriesFetcher.batchDeleteEntries(deletedEntries: deletedEntriesList);
+    Env.tagFetcher.batchDeleteTags(deletedTags: deletedTagsList);
+    Env.logsFetcher.deleteLog(log: log);
+    Env.settingsFetcher.writeAppSettings(settings);
+
+    return updateSubstates(
+      appState,
+      [
+        updateLogsState((logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none(), userUpdated: false)),
+        updateEntriesState((entriesState) => entriesState.copyWith(entries: entriesMap)),
+        updateTagState((tagState) => tagState.copyWith(tags: tagsMap)),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }

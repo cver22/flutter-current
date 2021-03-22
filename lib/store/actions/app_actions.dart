@@ -7,219 +7,45 @@ import 'package:expenses/env.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/log/log_model/logs_state.dart';
 import 'package:expenses/log/log_totals_model/log_total.dart';
+import 'package:expenses/log/log_totals_model/log_totals_state.dart';
 import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
-import 'package:uuid/uuid.dart';
 
 abstract class AppAction {
   AppState updateState(AppState appState);
 }
 
-AppState _updateLogEntriesTagSettingState(
-    AppState appState,
-    LogsState updateLogState(LogsState logsState),
-    EntriesState updateEntriesState(EntriesState entriesState),
-    TagState updateTagState(TagState tagState),
-    SettingsState updateSettingsState(SettingsState settingsState)) {
-  return appState.copyWith(
-      logsState: updateLogState(appState.logsState),
-      entriesState: updateEntriesState(appState.entriesState),
-      tagState: updateTagState(appState.tagState),
-      settingsState: updateSettingsState(appState.settingsState));
+AppState updateSubstates(AppState state, List<AppState Function(AppState)> updates) {
+  return updates.fold(state, (updatedState, update) => update(updatedState));
 }
 
-AppState _updateLogsTagsSingleEntryState(
-  AppState appState,
-  LogsState updateLogState(LogsState logsState),
-  TagState updateTagState(TagState tagState),
-  SingleEntryState update(SingleEntryState singleEntryState),
-) {
-  return appState.copyWith(
-    logsState: updateLogState(appState.logsState),
-    tagState: updateTagState(appState.tagState),
-    singleEntryState: update(appState.singleEntryState),
-  );
+AppState Function(AppState) updateLogsState(LogsState update(logsState)) {
+  return (state) => state.copyWith(logsState: update(state.logsState));
 }
 
-AppState _updateTagSingleEntryState(
-  AppState appState,
-  TagState updateTagState(TagState tagState),
-  SingleEntryState update(SingleEntryState singleEntryState),
-) {
-  return appState.copyWith(
-    tagState: updateTagState(appState.tagState),
-    singleEntryState: update(appState.singleEntryState),
-  );
+AppState Function(AppState) updateEntriesState(EntriesState update(entriesState)) {
+  return (state) => state.copyWith(entriesState: update(state.entriesState));
 }
 
-class DeleteLog implements AppAction {
-  //This action updates multiple states simultaneously
-  final Log log;
-
-  DeleteLog({this.log});
-
-  @override
-  AppState updateState(AppState appState) {
-    LogsState updatedLogsState = appState.logsState;
-    Settings settings = appState.settingsState.settings.value;
-    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
-
-    List<MyEntry> deletedEntriesList = [];
-    List<Tag> deletedTagsList = [];
-    Map<String, MyEntry> entriesMap = Map.from(appState.entriesState.entries);
-    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
-
-    entriesMap.forEach((key, entry) {
-      if (entry.logId == log.id) {
-        deletedEntriesList.add(entry);
-      }
-    });
-
-    entriesMap.removeWhere((key, entry) => entry.logId == log.id);
-
-    tagsMap.forEach((key, tag) {
-      if (tag.logId == log.id) {
-        deletedTagsList.add(tag);
-      }
-    });
-
-    tagsMap.removeWhere((key, tag) => tag.logId == log.id);
-
-    //TODO likely need a method to reset the default to nothing, else statement for the above
-    //ensures the default log is updated if the current log is default and deleted
-    if (appState.settingsState.settings.value.defaultLogId == log.id && updatedLogsState.logs.isNotEmpty) {
-      settings = settings.copyWith(
-          defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id);
-    }
-
-    Env.entriesFetcher.batchDeleteEntries(deletedEntries: deletedEntriesList);
-    Env.tagFetcher.batchDeleteTags(deletedTags: deletedTagsList);
-    Env.logsFetcher.deleteLog(log: log);
-
-    return _updateLogEntriesTagSettingState(
-      appState,
-      (logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none(), userUpdated: false),
-      (entriesState) => entriesState.copyWith(entries: entriesMap),
-      (tagState) => tagState.copyWith(tags: tagsMap),
-      (settingsState) => settingsState.copyWith(settings: Maybe.some(settings)),
-    );
-  }
+AppState Function(AppState) updateSettingsState(SettingsState update(settingsState)) {
+  return (state) => state.copyWith(settingsState: update(state.settingsState));
 }
 
-class DeleteTagFromEntryScreen implements AppAction {
-  final Tag tag;
-
-  DeleteTagFromEntryScreen({@required this.tag});
-
-  @override
-  AppState updateState(AppState appState) {
-    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
-    Map<String, Tag> entryTagsMap = Map.from(appState.singleEntryState.tags);
-    tagsMap.removeWhere((key, value) => key == tag.id);
-    entryTagsMap.removeWhere((key, value) => key == tag.id);
-
-    Env.tagFetcher.deleteTag(tag);
-
-    return _updateTagSingleEntryState(
-      appState,
-      (tagState) => tagState.copyWith(tags: tagsMap),
-      (singleEntryState) => singleEntryState.copyWith(tags: entryTagsMap, userUpdated: true),
-    );
-  }
+AppState Function(AppState) updateSingleEntryState(SingleEntryState update(singleEntryState)) {
+  return (state) => state.copyWith(singleEntryState: update(state.singleEntryState));
 }
 
-class AddUpdateSingleEntryAndTags implements AppAction {
-  //submits new entry to the entries list and the clear the singleEntryState
-  final MyEntry entry;
+AppState Function(AppState) updateTagState(TagState update(tagState)) {
+  return (state) => state.copyWith(tagState: update(state.tagState));
+}
 
-  AddUpdateSingleEntryAndTags({this.entry});
-
-  AppState updateState(AppState appState) {
-    List<Tag> tagsToAddToDatabase = [];
-    List<Tag> tagsToUpdateInDatabase = [];
-    Map<String, Tag> addedUpdatedTags = Map.from(appState.singleEntryState.tags);
-    Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
-    Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
-    Map<String, Log> logs = Map.from(appState.logsState.logs);
-    MyEntry updatedEntry = entry;
-
-    Env.store.dispatch(EntryProcessing());
-
-    //update entry for state and database
-    if (updatedEntry.id != null &&
-        updatedEntry !=
-            appState.entriesState.entries.entries
-                .map((e) => e.value)
-                .toList()
-                .firstWhere((element) => element.id == entry.id)) {
-      //update entry if id is not null and thus already exists an the entry has been modified
-      Env.entriesFetcher.updateEntry(entry);
-    } else if (updatedEntry.id == null) {
-      //if no category has been chosen, automatically set NO_CATEGORY
-      String categoryId = updatedEntry?.categoryId ?? NO_CATEGORY;
-      String subcategoryId = updatedEntry?.subcategoryId;
-
-      if (categoryId != NO_CATEGORY && categoryId != TRANSFER_FUNDS && subcategoryId == null) {
-        //if the category has been chosen but not the subcategory, automatically set subcategory to "other"
-
-        List<AppCategory> subcategories = logs[updatedEntry.logId].subcategories;
-
-        subcategoryId = subcategories
-            .firstWhere((element) => element.parentCategoryId == categoryId && element.id.contains(OTHER))
-            .id;
-
-        addedUpdatedTags = categorySubcategoryUpdateAllTagFrequencies(entry: entry, newAppCategory: subcategoryId, tags: addedUpdatedTags);
-
-      }
-
-      //save new entry using the user id to help minimize chance of duplication of entry ids in the database
-      Env.entriesFetcher.addEntry(updatedEntry.copyWith(
-          id: '${appState.authState.user.value.id}-${Uuid().v4()}',
-          categoryId: categoryId,
-          subcategoryId: subcategoryId));
-    }
-
-    //update entries for total only
-    entries.update(updatedEntry.id, (value) => updatedEntry, ifAbsent: () => updatedEntry);
-
-    //update tags state
-    addedUpdatedTags.forEach((key, tag) {
-      if (!masterTagList.containsKey(key)) {
-        //tag doesn't exist and will be added
-
-        masterTagList.putIfAbsent(key, () => tag);
-        tagsToAddToDatabase.add(tag);
-      } else if (masterTagList.containsKey(key) && masterTagList[key] != tag) {
-        // if the tag exists and has changed, update it
-        masterTagList.update(key, (value) => tag); // update the local tag map
-        tagsToUpdateInDatabase.add(tag); //updates list of tags that will be sent to database
-      }
-    });
-
-    //update tags database
-    Env.tagFetcher.batchAddUpdate(addedTags: tagsToAddToDatabase, updatedTags: tagsToUpdateInDatabase);
-
-    //update logs total in state
-    //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
-
-    //update log categories and subcategories if they have changed
-    logs = updateLogCategoriesSubcategoriesFromEntry(appState: appState, logId: updatedEntry.logId, logs: logs);
-
-    return _updateLogsTagsSingleEntryState(
-      appState,
-      (logsState) => logsState.copyWith(logs: logs),
-      (tagState) => tagState.copyWith(tags: masterTagList),
-      (singleEntryState) => SingleEntryState.initial(),
-    );
-  }
+AppState Function(AppState) updateLogTotalsState(LogTotalsState update(logTotalsState)) {
+  return (state) => state.copyWith(logTotalsState: update(state.logTotalsState));
 }
 
 Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
@@ -346,7 +172,6 @@ bool _canReorderSubcategory({@required AppCategory subcategory, @required String
   return true;
 }
 
-
 List<Tag> buildSearchedTagsList(
     {@required List<Tag> tags, @required List<String> tagIds, int maxTags = -1, @required String search}) {
   int tagCount = 0;
@@ -372,4 +197,17 @@ List<Tag> buildSearchedTagsList(
   print('inside searched Tags: $searchedTags');
 
   return searchedTags;
+}
+
+
+List<AppCategory> reorderLogSettingsCategories({@required List<AppCategory> categories, @required int oldCategoryIndex, @required int newCategoryIndex}) {
+  AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
+  categories.insert(newCategoryIndex, movedCategory);
+  return categories;
+}
+
+List<bool> reorderLogSettingsExpandedCategories({@required List<bool> expandedCategories, @required int oldCategoryIndex, @required int newCategoryIndex}) {
+  bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
+  expandedCategories.insert(newCategoryIndex, movedExpansion);
+  return expandedCategories;
 }

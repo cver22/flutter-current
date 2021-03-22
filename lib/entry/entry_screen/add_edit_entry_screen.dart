@@ -30,7 +30,7 @@ class AddEditEntryScreen extends StatelessWidget {
   AddEditEntryScreen({Key key}) : super(key: key);
 
   void _save({@required MyEntry entry}) {
-    Env.store.dispatch(AddUpdateSingleEntryAndTags(entry: entry));
+    Env.store.dispatch(EntryAddUpdateEntryAndTags(entry: entry));
     Get.back();
   }
 
@@ -293,7 +293,6 @@ class AddEditEntryScreen extends StatelessWidget {
 
   _updateCategoriesOnClose() {
     Env.store.dispatch(LogUpdateCategoriesSubcategoriesOnEntryScreenClose());
-    Env.store.dispatch(EntryClearState());
   }
 
   Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave}) {

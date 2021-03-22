@@ -4,6 +4,7 @@ import 'package:expenses/entry/entry_model/app_entry.dart';
 import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:expenses/log/log_model/log.dart';
 import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
+import 'package:expenses/settings/settings_model/settings.dart';
 import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/utils/currency.dart';
@@ -12,14 +13,14 @@ import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-AppState _updateSingleEntryState(
-  AppState appState,
-  SingleEntryState update(SingleEntryState singleEntryState),
-) {
-  return appState.copyWith(singleEntryState: update(appState.singleEntryState));
+import '../../env.dart';
+
+//to be used when user updates a parameter of the entry. Generally not when they add/edit of categories/subcategories/tags
+AppState Function(AppState) _userUpdateSingleEntryState(SingleEntryState update(singleEntryState)) {
+  return (state) => state.copyWith(singleEntryState: update(state.singleEntryState.copyWith(userUpdated: true)));
 }
 
-///*SET OR SELECT ENTRY*//
+///*SET, SELECT, SAVE ENTRY*//
 
 class EntrySetNewSelect implements AppAction {
   //sets new entry and resets all entry data not yet available
@@ -37,6 +38,8 @@ class EntrySetNewSelect implements AppAction {
     Log log;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     String defaultLogId = appState.settingsState.settings?.value?.defaultLogId;
+    Settings settings = appState.settingsState.settings.value;
+
 
     if (logId != null) {
       //add entry triggered from a selected log
@@ -44,7 +47,11 @@ class EntrySetNewSelect implements AppAction {
     } else if (defaultLogId != null && logs.containsKey(defaultLogId)) {
       log = logs[defaultLogId];
     } else {
-      log = logs[logs.keys.first];
+      //current default logId is not set or refers to a deleted log, change default to first log
+      defaultLogId = logs.keys.first;
+      log = logs[defaultLogId];
+      settings = settings.copyWith(defaultLogId: defaultLogId);
+      Env.settingsFetcher.writeAppSettings(settings);
     }
 
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
@@ -54,18 +61,28 @@ class EntrySetNewSelect implements AppAction {
     entry = entry.copyWith(
         logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    List<AppCategory> categories = List.from(log.categories);
+    List<AppCategory> subcategories = List.from(log.subcategories);
+
+    Env.settingsFetcher.writeAppSettings(settings);
+
+    return updateSubstates(
+      appState,
+      [
+        //TODO start here
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
               selectedTag: Maybe.some(Tag()),
               tags: tags,
-              categories: List.from(log.categories),
-              subcategories: List.from(log.subcategories),
+              categories:  categories,
+              subcategories: subcategories,
               processing: false,
               commentFocusNode: Maybe.some(FocusNode()),
               tagFocusNode: Maybe.some(FocusNode()),
-            ));
+            )),
+      ],
+    );
   }
 }
 
@@ -88,9 +105,10 @@ class EntrySelectEntry implements AppAction {
           spendingFocusNode: FocusNode(),
         ));
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(entryMembers: entryMembers)),
               selectedTag: Maybe.some(Tag()),
               tags: tags,
@@ -99,7 +117,96 @@ class EntrySelectEntry implements AppAction {
               processing: false,
               commentFocusNode: Maybe.some(FocusNode()),
               tagFocusNode: Maybe.some(FocusNode()),
-            ));
+            )),
+      ],
+    );
+  }
+}
+
+class EntryAddUpdateEntryAndTags implements AppAction {
+  final MyEntry entry;
+
+  EntryAddUpdateEntryAndTags({this.entry});
+
+  AppState updateState(AppState appState) {
+    List<Tag> tagsToAddToDatabase = [];
+    List<Tag> tagsToUpdateInDatabase = [];
+    Map<String, Tag> addedUpdatedTags = Map.from(appState.singleEntryState.tags);
+    Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
+    Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
+    Map<String, Log> logs = Map.from(appState.logsState.logs);
+    MyEntry updatedEntry = entry;
+
+    Env.store.dispatch(EntryProcessing());
+
+    //update entry for state and database
+    if (updatedEntry.id != null &&
+        updatedEntry !=
+            appState.entriesState.entries.entries
+                .map((e) => e.value)
+                .toList()
+                .firstWhere((element) => element.id == entry.id)) {
+      //update entry if id is not null and thus already exists an the entry has been modified
+      Env.entriesFetcher.updateEntry(entry);
+    } else if (updatedEntry.id == null) {
+      //if no category has been chosen, automatically set NO_CATEGORY
+      String categoryId = updatedEntry?.categoryId ?? NO_CATEGORY;
+      String subcategoryId = updatedEntry?.subcategoryId;
+
+      if (categoryId != NO_CATEGORY && categoryId != TRANSFER_FUNDS && subcategoryId == null) {
+        //if the category has been chosen but not the subcategory, automatically set subcategory to "other"
+
+        List<AppCategory> subcategories = logs[updatedEntry.logId].subcategories;
+
+        subcategoryId = subcategories
+            .firstWhere((element) => element.parentCategoryId == categoryId && element.id.contains(OTHER))
+            .id;
+
+        addedUpdatedTags = categorySubcategoryUpdateAllTagFrequencies(
+            entry: entry, newAppCategory: subcategoryId, tags: addedUpdatedTags);
+      }
+
+      //save new entry using the user id to help minimize chance of duplication of entry ids in the database
+      Env.entriesFetcher.addEntry(updatedEntry.copyWith(
+          id: '${appState.authState.user.value.id}-${Uuid().v4()}',
+          categoryId: categoryId,
+          subcategoryId: subcategoryId));
+    }
+
+    //update entries for total only
+    entries.update(updatedEntry.id, (value) => updatedEntry, ifAbsent: () => updatedEntry);
+
+    //update tags state
+    addedUpdatedTags.forEach((key, tag) {
+      if (!masterTagList.containsKey(key)) {
+        //tag doesn't exist and will be added
+
+        masterTagList.putIfAbsent(key, () => tag);
+        tagsToAddToDatabase.add(tag);
+      } else if (masterTagList.containsKey(key) && masterTagList[key] != tag) {
+        // if the tag exists and has changed, update it
+        masterTagList.update(key, (value) => tag); // update the local tag map
+        tagsToUpdateInDatabase.add(tag); //updates list of tags that will be sent to database
+      }
+    });
+
+    //update tags database
+    Env.tagFetcher.batchAddUpdate(addedTags: tagsToAddToDatabase, updatedTags: tagsToUpdateInDatabase);
+
+    //update logs total in state
+    //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
+
+    //update log categories and subcategories if they have changed
+    logs = updateLogCategoriesSubcategoriesFromEntry(appState: appState, logId: updatedEntry.logId, logs: logs);
+
+    return updateSubstates(
+      appState,
+      [
+        updateLogsState((logsState) => logsState.copyWith(logs: logs)),
+        updateTagState((tagState) => tagState.copyWith(tags: masterTagList)),
+        updateSingleEntryState((singleEntryState) => SingleEntryState.initial()),
+      ],
+    );
   }
 }
 
@@ -108,18 +215,24 @@ class EntrySelectEntry implements AppAction {
 class EntryProcessing implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateSingleEntryState(appState, (singleEntryState) => singleEntryState.copyWith(processing: true));
+    return updateSubstates(
+      appState,
+      [updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(processing: true))],
+    );
   }
 }
 
 class EntryClearState implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateSingleEntryState(appState, (entryState) => SingleEntryState.initial());
+    return updateSubstates(
+      appState,
+      [updateSingleEntryState((singleEntryState) => SingleEntryState.initial())],
+    );
   }
 }
 
-/*CHANGE ENTRY VALUES*/
+///*CHANGE ENTRY VALUES*/
 
 class EntryUpdateCurrency implements AppAction {
   final String currency;
@@ -128,10 +241,13 @@ class EntryUpdateCurrency implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateSingleEntryState(
-        appState,
-        (entryState) => entryState.copyWith(
-            selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(currency: currency)), userUpdated: true));
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
+            selectedEntry: Maybe.some(singleEntryState.selectedEntry.value.copyWith(currency: currency)))),
+      ],
+    );
   }
 }
 
@@ -142,10 +258,13 @@ class EntryUpdateComment implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateSingleEntryState(
-        appState,
-        (entryState) => entryState.copyWith(
-            selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(comment: comment)), userUpdated: true));
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
+            selectedEntry: Maybe.some(singleEntryState.selectedEntry.value.copyWith(comment: comment)))),
+      ],
+    );
   }
 }
 
@@ -156,10 +275,13 @@ class EntryUpdateDateTime implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateSingleEntryState(
-        appState,
-        (entryState) => entryState.copyWith(
-            selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(dateTime: dateTime)), userUpdated: true));
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
+            selectedEntry: Maybe.some(singleEntryState.selectedEntry.value.copyWith(dateTime: dateTime)))),
+      ],
+    );
   }
 }
 
@@ -178,13 +300,15 @@ class EntrySelectSubcategory implements AppAction {
     tags = categorySubcategoryUpdateAllTagFrequencies(
         tags: tags, oldAppCategory: oldSubcategoryId, newAppCategory: updatedSubcategory, entry: entry);
 
-    return _updateSingleEntryState(
-        appState,
-        (entryState) => entryState.copyWith(
-              selectedEntry: Maybe.some(entryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
-              userUpdated: true,
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
+              selectedEntry: Maybe.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
               tags: tags,
-            ));
+            )),
+      ],
+    );
   }
 }
 
@@ -233,13 +357,15 @@ class EntrySelectCategory implements AppAction {
     tags = categorySubcategoryUpdateAllTagFrequencies(
         entry: entry, oldAppCategory: oldCategoryId, newAppCategory: updatedCategory, tags: tags);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
-              tags: tags,
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.changeCategories(category: updatedCategory)),
-              userUpdated: true,
-            ));
+              tags: tags,
+            )),
+      ],
+    );
   }
 }
 
@@ -260,9 +386,9 @@ class EntryReorderCategories implements AppAction {
     categories.remove(category);
     categories.insert(categoryNewIndex, category);
 
-    return _updateSingleEntryState(
+    return updateSubstates(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(categories: categories, userUpdated: true),
+      [updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(categories: categories))],
     );
   }
 }
@@ -294,9 +420,9 @@ class EntryReorderSubcategories implements AppAction {
       });
     }
 
-    return _updateSingleEntryState(
+    return updateSubstates(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(subcategories: subcategories, userUpdated: true),
+      [updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(subcategories: subcategories))],
     );
   }
 }
@@ -318,10 +444,12 @@ class EntryAddEditCategory implements AppAction {
       categories[categories.indexWhere((entry) => entry.id == category.id)] = category;
     }
 
-    return _updateSingleEntryState(
+    return updateSubstates(
       appState,
-      (singleEntryState) =>
-          singleEntryState.copyWith(categories: categories, subcategories: subcategories, userUpdated: true),
+      [
+        updateSingleEntryState(
+            (singleEntryState) => singleEntryState.copyWith(categories: categories, subcategories: subcategories))
+      ],
     );
   }
 }
@@ -356,10 +484,12 @@ class EntryDeleteCategory implements AppAction {
       );
     }
 
-    return _updateSingleEntryState(
+    return updateSubstates(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(
-          categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry), userUpdated: false),
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
+            categories: categories, subcategories: subcategories, selectedEntry: Maybe.some(entry)))
+      ],
     );
   }
 }
@@ -397,10 +527,12 @@ class EntryAddEditSubcategory implements AppAction {
     }
 
     //update the subcategory as well as the category if the parent has changed
-    return _updateSingleEntryState(
+    return updateSubstates(
       appState,
-      (singleEntryState) => singleEntryState.copyWith(
-          subcategories: subcategories, tags: tags, selectedEntry: Maybe.some(entry), userUpdated: true),
+      [
+        _userUpdateSingleEntryState((singleEntryState) =>
+            singleEntryState.copyWith(subcategories: subcategories, tags: tags, selectedEntry: Maybe.some(entry)))
+      ],
     );
   }
 }
@@ -419,19 +551,21 @@ class EntryDeleteSubcategory implements AppAction {
       subcategories.removeWhere((e) => e.id == subcategory.id);
       if (subcategory.id == entry.subcategoryId) {
         //TODO this should auto select the "other" subcategory
-        //entry = entry.copyWith(subcategoryId: NO_SUBCATEGORY);
+
       }
     }
 
-    return _updateSingleEntryState(
+    return updateSubstates(
       appState,
-      (singleEntryState) =>
-          singleEntryState.copyWith(subcategories: subcategories, selectedEntry: Maybe.some(entry), userUpdated: true),
+      [
+        _userUpdateSingleEntryState((singleEntryState) =>
+            singleEntryState.copyWith(subcategories: subcategories, selectedEntry: Maybe.some(entry)))
+      ],
     );
   }
 }
 
-/*MEMBER ACTIONS*/
+///*MEMBER ACTIONS*/
 
 class EntryUpdateMemberPaidAmount implements AppAction {
   final int paidValue;
@@ -463,13 +597,15 @@ class EntryUpdateMemberPaidAmount implements AppAction {
     members = _divideSpendingEvenly(amount: amount, members: members);
     entry = entry.copyWith(amount: amount, entryMembers: members);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
-              userUpdated: true,
               canSave: _canSave(entry: entry),
-            ));
+            ))
+      ],
+    );
   }
 }
 
@@ -490,13 +626,15 @@ class EntryUpdateMemberSpentAmount implements AppAction {
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
     entry = entry.copyWith(entryMembers: members);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
-              userUpdated: true,
               canSave: _canSave(entry: entry),
-            ));
+            ))
+      ],
+    );
   }
 }
 
@@ -510,13 +648,15 @@ class EntryDivideRemainingSpending implements AppAction {
     members = _distributeRemainingSpending(amount: entry.amount, members: members);
     entry = entry.copyWith(entryMembers: members);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
-              userUpdated: true,
               canSave: _canSave(entry: entry),
-            ));
+            ))
+      ],
+    );
   }
 }
 
@@ -532,13 +672,15 @@ class EntryResetMemberSpendingToAll implements AppAction {
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
     entry = entry.copyWith(entryMembers: members);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
-              userUpdated: true,
               canSave: _canSave(entry: entry),
-            ));
+            ))
+      ],
+    );
   }
 }
 
@@ -588,13 +730,15 @@ class EntryToggleMemberPaying implements AppAction {
     members = _divideSpendingEvenly(amount: amount, members: members);
     entry = entry.copyWith(entryMembers: members, amount: amount);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
-              userUpdated: true,
               canSave: _canSave(entry: entry),
-            ));
+            ))
+      ],
+    );
   }
 }
 
@@ -626,17 +770,19 @@ class EntryToggleMemberSpending implements AppAction {
     members = _divideSpendingEvenly(amount: entry.amount, members: members);
     entry = entry.copyWith(entryMembers: members);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
-              userUpdated: true,
               canSave: _canSave(entry: entry),
-            ));
+            ))
+      ],
+    );
   }
 }
 
-/*TAGS SECTION*/
+///*TAGS SECTION*/
 
 class EntryAddUpdateTag implements AppAction {
   final Tag tag;
@@ -690,16 +836,18 @@ class EntryAddUpdateTag implements AppAction {
       tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry),
               selectedTag: Maybe.some(Tag()),
               tags: tags,
-              userUpdated: true,
               searchedTags: const [],
               search: Maybe.none(),
-            ));
+            ))
+      ],
+    );
   }
 }
 
@@ -744,14 +892,16 @@ class EntrySelectDeselectTag implements AppAction {
 
     tags.update(selectedDeselectedTag.id, (value) => selectedDeselectedTag, ifAbsent: () => selectedDeselectedTag);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)),
             tags: tags,
             searchedTags: const [],
-            userUpdated: true,
-            search: Maybe.none()));
+            search: Maybe.none())),
+      ],
+    );
   }
 }
 
@@ -771,10 +921,41 @@ class EntrySetSearchedTags implements AppAction {
 
     searchedTags = buildSearchedTagsList(tags: tags, tagIds: selectedTagIds, maxTags: maxTags, search: search);
 
-    return _updateSingleEntryState(
-        appState, (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, search: searchMaybe));
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState(
+            (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, search: searchMaybe)),
+      ],
+    );
   }
 }
+
+class EntryDeleteTag implements AppAction {
+  final Tag tag;
+
+  EntryDeleteTag({@required this.tag});
+
+  @override
+  AppState updateState(AppState appState) {
+    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
+    Map<String, Tag> entryTagsMap = Map.from(appState.singleEntryState.tags);
+    tagsMap.removeWhere((key, value) => key == tag.id);
+    entryTagsMap.removeWhere((key, value) => key == tag.id);
+
+    Env.tagFetcher.deleteTag(tag);
+
+    return updateSubstates(
+      appState,
+      [
+        updateTagState((tagState) => tagState.copyWith(tags: tagsMap)),
+        updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(tags: entryTagsMap, userUpdated: true)),
+      ],
+    );
+  }
+}
+
+///*FOCUS*//
 
 class EntryMemberFocus implements AppAction {
   final String memberId;
@@ -801,11 +982,13 @@ class EntryMemberFocus implements AppAction {
 
     memberMap.update(memberId, (value) => member);
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry.copyWith(entryMembers: memberMap)),
-            ));
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) =>
+            singleEntryState.copyWith(selectedEntry: Maybe.some(entry.copyWith(entryMembers: memberMap)))),
+      ],
+    );
   }
 }
 
@@ -869,13 +1052,16 @@ class EntryNextFocus implements AppAction {
       }
     }
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(entryMembers: memberMap)),
               commentFocusNode: Maybe.some(commentFocusNode),
               tagFocusNode: Maybe.some(tagFocusNode),
-            ));
+            )),
+      ],
+    );
   }
 }
 
@@ -903,15 +1089,20 @@ class EntryClearAllFocus implements AppAction {
     commentFocusNode.unfocus();
     tagFocusNode.unfocus();
 
-    return _updateSingleEntryState(
-        appState,
-        (singleEntryState) => singleEntryState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe.some(entry.copyWith(entryMembers: memberMap)),
               commentFocusNode: Maybe.some(commentFocusNode),
               tagFocusNode: Maybe.some(tagFocusNode),
-            ));
+            )),
+      ],
+    );
   }
 }
+
+///*METHODS*/
 
 Tag _incrementCategoryAndLogFrequency(
     {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {

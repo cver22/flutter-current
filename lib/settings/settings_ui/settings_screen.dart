@@ -135,9 +135,7 @@ class SettingsScreen extends StatelessWidget {
   }
 
   Widget _categoryButton({SettingsState settingsState, BuildContext context}) {
-    return settingsState?.settings?.value?.defaultCategories == null
-        ? Container()
-        : CategoryButton(
+    return CategoryButton(
             label: 'Edit Default Categories',
             onPressed: () => {
               /*Get.dialog(CategoryListDialog()),*/

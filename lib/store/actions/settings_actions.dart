@@ -89,8 +89,7 @@ class SettingsDeleteCategory implements AppAction {
     Settings settings = appState.settingsState.settings.value;
     List<AppCategory> categories = List.from(settings.defaultCategories);
 
-    if (category.id != NO_CATEGORY) {
-      //remove as long as the it is not NO_CATEGORY
+    if (canDeleteCategory(id: category.id)) {
       categories = categories.where((element) => element.id != category.id).toList();
       settings = settings.copyWith(defaultCategories: categories);
       Env.settingsFetcher.writeAppSettings(settings);
@@ -179,19 +178,21 @@ class SettingsReorderCategory implements AppAction {
     //reorder categories list
     Settings settings = appState.settingsState.settings.value;
     List<AppCategory> categories = List.from(settings.defaultCategories);
-    AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
-    categories.insert(newCategoryIndex, movedCategory);
+    categories = reorderLogSettingsCategories(
+        categories: categories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
 
     //reorder expanded list
     List<bool> expandedCategories = List.from(appState.settingsState.expandedCategories);
-    bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
-    expandedCategories.insert(newCategoryIndex, movedExpansion);
+    expandedCategories = reorderLogSettingsExpandedCategories(
+        expandedCategories: expandedCategories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
+
+    settings = settings.copyWith(defaultCategories: categories);
+    Env.settingsFetcher.writeAppSettings(settings);
 
     return _updateSettingsState(
         appState,
-        (settingsState) => settingsState.copyWith(
-            settings: Maybe.some(settings.copyWith(defaultCategories: categories)),
-            expandedCategories: expandedCategories));
+        (settingsState) =>
+            settingsState.copyWith(settings: Maybe.some(settings), expandedCategories: expandedCategories));
   }
 }
 
@@ -225,9 +226,9 @@ class SettingsReorderSubcategory implements AppAction {
         subsetOfSubcategories: subsetOfSubcategories,
         subcategories: subcategories);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings.copyWith(defaultSubcategories: subcategories))));
+    settings = settings.copyWith(defaultSubcategories: subcategories);
+    Env.settingsFetcher.writeAppSettings(settings);
+
+    return _updateSettingsState(appState, (settingsState) => settingsState.copyWith(settings: Maybe.some(settings)));
   }
 }

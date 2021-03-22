@@ -58,7 +58,7 @@ class _EditTagDialogState extends State<EditTagDialog> {
             TextButton(
                 child: Text('Delete'),
                 onPressed: () => {
-                      Env.store.dispatch(DeleteTagFromEntryScreen(tag: widget.tag)),
+                      Env.store.dispatch(EntryDeleteTag(tag: widget.tag)),
                       Get.back(),
                     }),
             TextButton(

@@ -3,11 +3,12 @@ import 'package:expenses/store/actions/app_actions.dart';
 import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:expenses/tags/tag_model/tag_state.dart';
 
-AppState _updateTagState(
-  AppState appState,
-  TagState update(TagState tagState),
-) {
-  return appState.copyWith(tagState: update(appState.tagState));
+AppState _updateSubstates(AppState state, List<AppState Function(AppState)> updates) {
+  return updates.fold(state, (updatedState, update) => update(updatedState));
+}
+
+AppState Function(AppState) _updateTagState(TagState update(tagState)) {
+  return (state) => state.copyWith(tagState: update(state.tagState));
 }
 
 AppState _updateTags(
@@ -16,20 +17,30 @@ AppState _updateTags(
 ) {
   Map<String, Tag> cloneMap = Map.from(appState.tagState.tags);
   updateInPlace(cloneMap);
-  return _updateTagState(appState, (tagState) => tagState.copyWith(tags: cloneMap));
+
+  return _updateSubstates(
+    appState,
+    [_updateTagState((tagState) => tagState.copyWith(tags: cloneMap))],
+  );
 }
 
 class TagsSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: true));
+    return _updateSubstates(
+      appState,
+      [_updateTagState((tagState) => tagState.copyWith(isLoading: true))],
+    );
   }
 }
 
 class TagsSetLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateTagState(appState, (tagState) => tagState.copyWith(isLoading: false));
+    return _updateSubstates(
+      appState,
+      [_updateTagState((tagState) => tagState.copyWith(isLoading: false))],
+    );
   }
 }
 

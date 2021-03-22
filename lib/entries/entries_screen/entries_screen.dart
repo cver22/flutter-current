@@ -24,13 +24,15 @@ class EntriesScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<MyEntry> entries = [];
+    bool activateFAB = Env.store.state.logsState.logs.isNotEmpty;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
+        backgroundColor: activateFAB ? null : Colors.grey,
+        onPressed:  activateFAB ? () {
           Env.store.dispatch(EntrySetNewSelect());
           Get.toNamed(ExpenseRoutes.addEditEntries);
-        },
+        } : null,
         child: Icon(Icons.add),
       ),
       body: ConnectState<EntriesState>(
