@@ -1,10 +1,11 @@
-import 'package:expenses/login_register/login_register_model/login_or_register.dart';
-import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/login_register/login_register_ui/login_register_form.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
+import '../../store/connect_state.dart';
+import '../../utils/utils.dart';
+import '../login_register_model/login_or_register.dart';
+import '../login_register_model/login_reg_state.dart';
+import 'login_register_form.dart';
 
 class LoginRegisterScreen extends StatelessWidget {
   const LoginRegisterScreen({Key key}) : super(key: key);
@@ -22,12 +23,15 @@ class LoginRegisterScreen extends StatelessWidget {
             appBar: AppBar(
               leading: Container(),
               title: Text(
-                loginRegState.loginOrRegister == LoginOrRegister.login ? 'Login' : 'Register',
+                loginRegState.loginOrRegister == LoginOrRegister.login
+                    ? 'Login'
+                    : 'Register',
               ),
             ),
             body: LoginRegisterForm(),
           ),
-          onWillPop: () => SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+          onWillPop: () =>
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
         );
       },
     );

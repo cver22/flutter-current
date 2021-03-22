@@ -1,18 +1,23 @@
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/utils/currency.dart';
-import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../../env.dart';
+import '../../../log/log_model/log.dart';
+import '../../../store/actions/single_entry_actions.dart';
+import '../../../utils/currency.dart';
+import '../../../utils/expense_routes.dart';
+import '../../member_model/log_member_model/log_member.dart';
 
 class LogMemberMonthListTile extends StatelessWidget {
   final LogMember member;
   final Log log;
   final bool singleMemberLog;
 
-  const LogMemberMonthListTile({Key key, @required this.log, @required this.member, this.singleMemberLog = false})
+  const LogMemberMonthListTile(
+      {Key key,
+      @required this.log,
+      @required this.member,
+      this.singleMemberLog = false})
       : super(key: key);
 
   @override
@@ -27,7 +32,8 @@ class LogMemberMonthListTile extends StatelessWidget {
             )),
             Get.toNamed(ExpenseRoutes.addEditEntries),
           },
-          contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
+          contentPadding:
+              EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -35,10 +41,12 @@ class LogMemberMonthListTile extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  Text('Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
+                  Text(
+                      'Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
                   singleMemberLog
                       ? Container()
-                      : Text('  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
+                      : Text(
+                          '  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
                 ],
               )
             ],

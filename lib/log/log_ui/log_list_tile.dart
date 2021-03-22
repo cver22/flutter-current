@@ -1,21 +1,27 @@
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/log/log_totals_model/log_total.dart';
-import 'package:expenses/member/member_ui/log_member_detailed_ui/log_member_month_list.dart';
-import 'package:expenses/store/actions/entries_actions.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/utils/currency.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../env.dart';
+import '../../member/member_ui/log_member_detailed_ui/log_member_month_list.dart';
+import '../../store/actions/entries_actions.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../utils/currency.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/expense_routes.dart';
+import '../log_model/log.dart';
+import '../log_totals_model/log_total.dart';
 
 class LogListTile extends StatelessWidget {
   final Log log;
   final LogTotal logTotal;
   final TabController tabController;
 
-  const LogListTile({Key key, @required this.log, @required this.logTotal, @required this.tabController}) : super(key: key);
+  const LogListTile(
+      {Key key,
+      @required this.log,
+      @required this.logTotal,
+      @required this.tabController})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +46,8 @@ class LogListTile extends StatelessWidget {
                   children: [
                     IconButton(
                       onPressed: () {
-                        Env.store.dispatch(EntriesSetEntriesFilter(logId: log.id));
+                        Env.store
+                            .dispatch(EntriesSetEntriesFilter(logId: log.id));
                         tabController.animateTo(1);
                       },
                       icon: Icon(Icons.assignment_outlined),

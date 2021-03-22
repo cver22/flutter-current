@@ -1,11 +1,11 @@
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../env.dart';
+import '../../store/actions/filter_actions.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../../utils/db_consts.dart';
+import '../tag_model/tag.dart';
 
 class TagField extends StatefulWidget {
   final FocusNode tagFocusNode;
@@ -67,7 +67,9 @@ class _TagFieldState extends State<TagField> {
             controller: _controller,
             keyboardType: TextInputType.text,
             textCapitalization: TextCapitalization.words,
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))],
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9]"))
+            ],
             textInputAction: TextInputAction.done,
             onFieldSubmitted: searchOnly
                 ? null

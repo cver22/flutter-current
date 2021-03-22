@@ -1,9 +1,9 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:expenses/auth_user/models/app_user.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/entry/entry_model/app_entry_entity.dart';
-import 'package:expenses/utils/db_consts.dart';
+
+import '../auth_user/models/app_user.dart';
+import '../entry/entry_model/app_entry.dart';
+import '../entry/entry_model/app_entry_entity.dart';
+import '../utils/db_consts.dart';
 
 abstract class EntriesRepository {
   Future<void> addNewEntry(MyEntry entry);
@@ -21,25 +21,38 @@ abstract class EntriesRepository {
 
 class FirebaseEntriesRepository implements EntriesRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final entriesCollection = FirebaseFirestore.instance.collection(ENTRY_COLLECTION);
+  final entriesCollection =
+      FirebaseFirestore.instance.collection(ENTRY_COLLECTION);
 
   @override
   Future<void> addNewEntry(MyEntry entry) {
-    return db.collection(ENTRY_COLLECTION).doc(entry.id).set(entry.toEntity().toDocument());
+    return db
+        .collection(ENTRY_COLLECTION)
+        .doc(entry.id)
+        .set(entry.toEntity().toDocument());
   }
 
   //TODO need to filter by contains UID
   @override
   Stream<List<MyEntry>> loadEntries(AppUser user) {
-    return db.collection(ENTRY_COLLECTION).where(MEMBER_LIST, arrayContains: user.id).snapshots().map((snapshot) {
+    return db
+        .collection(ENTRY_COLLECTION)
+        .where(MEMBER_LIST, arrayContains: user.id)
+        .snapshots()
+        .map((snapshot) {
       // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
-      return snapshot.docs.map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc))).toList();
+      return snapshot.docs
+          .map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc)))
+          .toList();
     });
   }
 
   @override
   Future<void> updateEntry(MyEntry update) {
-    return db.collection(ENTRY_COLLECTION).doc(update.id).update(update.toEntity().toDocument());
+    return db
+        .collection(ENTRY_COLLECTION)
+        .doc(update.id)
+        .update(update.toEntity().toDocument());
   }
 
   @override
@@ -64,7 +77,8 @@ class FirebaseEntriesRepository implements EntriesRepository {
     WriteBatch batch = db.batch();
 
     updatedEntries.forEach((entry) {
-      batch.update(db.collection(TAG_COLLECTION).doc(entry.id), {entry.id: entry.toEntity().toDocument()});
+      batch.update(db.collection(TAG_COLLECTION).doc(entry.id),
+          {entry.id: entry.toEntity().toDocument()});
     });
 
 //TODO maybe add a whenComplete to this?

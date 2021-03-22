@@ -1,15 +1,14 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/utils/maybe.dart';
+import 'log.dart';
+import '../../utils/maybe.dart';
 import 'package:flutter/foundation.dart';
 
 //TODO will need a visible method to hide archived/deleted logs
 
 @immutable
 class LogsState extends Equatable {
-
   final Map<String, Log> logs; // id, log
   final bool isLoading;
   final Maybe<Log> selectedLog;
@@ -18,15 +17,14 @@ class LogsState extends Equatable {
   final bool userUpdated;
   final bool canSave;
 
-  LogsState({
-    this.logs,
-    this.isLoading,
-    this.selectedLog,
-    this.expandedCategories,
-    this.reorder,
-    this.userUpdated,
-    this.canSave
-  });
+  LogsState(
+      {this.logs,
+      this.isLoading,
+      this.selectedLog,
+      this.expandedCategories,
+      this.reorder,
+      this.userUpdated,
+      this.canSave});
 
   factory LogsState.initial() {
     return LogsState(
@@ -41,7 +39,15 @@ class LogsState extends Equatable {
   }
 
   @override
-  List<Object> get props => [logs, isLoading, selectedLog, expandedCategories, reorder, userUpdated, canSave];
+  List<Object> get props => [
+        logs,
+        isLoading,
+        selectedLog,
+        expandedCategories,
+        reorder,
+        userUpdated,
+        canSave
+      ];
 
   @override
   bool get stringify => true;
@@ -58,7 +64,8 @@ class LogsState extends Equatable {
     if ((logs == null || identical(logs, this.logs)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
         (selectedLog == null || identical(selectedLog, this.selectedLog)) &&
-        (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
+        (expandedCategories == null ||
+            identical(expandedCategories, this.expandedCategories)) &&
         (reorder == null || identical(reorder, this.reorder)) &&
         (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
         (canSave == null || identical(canSave, this.canSave))) {

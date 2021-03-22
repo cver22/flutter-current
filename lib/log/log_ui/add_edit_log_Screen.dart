@@ -1,23 +1,23 @@
-import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/app/common_widgets/app_currency_picker.dart';
-import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
-import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/log/log_model/logs_state.dart';
-import 'package:expenses/log/log_ui/log_name_form.dart';
-import 'package:expenses/member/member_ui/log_member_simple_ui/log_member_total_list.dart';
-import 'package:expenses/qr_reader/qr_ui/qr_reader.dart';
-import 'package:expenses/settings/settings_model/settings.dart';
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../app/common_widgets/app_button.dart';
+import '../../app/common_widgets/app_currency_picker.dart';
+import '../../app/common_widgets/simple_confirmation_dialog.dart';
+import '../../categories/categories_screens/category_button.dart';
+import '../../categories/categories_screens/master_category_list_dialog.dart';
+import '../../env.dart';
+import '../../member/member_ui/log_member_simple_ui/log_member_total_list.dart';
+import '../../qr_reader/qr_ui/qr_reader.dart';
+import '../../settings/settings_model/settings.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/utils.dart';
+import '../log_model/log.dart';
+import '../log_model/logs_state.dart';
+import 'log_name_form.dart';
 
 class AddEditLogScreen extends StatelessWidget {
   const AddEditLogScreen({Key key}) : super(key: key);
@@ -79,7 +79,8 @@ class AddEditLogScreen extends StatelessWidget {
           onTapConfirm: (delete) {
             deleteConfirmed = delete;
             if (deleteConfirmed) {
-              Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
+              Env.store.dispatch(
+                  DeleteLog(log: Env.store.state.logsState.selectedLog.value));
               Get.back();
             }
           },
@@ -139,7 +140,11 @@ class AddEditLogScreen extends StatelessWidget {
                       ),
               ],
             ),
-            body: _buildContents(context: context, log: log, currency: currency, logs: logsState.logs),
+            body: _buildContents(
+                context: context,
+                log: log,
+                currency: currency,
+                logs: logsState.logs),
           ),
         );
       },
@@ -147,7 +152,10 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   Widget _buildContents(
-      {@required BuildContext context, @required Log log, @required String currency, @required Map<String, Log> logs}) {
+      {@required BuildContext context,
+      @required Log log,
+      @required String currency,
+      @required Map<String, Log> logs}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -159,9 +167,13 @@ class AddEditLogScreen extends StatelessWidget {
               children: <Widget>[
                 LogNameForm(log: log),
                 log.uid == null ? SizedBox(height: 16.0) : Container(),
-                log.uid == null ? NewLogCategorySourceWidget(logs: logs, log: log) : Container(),
+                log.uid == null
+                    ? NewLogCategorySourceWidget(logs: logs, log: log)
+                    : Container(),
                 SizedBox(height: 16.0),
-                log.uid == null ? Container() : _categoryButton(context: context, log: log),
+                log.uid == null
+                    ? Container()
+                    : _categoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
                 _buildLogMemberList(log: log),
                 SizedBox(height: 8.0),
@@ -235,8 +247,10 @@ class AddEditLogScreen extends StatelessWidget {
     return log.uid == null
         ? AppCurrencyPicker(
             currency: currency,
-            returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
-        : Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');
+            returnCurrency: (currency) => Env.store.dispatch(
+                UpdateSelectedLog(log: log.copyWith(currency: currency))))
+        : Text(
+            '${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');
   }
 }
 
@@ -251,10 +265,12 @@ class NewLogCategorySourceWidget extends StatefulWidget {
   final Log log;
 
   @override
-  _NewLogCategorySourceWidgetState createState() => _NewLogCategorySourceWidgetState();
+  _NewLogCategorySourceWidgetState createState() =>
+      _NewLogCategorySourceWidgetState();
 }
 
-class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget> {
+class _NewLogCategorySourceWidgetState
+    extends State<NewLogCategorySourceWidget> {
   Log defaultLog;
   Log currentDropDownSelection;
   List<Log> temporaryLogs = [];

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:expenses/utils/db_consts.dart';
+import '../../utils/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
@@ -13,13 +13,21 @@ class TagEntity extends Equatable {
   final String id;
   final String name;
   final int tagLogFrequency; //how often the tag is used in its parent log
-  final Map<String, int> tagCategoryFrequency; //how often the tag is used for each category
+  final Map<String, int>
+      tagCategoryFrequency; //how often the tag is used for each category
   final List<String> memberList; //used for retrieval from database
 
-  const TagEntity({this.logId, this.id, this.name, this.tagLogFrequency, this.tagCategoryFrequency, this.memberList});
+  const TagEntity(
+      {this.logId,
+      this.id,
+      this.name,
+      this.tagLogFrequency,
+      this.tagCategoryFrequency,
+      this.memberList});
 
   @override
-  List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object> get props =>
+      [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   @override
   String toString() {
@@ -27,7 +35,8 @@ class TagEntity extends Equatable {
         '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
-  factory TagEntity.fromJson(Map<String, dynamic> json) => _$TagEntityFromJson(json);
+  factory TagEntity.fromJson(Map<String, dynamic> json) =>
+      _$TagEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$TagEntityToJson(this);
 
@@ -38,7 +47,8 @@ class TagEntity extends Equatable {
       name: snap.data()[NAME],
       tagLogFrequency: snap.data()[TAG_LOG_FREQUENCY],
       tagCategoryFrequency:
-          (snap.data()[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+          (snap.data()[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)
+              ?.map((key, value) => MapEntry(key, value)),
       memberList: List<String>.from(snap.data()[MEMBER_LIST] as List<dynamic>),
     );
   }

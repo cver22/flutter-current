@@ -1,8 +1,8 @@
-import 'package:expenses/account/account_model/account_state.dart';
-import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/utils/validators.dart';
+import '../../account/account_model/account_state.dart';
+import '../../app/models/app_state.dart';
+import '../../login_register/login_register_model/login__reg_status.dart';
+import '../../utils/validators.dart';
+import 'app_actions.dart';
 
 AppState _updateAccountState(
   AppState appState,
@@ -14,21 +14,24 @@ AppState _updateAccountState(
 class AccountUpdateFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(appState, (accountState) => accountState.failure());
+    return _updateAccountState(
+        appState, (accountState) => accountState.failure());
   }
 }
 
 class AccountUpdateSubmitting implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(appState, (accountState) => accountState.submitting());
+    return _updateAccountState(
+        appState, (accountState) => accountState.submitting());
   }
 }
 
 class AccountUpdateSuccess implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(appState, (accountState) => accountState.success());
+    return _updateAccountState(
+        appState, (accountState) => accountState.success());
   }
 }
 
@@ -36,14 +39,17 @@ class ShowHidePasswordForm implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(
-        appState, (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm));
+        appState,
+        (accountState) => accountState.copyWith(
+            showPasswordForm: !appState.accountState.showPasswordForm));
   }
 }
 
 class AccountResetState implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(appState, (accountState) => accountState.resetState());
+    return _updateAccountState(
+        appState, (accountState) => accountState.resetState());
   }
 }
 
@@ -60,7 +66,8 @@ class AccountValidateOldPassword implements AppAction {
     return _updateAccountState(
         appState,
         (accountState) => accountState.copyWith(
-            isOldPasswordValid: Validators.isValidPassword(password), loginStatus: LoginStatus.updated));
+            isOldPasswordValid: Validators.isValidPassword(password),
+            loginStatus: LoginStatus.updated));
   }
 }
 
@@ -95,6 +102,8 @@ class IsUserSignedInWithEmail implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateAccountState(
-        appState, (accountState) => accountState.copyWith(isUserSignedInWithEmail: signedInWithEmail));
+        appState,
+        (accountState) =>
+            accountState.copyWith(isUserSignedInWithEmail: signedInWithEmail));
   }
 }

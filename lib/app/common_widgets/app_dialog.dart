@@ -1,7 +1,7 @@
-import 'package:expenses/tags/tags_ui/tag_field.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../utils/db_consts.dart';
 
 class AppDialogWithActions extends StatelessWidget {
   final Widget child;
@@ -21,14 +21,17 @@ class AppDialogWithActions extends StatelessWidget {
       this.backChevron,
       this.trailingTitleWidget,
       this.shrinkWrap = false,
-      this.padContent = true, this.topWidget})
+      this.padContent = true,
+      this.topWidget})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return AlertDialog(
       titlePadding: EdgeInsets.fromLTRB(5, 5, 5, 5),
-      contentPadding: padContent ? EdgeInsets.fromLTRB(10, 0, 10, 0) : EdgeInsets.fromLTRB(0, 0, 0, 0),
+      contentPadding: padContent
+          ? EdgeInsets.fromLTRB(10, 0, 10, 0)
+          : EdgeInsets.fromLTRB(0, 0, 0, 0),
       title: Column(
         children: [
           Row(
@@ -59,7 +62,8 @@ class AppDialogWithActions extends StatelessWidget {
       ),
       insetPadding: EdgeInsets.all(DIALOG_EDGE_INSETS),
       elevation: DIALOG_ELEVATION,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
+      shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(DIALOG_BORDER_RADIUS)),
       actions: actions,
       actionsPadding: EdgeInsets.fromLTRB(5, 5, 5, 5),
       content: Builder(builder: (context) {

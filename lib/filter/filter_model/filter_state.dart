@@ -1,11 +1,12 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/filter/filter_model/filter.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/maybe.dart';
+
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/maybe.dart';
+import 'filter.dart';
 
 class FilterState extends Equatable {
   final Maybe<Filter> filter;
@@ -18,7 +19,6 @@ class FilterState extends Equatable {
   final Maybe<String> search;
   final List<Tag> searchedTags;
   final Maybe<SortMethod> sortMethod; //currently unused , implement later
-
 
   FilterState({
     this.filter,
@@ -78,9 +78,13 @@ class FilterState extends Equatable {
     Maybe<SortMethod> sortMethod,
   }) {
     if ((filter == null || identical(filter, this.filter)) &&
-        (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
-        (consolidatedCategories == null || identical(consolidatedCategories, this.consolidatedCategories)) &&
-        (consolidatedSubcategories == null || identical(consolidatedSubcategories, this.consolidatedSubcategories)) &&
+        (expandedCategories == null ||
+            identical(expandedCategories, this.expandedCategories)) &&
+        (consolidatedCategories == null ||
+            identical(consolidatedCategories, this.consolidatedCategories)) &&
+        (consolidatedSubcategories == null ||
+            identical(
+                consolidatedSubcategories, this.consolidatedSubcategories)) &&
         (allMembers == null || identical(allMembers, this.allMembers)) &&
         (allTags == null || identical(allTags, this.allTags)) &&
         (updated == null || identical(updated, this.updated)) &&
@@ -93,8 +97,10 @@ class FilterState extends Equatable {
     return new FilterState(
       filter: filter ?? this.filter,
       expandedCategories: expandedCategories ?? this.expandedCategories,
-      consolidatedCategories: consolidatedCategories ?? this.consolidatedCategories,
-      consolidatedSubcategories: consolidatedSubcategories ?? this.consolidatedSubcategories,
+      consolidatedCategories:
+          consolidatedCategories ?? this.consolidatedCategories,
+      consolidatedSubcategories:
+          consolidatedSubcategories ?? this.consolidatedSubcategories,
       allMembers: allMembers ?? this.allMembers,
       allTags: allTags ?? this.allTags,
       updated: updated ?? this.updated,

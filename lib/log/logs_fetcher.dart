@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/log/logs_repository.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/app_store.dart';
 import 'package:flutter/foundation.dart';
+
+import '../store/actions/logs_actions.dart';
+import '../store/app_store.dart';
+import 'log_model/log.dart';
+import 'logs_repository.dart';
 
 class LogsFetcher {
   final AppStore _store;
@@ -20,9 +21,10 @@ class LogsFetcher {
   Future<void> loadLogs() async {
     _store.dispatch(SetLogsLoading());
     _logsSubscription?.cancel();
-    _logsSubscription = _logsRepository.loadLogs(_store.state.authState.user.value).listen(
-          (logs) => _store.dispatch(SetLogs(logList: logs)),
-        );
+    _logsSubscription =
+        _logsRepository.loadLogs(_store.state.authState.user.value).listen(
+              (logs) => _store.dispatch(SetLogs(logList: logs)),
+            );
     _store.dispatch(SetLogsLoaded());
   }
 

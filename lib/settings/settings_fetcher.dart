@@ -2,16 +2,17 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:expenses/env.dart';
-import 'package:expenses/settings/settings_model/settings.dart';
-import 'package:expenses/settings/settings_model/settings_entity.dart';
-import 'package:expenses/store/actions/settings_actions.dart';
-import 'package:expenses/store/app_store.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/services.dart';
 import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../env.dart';
+import '../store/actions/settings_actions.dart';
+import '../store/app_store.dart';
+import '../utils/maybe.dart';
+import 'settings_model/settings.dart';
+import 'settings_model/settings_entity.dart';
 
 class SettingsFetcher {
   final AppStore _store;
@@ -61,16 +62,19 @@ class SettingsFetcher {
     }
 
     try {
-      if (settingsInitialized && Env.store.state.settingsState.settings.isSome) {
+      if (settingsInitialized &&
+          Env.store.state.settingsState.settings.isSome) {
         //if the settings are already loaded, do nothing
         return;
       } else if (!settingsInitialized) {
         print('Resetting settings');
         //if no settings have ever been loaded, load the default
-        String jsonString = await rootBundle.loadString('assets/default_settings.txt');
+        String jsonString =
+            await rootBundle.loadString('assets/default_settings.txt');
 
         _store.dispatch(SettingsUpdate(
-          settings: Maybe.some(Settings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)))),
+          settings: Maybe.some(Settings.fromEntity(
+              SettingsEntity.fromJson(json.decode(jsonString)))),
         ));
 
         //marks that default settings have previously been read from assets
@@ -83,7 +87,8 @@ class SettingsFetcher {
         jsonData = json.decode(await file.readAsString());
 
         _store.dispatch(SettingsUpdate(
-          settings: Maybe.some(Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
+          settings: Maybe.some(
+              Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
         ));
       }
     } catch (e) {

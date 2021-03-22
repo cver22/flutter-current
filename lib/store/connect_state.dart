@@ -1,6 +1,7 @@
-import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/env.dart';
 import 'package:flutter/widgets.dart';
+
+import '../app/models/app_state.dart';
+import '../env.dart';
 
 class ConnectState<T> extends StatelessWidget {
   final T Function(AppState appState) map;
@@ -17,7 +18,9 @@ class ConnectState<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<T>(
-        stream: Env.store.state$.map(map).distinct((T prev, T next) => !where(prev, next)),
+        stream: Env.store.state$
+            .map(map)
+            .distinct((T prev, T next) => !where(prev, next)),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return Container();

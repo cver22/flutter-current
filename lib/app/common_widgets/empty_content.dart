@@ -1,11 +1,11 @@
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../env.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../../utils/expense_routes.dart';
+import 'app_button.dart';
 
 class EmptyContent extends StatelessWidget {
   const EmptyContent({
@@ -71,7 +71,6 @@ class LogEmptyContent extends StatelessWidget {
   }
 }
 
-
 class EntriesEmptyContent extends StatelessWidget {
   const EntriesEmptyContent({
     Key key,
@@ -97,4 +96,3 @@ class EntriesEmptyContent extends StatelessWidget {
     );
   }
 }
-

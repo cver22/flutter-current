@@ -1,8 +1,9 @@
-import 'package:expenses/member/member_model/entry_member_model/entry_member_entity.dart';
-import 'package:expenses/member/member_model/member.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
+
+import '../../../utils/db_consts.dart';
+import '../member.dart';
+import 'entry_member_entity.dart';
 
 @immutable
 class EntryMember extends Member {
@@ -78,12 +79,17 @@ class EntryMember extends Member {
         (spent == null || identical(spent, this.spent)) &&
         (paying == null || identical(paying, this.paying)) &&
         (spending == null || identical(spending, this.spending)) &&
-        (payingController == null || identical(payingController, this.payingController)) &&
-        (spendingController == null || identical(spendingController, this.spendingController)) &&
-        (payingFocusNode == null || identical(payingFocusNode, this.payingFocusNode)) &&
-        (spendingFocusNode == null || identical(spendingFocusNode, this.spendingFocusNode)) &&
+        (payingController == null ||
+            identical(payingController, this.payingController)) &&
+        (spendingController == null ||
+            identical(spendingController, this.spendingController)) &&
+        (payingFocusNode == null ||
+            identical(payingFocusNode, this.payingFocusNode)) &&
+        (spendingFocusNode == null ||
+            identical(spendingFocusNode, this.spendingFocusNode)) &&
         (order == null || identical(order, this.order)) &&
-        (userEditedSpent == null || identical(userEditedSpent, this.userEditedSpent))) {
+        (userEditedSpent == null ||
+            identical(userEditedSpent, this.userEditedSpent))) {
       return this;
     }
 

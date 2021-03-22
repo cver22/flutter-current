@@ -1,16 +1,17 @@
-import 'package:expenses/app/common_widgets/loading_indicator.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/login_register/login_register_model/login_or_register.dart';
-import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/login_register/login_register_ui/create_account_button.dart';
-import 'package:expenses/login_register/login_register_ui/google_login_button.dart';
-import 'package:expenses/login_register/login_register_ui/login_register_button.dart';
-import 'package:expenses/store/actions/login_reg_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../app/common_widgets/loading_indicator.dart';
+import '../../env.dart';
+import '../../store/actions/login_reg_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/expense_routes.dart';
+import '../../utils/utils.dart';
+import '../login_register_model/login_or_register.dart';
+import '../login_register_model/login_reg_state.dart';
+import 'create_account_button.dart';
+import 'google_login_button.dart';
+import 'login_register_button.dart';
 
 class LoginRegisterForm extends StatefulWidget {
   @override
@@ -21,7 +22,8 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
 
-  bool get isPopulated => _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
+  bool get isPopulated =>
+      _emailController.text.isNotEmpty && _passwordController.text.isNotEmpty;
 
   bool isLogin(LoginRegState state) {
     return state.loginOrRegister == LoginOrRegister.login;
@@ -63,7 +65,8 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                     children: <Widget>[
                       Padding(
                         padding: EdgeInsets.symmetric(vertical: 20.0),
-                        child: Image.asset('assets/flutter_logo.png', height: 200),
+                        child:
+                            Image.asset('assets/flutter_logo.png', height: 200),
                       ),
                       TextFormField(
                         controller: _emailController,
@@ -88,7 +91,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                         autocorrect: false,
                         //TODO delay password validation
                         validator: (_) {
-                          return !state.isPasswordValid ? 'Minimum 10 characters' : null;
+                          return !state.isPasswordValid
+                              ? 'Minimum 10 characters'
+                              : null;
                         },
                       ),
                       Padding(
@@ -96,7 +101,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                         child: Column(
                           children: <Widget>[
                             LoginRegisterButton(
-                              onPressed: isLoginButtonEnabled(state) ? () => _onFormSubmitted(state, context) : null,
+                              onPressed: isLoginButtonEnabled(state)
+                                  ? () => _onFormSubmitted(state, context)
+                                  : null,
                               name: isLogin(state) ? 'Login' : 'Register',
                             ),
                             GoogleLoginButton(
@@ -112,7 +119,9 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
                 ),
               ),
               ModalLoadingIndicator(
-                  loadingMessage: state.loginOrRegister == LoginOrRegister.login ? 'Logging In' : 'Registering',
+                  loadingMessage: state.loginOrRegister == LoginOrRegister.login
+                      ? 'Logging In'
+                      : 'Registering',
                   activate: state.isSubmitting)
             ],
           );
@@ -124,7 +133,8 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
   }
 
   void _onPasswordChanged() {
-    Env.store.dispatch(LoginRegisterPasswordValidation(_passwordController.text));
+    Env.store
+        .dispatch(LoginRegisterPasswordValidation(_passwordController.text));
   }
 
   @override

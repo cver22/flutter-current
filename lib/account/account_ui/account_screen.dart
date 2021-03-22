@@ -1,20 +1,21 @@
 import 'dart:convert';
 
-import 'package:expenses/account/account_ui/change_password_controller.dart';
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/auth_user/models/app_user.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/qr_reader/qr_model/qr_model.dart';
-import 'package:expenses/store/actions/auth_actions.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
+import '../../app/common_widgets/app_button.dart';
+import '../../auth_user/models/app_user.dart';
+import '../../env.dart';
+import '../../qr_reader/qr_model/qr_model.dart';
+import '../../store/actions/auth_actions.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/expense_routes.dart';
+import '../../utils/utils.dart';
+import 'change_password_controller.dart';
 
 //AccountScreen contains user information, picture, QR code, password changes, logout
 class AccountScreen extends StatefulWidget {
@@ -34,7 +35,8 @@ class _AccountScreenState extends State<AccountScreen> {
   @override
   void initState() {
     user = Env.store.state.authState.user.value;
-    _displayNameController.value = TextEditingValue(text: user.displayName ?? '');
+    _displayNameController.value =
+        TextEditingValue(text: user.displayName ?? '');
     super.initState();
   }
 
@@ -107,8 +109,11 @@ class _AccountScreenState extends State<AccountScreen> {
       ]),
       child: CircleAvatar(
           radius: 60.0,
-          backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl) : null,
-          child: user.photoUrl == null ? Icon(Icons.camera_alt, size: 60.0) : null),
+          backgroundImage:
+              user.photoUrl != null ? NetworkImage(user.photoUrl) : null,
+          child: user.photoUrl == null
+              ? Icon(Icons.camera_alt, size: 60.0)
+              : null),
     );
   }
 
@@ -124,7 +129,9 @@ class _AccountScreenState extends State<AccountScreen> {
               textCapitalization: TextCapitalization.sentences,
             ),
           )
-        : Text(user.displayName != null && user.displayName.length > 0 ? user.displayName : 'Please enter a name');
+        : Text(user.displayName != null && user.displayName.length > 0
+            ? user.displayName
+            : 'Please enter a name');
   }
 
   Widget _showEditDisplayIcon() {
@@ -138,7 +145,8 @@ class _AccountScreenState extends State<AccountScreen> {
               String displayName = _displayNameController.value.text;
               if (displayName != user.displayName) {
                 Env.userFetcher.updateDisplayName(displayName: displayName);
-                Env.store.dispatch(AuthUpdateDisplayName(displayName: displayName));
+                Env.store
+                    .dispatch(AuthUpdateDisplayName(displayName: displayName));
                 Env.store.dispatch(LogUpdateLogMember());
                 user = Env.store.state.authState.user.value;
               }
@@ -171,7 +179,10 @@ class _AccountScreenState extends State<AccountScreen> {
               Text('Scan to add user to the log.'),
               SizedBox(height: 10.0),
               QrImage(
-                data: jsonEncode(QRModel(uid: user.id, name: user.displayName ?? 'No Name').toJson()).toString(),
+                data: jsonEncode(QRModel(
+                            uid: user.id, name: user.displayName ?? 'No Name')
+                        .toJson())
+                    .toString(),
                 size: 200,
                 version: 8,
                 errorCorrectionLevel: QrErrorCorrectLevel.H,

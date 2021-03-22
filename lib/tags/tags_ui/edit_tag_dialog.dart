@@ -1,11 +1,10 @@
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
 import '../../env.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../tag_model/tag.dart';
 
 class EditTagDialog extends StatefulWidget {
   final Tag tag;
@@ -44,7 +43,9 @@ class _EditTagDialogState extends State<EditTagDialog> {
         controller: _controller,
         autofocus: true,
         keyboardType: TextInputType.text,
-        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))],
+        inputFormatters: [
+          FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9\-_\s]"))
+        ],
         decoration: InputDecoration(border: OutlineInputBorder()),
         onChanged: (value) {
           setState(() {
@@ -72,8 +73,9 @@ class _EditTagDialogState extends State<EditTagDialog> {
               //TODO this does not work
               onPressed: canSave
                   ? () => {
-                        Env.store.dispatch(
-                            EntryAddUpdateTag(tag: widget.tag.copyWith(name: _controller.text.trimRight()))),
+                        Env.store.dispatch(EntryAddUpdateTag(
+                            tag: widget.tag
+                                .copyWith(name: _controller.text.trimRight()))),
                         Get.back(),
                       }
                   : null,

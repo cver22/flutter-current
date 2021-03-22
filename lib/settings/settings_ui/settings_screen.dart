@@ -1,17 +1,18 @@
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/app/common_widgets/app_currency_picker.dart';
-import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/store/actions/settings_actions.dart';
-import 'package:expenses/store/app_store.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/maybe.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
+
+import '../../app/common_widgets/app_button.dart';
+import '../../app/common_widgets/app_currency_picker.dart';
+import '../../categories/categories_screens/category_button.dart';
+import '../../categories/categories_screens/master_category_list_dialog.dart';
+import '../../env.dart';
+import '../../log/log_model/log.dart';
+import '../../store/actions/settings_actions.dart';
+import '../../store/app_store.dart';
+import '../../store/connect_state.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/maybe.dart';
+import '../../utils/utils.dart';
+import '../settings_model/settings_state.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key key}) : super(key: key);
@@ -48,12 +49,16 @@ class SettingsScreen extends StatelessWidget {
                       SizedBox(width: 10),
                       AppCurrencyPicker(
                           currency: settingsState.settings.value.homeCurrency,
-                          returnCurrency: (currency) => Env.store.dispatch(SettingsUpdate(
-                              settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))))),
+                          returnCurrency: (currency) => Env.store.dispatch(
+                              SettingsUpdate(
+                                  settings: Maybe.some(settingsState
+                                      .settings.value
+                                      .copyWith(homeCurrency: currency))))),
                     ],
                   ),
                   SizedBox(height: 10),
-                  _categoryButton(settingsState: settingsState, context: context),
+                  _categoryButton(
+                      settingsState: settingsState, context: context),
                   SizedBox(
                     height: 50,
                   ),
@@ -67,7 +72,8 @@ class SettingsScreen extends StatelessWidget {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Reset Settings'),
-                                    content: Text('Are you sure you want to reset all settings?'),
+                                    content: Text(
+                                        'Are you sure you want to reset all settings?'),
                                     actions: [
                                       TextButton(
                                         child: Text('Cancel'),
@@ -78,7 +84,9 @@ class SettingsScreen extends StatelessWidget {
                                       TextButton(
                                         child: Text('Yes'),
                                         onPressed: () {
-                                          Env.settingsFetcher.readResetAppSettings(resetSettings: true);
+                                          Env.settingsFetcher
+                                              .readResetAppSettings(
+                                                  resetSettings: true);
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -89,7 +97,8 @@ class SettingsScreen extends StatelessWidget {
                   AppButton(
                     child: Text('Reload settings'),
                     onPressed: () {
-                      Env.settingsFetcher.readResetAppSettings(resetSettings: false);
+                      Env.settingsFetcher
+                          .readResetAppSettings(resetSettings: false);
                     },
                   ),
                 ],
@@ -136,18 +145,19 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _categoryButton({SettingsState settingsState, BuildContext context}) {
     return CategoryButton(
-            label: 'Edit Default Categories',
-            onPressed: () => {
-              /*Get.dialog(CategoryListDialog()),*/
-              showDialog(
-                context: context,
-                builder: (_) {
-                  Env.store.dispatch(SettingSetExpandedCategories());
-                  return MasterCategoryListDialog(setLogFilter: SettingsLogFilter.settings);
-                },
-              ),
-            },
-            category: null, // do not pass a category, maintains label
-          );
+      label: 'Edit Default Categories',
+      onPressed: () => {
+        /*Get.dialog(CategoryListDialog()),*/
+        showDialog(
+          context: context,
+          builder: (_) {
+            Env.store.dispatch(SettingSetExpandedCategories());
+            return MasterCategoryListDialog(
+                setLogFilter: SettingsLogFilter.settings);
+          },
+        ),
+      },
+      category: null, // do not pass a category, maintains label
+    );
   }
 }

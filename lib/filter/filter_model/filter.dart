@@ -1,7 +1,8 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/utils/maybe.dart';
+
+import '../../utils/maybe.dart';
 
 class Filter extends Equatable {
   final Maybe<DateTime> startDate;
@@ -80,8 +81,10 @@ class Filter extends Equatable {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
         (currency == null || identical(currency, this.currency)) &&
-        (selectedCategories == null || identical(selectedCategories, this.selectedCategories)) &&
-        (selectedSubcategories == null || identical(selectedSubcategories, this.selectedSubcategories)) &&
+        (selectedCategories == null ||
+            identical(selectedCategories, this.selectedCategories)) &&
+        (selectedSubcategories == null ||
+            identical(selectedSubcategories, this.selectedSubcategories)) &&
         (minAmount == null || identical(minAmount, this.minAmount)) &&
         (maxAmount == null || identical(maxAmount, this.maxAmount)) &&
         (membersPaid == null || identical(membersPaid, this.membersPaid)) &&
@@ -96,7 +99,8 @@ class Filter extends Equatable {
       endDate: endDate ?? this.endDate,
       currency: currency ?? this.currency,
       selectedCategories: selectedCategories ?? this.selectedCategories,
-      selectedSubcategories: selectedSubcategories ?? this.selectedSubcategories,
+      selectedSubcategories:
+          selectedSubcategories ?? this.selectedSubcategories,
       minAmount: minAmount ?? this.minAmount,
       maxAmount: maxAmount ?? this.maxAmount,
       membersPaid: membersPaid ?? this.membersPaid,

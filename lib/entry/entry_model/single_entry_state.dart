@@ -1,10 +1,10 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/utils/maybe.dart';
+import '../../categories/categories_model/app_category/app_category.dart';
+import 'app_entry.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../utils/maybe.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -12,10 +12,13 @@ import 'package:meta/meta.dart';
 class SingleEntryState extends Equatable {
   final Maybe<MyEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
-  final Map<String, Tag> tags; //collection of all log tags for updating if required
+  final Map<String, Tag>
+      tags; //collection of all log tags for updating if required
   final List<Tag> searchedTags;
-  final List<AppCategory> categories; // collection of all log categories for updating if required;
-  final List<AppCategory> subcategories; //collection of all log subcategories for updating if required;
+  final List<AppCategory>
+      categories; // collection of all log categories for updating if required;
+  final List<AppCategory>
+      subcategories; //collection of all log subcategories for updating if required;
   final bool processing;
   final bool userUpdated;
   final Maybe<FocusNode> commentFocusNode;
@@ -56,8 +59,7 @@ class SingleEntryState extends Equatable {
   }
 
   @override
-  List<Object> get props =>
-      [
+  List<Object> get props => [
         selectedEntry,
         selectedTag,
         tags,
@@ -89,15 +91,18 @@ class SingleEntryState extends Equatable {
     Maybe<String> search,
     bool canSave,
   }) {
-    if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
+    if ((selectedEntry == null ||
+            identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
         (tags == null || identical(tags, this.tags)) &&
         (searchedTags == null || identical(searchedTags, this.searchedTags)) &&
         (categories == null || identical(categories, this.categories)) &&
-        (subcategories == null || identical(subcategories, this.subcategories)) &&
+        (subcategories == null ||
+            identical(subcategories, this.subcategories)) &&
         (processing == null || identical(processing, this.processing)) &&
         (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
-        (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
+        (commentFocusNode == null ||
+            identical(commentFocusNode, this.commentFocusNode)) &&
         (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode)) &&
         (search == null || identical(search, this.search)) &&
         (canSave == null || identical(canSave, this.canSave))) {

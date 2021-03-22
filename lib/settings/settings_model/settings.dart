@@ -1,8 +1,9 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category_entity.dart';
-import 'package:expenses/settings/settings_model/settings_entity.dart';
 import 'package:meta/meta.dart';
+
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../categories/categories_model/app_category/app_category_entity.dart';
+import 'settings_entity.dart';
 
 @immutable
 class Settings extends Equatable {
@@ -22,8 +23,14 @@ class Settings extends Equatable {
       this.logOrder});
 
   @override
-  List<Object> get props =>
-      [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId, autoInsertDecimalPoint, logOrder];
+  List<Object> get props => [
+        homeCurrency,
+        defaultCategories,
+        defaultSubcategories,
+        defaultLogId,
+        autoInsertDecimalPoint,
+        logOrder
+      ];
 
   @override
   bool get stringify => true;
@@ -83,10 +90,13 @@ class Settings extends Equatable {
     List<String> logOrder,
   }) {
     if ((homeCurrency == null || identical(homeCurrency, this.homeCurrency)) &&
-        (defaultCategories == null || identical(defaultCategories, this.defaultCategories)) &&
-        (defaultSubcategories == null || identical(defaultSubcategories, this.defaultSubcategories)) &&
+        (defaultCategories == null ||
+            identical(defaultCategories, this.defaultCategories)) &&
+        (defaultSubcategories == null ||
+            identical(defaultSubcategories, this.defaultSubcategories)) &&
         (defaultLogId == null || identical(defaultLogId, this.defaultLogId)) &&
-        (autoInsertDecimalPoint == null || identical(autoInsertDecimalPoint, this.autoInsertDecimalPoint)) &&
+        (autoInsertDecimalPoint == null ||
+            identical(autoInsertDecimalPoint, this.autoInsertDecimalPoint)) &&
         (logOrder == null || identical(logOrder, this.logOrder))) {
       return this;
     }
@@ -96,7 +106,8 @@ class Settings extends Equatable {
       defaultCategories: defaultCategories ?? this.defaultCategories,
       defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,
       defaultLogId: defaultLogId ?? this.defaultLogId,
-      autoInsertDecimalPoint: autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
+      autoInsertDecimalPoint:
+          autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
       logOrder: logOrder ?? this.logOrder,
     );
   }

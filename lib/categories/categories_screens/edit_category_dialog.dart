@@ -1,15 +1,17 @@
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/app/common_widgets/app_dialog.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/categories/categories_screens/emoji/emoji_picker.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../app/common_widgets/app_button.dart';
+import '../../app/common_widgets/app_dialog.dart';
+import '../../utils/db_consts.dart';
+import '../categories_model/app_category/app_category.dart';
+import 'emoji/emoji_picker.dart';
 
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
   final Function(AppCategory) setDefault;
-  final Function(String, String, String) save; //Category (name, emojiChar, parentCategoryId)
+  final Function(String, String, String)
+      save; //Category (name, emojiChar, parentCategoryId)
   final AppCategory category;
   final String initialParent;
 
@@ -77,7 +79,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         parentCategoryId = category?.parentCategoryId ?? NO_CATEGORY;
       }
 
-      selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
+      selectedCategory =
+          categories?.firstWhere((e) => e.id == parentCategoryId);
     }
 
     controller = TextEditingController(text: name);
@@ -125,7 +128,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               height: 0.0,
             ),
       actions: <Widget>[
-        _canDelete(categoryId: category.id) ? TextButton(child: Text('Delete'), onPressed: widget.delete) : Container(),
+        _canDelete(categoryId: category.id)
+            ? TextButton(child: Text('Delete'), onPressed: widget.delete)
+            : Container(),
 
         TextButton(
           child: Text('Cancel'),
@@ -199,7 +204,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
   Widget _selectParentCategory(AppCategory initialCategory) {
     List<AppCategory> selectableCategories = List.from(categories);
-    selectableCategories.removeWhere((element) => element.id == NO_CATEGORY || element.id == TRANSFER_FUNDS);
+    selectableCategories.removeWhere(
+        (element) => element.id == NO_CATEGORY || element.id == TRANSFER_FUNDS);
 
     return Row(
       children: [
@@ -235,7 +241,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     );
   }
 
-  String dialogTitle(CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
+  String dialogTitle(
+      CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
     if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
       if (newCategory) return 'New Category';
       return 'Edit Category';
@@ -248,12 +255,16 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   void _onParentCategoryChanged(AppCategory category) {
     setState(() {
       parentCategoryId = category.id;
-      selectedCategory = categories?.firstWhere((e) => e.id == parentCategoryId);
+      selectedCategory =
+          categories?.firstWhere((e) => e.id == parentCategoryId);
     });
   }
 
   bool _canDelete({String categoryId}) {
-    if (categoryId == null || categoryId == NO_CATEGORY || categoryId.contains(OTHER) || categoryId == TRANSFER_FUNDS) {
+    if (categoryId == null ||
+        categoryId == NO_CATEGORY ||
+        categoryId.contains(OTHER) ||
+        categoryId == TRANSFER_FUNDS) {
       return false;
     }
     return true;
@@ -266,6 +277,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     }
 
     //special categories and subcategories can not be renamed
-    return categoryId == NO_CATEGORY || categoryId.contains(OTHER) || categoryId == TRANSFER_FUNDS;
+    return categoryId == NO_CATEGORY ||
+        categoryId.contains(OTHER) ||
+        categoryId == TRANSFER_FUNDS;
   }
 }

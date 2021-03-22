@@ -1,11 +1,12 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/log/log_model/log_entity.dart';
-import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
+
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../member/member_model/log_member_model/log_member.dart';
+import '../../utils/db_consts.dart';
+import 'log_entity.dart';
 
 @immutable
 class Log extends Equatable {
@@ -38,8 +39,18 @@ class Log extends Equatable {
   final int order;
 
   @override
-  List<Object> get props =>
-      [uid, id, name, currency, categories, subcategories, archive, defaultCategory, logMembers, order];
+  List<Object> get props => [
+        uid,
+        id,
+        name,
+        currency,
+        categories,
+        subcategories,
+        archive,
+        defaultCategory,
+        logMembers,
+        order
+      ];
 
   @override
   String toString() {
@@ -128,9 +139,11 @@ class Log extends Equatable {
         (name == null || identical(name, this.name)) &&
         (currency == null || identical(currency, this.currency)) &&
         (archive == null || identical(archive, this.archive)) &&
-        (defaultCategory == null || identical(defaultCategory, this.defaultCategory)) &&
+        (defaultCategory == null ||
+            identical(defaultCategory, this.defaultCategory)) &&
         (categories == null || identical(categories, this.categories)) &&
-        (subcategories == null || identical(subcategories, this.subcategories)) &&
+        (subcategories == null ||
+            identical(subcategories, this.subcategories)) &&
         (logMembers == null || identical(logMembers, this.logMembers)) &&
         (order == null || identical(order, this.order))) {
       return this;

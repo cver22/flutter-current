@@ -1,13 +1,13 @@
-import 'package:expenses/account/account_model/account_state.dart';
-import 'package:expenses/account/account_ui/change_password_form.dart';
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
-import 'package:expenses/store/actions/account_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/common_widgets/app_button.dart';
 import '../../env.dart';
+import '../../login_register/login_register_model/login__reg_status.dart';
+import '../../store/actions/account_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/utils.dart';
+import '../account_model/account_state.dart';
+import 'change_password_form.dart';
 
 //controls if the password change fields are visible due to the sign in method and if the password chang is successful
 class ChangePasswordController extends StatelessWidget {

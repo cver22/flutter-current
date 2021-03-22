@@ -1,5 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/utils/db_consts.dart';
+
+import '../../utils/db_consts.dart';
 
 class QRModel extends Equatable {
   final String uid;
@@ -15,7 +16,8 @@ class QRModel extends Equatable {
     String uid,
     String name,
   }) {
-    if ((uid == null || identical(uid, this.uid)) && (name == null || identical(name, this.name))) {
+    if ((uid == null || identical(uid, this.uid)) &&
+        (name == null || identical(name, this.name))) {
       return this;
     }
 

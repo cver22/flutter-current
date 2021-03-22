@@ -1,7 +1,8 @@
-import 'package:expenses/member/member_model/member_entity.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+
+import '../../../utils/db_consts.dart';
+import '../member_entity.dart';
 
 part 'log_member_entity.g.dart';
 
@@ -22,7 +23,8 @@ class LogMemberEntity extends MemberEntity {
     return 'LogMemberEntity {$UID: $uid, $NAME: $name, $PAID: $paid, $SPENT: $spent, role: $role, $ORDER: $order}';
   }
 
-  factory LogMemberEntity.fromJson(Map<String, dynamic> json) => _$LogMemberEntityFromJson(json);
+  factory LogMemberEntity.fromJson(Map<String, dynamic> json) =>
+      _$LogMemberEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$LogMemberEntityToJson(this);
 }

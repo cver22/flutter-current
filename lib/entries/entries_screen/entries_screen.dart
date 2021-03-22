@@ -1,22 +1,22 @@
-import 'package:expenses/app/common_widgets/empty_content.dart';
-import 'package:expenses/app/common_widgets/error_widget.dart';
-import 'package:expenses/app/common_widgets/loading_indicator.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/entries/entries_model/entries_state.dart';
-import 'package:expenses/entries/entries_screen/entries_screen_build_list_view.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/filter/filter_model/filter.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/maybe.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/common_widgets/empty_content.dart';
+import '../../app/common_widgets/error_widget.dart';
+import '../../app/common_widgets/loading_indicator.dart';
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../entry/entry_model/app_entry.dart';
 import '../../env.dart';
+import '../../filter/filter_model/filter.dart';
+import '../../log/log_model/log.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../../store/connect_state.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../utils/expense_routes.dart';
+import '../../utils/maybe.dart';
+import '../../utils/utils.dart';
+import '../entries_model/entries_state.dart';
+import 'entries_screen_build_list_view.dart';
 
 class EntriesScreen extends StatelessWidget {
   EntriesScreen({Key key}) : super(key: key);
@@ -29,10 +29,12 @@ class EntriesScreen extends StatelessWidget {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: activateFAB ? null : Colors.grey,
-        onPressed:  activateFAB ? () {
-          Env.store.dispatch(EntrySetNewSelect());
-          Get.toNamed(ExpenseRoutes.addEditEntries);
-        } : null,
+        onPressed: activateFAB
+            ? () {
+                Env.store.dispatch(EntrySetNewSelect());
+                Get.toNamed(ExpenseRoutes.addEditEntries);
+              }
+            : null,
         child: Icon(Icons.add),
       ),
       body: ConnectState<EntriesState>(
@@ -42,8 +44,10 @@ class EntriesScreen extends StatelessWidget {
           print('Rendering entries screen');
 
           if (entriesState.isLoading == true) {
-            return ModalLoadingIndicator(loadingMessage: 'Loading your entries...', activate: true);
-          } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
+            return ModalLoadingIndicator(
+                loadingMessage: 'Loading your entries...', activate: true);
+          } else if (entriesState.isLoading == false &&
+              entriesState.entries.isNotEmpty) {
             entries = entriesState.entries.entries.map((e) => e.value).toList();
 
             if (entriesState.descending) {
@@ -53,9 +57,14 @@ class EntriesScreen extends StatelessWidget {
             }
 
             return EntriesScreenBuildListView(
-                entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter));
-          } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
-            return Env.store.state.logsState.logs.isEmpty ? LogEmptyContent() : EntriesEmptyContent();
+                entries: _buildFilteredEntries(
+                    entries: List.from(entries),
+                    entriesFilter: entriesState.entriesFilter));
+          } else if (entriesState.isLoading == false &&
+              entriesState.entries.isEmpty) {
+            return Env.store.state.logsState.logs.isEmpty
+                ? LogEmptyContent()
+                : EntriesEmptyContent();
           } else {
             //TODO pass meaningful error message
             return ErrorContent();
@@ -75,15 +84,18 @@ List<MyEntry> _buildFilteredEntries({
     Filter filter = entriesFilter.value;
     //minimum entry date
     if (filter.startDate.isSome) {
-      entries.removeWhere((entry) => entry.dateTime.isBefore(filter.startDate.value));
+      entries.removeWhere(
+          (entry) => entry.dateTime.isBefore(filter.startDate.value));
     }
     //maximum entry date
     if (filter.endDate.isSome) {
-      entries.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value));
+      entries
+          .removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value));
     }
     //is the entry logId found in the list of logIds selected
     if (filter.selectedLogs.length > 0) {
-      entries.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
+      entries
+          .removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
     }
     //TODO currency filter
 
@@ -102,10 +114,12 @@ List<MyEntry> _buildFilteredEntries({
       entries.removeWhere((entry) {
         List<AppCategory> subcategories = logs[entry.logId].subcategories;
 
-        AppCategory subcategory =
-            subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
+        AppCategory subcategory = subcategories.firstWhere(
+            (subcategory) => subcategory.id == entry.subcategoryId,
+            orElse: () => null);
 
-        if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
+        if (subcategory != null &&
+            filter.selectedSubcategories.contains(subcategory.id)) {
           //filter contains subcategory, show entry
           return false;
         } else {
@@ -121,7 +135,9 @@ List<MyEntry> _buildFilteredEntries({
 
       entries.removeWhere((entry) {
         List<AppCategory> categories = logs[entry.logId].categories;
-        String categoryName = categories.firstWhere((category) => category.id == entry.categoryId).name;
+        String categoryName = categories
+            .firstWhere((category) => category.id == entry.categoryId)
+            .name;
 
         if (filter.selectedCategories.contains(categoryName)) {
           //filter contains category, show entry

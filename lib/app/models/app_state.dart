@@ -1,15 +1,16 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/account/account_model/account_state.dart';
-import 'package:expenses/auth_user/models/auth_state.dart';
-import 'package:expenses/entries/entries_model/entries_state.dart';
-import 'package:expenses/entry/entry_model/single_entry_state.dart';
-import 'package:expenses/filter/filter_model/filter_state.dart';
-import 'package:expenses/log/log_model/logs_state.dart';
-import 'package:expenses/log/log_totals_model/log_totals_state.dart';
-import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/settings/settings_model/settings_state.dart';
-import 'package:expenses/tags/tag_model/tag_state.dart';
 import 'package:meta/meta.dart';
+
+import '../../account/account_model/account_state.dart';
+import '../../auth_user/models/auth_state.dart';
+import '../../entries/entries_model/entries_state.dart';
+import '../../entry/entry_model/single_entry_state.dart';
+import '../../filter/filter_model/filter_state.dart';
+import '../../log/log_model/logs_state.dart';
+import '../../log/log_totals_model/log_totals_state.dart';
+import '../../login_register/login_register_model/login_reg_state.dart';
+import '../../settings/settings_model/settings_state.dart';
+import '../../tags/tag_model/tag_state.dart';
 
 @immutable
 class AppState extends Equatable {
@@ -80,13 +81,17 @@ class AppState extends Equatable {
     FilterState filterState,
   }) {
     if ((authState == null || identical(authState, this.authState)) &&
-        (loginRegState == null || identical(loginRegState, this.loginRegState)) &&
+        (loginRegState == null ||
+            identical(loginRegState, this.loginRegState)) &&
         (logsState == null || identical(logsState, this.logsState)) &&
         (entriesState == null || identical(entriesState, this.entriesState)) &&
-        (settingsState == null || identical(settingsState, this.settingsState)) &&
-        (singleEntryState == null || identical(singleEntryState, this.singleEntryState)) &&
+        (settingsState == null ||
+            identical(settingsState, this.settingsState)) &&
+        (singleEntryState == null ||
+            identical(singleEntryState, this.singleEntryState)) &&
         (tagState == null || identical(tagState, this.tagState)) &&
-        (logTotalsState == null || identical(logTotalsState, this.logTotalsState)) &&
+        (logTotalsState == null ||
+            identical(logTotalsState, this.logTotalsState)) &&
         (accountState == null || identical(accountState, this.accountState)) &&
         (filterState == null || identical(filterState, this.filterState))) {
       return this;

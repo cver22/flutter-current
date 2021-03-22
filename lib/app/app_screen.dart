@@ -1,22 +1,22 @@
-import 'package:expenses/app/app_drawer.dart';
-import 'package:expenses/entries/entries_model/entries_state.dart';
-import 'package:expenses/entries/entries_screen/entries_screen.dart';
-import 'package:expenses/filter/filter_screen/filter_dialog.dart';
-import 'package:expenses/log/log_ui/logs_screen.dart';
-import 'package:expenses/store/actions/entries_actions.dart';
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/keys.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../entries/entries_model/entries_state.dart';
+import '../entries/entries_screen/entries_screen.dart';
 import '../env.dart';
+import '../filter/filter_screen/filter_dialog.dart';
+import '../log/log_ui/logs_screen.dart';
+import '../store/actions/entries_actions.dart';
+import '../store/actions/filter_actions.dart';
+import '../store/actions/logs_actions.dart';
+import '../store/connect_state.dart';
+import '../utils/db_consts.dart';
+import '../utils/expense_routes.dart';
+import '../utils/keys.dart';
+import '../utils/utils.dart';
+import 'app_drawer.dart';
 
-//main screen of the app from which we can navigate to other options of the app
+//main screen of the app from which we can navigate to other areas of the app
 
 class AppScreen extends StatefulWidget {
   AppScreen({Key key}) : super(key: key);
@@ -25,7 +25,8 @@ class AppScreen extends StatefulWidget {
   _AppScreenState createState() => _AppScreenState();
 }
 
-class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMixin {
+class _AppScreenState extends State<AppScreen>
+    with SingleTickerProviderStateMixin {
   TabController _controller;
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
@@ -38,7 +39,8 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
   @override
   void initState() {
     super.initState();
-    _controller = TabController(length: tabs.length, vsync: this, initialIndex: 0);
+    _controller =
+        TabController(length: tabs.length, vsync: this, initialIndex: 0);
     _controller.addListener(() {
       setState(() {});
     });
@@ -93,7 +95,8 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
               body: TabBarView(
                 controller: _controller,
                 children: [
-                  LogsScreen(key: ExpenseKeys.logsScreen, tabController: _controller),
+                  LogsScreen(
+                      key: ExpenseKeys.logsScreen, tabController: _controller),
                   EntriesScreen(key: ExpenseKeys.entriesScreen),
                   Icon(Icons.assessment),
                 ],
@@ -105,7 +108,8 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     );
   }
 
-  PopupMenuButton<String> _buildEntriesPopupMenuButton({@required EntriesState state}) {
+  PopupMenuButton<String> _buildEntriesPopupMenuButton(
+      {@required EntriesState state}) {
     return PopupMenuButton<String>(
       onSelected: handleClick,
       itemBuilder: (BuildContext context) {

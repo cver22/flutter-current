@@ -1,10 +1,11 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/filter/filter_model/filter.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
+
+import '../../entry/entry_model/app_entry.dart';
+import '../../filter/filter_model/filter.dart';
+import '../../utils/maybe.dart';
 
 @immutable
 class EntriesState extends Equatable {
@@ -14,7 +15,12 @@ class EntriesState extends Equatable {
   final Maybe<Filter> chartFilter;
   final bool descending;
 
-  EntriesState({this.entries, this.isLoading, this.entriesFilter, this.chartFilter, this.descending});
+  EntriesState(
+      {this.entries,
+      this.isLoading,
+      this.entriesFilter,
+      this.chartFilter,
+      this.descending});
 
   factory EntriesState.initial() {
     return EntriesState(
@@ -27,7 +33,8 @@ class EntriesState extends Equatable {
   }
 
   @override
-  List<Object> get props => [entries, isLoading, entriesFilter, chartFilter, descending];
+  List<Object> get props =>
+      [entries, isLoading, entriesFilter, chartFilter, descending];
 
   @override
   bool get stringify => true;
@@ -41,7 +48,8 @@ class EntriesState extends Equatable {
   }) {
     if ((entries == null || identical(entries, this.entries)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
-        (entriesFilter == null || identical(entriesFilter, this.entriesFilter)) &&
+        (entriesFilter == null ||
+            identical(entriesFilter, this.entriesFilter)) &&
         (chartFilter == null || identical(chartFilter, this.chartFilter)) &&
         (descending == null || identical(descending, this.descending))) {
       return this;

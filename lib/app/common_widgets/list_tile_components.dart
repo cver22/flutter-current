@@ -1,7 +1,8 @@
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/categories/categories_screens/category_list_tools.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
+
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../categories/categories_screens/category_list_tools.dart';
+import '../../utils/db_consts.dart';
 
 //leading and trailing components for category list tiles
 
@@ -84,7 +85,9 @@ class FilterListTileTrailing extends StatelessWidget {
       child: IconButton(
         padding: EdgeInsets.all(0),
         icon: Icon(
-          selected ? Icons.check_box_outlined : Icons.check_box_outline_blank_outlined,
+          selected
+              ? Icons.check_box_outlined
+              : Icons.check_box_outline_blank_outlined,
           size: EMOJI_SIZE,
         ),
         onPressed: onSelect,
@@ -126,13 +129,17 @@ class MasterCategoryListTileTrailing extends StatelessWidget {
   _onTapAdd() {
     AppCategory subcategory = AppCategory(parentCategoryId: category.id);
     if (setLogFilter == SettingsLogFilter.log) {
-      getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+      getLogAddEditSubcategoryDialog(
+          subcategory: subcategory, categories: categories);
     } else if (setLogFilter == SettingsLogFilter.settings) {
-      getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
+      getSettingsAddEditSubcategoryDialog(
+          subcategory: subcategory, categories: categories);
     }
   }
 
   bool _canAddSubcategory() {
-    return expanded && category.id != NO_CATEGORY && category.id != TRANSFER_FUNDS;
+    return expanded &&
+        category.id != NO_CATEGORY &&
+        category.id != TRANSFER_FUNDS;
   }
 }

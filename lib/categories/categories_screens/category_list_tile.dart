@@ -1,7 +1,8 @@
-import 'package:expenses/app/common_widgets/list_tile_components.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
+
+import '../../app/common_widgets/list_tile_components.dart';
+import '../../utils/db_consts.dart';
+import '../categories_model/app_category/app_category.dart';
 
 class CategoryListTile extends StatelessWidget {
   final AppCategory category;
@@ -11,7 +12,14 @@ class CategoryListTile extends StatelessWidget {
   final SettingsLogFilter setLogFilter;
   final bool selected;
 
-  const CategoryListTile({Key key, @required this.category, this.onTap, this.onTapEdit, this.inset = false, this.selected, this.setLogFilter})
+  const CategoryListTile(
+      {Key key,
+      @required this.category,
+      this.onTap,
+      this.onTapEdit,
+      this.inset = false,
+      this.selected,
+      this.setLogFilter})
       : super(key: key);
 
   @override
@@ -30,7 +38,9 @@ class CategoryListTile extends StatelessWidget {
         sublist: inset, //only a sublist if there is no ontap method
       ),
       title: Text(category.name),
-      trailing: setLogFilter == SettingsLogFilter.filter ? FilterListTileTrailing(onSelect: onTapEdit, selected: selected) : CategoryListTileTrailing(onTapEdit: onTapEdit),
+      trailing: setLogFilter == SettingsLogFilter.filter
+          ? FilterListTileTrailing(onSelect: onTapEdit, selected: selected)
+          : CategoryListTileTrailing(onTapEdit: onTapEdit),
       onTap: onTap,
     );
   }

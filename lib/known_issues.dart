@@ -20,7 +20,6 @@
 //TODO how to handle auto scroll on the account screen and login screen
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
 //TODO confirm change password tool works as I have it commented out at the moment
-//TODO track subcategory tag frequency
 //TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
 //TODO add calculator
 //TODO start splash screen earlier?

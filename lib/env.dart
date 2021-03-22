@@ -1,14 +1,14 @@
-import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/auth_user/user_fetcher.dart';
-import 'package:expenses/auth_user/user_repository.dart';
-import 'package:expenses/entries/entries_fetcher.dart';
-import 'package:expenses/entries/entries_repository.dart';
-import 'package:expenses/log/logs_fetcher.dart';
-import 'package:expenses/log/logs_repository.dart';
-import 'package:expenses/settings/settings_fetcher.dart';
-import 'package:expenses/store/app_store.dart';
-import 'package:expenses/tags/tag_fetcher.dart';
-import 'package:expenses/tags/tag_repository.dart';
+import 'app/models/app_state.dart';
+import 'auth_user/user_fetcher.dart';
+import 'auth_user/user_repository.dart';
+import 'entries/entries_fetcher.dart';
+import 'entries/entries_repository.dart';
+import 'log/logs_fetcher.dart';
+import 'log/logs_repository.dart';
+import 'settings/settings_fetcher.dart';
+import 'store/app_store.dart';
+import 'tags/tag_fetcher.dart';
+import 'tags/tag_repository.dart';
 
 class Env {
   static final store = AppStore(AppState.initial());
@@ -33,5 +33,6 @@ class Env {
     tagRepository: FirebaseTagRepository(),
   );
 
-  static final settingsFetcher = SettingsFetcher(store: store); //SettingsFetcher
+  static final settingsFetcher =
+      SettingsFetcher(store: store); //SettingsFetcher
 }

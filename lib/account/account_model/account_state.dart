@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
+import '../../login_register/login_register_model/login__reg_status.dart';
 import 'package:meta/meta.dart';
 
 //AccountState is used for tracking password changes by the user
@@ -76,7 +76,13 @@ class AccountState extends Equatable {
   }
 
   @override
-  List<Object> get props => [loginStatus, showPasswordForm, isOldPasswordValid, isNewPasswordValid, newPasswordsMatch];
+  List<Object> get props => [
+        loginStatus,
+        showPasswordForm,
+        isOldPasswordValid,
+        isNewPasswordValid,
+        newPasswordsMatch
+      ];
 
   @override
   bool get stringify => true;
@@ -90,17 +96,23 @@ class AccountState extends Equatable {
     bool newPasswordsMatch,
   }) {
     if ((loginStatus == null || identical(loginStatus, this.loginStatus)) &&
-        (isUserSignedInWithEmail == null || identical(isUserSignedInWithEmail, this.isUserSignedInWithEmail)) &&
-        (showPasswordForm == null || identical(showPasswordForm, this.showPasswordForm)) &&
-        (isOldPasswordValid == null || identical(isOldPasswordValid, this.isOldPasswordValid)) &&
-        (isNewPasswordValid == null || identical(isNewPasswordValid, this.isNewPasswordValid)) &&
-        (newPasswordsMatch == null || identical(newPasswordsMatch, this.newPasswordsMatch))) {
+        (isUserSignedInWithEmail == null ||
+            identical(isUserSignedInWithEmail, this.isUserSignedInWithEmail)) &&
+        (showPasswordForm == null ||
+            identical(showPasswordForm, this.showPasswordForm)) &&
+        (isOldPasswordValid == null ||
+            identical(isOldPasswordValid, this.isOldPasswordValid)) &&
+        (isNewPasswordValid == null ||
+            identical(isNewPasswordValid, this.isNewPasswordValid)) &&
+        (newPasswordsMatch == null ||
+            identical(newPasswordsMatch, this.newPasswordsMatch))) {
       return this;
     }
 
     return new AccountState(
       loginStatus: loginStatus ?? this.loginStatus,
-      isUserSignedInWithEmail: isUserSignedInWithEmail ?? this.isUserSignedInWithEmail,
+      isUserSignedInWithEmail:
+          isUserSignedInWithEmail ?? this.isUserSignedInWithEmail,
       showPasswordForm: showPasswordForm ?? this.showPasswordForm,
       isOldPasswordValid: isOldPasswordValid ?? this.isOldPasswordValid,
       isNewPasswordValid: isNewPasswordValid ?? this.isNewPasswordValid,

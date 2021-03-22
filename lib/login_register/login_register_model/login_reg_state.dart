@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/login_register/login_register_model/login__reg_status.dart';
-import 'package:expenses/login_register/login_register_model/login_or_register.dart';
 import 'package:meta/meta.dart';
+
+import 'login__reg_status.dart';
+import 'login_or_register.dart';
 
 // empty is the initial state of the LoginForm.
 // loading is the state of the LoginForm when we are validating credentials
@@ -105,7 +106,13 @@ class LoginRegState extends Equatable {
   }
 
   @override
-  List<Object> get props => [loginStatus, loginOrRegister, isEmailValid, isPasswordValid, isSubmitting];
+  List<Object> get props => [
+        loginStatus,
+        loginOrRegister,
+        isEmailValid,
+        isPasswordValid,
+        isSubmitting
+      ];
 
   @override
   bool get stringify => true;

@@ -1,8 +1,9 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/log/log_totals_model/log_total.dart';
 import 'package:meta/meta.dart';
+
+import 'log_total.dart';
 
 @immutable
 class LogTotalsState extends Equatable {

@@ -1,29 +1,29 @@
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/app/common_widgets/app_currency_picker.dart';
-import 'package:expenses/app/common_widgets/date_button.dart';
-import 'package:expenses/app/common_widgets/loading_indicator.dart';
-import 'package:expenses/app/common_widgets/simple_confirmation_dialog.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/entry_category_list_dialog.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/entry/entry_model/single_entry_state.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/member/member_ui/entry_member_ui/entry_member_list.dart';
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/store/actions/entries_actions.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/tags/tags_ui/tag_picker.dart';
-import 'package:expenses/utils/currency.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/keys.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../app/common_widgets/app_button.dart';
+import '../../app/common_widgets/app_currency_picker.dart';
+import '../../app/common_widgets/date_button.dart';
+import '../../app/common_widgets/loading_indicator.dart';
+import '../../app/common_widgets/simple_confirmation_dialog.dart';
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../categories/categories_screens/category_button.dart';
+import '../../categories/categories_screens/entry_category_list_dialog.dart';
+import '../../env.dart';
+import '../../log/log_model/log.dart';
+import '../../member/member_model/entry_member_model/entry_member.dart';
+import '../../member/member_ui/entry_member_ui/entry_member_list.dart';
+import '../../store/actions/entries_actions.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../../store/connect_state.dart';
+import '../../tags/tags_ui/tag_picker.dart';
+import '../../utils/currency.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/keys.dart';
+import '../../utils/utils.dart';
+import '../entry_model/app_entry.dart';
+import '../entry_model/single_entry_state.dart';
 
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
 class AddEditEntryScreen extends StatelessWidget {
@@ -34,7 +34,8 @@ class AddEditEntryScreen extends StatelessWidget {
     Get.back();
   }
 
-  Future<bool> _closeConfirmationDialog({@required bool canSave, @required MyEntry entry}) async {
+  Future<bool> _closeConfirmationDialog(
+      {@required bool canSave, @required MyEntry entry}) async {
     bool onWillPop = false;
     await Get.dialog(
       SimpleConfirmationDialog(
@@ -71,7 +72,8 @@ class AddEditEntryScreen extends StatelessWidget {
           if (singleEntryState.processing) {
             return Container(); //TODO replace with spinner
           } else {
-            if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
+            if (!singleEntryState.processing &&
+                singleEntryState.selectedEntry.isSome) {
               entry = singleEntryState.selectedEntry.value;
             }
             Log log;
@@ -80,7 +82,8 @@ class AddEditEntryScreen extends StatelessWidget {
             return WillPopScope(
               onWillPop: () async {
                 if (singleEntryState.userUpdated) {
-                  return _closeConfirmationDialog(canSave: singleEntryState.canSave, entry: entry);
+                  return _closeConfirmationDialog(
+                      canSave: singleEntryState.canSave, entry: entry);
                 } else {
                   _updateCategoriesOnClose();
                   return true;
@@ -89,10 +92,19 @@ class AddEditEntryScreen extends StatelessWidget {
               child: Stack(
                 children: [
                   Scaffold(
-                    appBar: _buildAppBar(entry: entry, singleEntryState: singleEntryState, log: log),
-                    body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
+                    appBar: _buildAppBar(
+                        entry: entry,
+                        singleEntryState: singleEntryState,
+                        log: log),
+                    body: _buildContents(
+                        context: context,
+                        entryState: singleEntryState,
+                        log: log,
+                        entry: entry),
                   ),
-                  ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.processing),
+                  ModalLoadingIndicator(
+                      loadingMessage: '',
+                      activate: singleEntryState.processing),
                 ],
               ),
             );
@@ -100,7 +112,10 @@ class AddEditEntryScreen extends StatelessWidget {
         });
   }
 
-  AppBar _buildAppBar({@required MyEntry entry, @required SingleEntryState singleEntryState, @required Log log}) {
+  AppBar _buildAppBar(
+      {@required MyEntry entry,
+      @required SingleEntryState singleEntryState,
+      @required Log log}) {
     bool canSave = singleEntryState.canSave;
 
     return AppBar(
@@ -138,7 +153,8 @@ class AddEditEntryScreen extends StatelessWidget {
         margin: EdgeInsets.all(8.0),
         child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-          child: _buildForm(context: context, entryState: entryState, log: log, entry: entry),
+          child: _buildForm(
+              context: context, entryState: entryState, log: log, entry: entry),
         ),
       ),
     );
@@ -166,7 +182,8 @@ class AddEditEntryScreen extends StatelessWidget {
           children: <Widget>[
             AppCurrencyPicker(
                 currency: entry?.currency,
-                returnCurrency: (currency) => Env.store.dispatch(EntryUpdateCurrency(currency: currency))),
+                returnCurrency: (currency) => Env.store
+                    .dispatch(EntryUpdateCurrency(currency: currency))),
             Text(
                 'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
@@ -178,26 +195,32 @@ class AddEditEntryScreen extends StatelessWidget {
             userUpdated: entryState.userUpdated,
             entryId: entry.id),
         canSave ? Container() : SizedBox(height: 10.0),
-        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSave: canSave),
+        _distributeAmountButtons(
+            members: entryState.selectedEntry.value.entryMembers,
+            canSave: canSave),
         SizedBox(height: 10.0),
         DateButton(
           datePickerType: DatePickerType.entry,
           initialDateTime: entry.dateTime,
           label: 'Select Date',
-          onSave: (newDateTIme) => Env.store.dispatch(EntryUpdateDateTime(dateTime: newDateTIme)),
+          onSave: (newDateTIme) =>
+              Env.store.dispatch(EntryUpdateDateTime(dateTime: newDateTIme)),
         ),
         SizedBox(height: 10.0),
         _categoryButton(categories: entryState?.categories, entry: entry),
         //Transfer funds and No_category do not have a sub categories
-        _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
-        _commentFormField(entry: entry, commentFocusNode: entryState.commentFocusNode.value),
+        _subcategoryButton(
+            subcategories: entryState.subcategories, entry: entry),
+        _commentFormField(
+            entry: entry, commentFocusNode: entryState.commentFocusNode.value),
         TagPicker(),
         SizedBox(height: 400.0),
       ],
     );
   }
 
-  Widget _categoryButton({@required MyEntry entry, @required List<AppCategory> categories}) {
+  Widget _categoryButton(
+      {@required MyEntry entry, @required List<AppCategory> categories}) {
     return entry?.logId == null
         ? Container()
         : CategoryButton(
@@ -213,13 +236,19 @@ class AddEditEntryScreen extends StatelessWidget {
             },
             category: entry?.categoryId == null
                 ? null
-                : categories?.firstWhere((element) => element.id == entry.categoryId,
-                    orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
+                : categories?.firstWhere(
+                    (element) => element.id == entry.categoryId,
+                    orElse: () => categories?.firstWhere(
+                        (element) => element.id == NO_CATEGORY,
+                        orElse: () => null)),
           );
   }
 
-  Widget _subcategoryButton({@required MyEntry entry, @required List<AppCategory> subcategories}) {
-    return entry?.categoryId == null || entry?.categoryId == TRANSFER_FUNDS || entry.categoryId == NO_CATEGORY
+  Widget _subcategoryButton(
+      {@required MyEntry entry, @required List<AppCategory> subcategories}) {
+    return entry?.categoryId == null ||
+            entry?.categoryId == TRANSFER_FUNDS ||
+            entry.categoryId == NO_CATEGORY
         ? Container()
         : CategoryButton(
             label: 'Select a Subcategory',
@@ -234,11 +263,14 @@ class AddEditEntryScreen extends StatelessWidget {
             },
             category: entry?.subcategoryId == null
                 ? null
-                : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: () => null),
+                : subcategories?.firstWhere(
+                    (element) => element.id == entry.subcategoryId,
+                    orElse: () => null),
           );
   }
 
-  Widget _commentFormField({@required MyEntry entry, @required FocusNode commentFocusNode}) {
+  Widget _commentFormField(
+      {@required MyEntry entry, @required FocusNode commentFocusNode}) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Comment'),
       initialValue: entry?.comment,
@@ -295,7 +327,8 @@ class AddEditEntryScreen extends StatelessWidget {
     Env.store.dispatch(LogUpdateCategoriesSubcategoriesOnEntryScreenClose());
   }
 
-  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave}) {
+  Widget _distributeAmountButtons(
+      {@required Map<String, EntryMember> members, @required bool canSave}) {
     int remainingSpending = 0;
     members.forEach((key, member) {
       if (member.paying && member.paid != null) {
@@ -318,7 +351,9 @@ class AddEditEntryScreen extends StatelessWidget {
               buttonColor: Colors.red[100],
               child: RichText(
                 text: TextSpan(children: [
-                  TextSpan(text: 'Distribute Remaining ', style: TextStyle(color: Colors.black)),
+                  TextSpan(
+                      text: 'Distribute Remaining ',
+                      style: TextStyle(color: Colors.black)),
                   TextSpan(
                       text: '\$${formattedAmount(value: remainingSpending)}',
                       style: TextStyle(
@@ -334,7 +369,8 @@ class AddEditEntryScreen extends StatelessWidget {
               buttonColor: Colors.red[100],
               child: Text(
                 'Reset',
-                style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                style:
+                    TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
               )),
         ],
       );

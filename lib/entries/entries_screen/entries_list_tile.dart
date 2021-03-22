@@ -1,20 +1,22 @@
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/utils/currency.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../entry/entry_model/app_entry.dart';
+import '../../env.dart';
+import '../../log/log_model/log.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../utils/currency.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/expense_routes.dart';
 
 class EntriesListTile extends StatelessWidget {
   final MyEntry entry;
   final Map<String, Tag> tags;
 
-  const EntriesListTile({Key key, @required this.entry, @required this.tags}) : super(key: key);
+  const EntriesListTile({Key key, @required this.entry, @required this.tags})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -22,8 +24,9 @@ class EntriesListTile extends StatelessWidget {
     DateTime date = entry.dateTime;
 
     if (entry?.logId != null) {
-      log = Env.store.state.logsState.logs?.values
-          ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
+      log = Env.store.state.logsState.logs?.values?.firstWhere(
+          (element) => element?.id == entry?.logId,
+          orElse: () => null);
     }
     if (log != null) {
       return Column(
@@ -45,7 +48,9 @@ class EntriesListTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   _buildTagWidget(logId: log.id),
-                  entry?.comment != null && entry.comment.length > 0 ? Text(entry.comment) : Container(),
+                  entry?.comment != null && entry.comment.length > 0
+                      ? Text(entry.comment)
+                      : Container(),
                 ],
               ),
             ),
@@ -54,7 +59,7 @@ class EntriesListTile extends StatelessWidget {
               Env.store.dispatch(EntrySelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
             },
-           /* onLongPress: () => {
+            /* onLongPress: () => {
               //TODO multi select
             },*/
           ),
@@ -76,7 +81,10 @@ class EntriesListTile extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
         ),
         SizedBox(height: 8.0),
-        Text('${MONTHS_SHORT[date.month - 1]} ${date.day.toString()}, ${date.year.toString()}',style: TextStyle(fontSize: 12.0),),
+        Text(
+          '${MONTHS_SHORT[date.month - 1]} ${date.day.toString()}, ${date.year.toString()}',
+          style: TextStyle(fontSize: 12.0),
+        ),
       ],
     );
   }
@@ -86,23 +94,31 @@ class EntriesListTile extends StatelessWidget {
     String subcategoryId = entry?.subcategoryId;
 
     if (subcategoryId != null && !subcategoryId.contains(OTHER)) {
-      emojiChar = log.subcategories.firstWhere((element) => element.id == subcategoryId, orElse: () => null)?.emojiChar;
+      emojiChar = log.subcategories
+          .firstWhere((element) => element.id == subcategoryId,
+              orElse: () => null)
+          ?.emojiChar;
     }
 
     if (entry?.categoryId != null && emojiChar == null) {
-      emojiChar =
-          log.categories.firstWhere((element) => element.id == entry.categoryId, orElse: () => null)?.emojiChar ??
-              '\u{2757}';
+      emojiChar = log.categories
+              .firstWhere((element) => element.id == entry.categoryId,
+                  orElse: () => null)
+              ?.emojiChar ??
+          '\u{2757}';
     }
 
     return emojiChar;
   }
 
   Widget categoriesSubcategories({@required Log log}) {
-    AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
-        orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
-    AppCategory subcategory =
-        log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
+    AppCategory category = log?.categories?.firstWhere(
+        (element) => element.id == entry?.categoryId,
+        orElse: () => log?.categories
+            ?.firstWhere((element) => element.id == NO_CATEGORY));
+    AppCategory subcategory = log?.subcategories?.firstWhere(
+        (element) => element.id == entry?.subcategoryId,
+        orElse: () => null);
 
     bool hasSubcategory = subcategory != null;
 

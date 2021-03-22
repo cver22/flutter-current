@@ -1,5 +1,5 @@
-import 'package:expenses/auth_user/models/app_user.dart';
-import 'package:expenses/utils/maybe.dart';
+import 'app_user.dart';
+import '../../utils/maybe.dart';
 import 'package:meta/meta.dart';
 
 @immutable

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/settings/settings_model/settings.dart';
-import 'package:expenses/utils/maybe.dart';
+
+import '../../utils/maybe.dart';
+import 'settings.dart';
 
 class SettingsState extends Equatable {
   final Maybe<Settings> settings;
@@ -29,7 +30,8 @@ class SettingsState extends Equatable {
     List<bool> expandedCategories,
   }) {
     if ((settings == null || identical(settings, this.settings)) &&
-        (expandedCategories == null || identical(expandedCategories, this.expandedCategories))) {
+        (expandedCategories == null ||
+            identical(expandedCategories, this.expandedCategories))) {
       return this;
     }
 

@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:expenses/store/actions/tag_actions.dart';
-import 'package:expenses/store/app_store.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tag_repository.dart';
 import 'package:meta/meta.dart';
+
+import '../store/actions/tag_actions.dart';
+import '../store/app_store.dart';
+import 'tag_model/tag.dart';
+import 'tag_repository.dart';
 
 class TagFetcher {
   final AppStore _store;
@@ -20,9 +21,10 @@ class TagFetcher {
   Future<void> loadTags() async {
     _store.dispatch(TagsSetLoading());
     _tagSubscription?.cancel();
-    _tagSubscription = _tagRepository.loadTags(_store.state.authState.user.value).listen(
-          (tags) => _store.dispatch(TagsSetTags(tagList: tags)),
-        );
+    _tagSubscription =
+        _tagRepository.loadTags(_store.state.authState.user.value).listen(
+              (tags) => _store.dispatch(TagsSetTags(tagList: tags)),
+            );
     _store.dispatch(TagsSetLoaded());
   }
 
@@ -42,7 +44,8 @@ class TagFetcher {
     }
   }
 
-  Future<void> batchAddUpdate({List<Tag> addedTags, List<Tag> updatedTags}) async {
+  Future<void> batchAddUpdate(
+      {List<Tag> addedTags, List<Tag> updatedTags}) async {
     if (addedTags.isNotEmpty) {
       try {
         _tagRepository.batchAddTags(addedTags: addedTags);

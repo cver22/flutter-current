@@ -1,18 +1,19 @@
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/categories/categories_screens/edit_category_dialog.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/store/actions/settings_actions.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 
 import '../../env.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../store/actions/settings_actions.dart';
+import '../../utils/db_consts.dart';
+import '../categories_model/app_category/app_category.dart';
+import 'edit_category_dialog.dart';
 
 Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) => {
-        Env.store.dispatch(LogAddEditCategory(category: category.copyWith(name: name, emojiChar: emojiChar))),
+        Env.store.dispatch(LogAddEditCategory(
+            category: category.copyWith(name: name, emojiChar: emojiChar))),
       },
 
       //TODO default function
@@ -31,13 +32,17 @@ Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
 }
 
 Future<dynamic> getLogAddEditSubcategoryDialog(
-    {@required AppCategory subcategory, @required List<AppCategory> categories}) {
+    {@required AppCategory subcategory,
+    @required List<AppCategory> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,
       save: (name, emojiChar, parentCategoryId) => {
         Env.store.dispatch(LogAddEditSubcategory(
-            subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
+            subcategory: subcategory.copyWith(
+                name: name,
+                emojiChar: emojiChar,
+                parentCategoryId: parentCategoryId))),
       },
 
       //TODO default function
@@ -53,11 +58,13 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
   );
 }
 
-Future<dynamic> getSettingsAddEditCategoryDialog({@required AppCategory category}) {
+Future<dynamic> getSettingsAddEditCategoryDialog(
+    {@required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) => {
-        Env.store.dispatch(SettingsAddEditCategory(category: category.copyWith(name: name, emojiChar: emojiChar))),
+        Env.store.dispatch(SettingsAddEditCategory(
+            category: category.copyWith(name: name, emojiChar: emojiChar))),
       },
 
       /*setDefault: (category) => {
@@ -73,16 +80,22 @@ Future<dynamic> getSettingsAddEditCategoryDialog({@required AppCategory category
 }
 
 Future<dynamic> getSettingsAddEditSubcategoryDialog(
-    {@required AppCategory subcategory, @required List<AppCategory> categories}) {
+    {@required AppCategory subcategory,
+    @required List<AppCategory> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,
       save: (name, emojiChar, parentCategoryId) => {
         Env.store.dispatch(SettingsAddEditSubcategory(
-            subcategory: subcategory.copyWith(name: name, emojiChar: emojiChar, parentCategoryId: parentCategoryId))),
+            subcategory: subcategory.copyWith(
+                name: name,
+                emojiChar: emojiChar,
+                parentCategoryId: parentCategoryId))),
       },
       //TODO default function
-      delete: () => {Env.store.dispatch(SettingsDeleteSubcategory(subcategory: subcategory))},
+      delete: () => {
+        Env.store.dispatch(SettingsDeleteSubcategory(subcategory: subcategory))
+      },
       category: subcategory,
       categoryOrSubcategory: CategoryOrSubcategory.subcategory,
     ),

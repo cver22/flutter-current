@@ -1,8 +1,9 @@
-import 'package:expenses/env.dart';
-import 'package:expenses/login_register/login_register_model/login_or_register.dart';
-import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/store/actions/login_reg_actions.dart';
 import 'package:flutter/material.dart';
+
+import '../../env.dart';
+import '../../store/actions/login_reg_actions.dart';
+import '../login_register_model/login_or_register.dart';
+import '../login_register_model/login_reg_state.dart';
 
 class CreateAccountButton extends StatelessWidget {
   final LoginRegState loginState;
@@ -12,7 +13,9 @@ class CreateAccountButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: loginState.loginOrRegister == LoginOrRegister.login ? Text('Create an Account') : Text('Go to Login'),
+      child: loginState.loginOrRegister == LoginOrRegister.login
+          ? Text('Create an Account')
+          : Text('Go to Login'),
       onPressed: () {
         Env.store.dispatch(LoginOrCreateUser());
       },

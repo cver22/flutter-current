@@ -1,14 +1,14 @@
-import 'package:expenses/app/common_widgets/app_dialog.dart';
-import 'package:expenses/filter/filter_model/filter_state.dart';
-import 'package:expenses/filter/filter_screen/filter_list_tile.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
+import '../../log/log_model/log.dart';
+import '../../store/actions/filter_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/utils.dart';
+import '../filter_model/filter_state.dart';
+import 'filter_list_tile.dart';
 
 class FilterLogDialog extends StatelessWidget {
   @override

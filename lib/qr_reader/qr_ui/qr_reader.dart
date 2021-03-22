@@ -1,16 +1,16 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/qr_reader/qr_model/qr_model.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 
+import '../../app/common_widgets/app_button.dart';
 import '../../env.dart';
+import '../../store/actions/logs_actions.dart';
+import '../../utils/db_consts.dart';
+import '../qr_model/qr_model.dart';
 
 const flashOn = 'FLASH ON';
 const flashOff = 'FLASH OFF';
@@ -114,15 +114,21 @@ class _QRReaderState extends State<QRReader> {
 
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    var scanArea =
-        (MediaQuery.of(context).size.width < 400 || MediaQuery.of(context).size.height < 400) ? 150.0 : 300.0;
+    var scanArea = (MediaQuery.of(context).size.width < 400 ||
+            MediaQuery.of(context).size.height < 400)
+        ? 150.0
+        : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.red, borderRadius: 10, borderLength: 30, borderWidth: 10, cutOutSize: scanArea),
+          borderColor: Colors.red,
+          borderRadius: 10,
+          borderLength: 30,
+          borderWidth: 10,
+          cutOutSize: scanArea),
     );
   }
 
@@ -137,10 +143,13 @@ class _QRReaderState extends State<QRReader> {
             resultCode.length > 1 &&
             resultCode.contains(APP) &&
             resultCode.contains(EXPENSE_APP)) {
-          int initialMemberCount = Env.store.state.logsState.selectedLog.value.logMembers.length;
+          int initialMemberCount =
+              Env.store.state.logsState.selectedLog.value.logMembers.length;
           QRModel qrModel = QRModel.fromJson(jsonDecode(resultCode));
-          Env.store.dispatch(LogAddMemberToSelectedLog(uid: qrModel.uid, name: qrModel.name));
-          if (Env.store.state.logsState.selectedLog.value.logMembers.length > initialMemberCount) {
+          Env.store.dispatch(
+              LogAddMemberToSelectedLog(uid: qrModel.uid, name: qrModel.name));
+          if (Env.store.state.logsState.selectedLog.value.logMembers.length >
+              initialMemberCount) {
             print('New member added: ${qrModel.name}');
             Get.back();
           } else {

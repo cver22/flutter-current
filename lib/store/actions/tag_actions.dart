@@ -1,9 +1,10 @@
-import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tag_model/tag_state.dart';
+import '../../app/models/app_state.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../tags/tag_model/tag_state.dart';
+import 'app_actions.dart';
 
-AppState _updateSubstates(AppState state, List<AppState Function(AppState)> updates) {
+AppState _updateSubstates(
+    AppState state, List<AppState Function(AppState)> updates) {
   return updates.fold(state, (updatedState, update) => update(updatedState));
 }
 

@@ -1,7 +1,8 @@
-import 'package:expenses/member/member_model/member_entity.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+
+import '../../../utils/db_consts.dart';
+import '../member_entity.dart';
 
 part 'entry_member_entity.g.dart';
 
@@ -11,7 +12,8 @@ class EntryMemberEntity extends MemberEntity {
   final bool paying;
   final bool spending;
 
-  EntryMemberEntity({uid, paid, spent, order, this.paying, this.spending = true})
+  EntryMemberEntity(
+      {uid, paid, spent, order, this.paying, this.spending = true})
       : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
@@ -22,7 +24,8 @@ class EntryMemberEntity extends MemberEntity {
     return 'EntryMemberEntity {$UID: $uid, paid: $paid, spent: $spent, paying: $paying, spending: $spending $ORDER: $order}';
   }
 
-  factory EntryMemberEntity.fromJson(Map<String, dynamic> json) => _$EntryMemberEntityFromJson(json);
+  factory EntryMemberEntity.fromJson(Map<String, dynamic> json) =>
+      _$EntryMemberEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$EntryMemberEntityToJson(this);
 }

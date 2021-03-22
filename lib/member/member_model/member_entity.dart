@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:meta/meta.dart';
+
+import '../../utils/db_consts.dart';
 
 @immutable
 class MemberEntity extends Equatable {

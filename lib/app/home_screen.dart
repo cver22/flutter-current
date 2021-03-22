@@ -1,9 +1,9 @@
-import 'package:expenses/app/splash_screen.dart';
-import 'package:expenses/auth_user/models/auth_state.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/utils.dart';
+import 'splash_screen.dart';
+import '../auth_user/models/auth_state.dart';
+import '../env.dart';
+import '../store/connect_state.dart';
+import '../utils/expense_routes.dart';
+import '../utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -61,16 +61,16 @@ class HomeScreen extends StatelessWidget {
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);
           });
-          *//*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
-                ModalRoute.withName(ExpenseRoutes.home));*//*
+          */ /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
+                ModalRoute.withName(ExpenseRoutes.home));*/ /*
         } else if (authState.user.isNone) {
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.loginRegister);
           });
-          *//* Navigator.pushNamedAndRemoveUntil(
+          */ /* Navigator.pushNamedAndRemoveUntil(
                 context,
                 ExpenseRoutes.loginRegister,
-                ModalRoute.withName(ExpenseRoutes.home));*//*
+                ModalRoute.withName(ExpenseRoutes.home));*/ /*
         }
         return ErrorContent();*/
       },

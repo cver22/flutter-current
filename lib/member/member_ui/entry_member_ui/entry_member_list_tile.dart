@@ -1,11 +1,11 @@
-import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/utils/currency.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../env.dart';
+import '../../../store/actions/single_entry_actions.dart';
+import '../../../utils/currency.dart';
+import '../../../utils/db_consts.dart';
+import '../../member_model/entry_member_model/entry_member.dart';
 
 class EntryMemberListTile extends StatefulWidget {
   final EntryMember member;
@@ -14,7 +14,11 @@ class EntryMemberListTile extends StatefulWidget {
   final bool autoFocus;
 
   const EntryMemberListTile(
-      {Key key, @required this.member, @required this.name, this.singleMemberLog = false, this.autoFocus = false})
+      {Key key,
+      @required this.member,
+      @required this.name,
+      this.singleMemberLog = false,
+      this.autoFocus = false})
       : super(key: key);
 
   @override
@@ -72,7 +76,9 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             mainAxisSize: MainAxisSize.min,
             children: [
               _buildCheckBox(
-                  checked: member.paying, onChanged: (value) => Env.store.dispatch(EntryToggleMemberPaying(member: member))),
+                  checked: member.paying,
+                  onChanged: (value) => Env.store
+                      .dispatch(EntryToggleMemberPaying(member: member))),
               _buildTextFormField(
                 paidOrSpent: PaidOrSpent.paid,
                 controller: _payingController,
@@ -88,7 +94,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   children: [
                     _buildCheckBox(
                         checked: member.spending,
-                        onChanged: (value) => Env.store.dispatch(EntryToggleMemberSpending(member: member))),
+                        onChanged: (value) => Env.store.dispatch(
+                            EntryToggleMemberSpending(member: member))),
                     _buildTextFormField(
                       paidOrSpent: PaidOrSpent.spent,
                       controller: _spendingController,
@@ -104,7 +111,10 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
   }
 
   Widget _buildTextFormField(
-      {PaidOrSpent paidOrSpent, TextEditingController controller, FocusNode focusNode, EntryMember member}) {
+      {PaidOrSpent paidOrSpent,
+      TextEditingController controller,
+      FocusNode focusNode,
+      EntryMember member}) {
     bool inactive = true;
     if (paidOrSpent == PaidOrSpent.paid) {
       inactive = !member.paying;
@@ -117,19 +127,28 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
       children: [
         Text(
           '\$ ',
-          style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
+          style:
+              TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
         ),
         Container(
           width: 50.0,
           child: TextField(
-            style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
+            style:
+                TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(
-              hintText: focusNode.hasFocus ? '': paidOrSpent == PaidOrSpent.paid ? PAID : SPENT, //TODO this doesn't fully work as the initial focus does not operate
-              hintStyle: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : ACTIVE_HINT_COLOR),
+              hintText: focusNode.hasFocus
+                  ? ''
+                  : paidOrSpent == PaidOrSpent.paid
+                      ? PAID
+                      : SPENT, //TODO this doesn't fully work as the initial focus does not operate
+              hintStyle: TextStyle(
+                  color: inactive ? INACTIVE_HINT_COLOR : ACTIVE_HINT_COLOR),
             ),
-            inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
+            inputFormatters: [
+              FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))
+            ],
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
             onSubmitted: (value) {
@@ -140,7 +159,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               if (paidOrSpent == PaidOrSpent.paid) {
                 if (member.paying) {
                   //user already paying, update state with focus
-                  Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
+                  Env.store.dispatch(EntryMemberFocus(
+                      paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
                   //user now paying, update focus and toggle
                   Env.store.dispatch(EntryToggleMemberPaying(member: member));
@@ -148,7 +168,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               } else if (paidOrSpent == PaidOrSpent.spent) {
                 if (member.spending) {
                   //user already spending, update state with focus
-                  Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
+                  Env.store.dispatch(EntryMemberFocus(
+                      paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
                   //user now spending, update focus and toggle
                   Env.store.dispatch(EntryToggleMemberSpending(member: member));
@@ -160,9 +181,11 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             onChanged: (newValue) {
               int intValue = parseNewValue(newValue: newValue);
               if (paidOrSpent == PaidOrSpent.paid) {
-                Env.store.dispatch(EntryUpdateMemberPaidAmount(paidValue: intValue, member: member));
+                Env.store.dispatch(EntryUpdateMemberPaidAmount(
+                    paidValue: intValue, member: member));
               } else {
-                Env.store.dispatch(EntryUpdateMemberSpentAmount(spentValue: intValue, member: member));
+                Env.store.dispatch(EntryUpdateMemberSpentAmount(
+                    spentValue: intValue, member: member));
               }
             },
           ),
@@ -171,7 +194,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
     );
   }
 
-  Widget _buildCheckBox({@required bool checked, @required ValueChanged<bool> onChanged}) {
+  Widget _buildCheckBox(
+      {@required bool checked, @required ValueChanged<bool> onChanged}) {
     return Checkbox(
       value: checked,
       onChanged: onChanged,

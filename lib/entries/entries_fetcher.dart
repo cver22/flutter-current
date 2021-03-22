@@ -1,12 +1,12 @@
 import 'dart:async';
 
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/member/member_model/log_member_model/log_member.dart';
-import 'package:expenses/store/actions/entries_actions.dart';
-import 'package:expenses/store/app_store.dart';
 import 'package:meta/meta.dart';
 
+import '../entry/entry_model/app_entry.dart';
+import '../member/member_model/entry_member_model/entry_member.dart';
+import '../member/member_model/log_member_model/log_member.dart';
+import '../store/actions/entries_actions.dart';
+import '../store/app_store.dart';
 import 'entries_repository.dart';
 
 class EntriesFetcher {
@@ -23,7 +23,9 @@ class EntriesFetcher {
   Future<void> loadEntries() async {
     _store.dispatch(EntriesSetLoading());
     _entriesSubscription?.cancel();
-    _entriesSubscription = _entriesRepository.loadEntries(_store.state.authState.user.value).listen(
+    _entriesSubscription = _entriesRepository
+        .loadEntries(_store.state.authState.user.value)
+        .listen(
           (entries) => _store.dispatch(EntriesSetEntries(entryList: entries)),
         );
     _store.dispatch(EntriesSetLoaded());
@@ -53,7 +55,9 @@ class EntriesFetcher {
     }
   }
 
-  Future<void> batchUpdateEntries({@required List<MyEntry> entries, @required Map<String, LogMember> logMembers}) {
+  Future<void> batchUpdateEntries(
+      {@required List<MyEntry> entries,
+      @required Map<String, LogMember> logMembers}) {
     List<MyEntry> updatedEntries = [];
 
     //adds any new log members to all entries for the log
@@ -61,7 +65,8 @@ class EntriesFetcher {
       Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
       logMembers.forEach((key, logMember) {
         if (!entry.entryMembers.containsKey(key)) {
-          entryMembers.putIfAbsent(key, () => EntryMember(uid: logMember.uid, spending: false));
+          entryMembers.putIfAbsent(
+              key, () => EntryMember(uid: logMember.uid, spending: false));
         }
       });
       updatedEntries.add(entry.copyWith(entryMembers: entryMembers));
@@ -76,7 +81,8 @@ class EntriesFetcher {
     }
   }
 
-  Future<void> batchDeleteEntries({@required List<MyEntry> deletedEntries}) async {
+  Future<void> batchDeleteEntries(
+      {@required List<MyEntry> deletedEntries}) async {
     //log has been deleted, delete all associated entries
 
     if (deletedEntries.isNotEmpty) {

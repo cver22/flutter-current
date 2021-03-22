@@ -1,19 +1,20 @@
-import 'package:expenses/app/common_widgets/app_dialog.dart';
-import 'package:expenses/filter/filter_model/filter_state.dart';
-import 'package:expenses/filter/filter_screen/filter_list_tile.dart';
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
+import '../../store/actions/filter_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/utils.dart';
+import '../filter_model/filter_state.dart';
+import 'filter_list_tile.dart';
 
 class FilterMemberDialog extends StatelessWidget {
   final PaidOrSpent paidOrSpent;
 
-  const FilterMemberDialog({Key key, @required this.paidOrSpent}) : super(key: key);
+  const FilterMemberDialog({Key key, @required this.paidOrSpent})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -55,22 +56,21 @@ class FilterMemberDialog extends StatelessWidget {
 
   List<Widget> _actions() {
     return [
-
-                TextButton(
-                  child: Text('Clear'),
-                  onPressed: () {
-                    if (paidOrSpent == PaidOrSpent.paid) {
-                      Env.store.dispatch(FilterClearPaidSelection());
-                    } else {
-                      Env.store.dispatch(FilterClearSpentSelection());
-                    }
-                  },
-                ),
-                TextButton(
-                    child: Text('Done'),
-                    onPressed: () {
-                      Get.back();
-                    }),
-              ];
+      TextButton(
+        child: Text('Clear'),
+        onPressed: () {
+          if (paidOrSpent == PaidOrSpent.paid) {
+            Env.store.dispatch(FilterClearPaidSelection());
+          } else {
+            Env.store.dispatch(FilterClearSpentSelection());
+          }
+        },
+      ),
+      TextButton(
+          child: Text('Done'),
+          onPressed: () {
+            Get.back();
+          }),
+    ];
   }
 }

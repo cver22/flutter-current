@@ -1,19 +1,20 @@
-import 'package:expenses/app/app_screen.dart';
-import 'package:expenses/app/home_screen.dart';
-import 'package:expenses/entry/entry_screen/add_edit_entry_screen.dart';
-import 'package:expenses/env.dart';
-import 'package:expenses/log/log_ui/add_edit_log_Screen.dart';
-import 'package:expenses/login_register/login_register_ui/login_register_screen.dart';
-import 'package:expenses/settings/settings_ui/settings_screen.dart';
-import 'package:expenses/utils/expense_routes.dart';
-import 'package:expenses/utils/keys.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 
 import 'file:///C:/version-control/flutter-current/lib/account/account_ui/account_screen.dart';
 
-void main() async{
+import 'app/app_screen.dart';
+import 'app/home_screen.dart';
+import 'entry/entry_screen/add_edit_entry_screen.dart';
+import 'env.dart';
+import 'log/log_ui/add_edit_log_Screen.dart';
+import 'login_register/login_register_ui/login_register_screen.dart';
+import 'settings/settings_ui/settings_screen.dart';
+import 'utils/expense_routes.dart';
+import 'utils/keys.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   Env.userFetcher.startApp(); // allows code before runApp
@@ -25,14 +26,28 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: [
-        GetPage(name: ExpenseRoutes.home, page: () => HomeScreen(key: ExpenseKeys.homeScreen)),
-        GetPage(name: ExpenseRoutes.loginRegister, page: () => LoginRegisterScreen(key: ExpenseKeys.loginScreen)),
-        GetPage(name: ExpenseRoutes.app, page: () => AppScreen(key: ExpenseKeys.appScreen)),
-        GetPage(name: ExpenseRoutes.account, page: () => AccountScreen(key: ExpenseKeys.accountScreen)),
-        GetPage(name: ExpenseRoutes.settings, page: () => SettingsScreen(key: ExpenseKeys.settingsScreen)),
-        GetPage(name: ExpenseRoutes.addEditLog, page: () => AddEditLogScreen(key: ExpenseKeys.addEditLogScreen)),
         GetPage(
-            name: ExpenseRoutes.addEditEntries, page: () => AddEditEntryScreen(key: ExpenseKeys.addEditEntriesScreen)),
+            name: ExpenseRoutes.home,
+            page: () => HomeScreen(key: ExpenseKeys.homeScreen)),
+        GetPage(
+            name: ExpenseRoutes.loginRegister,
+            page: () => LoginRegisterScreen(key: ExpenseKeys.loginScreen)),
+        GetPage(
+            name: ExpenseRoutes.app,
+            page: () => AppScreen(key: ExpenseKeys.appScreen)),
+        GetPage(
+            name: ExpenseRoutes.account,
+            page: () => AccountScreen(key: ExpenseKeys.accountScreen)),
+        GetPage(
+            name: ExpenseRoutes.settings,
+            page: () => SettingsScreen(key: ExpenseKeys.settingsScreen)),
+        GetPage(
+            name: ExpenseRoutes.addEditLog,
+            page: () => AddEditLogScreen(key: ExpenseKeys.addEditLogScreen)),
+        GetPage(
+            name: ExpenseRoutes.addEditEntries,
+            page: () =>
+                AddEditEntryScreen(key: ExpenseKeys.addEditEntriesScreen)),
       ],
       initialRoute: ExpenseRoutes.home,
       key: ExpenseKeys.main,

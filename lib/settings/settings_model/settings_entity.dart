@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category_entity.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
+
+import '../../categories/categories_model/app_category/app_category_entity.dart';
 
 part 'settings_entity.g.dart';
 
@@ -25,13 +26,20 @@ class SettingsEntity implements Equatable {
   final List<String> logOrder;
 
   @override
-  List<Object> get props =>
-      [homeCurrency, defaultCategoryEntities, defaultSubcategoryEntities, defaultLogId, autoInsertDecimalPoint, logOrder];
+  List<Object> get props => [
+        homeCurrency,
+        defaultCategoryEntities,
+        defaultSubcategoryEntities,
+        defaultLogId,
+        autoInsertDecimalPoint,
+        logOrder
+      ];
 
   @override
   bool get stringify => true;
 
-  factory SettingsEntity.fromJson(Map<String, dynamic> json) => _$SettingsEntityFromJson(json);
+  factory SettingsEntity.fromJson(Map<String, dynamic> json) =>
+      _$SettingsEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$SettingsEntityToJson(this);
 }

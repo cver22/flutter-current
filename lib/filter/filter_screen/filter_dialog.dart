@@ -1,26 +1,25 @@
-import 'package:date_time_picker/date_time_picker.dart';
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/app/common_widgets/app_dialog.dart';
-import 'package:expenses/app/common_widgets/date_button.dart';
-import 'package:expenses/categories/categories_screens/category_button.dart';
-import 'package:expenses/categories/categories_screens/master_category_list_dialog.dart';
-import 'package:expenses/filter/filter_model/filter.dart';
-import 'package:expenses/filter/filter_model/filter_state.dart';
-import 'package:expenses/filter/filter_screen/filter_log_dialog.dart';
-import 'package:expenses/filter/filter_screen/filter_member_dialog.dart';
-import 'package:expenses/filter/filter_screen/filter_tag_dialog.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/store/actions/entries_actions.dart';
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/utils/currency.dart';
-import 'package:expenses/utils/db_consts.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
+import '../../app/common_widgets/app_button.dart';
+import '../../app/common_widgets/app_dialog.dart';
+import '../../app/common_widgets/date_button.dart';
+import '../../categories/categories_screens/category_button.dart';
+import '../../categories/categories_screens/master_category_list_dialog.dart';
 import '../../env.dart';
+import '../../log/log_model/log.dart';
+import '../../store/actions/entries_actions.dart';
+import '../../store/actions/filter_actions.dart';
+import '../../store/connect_state.dart';
+import '../../utils/currency.dart';
+import '../../utils/db_consts.dart';
+import '../../utils/utils.dart';
+import '../filter_model/filter.dart';
+import '../filter_model/filter_state.dart';
+import 'filter_log_dialog.dart';
+import 'filter_member_dialog.dart';
+import 'filter_tag_dialog.dart';
 
 class FilterDialog extends StatefulWidget {
   final EntriesCharts entriesChart;
@@ -52,13 +51,15 @@ class _FilterDialogState extends State<FilterDialog> {
     });
 
     if (Env.store.state.filterState.filter.value.minAmount.isSome) {
-      _minAmountController.value =
-          TextEditingValue(text: formattedAmount(value: Env.store.state.filterState.filter.value.minAmount.value));
+      _minAmountController.value = TextEditingValue(
+          text: formattedAmount(
+              value: Env.store.state.filterState.filter.value.minAmount.value));
     }
 
     if (Env.store.state.filterState.filter.value.maxAmount.isSome) {
-      _maxAmountController.value =
-          TextEditingValue(text: formattedAmount(value: Env.store.state.filterState.filter.value.maxAmount.value));
+      _maxAmountController.value = TextEditingValue(
+          text: formattedAmount(
+              value: Env.store.state.filterState.filter.value.maxAmount.value));
     }
 
     super.initState();
@@ -82,7 +83,8 @@ class _FilterDialogState extends State<FilterDialog> {
 
           return AppDialogWithActions(
             title: 'Filter',
-            actions: _actions(filterState: filterState, entriesChart: entriesChart),
+            actions:
+                _actions(filterState: filterState, entriesChart: entriesChart),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.max,
@@ -107,7 +109,9 @@ class _FilterDialogState extends State<FilterDialog> {
         });
   }
 
-  List<Widget> _actions({@required FilterState filterState, @required EntriesCharts entriesChart}) {
+  List<Widget> _actions(
+      {@required FilterState filterState,
+      @required EntriesCharts entriesChart}) {
     return [
       TextButton(
         child: Text('Cancel'),
@@ -138,7 +142,9 @@ class _FilterDialogState extends State<FilterDialog> {
 
   bool _minExceedMax({@required Filter filter}) {
     bool canSave = false;
-    if (filter.minAmount.isSome && filter.maxAmount.isSome && filter.minAmount.value >= filter.maxAmount.value) {
+    if (filter.minAmount.isSome &&
+        filter.maxAmount.isSome &&
+        filter.minAmount.value >= filter.maxAmount.value) {
       canSave = true;
     }
     return canSave;
@@ -197,7 +203,9 @@ class _FilterDialogState extends State<FilterDialog> {
       style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),
       controller: controller,
       focusNode: focusNode,
-      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
+      inputFormatters: [
+        FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))
+      ],
       keyboardType: TextInputType.number,
       textInputAction: textInputAction,
       decoration: InputDecoration(
@@ -219,7 +227,8 @@ class _FilterDialogState extends State<FilterDialog> {
       children: [
         DateButton(
           //TODO add remove focus action to these buttons
-          initialDateTime: filter.startDate.isSome ? filter.startDate.value : null,
+          initialDateTime:
+              filter.startDate.isSome ? filter.startDate.value : null,
 
           label: 'Start Date',
           datePickerType: DatePickerType.start,
@@ -301,7 +310,8 @@ class _FilterDialogState extends State<FilterDialog> {
                     _removeFocus(),
                     showDialog(
                       context: context,
-                      builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+                      builder: (_) =>
+                          FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
                     ),
                   },
               child: Text(
@@ -318,11 +328,14 @@ class _FilterDialogState extends State<FilterDialog> {
                     _removeFocus(),
                     showDialog(
                       context: context,
-                      builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
+                      builder: (_) =>
+                          FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
                     ),
                   },
               child: Text(
-                membersSpentString.length > 0 ? membersSpentString : 'Who spent?',
+                membersSpentString.length > 0
+                    ? membersSpentString
+                    : 'Who spent?',
                 overflow: TextOverflow.visible,
                 softWrap: true,
               )),
@@ -345,7 +358,8 @@ class _FilterDialogState extends State<FilterDialog> {
       });
 
       return AppButton(
-        child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
+        child: Text(
+            selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
         onPressed: () => {
           _removeFocus(),
           showDialog(

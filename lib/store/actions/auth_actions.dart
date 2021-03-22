@@ -1,9 +1,10 @@
-import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/auth_user/models/app_user.dart';
-import 'package:expenses/auth_user/models/auth_state.dart';
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:meta/meta.dart';
+
+import '../../app/models/app_state.dart';
+import '../../auth_user/models/app_user.dart';
+import '../../auth_user/models/auth_state.dart';
+import '../../utils/maybe.dart';
+import 'app_actions.dart';
 
 AppState _updateAuthState(
   AppState appState,
@@ -26,7 +27,10 @@ class AuthSuccess implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(appState, (authState) => authState.copyWith(user: Maybe.some(user), isLoading: false));
+    return _updateAuthState(
+        appState,
+        (authState) =>
+            authState.copyWith(user: Maybe.some(user), isLoading: false));
   }
 }
 
@@ -40,7 +44,8 @@ class AuthSignOut implements AppAction {
 class AuthLoadingUser implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(appState, (authState) => authState.copyWith(isLoading: true));
+    return _updateAuthState(
+        appState, (authState) => authState.copyWith(isLoading: true));
   }
 }
 
@@ -51,7 +56,10 @@ class AuthUpdateDisplayName implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(appState,
-        (authState) => authState.copyWith(user: Maybe.some(authState.user.value.copyWith(displayName: displayName))));
+    return _updateAuthState(
+        appState,
+        (authState) => authState.copyWith(
+            user: Maybe.some(
+                authState.user.value.copyWith(displayName: displayName))));
   }
 }

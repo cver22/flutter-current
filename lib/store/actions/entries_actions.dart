@@ -1,20 +1,19 @@
 import 'dart:collection';
 
-import 'package:expenses/app/models/app_state.dart';
-import 'package:expenses/categories/categories_model/app_category/app_category.dart';
-import 'package:expenses/entries/entries_model/entries_state.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/filter/filter_model/filter.dart';
-import 'package:expenses/filter/filter_model/filter_state.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/log/log_totals_model/log_total.dart';
-import 'package:expenses/log/log_totals_model/log_totals_state.dart';
-import 'package:expenses/store/actions/app_actions.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/utils/maybe.dart';
-
+import '../../app/models/app_state.dart';
+import '../../categories/categories_model/app_category/app_category.dart';
+import '../../entries/entries_model/entries_state.dart';
+import '../../entry/entry_model/app_entry.dart';
 import '../../env.dart';
+import '../../filter/filter_model/filter.dart';
+import '../../filter/filter_model/filter_state.dart';
+import '../../log/log_model/log.dart';
+import '../../log/log_totals_model/log_total.dart';
+import '../../log/log_totals_model/log_totals_state.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../utils/maybe.dart';
+import 'app_actions.dart';
+import 'single_entry_actions.dart';
 
 AppState _updateEntriesLogTotalsState(
   AppState appState,
@@ -51,15 +50,16 @@ AppState _updateEntriesState(
 class EntriesSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
-
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: true));
+    return _updateEntriesState(
+        appState, (entriesState) => entriesState.copyWith(isLoading: true));
   }
 }
 
 class EntriesSetLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(isLoading: false));
+    return _updateEntriesState(
+        appState, (entriesState) => entriesState.copyWith(isLoading: false));
   }
 }
 
@@ -79,10 +79,15 @@ class EntriesSetEntries implements AppAction {
     );
 
     logs.forEach((key, log) {
-      logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
+      logTotals.putIfAbsent(
+          key,
+          () => updateLogMemberTotals(
+              entries: entries.values.toList(), log: log));
     });
 
-    return _updateEntriesLogTotalsState(appState, (logTotalsState) => logTotalsState.copyWith(logTotals: logTotals),
+    return _updateEntriesLogTotalsState(
+        appState,
+        (logTotalsState) => logTotalsState.copyWith(logTotals: logTotals),
         (entriesState) => entriesState.copyWith(entries: entries));
   }
 }
@@ -91,7 +96,9 @@ class EntriesSetOrder implements AppAction {
   @override
   AppState updateState(AppState appState) {
     return _updateEntriesState(
-        appState, (entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending));
+        appState,
+        (entriesState) => entriesState.copyWith(
+            descending: !appState.entriesState.descending));
   }
 }
 
@@ -110,7 +117,8 @@ class EntriesDeleteSelectedEntry implements AppAction {
       Tag tag = tags[tagId];
 
       //decrement use of tag for this category and log
-      tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
+      tag = decrementCategorySubcategoryLogFrequency(
+          updatedTag: tag, categoryId: entry?.categoryId);
 
       tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
     });
@@ -145,25 +153,28 @@ class EntriesSetEntriesFilter implements AppAction {
 
     Maybe<Filter> updatedFilter = Maybe.some(Filter.initial());
 
-    if(logId == null){
+    if (logId == null) {
       //if filter has been changed, save new filter, if reset, pass no filter
       updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
     } else {
       //filter was set fro a logListTile and should only filter based on the log
       List<String> selectedLogs = [];
       selectedLogs.add(logId);
-      updatedFilter = Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
+      updatedFilter =
+          Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 
     /*AppState updated = _updateFilterState(appState, (filterState) => null)*/
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
+    return _updateEntriesState(appState,
+        (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
   }
 }
 
 class EntriesClearEntriesFilter implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(entriesFilter: Maybe.none()));
+    return _updateEntriesState(appState,
+        (entriesState) => entriesState.copyWith(entriesFilter: Maybe.none()));
   }
 }
 
@@ -173,15 +184,18 @@ class EntriesSetChartFilter implements AppAction {
     FilterState filterState = appState.filterState;
 
     //if filter has been changed, save new filter, if reset, pass no filter
-    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+    Maybe<Filter> updatedFilter =
+        filterState.updated ? filterState.filter : Maybe.none();
 
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(chartFilter: updatedFilter));
+    return _updateEntriesState(appState,
+        (entriesState) => entriesState.copyWith(chartFilter: updatedFilter));
   }
 }
 
 class EntriesClearChartFilter implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(appState, (entriesState) => entriesState.copyWith(chartFilter: Maybe.none()));
+    return _updateEntriesState(appState,
+        (entriesState) => entriesState.copyWith(chartFilter: Maybe.none()));
   }
 }

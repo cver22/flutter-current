@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/tags/tag_model/tag_entity.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:meta/meta.dart';
+
+import '../../utils/db_consts.dart';
+import 'tag_entity.dart';
 
 @immutable
 class Tag extends Equatable {
@@ -43,7 +44,8 @@ class Tag extends Equatable {
   }
 
   @override
-  List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object> get props =>
+      [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   TagEntity toEntity() {
     return TagEntity(

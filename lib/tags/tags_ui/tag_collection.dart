@@ -1,7 +1,8 @@
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tags_ui/tag_chip.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/material.dart';
+
+import '../../utils/maybe.dart';
+import '../tag_model/tag.dart';
+import 'tag_chip.dart';
 
 class TagCollection extends StatelessWidget {
   final List<Tag> tags;
@@ -33,7 +34,7 @@ class TagCollection extends StatelessWidget {
     });
     return Column(
       children: [
-        collectionName == null ? Container() :Text(collectionName),
+        collectionName == null ? Container() : Text(collectionName),
         Wrap(
           spacing: 5.0,
           runSpacing: 3.0,

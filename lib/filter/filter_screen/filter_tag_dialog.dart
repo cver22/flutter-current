@@ -1,16 +1,16 @@
-import 'package:expenses/app/common_widgets/app_dialog.dart';
-import 'package:expenses/filter/filter_model/filter_state.dart';
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/connect_state.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tags_ui/tag_collection.dart';
-import 'package:expenses/tags/tags_ui/tag_field.dart';
-import 'package:expenses/utils/maybe.dart';
-import 'package:expenses/utils/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
+import '../../store/actions/filter_actions.dart';
+import '../../store/connect_state.dart';
+import '../../tags/tag_model/tag.dart';
+import '../../tags/tags_ui/tag_collection.dart';
+import '../../tags/tags_ui/tag_field.dart';
+import '../../utils/maybe.dart';
+import '../../utils/utils.dart';
+import '../filter_model/filter_state.dart';
 
 class FilterTagDialog extends StatelessWidget {
   @override
@@ -31,26 +31,38 @@ class FilterTagDialog extends StatelessWidget {
               child: SingleChildScrollView(
                 child: Column(
                   children: [
-                    filterState.search.isSome ? Text('Searched Tags') : Container(),
-                    filterState.search.isSome ? _buildAllTags(
-                        selectedCategories: filterState.filter.value.selectedCategories,
-                        search: filterState.search,
-                        allTags: filterState.allTags,
-                        searchedTags: filterState.searchedTags,
-                        selectedTagNames: filterState.filter.value.selectedTags) : Container(),
+                    filterState.search.isSome
+                        ? Text('Searched Tags')
+                        : Container(),
+                    filterState.search.isSome
+                        ? _buildAllTags(
+                            selectedCategories:
+                                filterState.filter.value.selectedCategories,
+                            search: filterState.search,
+                            allTags: filterState.allTags,
+                            searchedTags: filterState.searchedTags,
+                            selectedTagNames:
+                                filterState.filter.value.selectedTags)
+                        : Container(),
                     Text('Selected Tags'),
                     _buildSelectedTags(
                       allTags: filterState.allTags,
                       selectedTagIds: filterState.filter.value.selectedTags,
                     ),
                     SizedBox(height: 8.0),
-                    filterState.search.isNone ? Text('Tags by Frequency') : Container(),
-                    filterState.search.isNone ? _buildAllTags(
-                        selectedCategories: filterState.filter.value.selectedCategories,
-                        search: filterState.search,
-                        allTags: filterState.allTags,
-                        searchedTags: filterState.searchedTags,
-                        selectedTagNames: filterState.filter.value.selectedTags) : Container(),
+                    filterState.search.isNone
+                        ? Text('Tags by Frequency')
+                        : Container(),
+                    filterState.search.isNone
+                        ? _buildAllTags(
+                            selectedCategories:
+                                filterState.filter.value.selectedCategories,
+                            search: filterState.search,
+                            allTags: filterState.allTags,
+                            searchedTags: filterState.searchedTags,
+                            selectedTagNames:
+                                filterState.filter.value.selectedTags)
+                        : Container(),
                   ],
                 ),
               ),
@@ -61,18 +73,18 @@ class FilterTagDialog extends StatelessWidget {
 
   List<Widget> _actions() {
     return [
-        TextButton(
-          child: Text('Clear'),
+      TextButton(
+        child: Text('Clear'),
+        onPressed: () {
+          Env.store.dispatch(FilterClearTagSelection());
+        },
+      ),
+      TextButton(
+          child: Text('Done'),
           onPressed: () {
-            Env.store.dispatch(FilterClearTagSelection());
-          },
-        ),
-        TextButton(
-            child: Text('Done'),
-            onPressed: () {
-              Get.back();
-            }),
-      ];
+            Get.back();
+          }),
+    ];
   }
 
   Widget _buildSelectedTags({
@@ -108,7 +120,8 @@ class FilterTagDialog extends StatelessWidget {
     @required List<Tag> searchedTags,
     @required List<String> selectedCategories,
   }) {
-    List<Tag> collectionTags = search.isNone ? List.from(allTags) : List.from(searchedTags);
+    List<Tag> collectionTags =
+        search.isNone ? List.from(allTags) : List.from(searchedTags);
 
     //remove any selected tags from this collection
     collectionTags.removeWhere((tag) {

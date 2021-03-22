@@ -1,13 +1,13 @@
-import 'package:expenses/store/actions/filter_actions.dart';
-import 'package:expenses/store/actions/single_entry_actions.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
-import 'package:expenses/tags/tags_ui/edit_tag_dialog.dart';
-import 'package:expenses/tags/tags_ui/tag_rich_text_spans.dart';
-import 'package:expenses/utils/maybe.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../env.dart';
+import '../../store/actions/filter_actions.dart';
+import '../../store/actions/single_entry_actions.dart';
+import '../../utils/maybe.dart';
+import '../tag_model/tag.dart';
+import 'edit_tag_dialog.dart';
+import 'tag_rich_text_spans.dart';
 
 class TagChip extends StatelessWidget {
   final Tag tag;
@@ -17,7 +17,12 @@ class TagChip extends StatelessWidget {
 
   //TODO have chips change colour when selected?
 
-  const TagChip({Key key, @required this.tag, @required this.search , this.editable = true, this.filterSelect = false})
+  const TagChip(
+      {Key key,
+      @required this.tag,
+      @required this.search,
+      this.editable = true,
+      this.filterSelect = false})
       : super(key: key);
 
   @override

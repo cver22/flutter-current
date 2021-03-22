@@ -1,9 +1,9 @@
-import 'package:expenses/app/common_widgets/app_button.dart';
-import 'package:expenses/log/log_model/log.dart';
-import 'package:expenses/store/actions/logs_actions.dart';
 import 'package:flutter/material.dart';
 
+import '../../app/common_widgets/app_button.dart';
 import '../../env.dart';
+import '../../store/actions/logs_actions.dart';
+import '../log_model/log.dart';
 
 class LogNameForm extends StatefulWidget {
   final Log log;
@@ -25,9 +25,9 @@ class _LogNameFormState extends State<LogNameForm> {
     if (log.uid != null && !editName) {
       return AppButton(
           onPressed: () {
-           setState(() {
-             editName = true;
-           });
+            setState(() {
+              editName = true;
+            });
           },
           child: Row(
             mainAxisSize: MainAxisSize.max,
@@ -44,7 +44,7 @@ class _LogNameFormState extends State<LogNameForm> {
           initialValue: log.name,
           autofocus: true,
           onChanged: (name) {
-              Env.store.dispatch(LogUpdateName(name: name));
+            Env.store.dispatch(LogUpdateName(name: name));
           }
           //TODO validate name cannot be empty
           //TODO need controllers

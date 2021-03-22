@@ -1,10 +1,10 @@
-import 'package:expenses/store/actions/account_actions.dart';
-import 'package:expenses/utils/expense_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:get/get.dart';
 
 import '../env.dart';
+import '../store/actions/account_actions.dart';
+import '../utils/expense_routes.dart';
 
 class AppDrawer extends StatelessWidget {
   @override

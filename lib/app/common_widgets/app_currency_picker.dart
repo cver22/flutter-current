@@ -1,12 +1,14 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/app/common_widgets/app_button.dart';
 import 'package:flutter/material.dart';
+
+import 'app_button.dart';
 
 class AppCurrencyPicker extends StatefulWidget {
   final String currency;
   final Function(String) returnCurrency;
 
-  const AppCurrencyPicker({Key key, this.currency, this.returnCurrency}) : super(key: key);
+  const AppCurrencyPicker({Key key, this.currency, this.returnCurrency})
+      : super(key: key);
 
   @override
   _AppCurrencyPickerState createState() => _AppCurrencyPickerState();
@@ -18,7 +20,6 @@ class _AppCurrencyPickerState extends State<AppCurrencyPicker> {
   @override
   Widget build(BuildContext context) {
     _currency = CurrencyService().findByCode(widget.currency ?? 'CAD');
-
 
     return AppButton(
       onPressed: () {
@@ -33,7 +34,8 @@ class _AppCurrencyPickerState extends State<AppCurrencyPicker> {
           },
         );
       },
-      child: Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}'),
+      child: Text(
+          '${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}'),
     );
   }
 }

@@ -1,12 +1,13 @@
-import 'package:expenses/auth_user/models/app_user.dart';
-import 'package:expenses/auth_user/user_repository.dart';
-import 'package:expenses/login_register/login_register_model/login_or_register.dart';
-import 'package:expenses/login_register/login_register_model/login_reg_state.dart';
-import 'package:expenses/store/actions/account_actions.dart';
-import 'package:expenses/store/actions/auth_actions.dart';
-import 'package:expenses/store/actions/login_reg_actions.dart';
-import 'package:expenses/store/app_store.dart';
 import 'package:meta/meta.dart';
+
+import '../login_register/login_register_model/login_or_register.dart';
+import '../login_register/login_register_model/login_reg_state.dart';
+import '../store/actions/account_actions.dart';
+import '../store/actions/auth_actions.dart';
+import '../store/actions/login_reg_actions.dart';
+import '../store/app_store.dart';
+import 'models/app_user.dart';
+import 'user_repository.dart';
 
 class UserFetcher {
   final AppStore _store;
@@ -62,11 +63,13 @@ class UserFetcher {
     }
   }
 
-  Future<void> signInOrRegisterWithCredentials({String email, String password, LoginRegState loginRegState}) async {
+  Future<void> signInOrRegisterWithCredentials(
+      {String email, String password, LoginRegState loginRegState}) async {
     _setLoadingAndSubmitting(loginRegState);
     try {
       if (loginRegState.loginOrRegister == LoginOrRegister.login) {
-        await _userRepository.signInWithCredentials(email: email, password: password);
+        await _userRepository.signInWithCredentials(
+            email: email, password: password);
       } else if (loginRegState.loginOrRegister == LoginOrRegister.register) {
         await _userRepository.signUp(email: email, password: password);
       }
@@ -79,20 +82,24 @@ class UserFetcher {
   }
 
   Future<void> updateDisplayName({@required String displayName}) async {
-    AppUser user = await _userRepository.updateUserProfile(displayName: displayName);
+    AppUser user =
+        await _userRepository.updateUserProfile(displayName: displayName);
     _store.dispatch(AuthSuccess(user: user));
   }
 
   //used for AccountScreen password change form
   Future<void> isUserSignedInWithEmail() async {
     bool signedInWithEmail = await _userRepository.isUserSignedInWithEmail();
-    _store.dispatch(IsUserSignedInWithEmail(signedInWithEmail: signedInWithEmail));
+    _store.dispatch(
+        IsUserSignedInWithEmail(signedInWithEmail: signedInWithEmail));
   }
 
   //only available if user has signed in with email
-  Future<void> updatePassword({@required String currentPassword, @required String newPassword}) async {
+  Future<void> updatePassword(
+      {@required String currentPassword, @required String newPassword}) async {
     _store.dispatch(AccountUpdateSubmitting());
-    bool success = await _userRepository.updatePassword(currentPassword: currentPassword, newPassword: newPassword);
+    bool success = await _userRepository.updatePassword(
+        currentPassword: currentPassword, newPassword: newPassword);
     if (success) {
       _store.dispatch(AccountUpdateSuccess());
     } else {

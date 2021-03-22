@@ -1,9 +1,9 @@
-import 'package:expenses/entries/entries_screen/entries_list_tile.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
 import 'package:flutter/material.dart';
 
+import '../../entry/entry_model/app_entry.dart';
 import '../../env.dart';
+import '../../tags/tag_model/tag.dart';
+import 'entries_list_tile.dart';
 
 class EntriesScreenBuildListView extends StatelessWidget {
   const EntriesScreenBuildListView({
@@ -21,7 +21,8 @@ class EntriesScreenBuildListView extends StatelessWidget {
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
-        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+        padding:
+            const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
           final MyEntry _entry = _entries[index];

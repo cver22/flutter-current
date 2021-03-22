@@ -1,7 +1,8 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/tags/tag_model/tag.dart';
+
+import 'tag.dart';
 
 class TagState extends Equatable {
   final Map<String, Tag> tags;
@@ -20,7 +21,8 @@ class TagState extends Equatable {
     Map<String, Tag> tags,
     bool isLoading,
   }) {
-    if ((tags == null || identical(tags, this.tags)) && (isLoading == null || identical(isLoading, this.isLoading))) {
+    if ((tags == null || identical(tags, this.tags)) &&
+        (isLoading == null || identical(isLoading, this.isLoading))) {
       return this;
     }
 

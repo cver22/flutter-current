@@ -1,9 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
-import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/member/member_model/entry_member_model/entry_member_entity.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
+
+import '../../member/member_model/entry_member_model/entry_member.dart';
+import '../../member/member_model/entry_member_model/entry_member_entity.dart';
+import '../../utils/db_consts.dart';
 
 @immutable
 class MyEntryEntity extends Equatable {
@@ -65,9 +66,11 @@ class MyEntryEntity extends Equatable {
       amount: snap.data()[AMOUNT],
       comment: snap.data()[COMMENT],
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()[DATE_TIME]),
-      tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-      entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
-          ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
+      tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)
+          ?.map((key, value) => MapEntry(key, value)),
+      entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)?.map(
+          (key, value) => MapEntry(
+              key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }
 
@@ -81,7 +84,8 @@ class MyEntryEntity extends Equatable {
       COMMENT: comment,
       DATE_TIME: dateTime.millisecondsSinceEpoch,
       TAGS: tagIDs.map((key, value) => MapEntry(key, value)),
-      MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      MEMBERS: entryMembers
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       MEMBER_LIST: memberList
     };
   }

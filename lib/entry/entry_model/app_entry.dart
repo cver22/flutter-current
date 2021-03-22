@@ -1,10 +1,11 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
-import 'package:expenses/entry/entry_model/app_entry_entity.dart';
-import 'package:expenses/member/member_model/entry_member_model/entry_member.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/foundation.dart';
+
+import '../../member/member_model/entry_member_model/entry_member.dart';
+import '../../utils/db_consts.dart';
+import 'app_entry_entity.dart';
 
 @immutable
 class MyEntry extends Equatable with ChangeNotifier {
@@ -56,8 +57,18 @@ class MyEntry extends Equatable with ChangeNotifier {
   }
 
   @override
-  List<Object> get props =>
-      [id, logId, currency, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, entryMembers];
+  List<Object> get props => [
+        id,
+        logId,
+        currency,
+        categoryId,
+        subcategoryId,
+        amount,
+        comment,
+        dateTime,
+        tagIDs,
+        entryMembers
+      ];
 
   @override
   String toString() {
@@ -77,7 +88,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       amount: amount,
       comment: comment,
       dateTime: dateTime,
-      tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
+      tagIDs: Map<String, String>.fromIterable(tagIDs,
+          key: (e) => e, value: (e) => e),
       entryMembers: entryMembers,
       memberList: entryMembers.keys.toList(),
     );
@@ -94,7 +106,8 @@ class MyEntry extends Equatable with ChangeNotifier {
       });
     }
 
-    entryMembersLinkedMap = entryMembersLinkedMap ?? entity.entryMembers; // ordering didn't work, pass the list anyway
+    entryMembersLinkedMap = entryMembersLinkedMap ??
+        entity.entryMembers; // ordering didn't work, pass the list anyway
 
     return MyEntry(
       id: entity.id,
@@ -126,7 +139,8 @@ class MyEntry extends Equatable with ChangeNotifier {
         (logId == null || identical(logId, this.logId)) &&
         (currency == null || identical(currency, this.currency)) &&
         (categoryId == null || identical(categoryId, this.categoryId)) &&
-        (subcategoryId == null || identical(subcategoryId, this.subcategoryId)) &&
+        (subcategoryId == null ||
+            identical(subcategoryId, this.subcategoryId)) &&
         (amount == null || identical(amount, this.amount)) &&
         (comment == null || identical(comment, this.comment)) &&
         (dateTime == null || identical(dateTime, this.dateTime)) &&
