@@ -151,7 +151,7 @@ class SettingsScreen extends StatelessWidget {
         showDialog(
           context: context,
           builder: (_) {
-            Env.store.dispatch(SettingSetExpandedCategories());
+            Env.store.dispatch(SettingsSetExpandedCategories());
             return MasterCategoryListDialog(
                 setLogFilter: SettingsLogFilter.settings);
           },

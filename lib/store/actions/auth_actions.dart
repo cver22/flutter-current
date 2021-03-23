@@ -6,17 +6,19 @@ import '../../auth_user/models/auth_state.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
 
-AppState _updateAuthState(
-  AppState appState,
-  AuthState update(AuthState authState),
-) {
-  return appState.copyWith(authState: update(appState.authState));
+AppState Function(AppState) _updateAuthState(AuthState update(authState)) {
+  return (state) => state.copyWith(authState: update(state.authState));
 }
 
 class AuthFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(appState, (authState) => AuthState.initial());
+    return updateSubstates(
+      appState,
+      [
+        _updateAuthState((authState) => AuthState.initial()),
+      ],
+    );
   }
 }
 
@@ -27,10 +29,12 @@ class AuthSuccess implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(
-        appState,
-        (authState) =>
-            authState.copyWith(user: Maybe.some(user), isLoading: false));
+    return updateSubstates(
+      appState,
+      [
+        _updateAuthState((authState) => authState.copyWith(user: Maybe.some(user), isLoading: false)),
+      ],
+    );
   }
 }
 
@@ -44,8 +48,12 @@ class AuthSignOut implements AppAction {
 class AuthLoadingUser implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(
-        appState, (authState) => authState.copyWith(isLoading: true));
+    return updateSubstates(
+      appState,
+      [
+        _updateAuthState((authState) => authState.copyWith(isLoading: true)),
+      ],
+    );
   }
 }
 
@@ -56,10 +64,12 @@ class AuthUpdateDisplayName implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAuthState(
-        appState,
-        (authState) => authState.copyWith(
-            user: Maybe.some(
-                authState.user.value.copyWith(displayName: displayName))));
+    return updateSubstates(
+      appState,
+      [
+        _updateAuthState((authState) =>
+            authState.copyWith(user: Maybe.some(authState.user.value.copyWith(displayName: displayName)))),
+      ],
+    );
   }
 }

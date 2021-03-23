@@ -12,12 +12,12 @@ import 'app_actions.dart';
 
 //TODO load setting from JSON file, change settings
 
-AppState _updateSettingsState(
+/*AppState _updateSettingsState(
   AppState appState,
   SettingsState update(SettingsState settingsState),
 ) {
   return appState.copyWith(settingsState: update(appState.settingsState));
-}
+}*/
 
 class SettingsUpdate implements AppAction {
   final Maybe<Settings> settings;
@@ -28,11 +28,12 @@ class SettingsUpdate implements AppAction {
   AppState updateState(AppState appState) {
     Env.settingsFetcher.writeAppSettings(settings.value);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) => settingsState.copyWith(
-              settings: settings,
-            ));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: settings)),
+      ],
+    );
   }
 }
 
@@ -51,10 +52,12 @@ class SettingsChangeDefaultLog implements AppAction {
 
     Env.settingsFetcher.writeAppSettings(settings);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings)));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }
 
@@ -77,10 +80,12 @@ class SettingsAddEditCategory implements AppAction {
     settings = settings.copyWith(defaultCategories: categories);
     Env.settingsFetcher.writeAppSettings(settings);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings)));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }
 
@@ -95,16 +100,17 @@ class SettingsDeleteCategory implements AppAction {
     List<AppCategory> categories = List.from(settings.defaultCategories);
 
     if (canDeleteCategory(id: category.id)) {
-      categories =
-          categories.where((element) => element.id != category.id).toList();
+      categories = categories.where((element) => element.id != category.id).toList();
       settings = settings.copyWith(defaultCategories: categories);
       Env.settingsFetcher.writeAppSettings(settings);
     }
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings)));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }
 
@@ -119,8 +125,7 @@ class SettingsAddEditSubcategory implements AppAction {
     List<AppCategory> subcategories = settings.defaultSubcategories;
 
     if (subcategory.id != null) {
-      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] =
-          subcategory;
+      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
     } else {
       subcategories.add(subcategory.copyWith(id: Uuid().v4()));
     }
@@ -128,10 +133,12 @@ class SettingsAddEditSubcategory implements AppAction {
     settings = settings.copyWith(defaultSubcategories: subcategories);
     Env.settingsFetcher.writeAppSettings(settings);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings)));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }
 
@@ -146,31 +153,32 @@ class SettingsDeleteSubcategory implements AppAction {
     List<AppCategory> subcategories = settings.defaultSubcategories;
 
     if (canDeleteSubcategory(subcategory: subcategory)) {
-      subcategories = subcategories
-          .where((element) => element.id != subcategory.id)
-          .toList();
+      subcategories = subcategories.where((element) => element.id != subcategory.id).toList();
       settings = settings.copyWith(defaultSubcategories: subcategories);
       Env.settingsFetcher.writeAppSettings(settings);
     }
-
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings)));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }
 
-class SettingSetExpandedCategories implements AppAction {
+class SettingsSetExpandedCategories implements AppAction {
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = [];
     appState.settingsState.settings.value.defaultCategories.forEach((element) {
       expandedCategories.add(false);
     });
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(expandedCategories: expandedCategories));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(expandedCategories: expandedCategories)),
+      ],
+    );
   }
 }
 
@@ -180,14 +188,15 @@ class SettingsExpandCollapseCategory implements AppAction {
   SettingsExpandCollapseCategory({@required this.index});
 
   AppState updateState(AppState appState) {
-    List<bool> expandedCategories =
-        List.from(appState.settingsState.expandedCategories);
+    List<bool> expandedCategories = List.from(appState.settingsState.expandedCategories);
     expandedCategories[index] = !expandedCategories[index];
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(expandedCategories: expandedCategories));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(expandedCategories: expandedCategories)),
+      ],
+    );
   }
 }
 
@@ -195,34 +204,30 @@ class SettingsReorderCategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
-  SettingsReorderCategory(
-      {@required this.oldCategoryIndex, @required this.newCategoryIndex});
+  SettingsReorderCategory({@required this.oldCategoryIndex, @required this.newCategoryIndex});
 
   AppState updateState(AppState appState) {
     //reorder categories list
     Settings settings = appState.settingsState.settings.value;
     List<AppCategory> categories = List.from(settings.defaultCategories);
     categories = reorderLogSettingsCategories(
-        categories: categories,
-        oldCategoryIndex: oldCategoryIndex,
-        newCategoryIndex: newCategoryIndex);
+        categories: categories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
 
     //reorder expanded list
-    List<bool> expandedCategories =
-        List.from(appState.settingsState.expandedCategories);
+    List<bool> expandedCategories = List.from(appState.settingsState.expandedCategories);
     expandedCategories = reorderLogSettingsExpandedCategories(
-        expandedCategories: expandedCategories,
-        oldCategoryIndex: oldCategoryIndex,
-        newCategoryIndex: newCategoryIndex);
+        expandedCategories: expandedCategories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
 
     settings = settings.copyWith(defaultCategories: categories);
     Env.settingsFetcher.writeAppSettings(settings);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) => settingsState.copyWith(
-            settings: Maybe.some(settings),
-            expandedCategories: expandedCategories));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) =>
+            settingsState.copyWith(settings: Maybe.some(settings), expandedCategories: expandedCategories)),
+      ],
+    );
   }
 }
 
@@ -243,10 +248,9 @@ class SettingsReorderSubcategory implements AppAction {
     String oldParentId = settings.defaultCategories[oldCategoryIndex].id;
     String newParentId = settings.defaultCategories[newCategoryIndex].id;
     List<AppCategory> subcategories = List.from(settings.defaultSubcategories);
-    List<AppCategory> subsetOfSubcategories =
-        List.from(settings.defaultSubcategories);
-    subsetOfSubcategories.retainWhere((subcategory) =>
-        subcategory.parentCategoryId == oldParentId); //get initial subset
+    List<AppCategory> subsetOfSubcategories = List.from(settings.defaultSubcategories);
+    subsetOfSubcategories
+        .retainWhere((subcategory) => subcategory.parentCategoryId == oldParentId); //get initial subset
     AppCategory subcategory = subsetOfSubcategories[oldSubcategoryIndex];
 
     subcategories = reorderSubcategoriesLogSetting(
@@ -260,9 +264,11 @@ class SettingsReorderSubcategory implements AppAction {
     settings = settings.copyWith(defaultSubcategories: subcategories);
     Env.settingsFetcher.writeAppSettings(settings);
 
-    return _updateSettingsState(
-        appState,
-        (settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings)));
+    return updateSubstates(
+      appState,
+      [
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+      ],
+    );
   }
 }

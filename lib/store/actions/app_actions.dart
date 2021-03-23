@@ -1,3 +1,4 @@
+import 'package:expenses/filter/filter_model/filter_state.dart';
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
@@ -54,6 +55,12 @@ AppState Function(AppState) updateLogTotalsState(
     LogTotalsState update(logTotalsState)) {
   return (state) =>
       state.copyWith(logTotalsState: update(state.logTotalsState));
+}
+
+AppState Function(AppState) updateFilterState(
+    FilterState update(filterState)) {
+  return (state) =>
+      state.copyWith(filterState: update(state.filterState));
 }
 
 Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(

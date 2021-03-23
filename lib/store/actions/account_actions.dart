@@ -4,70 +4,85 @@ import '../../login_register/login_register_model/login__reg_status.dart';
 import '../../utils/validators.dart';
 import 'app_actions.dart';
 
-AppState _updateAccountState(
-  AppState appState,
-  AccountState update(AccountState accountState),
-) {
-  return appState.copyWith(accountState: update(appState.accountState));
+AppState Function(AppState) _updateAccountState(AccountState update(accountState)) {
+  return (state) => state.copyWith(accountState: update(state.accountState));
 }
 
 class AccountUpdateFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState, (accountState) => accountState.failure());
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.failure()),
+      ],
+    );
   }
 }
 
 class AccountUpdateSubmitting implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState, (accountState) => accountState.submitting());
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.submitting()),
+      ],
+    );
   }
 }
 
 class AccountUpdateSuccess implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState, (accountState) => accountState.success());
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.success()),
+      ],
+    );
   }
 }
 
 class ShowHidePasswordForm implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState,
-        (accountState) => accountState.copyWith(
-            showPasswordForm: !appState.accountState.showPasswordForm));
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState(
+            (accountState) => accountState.copyWith(showPasswordForm: !appState.accountState.showPasswordForm)),
+      ],
+    );
   }
 }
 
 class AccountResetState implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState, (accountState) => accountState.resetState());
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.resetState()),
+      ],
+    );
   }
 }
 
 class AccountValidateOldPassword implements AppAction {
   final String password;
 
-  /*final String newPassword;
-  final String verifyPassword*/
-
   AccountValidateOldPassword({this.password});
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState,
-        (accountState) => accountState.copyWith(
-            isOldPasswordValid: Validators.isValidPassword(password),
-            loginStatus: LoginStatus.updated));
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.copyWith(
+            isOldPasswordValid: Validators.isValidPassword(password), loginStatus: LoginStatus.updated)),
+      ],
+    );
   }
 }
 
@@ -85,12 +100,15 @@ class AccountValidateNewPassword implements AppAction {
       passwordsMatch = true;
     }
 
-    return _updateAccountState(
-        appState,
-        (accountState) => accountState.copyWith(
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.copyWith(
             isNewPasswordValid: Validators.isValidPassword(newPassword),
             newPasswordsMatch: passwordsMatch,
-            loginStatus: LoginStatus.updated));
+            loginStatus: LoginStatus.updated)),
+      ],
+    );
   }
 }
 
@@ -101,9 +119,11 @@ class IsUserSignedInWithEmail implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateAccountState(
-        appState,
-        (accountState) =>
-            accountState.copyWith(isUserSignedInWithEmail: signedInWithEmail));
+    return updateSubstates(
+      appState,
+      [
+        _updateAccountState((accountState) => accountState.copyWith(isUserSignedInWithEmail: signedInWithEmail)),
+      ],
+    );
   }
 }

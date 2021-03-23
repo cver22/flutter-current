@@ -1,5 +1,8 @@
 import 'dart:collection';
 
+import 'package:expenses/entry/entry_model/single_entry_state.dart';
+import 'package:meta/meta.dart';
+
 import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
 import '../../entries/entries_model/entries_state.dart';
@@ -9,57 +12,32 @@ import '../../filter/filter_model/filter.dart';
 import '../../filter/filter_model/filter_state.dart';
 import '../../log/log_model/log.dart';
 import '../../log/log_totals_model/log_total.dart';
-import '../../log/log_totals_model/log_totals_state.dart';
 import '../../tags/tag_model/tag.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
 import 'single_entry_actions.dart';
 
-AppState _updateEntriesLogTotalsState(
-  AppState appState,
-  LogTotalsState updateLogTotalsState(LogTotalsState logTotalsState),
-  EntriesState update(EntriesState entriesState),
-) {
-  return appState.copyWith(
-    logTotalsState: updateLogTotalsState(appState.logTotalsState),
-    entriesState: update(appState.entriesState),
-  );
-}
-
-AppState _updateEntriesState(
-  AppState appState,
-  EntriesState update(EntriesState entriesState),
-) {
-  return appState.copyWith(entriesState: update(appState.entriesState));
-}
-
-/*AppState _updateEntries(
-  AppState appState,
-  LogsState updateLogState(LogsState logsState),
-  void updateInPlace(Map<String, MyEntry> entries),
-) {
-  Map<String, MyEntry> cloneMap = Map.from(appState.entriesState.entries);
-  updateInPlace(cloneMap);
-  return _updateEntriesLogsState(
-    appState,
-    (logsState) => updateLogState(appState.logsState),
-    (entriesState) => entriesState.copyWith(entries: cloneMap),
-  );
-}*/
-
 class EntriesSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(
-        appState, (entriesState) => entriesState.copyWith(isLoading: true));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(isLoading: true)),
+      ],
+    );
   }
 }
 
 class EntriesSetLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(
-        appState, (entriesState) => entriesState.copyWith(isLoading: false));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(isLoading: false)),
+      ],
+    );
   }
 }
 
@@ -71,34 +49,34 @@ class EntriesSetEntries implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
-    Map<String, Log> logs = Map.from(appState.logsState.logs);
     Map<String, LogTotal> logTotals = LinkedHashMap();
 
     entries.addEntries(
       entryList.map((entry) => MapEntry(entry.id, entry)),
     );
 
-    logs.forEach((key, log) {
-      logTotals.putIfAbsent(
-          key,
-          () => updateLogMemberTotals(
-              entries: entries.values.toList(), log: log));
-    });
+    logTotals =
+        entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entries);
 
-    return _updateEntriesLogTotalsState(
-        appState,
-        (logTotalsState) => logTotalsState.copyWith(logTotals: logTotals),
-        (entriesState) => entriesState.copyWith(entries: entries));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(entries: entries)),
+        updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
+      ],
+    );
   }
 }
 
 class EntriesSetOrder implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(
-        appState,
-        (entriesState) => entriesState.copyWith(
-            descending: !appState.entriesState.descending));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending)),
+      ],
+    );
   }
 }
 
@@ -111,36 +89,35 @@ class EntriesDeleteSelectedEntry implements AppAction {
     Map<String, Tag> tags = appState.singleEntryState.tags;
     EntriesState updatedEntriesState = appState.entriesState;
     updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
+    Map<String, LogTotal> logTotals = LinkedHashMap();
 
     entry.tagIDs.forEach((tagId) {
       //updates log list of tags
       Tag tag = tags[tagId];
 
       //decrement use of tag for this category and log
-      tag = decrementCategorySubcategoryLogFrequency(
-          updatedTag: tag, categoryId: entry?.categoryId);
+      tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
 
       tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
     });
 
     Env.entriesFetcher.deleteEntry(entry);
 
-    //TODO send to update all changed tags
-    //Map<String, Tag> stateTags = appState.tagState.tags;
+    //TODO update tags that have been decremented in the firestore
 
-    //TODO ask Boris, is this kind of action legal, or do I need to pass the revised state back to this action?
-    Env.store.dispatch(EntryClearState());
+    logTotals = entriesUpdateLogsTotals(
+        logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: updatedEntriesState.entries);
 
-    return _updateEntriesState(appState, (entriesState) => updatedEntriesState);
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => updatedEntriesState),
+        updateSingleEntryState((singleEntryState) => SingleEntryState.initial()),
+        updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
+      ],
+    );
   }
 }
-
-/*AppState _updateFilterState(
-    AppState appState,
-    FilterState update(FilterState filterState),
-    ) {
-  return appState.copyWith(filterState: update(appState.filterState));
-}*/
 
 class EntriesSetEntriesFilter implements AppAction {
   final String logId;
@@ -160,21 +137,28 @@ class EntriesSetEntriesFilter implements AppAction {
       //filter was set fro a logListTile and should only filter based on the log
       List<String> selectedLogs = [];
       selectedLogs.add(logId);
-      updatedFilter =
-          Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
+      updatedFilter = Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 
-    /*AppState updated = _updateFilterState(appState, (filterState) => null)*/
-    return _updateEntriesState(appState,
-        (entriesState) => entriesState.copyWith(entriesFilter: updatedFilter));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(entriesFilter: updatedFilter)),
+        updateFilterState((filterState) => FilterState.initial()),
+      ],
+    );
   }
 }
 
 class EntriesClearEntriesFilter implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(appState,
-        (entriesState) => entriesState.copyWith(entriesFilter: Maybe.none()));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(entriesFilter: Maybe.none())),
+      ],
+    );
   }
 }
 
@@ -184,18 +168,36 @@ class EntriesSetChartFilter implements AppAction {
     FilterState filterState = appState.filterState;
 
     //if filter has been changed, save new filter, if reset, pass no filter
-    Maybe<Filter> updatedFilter =
-        filterState.updated ? filterState.filter : Maybe.none();
+    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
 
-    return _updateEntriesState(appState,
-        (entriesState) => entriesState.copyWith(chartFilter: updatedFilter));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(chartFilter: updatedFilter)),
+        updateFilterState((filterState) => FilterState.initial()),
+      ],
+    );
   }
 }
 
 class EntriesClearChartFilter implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateEntriesState(appState,
-        (entriesState) => entriesState.copyWith(chartFilter: Maybe.none()));
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(chartFilter: Maybe.none())),
+      ],
+    );
   }
+}
+
+Map<String, LogTotal> entriesUpdateLogsTotals(
+    {@required Map<String, Log> logs,
+    @required Map<String, LogTotal> logTotals,
+    @required Map<String, MyEntry> entries}) {
+  logs.forEach((key, log) {
+    logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
+  });
+  return logTotals;
 }

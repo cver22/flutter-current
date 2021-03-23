@@ -1272,7 +1272,7 @@ Tag _incrementAppCategoryFrequency(
 Tag decrementCategorySubcategoryLogFrequency(
     {@required Tag updatedTag,
     @required String categoryId,
-    @required String subcategoryId}) {
+    String subcategoryId}) {
   updatedTag = _decrementCategorySubcategory(
       updatedTag: updatedTag,
       categoryId: categoryId,

@@ -3,10 +3,6 @@ import '../../tags/tag_model/tag.dart';
 import '../../tags/tag_model/tag_state.dart';
 import 'app_actions.dart';
 
-AppState _updateSubstates(
-    AppState state, List<AppState Function(AppState)> updates) {
-  return updates.fold(state, (updatedState, update) => update(updatedState));
-}
 
 AppState Function(AppState) _updateTagState(TagState update(tagState)) {
   return (state) => state.copyWith(tagState: update(state.tagState));
@@ -19,7 +15,7 @@ AppState _updateTags(
   Map<String, Tag> cloneMap = Map.from(appState.tagState.tags);
   updateInPlace(cloneMap);
 
-  return _updateSubstates(
+  return updateSubstates(
     appState,
     [_updateTagState((tagState) => tagState.copyWith(tags: cloneMap))],
   );
@@ -28,7 +24,7 @@ AppState _updateTags(
 class TagsSetLoading implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateSubstates(
+    return updateSubstates(
       appState,
       [_updateTagState((tagState) => tagState.copyWith(isLoading: true))],
     );
@@ -38,7 +34,7 @@ class TagsSetLoading implements AppAction {
 class TagsSetLoaded implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateSubstates(
+    return updateSubstates(
       appState,
       [_updateTagState((tagState) => tagState.copyWith(isLoading: false))],
     );

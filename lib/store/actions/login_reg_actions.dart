@@ -4,34 +4,43 @@ import '../../login_register/login_register_model/login_reg_state.dart';
 import '../../utils/validators.dart';
 import 'app_actions.dart';
 
-AppState _updateLoginRegState(
-  AppState appState,
-  LoginRegState update(LoginRegState loginRegState),
-) {
-  return appState.copyWith(loginRegState: update(appState.loginRegState));
+AppState Function(AppState) _updateLoginRegState(LoginRegState update(loginRegState)) {
+  return (state) => state.copyWith(loginRegState: update(state.loginRegState));
 }
 
 class LoginRegFailure implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateLoginRegState(
-        appState, (loginRegState) => loginRegState.failure());
+    return updateSubstates(
+      appState,
+      [
+        _updateLoginRegState((loginRegState) => loginRegState.failure()),
+      ],
+    );
   }
 }
 
 class LoginRegSubmitting implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateLoginRegState(
-        appState, (loginRegState) => loginRegState.submitting());
+    return updateSubstates(
+      appState,
+      [
+        _updateLoginRegState((loginRegState) => loginRegState.submitting()),
+      ],
+    );
   }
 }
 
 class LoginRegSuccess implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    return _updateLoginRegState(
-        appState, (loginRegState) => loginRegState.success());
+    return updateSubstates(
+      appState,
+      [
+        _updateLoginRegState((loginRegState) => loginRegState.success()),
+      ],
+    );
   }
 }
 
@@ -40,14 +49,14 @@ class LoginOrCreateUser implements AppAction {
   @override
   AppState updateState(AppState appState) {
     LoginOrRegister loginOrRegister = appState.loginRegState.loginOrRegister;
-    loginOrRegister = loginOrRegister == LoginOrRegister.login
-        ? LoginOrRegister.register
-        : LoginOrRegister.login;
+    loginOrRegister = loginOrRegister == LoginOrRegister.login ? LoginOrRegister.register : LoginOrRegister.login;
 
-    return _updateLoginRegState(
-        appState,
-        (loginRegState) =>
-            loginRegState.copyWith(loginOrRegister: loginOrRegister));
+    return updateSubstates(
+      appState,
+      [
+        _updateLoginRegState((loginRegState) => loginRegState.copyWith(loginOrRegister: loginOrRegister)),
+      ],
+    );
   }
 }
 
@@ -58,10 +67,13 @@ class LoginRegisterPasswordValidation implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLoginRegState(
-        appState,
-        (loginRegState) => loginRegState.updateCredentials(
-            isPasswordValid: Validators.isValidPassword(password)));
+    return updateSubstates(
+      appState,
+      [
+        _updateLoginRegState(
+            (loginRegState) => loginRegState.updateCredentials(isPasswordValid: Validators.isValidPassword(password))),
+      ],
+    );
   }
 }
 
@@ -72,9 +84,12 @@ class LoginRegisterEmailValidation implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLoginRegState(
-        appState,
-        (loginRegState) => loginRegState.updateCredentials(
-            isEmailValid: Validators.isValidEmail(email)));
+    return updateSubstates(
+      appState,
+      [
+        _updateLoginRegState(
+            (loginRegState) => loginRegState.updateCredentials(isEmailValid: Validators.isValidEmail(email))),
+      ],
+    );
   }
 }
