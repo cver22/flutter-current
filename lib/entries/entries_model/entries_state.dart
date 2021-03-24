@@ -9,7 +9,7 @@ import '../../utils/maybe.dart';
 
 @immutable
 class EntriesState extends Equatable {
-  final Map<String, MyEntry> entries;
+  final Map<String, AppEntry> entries;
   final bool isLoading;
   final Maybe<Filter> entriesFilter;
   final Maybe<Filter> chartFilter;
@@ -40,7 +40,7 @@ class EntriesState extends Equatable {
   bool get stringify => true;
 
   EntriesState copyWith({
-    Map<String, MyEntry> entries,
+    Map<String, AppEntry> entries,
     bool isLoading,
     Maybe<Filter> entriesFilter,
     Maybe<Filter> chartFilter,

@@ -153,7 +153,7 @@ class FilterSetReset implements AppAction {
               consolidatedCategories: consolidatedCategories.values.toList(),
               consolidatedSubcategories: consolidatedSubcategories.values.toList(),
               allMembers: members,
-              filter: Maybe.some(updatedFilter),
+              filter: Maybe<Filter>.some(updatedFilter),
               updated: updated,
               allTags: allTags,
             )),
@@ -205,7 +205,7 @@ class FilterSelectDeselectCategory implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
-                filter: Maybe.some(filter.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
               selectedCategories: selectedCategories,
               selectedSubcategories: selectedSubcategories,
             )))),
@@ -258,7 +258,7 @@ class FilterSelectDeselectSubcategory implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
-                filter: Maybe.some(filter.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
               selectedCategories: selectedCategories,
               selectedSubcategories: selectedSubcategories,
             )))),
@@ -273,7 +273,7 @@ class FilterClearCategorySelection implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
-                filter: Maybe.some(appState.filterState.filter.value.copyWith(
+                filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(
               selectedCategories: const [],
               selectedSubcategories: const [],
             )))),
@@ -290,11 +290,11 @@ class FilterSetStartDate implements AppAction {
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
     Maybe<DateTime> previousDate = filter.startDate;
-    Maybe<DateTime> updatedDate = Maybe.none();
+    Maybe<DateTime> updatedDate = Maybe<DateTime>.none();
 
     if (filter.endDate.isNone || date.isBefore(filter.endDate.value)) {
       //either no end date is set or start date must be before end date
-      updatedDate = Maybe.some(date);
+      updatedDate = Maybe<DateTime>.some(date);
     } else if (previousDate.isSome) {
       //if a previous date exists, revert to it, otherwise, no date has been set
       updatedDate = previousDate;
@@ -304,7 +304,7 @@ class FilterSetStartDate implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe.some(filter.copyWith(startDate: updatedDate)))),
+            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(startDate: updatedDate)))),
       ],
     );
   }
@@ -318,11 +318,11 @@ class FilterSetEndDate implements AppAction {
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
     Maybe<DateTime> previousDate = filter.endDate;
-    Maybe<DateTime> updatedDate = Maybe.none();
+    Maybe<DateTime> updatedDate = Maybe<DateTime>.none();
 
     if (filter.startDate.isNone || date.isAfter(filter.startDate.value)) {
       //either no start date is set or end date must be after start date
-      updatedDate = Maybe.some(date);
+      updatedDate = Maybe<DateTime>.some(date);
     } else if (previousDate.isSome) {
       //if a previous date exists, revert to it, otherwise, no date has been set
       updatedDate = previousDate;
@@ -332,7 +332,7 @@ class FilterSetEndDate implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe.some(filter.copyWith(endDate: updatedDate)))),
+            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(endDate: updatedDate)))),
       ],
     );
   }
@@ -349,9 +349,9 @@ class FilterUpdateMinAmount implements AppAction {
 
     if (minAmount != null) {
       if (minAmount == 0) {
-        min = Maybe.none();
+        min = Maybe<int>.none();
       } else {
-        min = Maybe.some(minAmount);
+        min = Maybe<int>.some(minAmount);
       }
     }
 
@@ -359,7 +359,7 @@ class FilterUpdateMinAmount implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
-                filter: Maybe.some(filter.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
               minAmount: min,
             )))),
       ],
@@ -379,9 +379,9 @@ class FilterUpdateMaxAmount implements AppAction {
 
     if (maxAmount != null) {
       if (maxAmount == 0) {
-        max = Maybe.none();
+        max = Maybe<int>.none();
       } else {
-        max = Maybe.some(maxAmount);
+        max = Maybe<int>.some(maxAmount);
       }
     }
 
@@ -389,7 +389,7 @@ class FilterUpdateMaxAmount implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
-                filter: Maybe.some(filter.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
               maxAmount: max,
             )))),
       ],
@@ -416,7 +416,7 @@ class FilterSelectPaid implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe.some(filter.copyWith(membersPaid: membersPaid)))),
+            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(membersPaid: membersPaid)))),
       ],
     );
   }
@@ -428,7 +428,7 @@ class FilterClearPaidSelection implements AppAction {
       appState,
       [
         updateFilterState((filterState) => filterState.copyWith(
-            filter: Maybe.some(appState.filterState.filter.value.copyWith(membersPaid: const [])))),
+            filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(membersPaid: const [])))),
       ],
     );
   }
@@ -453,7 +453,7 @@ class FilterSelectSpent implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe.some(filter.copyWith(membersSpent: membersSpent)))),
+            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(membersSpent: membersSpent)))),
       ],
     );
   }
@@ -465,7 +465,7 @@ class FilterClearSpentSelection implements AppAction {
       appState,
       [
         updateFilterState((filterState) => filterState.copyWith(
-            filter: Maybe.some(appState.filterState.filter.value.copyWith(membersSpent: const [])))),
+            filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(membersSpent: const [])))),
       ],
     );
   }
@@ -490,7 +490,7 @@ class FilterSelectLog implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe.some(filter.copyWith(selectedLogs: selectedLogs)))),
+            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(selectedLogs: selectedLogs)))),
       ],
     );
   }
@@ -502,7 +502,7 @@ class FilterClearLogSelection implements AppAction {
       appState,
       [
         updateFilterState((filterState) => filterState.copyWith(
-            filter: Maybe.some(appState.filterState.filter.value.copyWith(selectedLogs: const [])))),
+            filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(selectedLogs: const [])))),
       ],
     );
   }
@@ -529,8 +529,8 @@ class FilterSelectDeselectTag implements AppAction {
       appState,
       [
         _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
-              filter: Maybe.some(filter.copyWith(selectedTags: selectedTags)),
-              search: Maybe.none(), // clear search bar
+              filter: Maybe<Filter>.some(filter.copyWith(selectedTags: selectedTags)),
+              search: Maybe<String>.none(), // clear search bar
             )),
       ],
     );
@@ -546,7 +546,7 @@ class FilterSetSearchedTags implements AppAction {
   AppState updateState(AppState appState) {
     List<Tag> tags = List.from(appState.filterState.allTags);
     List<Tag> searchedTags = [];
-    Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe.some(search) : Maybe.none();
+    Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe<String>.some(search) : Maybe<String>.none();
     List<String> selectedTagIds = List.from(appState.filterState.filter.value.selectedTags);
 
     searchedTags = buildSearchedTagsList(tags: tags, tagIds: selectedTagIds, search: search);
@@ -571,12 +571,13 @@ class FilterClearTagSearch implements AppAction {
       [
         updateFilterState((filterState) => filterState.copyWith(
               searchedTags: const [],
-              search: Maybe.none(),
+              search: Maybe<String>.none(),
             )),
       ],
     );
   }
 }
+//TODO what is going on here????
 
 class FilterClearTagSelection implements AppAction {
   AppState updateState(AppState appState) {
@@ -584,7 +585,7 @@ class FilterClearTagSelection implements AppAction {
       appState,
       [
         updateFilterState((filterState) =>
-            filterState.copyWith(Maybe.some(appState.filterState.filter.value.copyWith(selectedTags: const [])))),
+            filterState.copyWith(filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(selectedTags: const [])))),
       ],
     );
   }

@@ -6,18 +6,10 @@ import '../../categories/categories_model/app_category/app_category.dart';
 import '../../env.dart';
 import '../../log/log_model/log.dart';
 import '../../settings/settings_model/settings.dart';
-import '../../settings/settings_model/settings_state.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
 
 //TODO load setting from JSON file, change settings
-
-/*AppState _updateSettingsState(
-  AppState appState,
-  SettingsState update(SettingsState settingsState),
-) {
-  return appState.copyWith(settingsState: update(appState.settingsState));
-}*/
 
 class SettingsUpdate implements AppAction {
   final Maybe<Settings> settings;
@@ -55,7 +47,7 @@ class SettingsChangeDefaultLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }
@@ -83,7 +75,7 @@ class SettingsAddEditCategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }
@@ -108,7 +100,7 @@ class SettingsDeleteCategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }
@@ -136,7 +128,7 @@ class SettingsAddEditSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }
@@ -160,7 +152,7 @@ class SettingsDeleteSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }
@@ -225,7 +217,7 @@ class SettingsReorderCategory implements AppAction {
       appState,
       [
         updateSettingsState((settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings), expandedCategories: expandedCategories)),
+            settingsState.copyWith(settings: Maybe<Settings>.some(settings), expandedCategories: expandedCategories)),
       ],
     );
   }
@@ -267,7 +259,7 @@ class SettingsReorderSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }

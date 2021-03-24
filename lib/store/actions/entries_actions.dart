@@ -1,10 +1,10 @@
 import 'dart:collection';
 
-import 'package:expenses/entry/entry_model/single_entry_state.dart';
+
 import 'package:meta/meta.dart';
 
+import '../../entry/entry_model/single_entry_state.dart';
 import '../../app/models/app_state.dart';
-import '../../categories/categories_model/app_category/app_category.dart';
 import '../../entries/entries_model/entries_state.dart';
 import '../../entry/entry_model/app_entry.dart';
 import '../../env.dart';
@@ -42,13 +42,13 @@ class EntriesSetLoaded implements AppAction {
 }
 
 class EntriesSetEntries implements AppAction {
-  final Iterable<MyEntry> entryList;
+  final Iterable<AppEntry> entryList;
 
   EntriesSetEntries({this.entryList});
 
   @override
   AppState updateState(AppState appState) {
-    Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
+    Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, LogTotal> logTotals = LinkedHashMap();
 
     entries.addEntries(
@@ -84,8 +84,8 @@ class EntriesDeleteSelectedEntry implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Env.store.dispatch(EntryProcessing());
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<AppCategory> categories = appState.singleEntryState.categories;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
+    //List<AppCategory> categories = appState.singleEntryState.categories;
     Map<String, Tag> tags = appState.singleEntryState.tags;
     EntriesState updatedEntriesState = appState.entriesState;
     updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
@@ -128,16 +128,16 @@ class EntriesSetEntriesFilter implements AppAction {
   AppState updateState(AppState appState) {
     FilterState filterState = appState.filterState;
 
-    Maybe<Filter> updatedFilter = Maybe.some(Filter.initial());
+    Maybe<Filter> updatedFilter = Maybe<Filter>.some(Filter.initial());
 
     if (logId == null) {
       //if filter has been changed, save new filter, if reset, pass no filter
-      updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+      updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
     } else {
       //filter was set fro a logListTile and should only filter based on the log
       List<String> selectedLogs = [];
       selectedLogs.add(logId);
-      updatedFilter = Maybe.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
+      updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 
     return updateSubstates(
@@ -156,7 +156,7 @@ class EntriesClearEntriesFilter implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateEntriesState((entriesState) => entriesState.copyWith(entriesFilter: Maybe.none())),
+        updateEntriesState((entriesState) => entriesState.copyWith(entriesFilter: Maybe<Filter>.none())),
       ],
     );
   }
@@ -168,7 +168,7 @@ class EntriesSetChartFilter implements AppAction {
     FilterState filterState = appState.filterState;
 
     //if filter has been changed, save new filter, if reset, pass no filter
-    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe.none();
+    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
 
     return updateSubstates(
       appState,
@@ -186,7 +186,7 @@ class EntriesClearChartFilter implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateEntriesState((entriesState) => entriesState.copyWith(chartFilter: Maybe.none())),
+        updateEntriesState((entriesState) => entriesState.copyWith(chartFilter: Maybe<Filter>.none())),
       ],
     );
   }
@@ -195,7 +195,7 @@ class EntriesClearChartFilter implements AppAction {
 Map<String, LogTotal> entriesUpdateLogsTotals(
     {@required Map<String, Log> logs,
     @required Map<String, LogTotal> logTotals,
-    @required Map<String, MyEntry> entries}) {
+    @required Map<String, AppEntry> entries}) {
   logs.forEach((key, log) {
     logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
   });

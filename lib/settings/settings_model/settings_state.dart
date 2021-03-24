@@ -14,7 +14,7 @@ class SettingsState extends Equatable {
 
   factory SettingsState.initial() {
     return SettingsState(
-      settings: Maybe.none(),
+      settings: Maybe<Settings>.none(),
       expandedCategories: const [],
     );
   }

@@ -23,7 +23,7 @@ class EntriesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<MyEntry> entries = [];
+    List<AppEntry> entries = [];
     bool activateFAB = Env.store.state.logsState.logs.isNotEmpty;
 
     return Scaffold(
@@ -75,8 +75,8 @@ class EntriesScreen extends StatelessWidget {
   }
 }
 
-List<MyEntry> _buildFilteredEntries({
-  List<MyEntry> entries,
+List<AppEntry> _buildFilteredEntries({
+  List<AppEntry> entries,
   Maybe<Filter> entriesFilter,
 }) {
   //only processes filters if a filter is present

@@ -12,7 +12,7 @@ import '../../utils/db_consts.dart';
 import '../../utils/expense_routes.dart';
 
 class EntriesListTile extends StatelessWidget {
-  final MyEntry entry;
+  final AppEntry entry;
   final Map<String, Tag> tags;
 
   const EntriesListTile({Key key, @required this.entry, @required this.tags})

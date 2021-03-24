@@ -6,17 +6,17 @@ import '../entry/entry_model/app_entry_entity.dart';
 import '../utils/db_consts.dart';
 
 abstract class EntriesRepository {
-  Future<void> addNewEntry(MyEntry entry);
+  Future<void> addNewEntry(AppEntry entry);
 
-  Stream<List<MyEntry>> loadEntries(AppUser user);
+  Stream<List<AppEntry>> loadEntries(AppUser user);
 
-  Future<void> updateEntry(MyEntry entry);
+  Future<void> updateEntry(AppEntry entry);
 
-  Future<void> deleteEntry(MyEntry entry);
+  Future<void> deleteEntry(AppEntry entry);
 
-  Future<void> batchDeleteEntries({List<MyEntry> deletedEntries}) {}
+  Future<void> batchDeleteEntries({List<AppEntry> deletedEntries}) {}
 
-  Future<void> batchUpdateEntries({List<MyEntry> updatedEntries}) {}
+  Future<void> batchUpdateEntries({List<AppEntry> updatedEntries}) {}
 }
 
 class FirebaseEntriesRepository implements EntriesRepository {
@@ -25,7 +25,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
       FirebaseFirestore.instance.collection(ENTRY_COLLECTION);
 
   @override
-  Future<void> addNewEntry(MyEntry entry) {
+  Future<void> addNewEntry(AppEntry entry) {
     return db
         .collection(ENTRY_COLLECTION)
         .doc(entry.id)
@@ -34,7 +34,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
 
   //TODO need to filter by contains UID
   @override
-  Stream<List<MyEntry>> loadEntries(AppUser user) {
+  Stream<List<AppEntry>> loadEntries(AppUser user) {
     return db
         .collection(ENTRY_COLLECTION)
         .where(MEMBER_LIST, arrayContains: user.id)
@@ -42,13 +42,13 @@ class FirebaseEntriesRepository implements EntriesRepository {
         .map((snapshot) {
       // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
       return snapshot.docs
-          .map((doc) => MyEntry.fromEntity(MyEntryEntity.fromSnapshot(doc)))
+          .map((doc) => AppEntry.fromEntity(MyEntryEntity.fromSnapshot(doc)))
           .toList();
     });
   }
 
   @override
-  Future<void> updateEntry(MyEntry update) {
+  Future<void> updateEntry(AppEntry update) {
     return db
         .collection(ENTRY_COLLECTION)
         .doc(update.id)
@@ -56,12 +56,12 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> deleteEntry(MyEntry entry) {
+  Future<void> deleteEntry(AppEntry entry) {
     return db.collection(ENTRY_COLLECTION).doc(entry.id).delete();
   }
 
   @override
-  Future<void> batchDeleteEntries({List<MyEntry> deletedEntries}) {
+  Future<void> batchDeleteEntries({List<AppEntry> deletedEntries}) {
     WriteBatch batch = db.batch();
 
     deletedEntries.forEach((entry) {
@@ -73,7 +73,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> batchUpdateEntries({List<MyEntry> updatedEntries}) {
+  Future<void> batchUpdateEntries({List<AppEntry> updatedEntries}) {
     WriteBatch batch = db.batch();
 
     updatedEntries.forEach((entry) {

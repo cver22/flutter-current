@@ -33,13 +33,13 @@ class Filter extends Equatable {
 
   factory Filter.initial() {
     return Filter(
-      startDate: Maybe.none(),
-      endDate: Maybe.none(),
+      startDate: Maybe<DateTime>.none(),
+      endDate: Maybe<DateTime>.none(),
       currency: LinkedHashMap(),
       selectedCategories: const [],
       selectedSubcategories: const [],
-      minAmount: Maybe.none(),
-      maxAmount: Maybe.none(),
+      minAmount: Maybe<int>.none(),
+      maxAmount: Maybe<int>.none(),
       membersPaid: const [],
       membersSpent: const [],
       selectedLogs: const [],

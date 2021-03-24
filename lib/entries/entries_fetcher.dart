@@ -31,7 +31,7 @@ class EntriesFetcher {
     _store.dispatch(EntriesSetLoaded());
   }
 
-  Future<void> addEntry(MyEntry entry) async {
+  Future<void> addEntry(AppEntry entry) async {
     try {
       _entriesRepository.addNewEntry(entry);
     } catch (e) {
@@ -39,7 +39,7 @@ class EntriesFetcher {
     }
   }
 
-  Future<void> updateEntry(MyEntry entry) async {
+  Future<void> updateEntry(AppEntry entry) async {
     try {
       _entriesRepository.updateEntry(entry);
     } catch (e) {
@@ -47,7 +47,7 @@ class EntriesFetcher {
     }
   }
 
-  Future<void> deleteEntry(MyEntry entry) async {
+  Future<void> deleteEntry(AppEntry entry) async {
     try {
       _entriesRepository.deleteEntry(entry);
     } catch (e) {
@@ -56,9 +56,9 @@ class EntriesFetcher {
   }
 
   Future<void> batchUpdateEntries(
-      {@required List<MyEntry> entries,
+      {@required List<AppEntry> entries,
       @required Map<String, LogMember> logMembers}) {
-    List<MyEntry> updatedEntries = [];
+    List<AppEntry> updatedEntries = [];
 
     //adds any new log members to all entries for the log
     entries.forEach((entry) {
@@ -82,7 +82,7 @@ class EntriesFetcher {
   }
 
   Future<void> batchDeleteEntries(
-      {@required List<MyEntry> deletedEntries}) async {
+      {@required List<AppEntry> deletedEntries}) async {
     //log has been deleted, delete all associated entries
 
     if (deletedEntries.isNotEmpty) {

@@ -8,8 +8,8 @@ import '../../utils/db_consts.dart';
 import 'app_entry_entity.dart';
 
 @immutable
-class MyEntry extends Equatable with ChangeNotifier {
-  MyEntry({
+class AppEntry extends Equatable with ChangeNotifier {
+  AppEntry({
     this.id,
     this.logId,
     this.currency,
@@ -34,7 +34,7 @@ class MyEntry extends Equatable with ChangeNotifier {
   final Map<String, EntryMember> entryMembers;
 
   //TODO need to get rid of this and move the logic to actions, will need to create a new entry with the relevant information
-  MyEntry changeCategories({
+  AppEntry changeCategories({
     String category,
   }) {
     //safety checks if category has changed and thus nulls the selected subcategory
@@ -43,7 +43,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       subcategory = this.subcategoryId;
     }
 
-    return MyEntry(
+    return AppEntry(
         id: this.id,
         logId: this.logId,
         currency: this.currency,
@@ -95,7 +95,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     );
   }
 
-  static MyEntry fromEntity(MyEntryEntity entity) {
+  static AppEntry fromEntity(MyEntryEntity entity) {
     //re-order the entry members as per user preference prior to passing to the entry
     LinkedHashMap<String, EntryMember> entryMembersLinkedMap = LinkedHashMap();
     for (int i = 0; i < entity.entryMembers.length; i++) {
@@ -109,7 +109,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     entryMembersLinkedMap = entryMembersLinkedMap ??
         entity.entryMembers; // ordering didn't work, pass the list anyway
 
-    return MyEntry(
+    return AppEntry(
       id: entity.id,
       logId: entity.logId,
       currency: entity.currency,
@@ -123,7 +123,7 @@ class MyEntry extends Equatable with ChangeNotifier {
     );
   }
 
-  MyEntry copyWith({
+  AppEntry copyWith({
     String id,
     String logId,
     String currency,
@@ -149,7 +149,7 @@ class MyEntry extends Equatable with ChangeNotifier {
       return this;
     }
 
-    return new MyEntry(
+    return new AppEntry(
       id: id ?? this.id,
       logId: logId ?? this.logId,
       currency: currency ?? this.currency,

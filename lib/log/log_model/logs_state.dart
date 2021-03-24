@@ -30,8 +30,8 @@ class LogsState extends Equatable {
     return LogsState(
       logs: LinkedHashMap(),
       isLoading: true,
-      selectedLog: Maybe.none(),
-      expandedCategories: List(),
+      selectedLog: Maybe<Log>.none(),
+      expandedCategories: const [],
       reorder: false,
       userUpdated: false,
       canSave: false,

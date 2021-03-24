@@ -23,7 +23,7 @@ class _TagPickerState extends State<TagPicker> {
       categoryRecentTags = [],
       logRecentTags = [];
 
-  MyEntry entry;
+  AppEntry entry;
   Log log;
   SingleEntryState currentSingleEntryState;
 

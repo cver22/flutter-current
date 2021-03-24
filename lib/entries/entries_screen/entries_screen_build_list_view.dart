@@ -8,11 +8,11 @@ import 'entries_list_tile.dart';
 class EntriesScreenBuildListView extends StatelessWidget {
   const EntriesScreenBuildListView({
     Key key,
-    @required List<MyEntry> entries,
+    @required List<AppEntry> entries,
   })  : _entries = entries,
         super(key: key);
 
-  final List<MyEntry> _entries;
+  final List<AppEntry> _entries;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class EntriesScreenBuildListView extends StatelessWidget {
             const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
         itemCount: _entries.length,
         itemBuilder: (BuildContext context, int index) {
-          final MyEntry _entry = _entries[index];
+          final AppEntry _entry = _entries[index];
           return EntriesListTile(entry: _entry, tags: tags);
         });
   }

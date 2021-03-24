@@ -1,7 +1,8 @@
-import 'package:expenses/filter/filter_model/filter_state.dart';
+
 import 'package:flutter/material.dart';
 import 'package:meta/meta.dart';
 
+import '../../filter/filter_model/filter_state.dart';
 import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
 import '../../entries/entries_model/entries_state.dart';
@@ -81,7 +82,7 @@ Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
 }
 
 LogTotal updateLogMemberTotals(
-    {@required List<MyEntry> entries, @required Log log}) {
+    {@required List<AppEntry> entries, @required Log log}) {
   Map<String, LogMember> logMembers = Map.from(log.logMembers);
   DateTime now = DateTime.now();
 

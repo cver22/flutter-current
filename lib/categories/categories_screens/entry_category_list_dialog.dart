@@ -62,7 +62,7 @@ class EntryCategoryListDialog extends StatelessWidget {
     );
   }
 
-  Widget _displayAddButton({MyEntry selectedEntry}) {
+  Widget _displayAddButton({AppEntry selectedEntry}) {
     AppCategory category = AppCategory();
     return IconButton(
       icon: Icon(Icons.add),

@@ -29,13 +29,13 @@ import '../entry_model/single_entry_state.dart';
 class AddEditEntryScreen extends StatelessWidget {
   AddEditEntryScreen({Key key}) : super(key: key);
 
-  void _save({@required MyEntry entry}) {
+  void _save({@required AppEntry entry}) {
     Env.store.dispatch(EntryAddUpdateEntryAndTags(entry: entry));
     Get.back();
   }
 
   Future<bool> _closeConfirmationDialog(
-      {@required bool canSave, @required MyEntry entry}) async {
+      {@required bool canSave, @required AppEntry entry}) async {
     bool onWillPop = false;
     await Get.dialog(
       SimpleConfirmationDialog(
@@ -62,7 +62,7 @@ class AddEditEntryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    MyEntry entry;
+    AppEntry entry;
     return ConnectState<SingleEntryState>(
         where: notIdentical,
         map: (state) => state.singleEntryState,
@@ -113,7 +113,7 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   AppBar _buildAppBar(
-      {@required MyEntry entry,
+      {@required AppEntry entry,
       @required SingleEntryState singleEntryState,
       @required Log log}) {
     bool canSave = singleEntryState.canSave;
@@ -147,7 +147,7 @@ class AddEditEntryScreen extends StatelessWidget {
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
-      @required MyEntry entry}) {
+      @required AppEntry entry}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
@@ -164,7 +164,7 @@ class AddEditEntryScreen extends StatelessWidget {
       {@required BuildContext context,
       @required SingleEntryState entryState,
       @required Log log,
-      @required MyEntry entry}) {
+      @required AppEntry entry}) {
     bool canSave = entryState.canSave;
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -220,7 +220,7 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _categoryButton(
-      {@required MyEntry entry, @required List<AppCategory> categories}) {
+      {@required AppEntry entry, @required List<AppCategory> categories}) {
     return entry?.logId == null
         ? Container()
         : CategoryButton(
@@ -245,7 +245,7 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _subcategoryButton(
-      {@required MyEntry entry, @required List<AppCategory> subcategories}) {
+      {@required AppEntry entry, @required List<AppCategory> subcategories}) {
     return entry?.categoryId == null ||
             entry?.categoryId == TRANSFER_FUNDS ||
             entry.categoryId == NO_CATEGORY
@@ -270,7 +270,7 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _commentFormField(
-      {@required MyEntry entry, @required FocusNode commentFocusNode}) {
+      {@required AppEntry entry, @required FocusNode commentFocusNode}) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Comment'),
       initialValue: entry?.comment,
@@ -307,7 +307,7 @@ class AddEditEntryScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildDeleteEntryButton({MyEntry entry}) {
+  Widget _buildDeleteEntryButton({AppEntry entry}) {
     return entry?.id == null
         ? Container()
         : PopupMenuButton<String>(

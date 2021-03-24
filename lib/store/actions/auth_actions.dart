@@ -32,7 +32,7 @@ class AuthSuccess implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateAuthState((authState) => authState.copyWith(user: Maybe.some(user), isLoading: false)),
+        _updateAuthState((authState) => authState.copyWith(user: Maybe<AppUser>.some(user), isLoading: false)),
       ],
     );
   }
@@ -68,7 +68,7 @@ class AuthUpdateDisplayName implements AppAction {
       appState,
       [
         _updateAuthState((authState) =>
-            authState.copyWith(user: Maybe.some(authState.user.value.copyWith(displayName: displayName)))),
+            authState.copyWith(user: Maybe<AppUser>.some(authState.user.value.copyWith(displayName: displayName)))),
       ],
     );
   }

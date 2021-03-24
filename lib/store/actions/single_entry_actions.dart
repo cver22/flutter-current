@@ -37,7 +37,7 @@ class EntrySetNewSelect implements AppAction {
     //TODO can probably abstract away to either settings model or to settings actions, i think model would be better, only update if needed
     //TODO if log in the settings is not present, this should also update the setting default
 
-    MyEntry entry = MyEntry();
+    AppEntry entry = AppEntry();
     Log log;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     String defaultLogId = appState.settingsState.settings?.value?.defaultLogId;
@@ -78,16 +78,16 @@ class EntrySetNewSelect implements AppAction {
       [
         //TODO start here
         updateSettingsState((settingsState) =>
-            settingsState.copyWith(settings: Maybe.some(settings))),
+            settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe.some(entry),
-              selectedTag: Maybe.some(Tag()),
+              selectedEntry: Maybe<AppEntry>.some(entry),
+              selectedTag: Maybe<Tag>.some(Tag()),
               tags: tags,
               categories: categories,
               subcategories: subcategories,
               processing: false,
-              commentFocusNode: Maybe.some(FocusNode()),
-              tagFocusNode: Maybe.some(FocusNode()),
+              commentFocusNode: Maybe<FocusNode>.some(FocusNode()),
+              tagFocusNode: Maybe<FocusNode>.some(FocusNode()),
             )),
       ],
     );
@@ -102,7 +102,7 @@ class EntrySelectEntry implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.entriesState.entries[entryId];
+    AppEntry entry = appState.entriesState.entries[entryId];
     Log log = appState.logsState.logs.values
         .firstWhere((element) => element.id == entry.logId);
     Map<String, Tag> tags = Map.from(appState.tagState.tags)
@@ -122,14 +122,14 @@ class EntrySelectEntry implements AppAction {
       [
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry:
-                  Maybe.some(entry.copyWith(entryMembers: entryMembers)),
+                  Maybe<AppEntry>.some(entry.copyWith(entryMembers: entryMembers)),
               selectedTag: Maybe.some(Tag()),
               tags: tags,
               categories: List.from(log.categories),
               subcategories: List.from(log.subcategories),
               processing: false,
-              commentFocusNode: Maybe.some(FocusNode()),
-              tagFocusNode: Maybe.some(FocusNode()),
+              commentFocusNode: Maybe<FocusNode>.some(FocusNode()),
+              tagFocusNode: Maybe<FocusNode>.some(FocusNode()),
             )),
       ],
     );
@@ -137,7 +137,7 @@ class EntrySelectEntry implements AppAction {
 }
 
 class EntryAddUpdateEntryAndTags implements AppAction {
-  final MyEntry entry;
+  final AppEntry entry;
 
   EntryAddUpdateEntryAndTags({this.entry});
 
@@ -147,9 +147,9 @@ class EntryAddUpdateEntryAndTags implements AppAction {
     Map<String, Tag> addedUpdatedTags =
         Map.from(appState.singleEntryState.tags);
     Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
-    Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
+    Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, Log> logs = Map.from(appState.logsState.logs);
-    MyEntry updatedEntry = entry;
+    AppEntry updatedEntry = entry;
 
     Env.store.dispatch(EntryProcessing());
 
@@ -277,7 +277,7 @@ class EntryUpdateCurrency implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
-                selectedEntry: Maybe.some(singleEntryState.selectedEntry.value
+                selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value
                     .copyWith(currency: currency)))),
       ],
     );
@@ -296,7 +296,7 @@ class EntryUpdateComment implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
-                selectedEntry: Maybe.some(singleEntryState.selectedEntry.value
+                selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value
                     .copyWith(comment: comment)))),
       ],
     );
@@ -315,7 +315,7 @@ class EntryUpdateDateTime implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
-                selectedEntry: Maybe.some(singleEntryState.selectedEntry.value
+                selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value
                     .copyWith(dateTime: dateTime)))),
       ],
     );
@@ -331,7 +331,7 @@ class EntrySelectSubcategory implements AppAction {
   AppState updateState(AppState appState) {
     String updatedSubcategory = subcategory;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     String oldSubcategoryId = entry?.subcategoryId;
 
     tags = categorySubcategoryUpdateAllTagFrequencies(
@@ -345,7 +345,7 @@ class EntrySelectSubcategory implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(singleEntryState.selectedEntry.value
+                  selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value
                       .copyWith(subcategoryId: subcategory)),
                   tags: tags,
                 )),
@@ -393,7 +393,7 @@ class EntrySelectCategory implements AppAction {
   AppState updateState(AppState appState) {
     String updatedCategory = newCategory ?? NO_CATEGORY;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     String oldCategoryId = entry.categoryId;
 
     tags = categorySubcategoryUpdateAllTagFrequencies(
@@ -408,7 +408,7 @@ class EntrySelectCategory implements AppAction {
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
               selectedEntry:
-                  Maybe.some(entry.changeCategories(category: updatedCategory)),
+                  Maybe<AppEntry>.some(entry.changeCategories(category: updatedCategory)),
               tags: tags,
             )),
       ],
@@ -529,7 +529,7 @@ class EntryDeleteCategory implements AppAction {
         List.from(appState.singleEntryState.categories);
     List<AppCategory> subcategories =
         List.from(appState.singleEntryState.subcategories);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     bool _canDeleteCategory = canDeleteCategory(id: category.id);
 
     //remove category and its subcategories if the category is not "no category"
@@ -539,7 +539,7 @@ class EntryDeleteCategory implements AppAction {
     }
     if (category.id == entry.categoryId) {
       //if we deleted the category used by the entry, reset the entry to no category or subcategory
-      entry = MyEntry(
+      entry = AppEntry(
         id: entry.id,
         logId: entry.logId,
         currency: entry.currency,
@@ -558,7 +558,7 @@ class EntryDeleteCategory implements AppAction {
             singleEntryState.copyWith(
                 categories: categories,
                 subcategories: subcategories,
-                selectedEntry: Maybe.some(entry)))
+                selectedEntry: Maybe<AppEntry>.some(entry)))
       ],
     );
   }
@@ -572,7 +572,7 @@ class EntryAddEditSubcategory implements AppAction {
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories =
         List.from(appState.singleEntryState.subcategories);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     String previousParentId = entry.categoryId;
 
@@ -609,7 +609,7 @@ class EntryAddEditSubcategory implements AppAction {
             singleEntryState.copyWith(
                 subcategories: subcategories,
                 tags: tags,
-                selectedEntry: Maybe.some(entry)))
+                selectedEntry: Maybe<AppEntry>.some(entry)))
       ],
     );
   }
@@ -623,7 +623,7 @@ class EntryDeleteSubcategory implements AppAction {
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories =
         List.from(appState.singleEntryState.subcategories);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     bool _canDeleteSubcategory = canDeleteSubcategory(subcategory: subcategory);
 
     if (_canDeleteSubcategory) {
@@ -639,7 +639,7 @@ class EntryDeleteSubcategory implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
-                subcategories: subcategories, selectedEntry: Maybe.some(entry)))
+                subcategories: subcategories, selectedEntry: Maybe<AppEntry>.some(entry)))
       ],
     );
   }
@@ -655,7 +655,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
       {@required this.paidValue, @required this.member});
 
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     int amount = 0;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
@@ -683,7 +683,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
                   canSave: _canSave(entry: entry),
                 ))
       ],
@@ -698,7 +698,7 @@ class EntryUpdateMemberSpentAmount implements AppAction {
   EntryUpdateMemberSpentAmount({this.spentValue = 0, @required this.member});
 
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
 
@@ -714,7 +714,7 @@ class EntryUpdateMemberSpentAmount implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
                   canSave: _canSave(entry: entry),
                 ))
       ],
@@ -726,7 +726,7 @@ class EntryDivideRemainingSpending implements AppAction {
   //if user has updated all members spent amounts and there is some remaining value, distribute the remaining amount evenly
 
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
 
     members =
@@ -738,7 +738,7 @@ class EntryDivideRemainingSpending implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
                   canSave: _canSave(entry: entry),
                 ))
       ],
@@ -748,7 +748,7 @@ class EntryDivideRemainingSpending implements AppAction {
 
 class EntryResetMemberSpendingToAll implements AppAction {
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
 
     members.updateAll((key, member) {
@@ -763,7 +763,7 @@ class EntryResetMemberSpendingToAll implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
                   canSave: _canSave(entry: entry),
                 ))
       ],
@@ -777,7 +777,7 @@ class EntryToggleMemberPaying implements AppAction {
   EntryToggleMemberPaying({@required this.member});
 
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
     int amount = 0;
@@ -823,7 +823,7 @@ class EntryToggleMemberPaying implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
                   canSave: _canSave(entry: entry),
                 ))
       ],
@@ -837,7 +837,7 @@ class EntryToggleMemberSpending implements AppAction {
   EntryToggleMemberSpending({@required this.member});
 
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
 
@@ -865,7 +865,7 @@ class EntryToggleMemberSpending implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
                   canSave: _canSave(entry: entry),
                 ))
       ],
@@ -884,7 +884,7 @@ class EntryAddUpdateTag implements AppAction {
   AppState updateState(AppState appState) {
     Tag addedUpdatedTag = tag;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Tag existingTag;
     bool duplicateNewTag = false;
 
@@ -935,11 +935,11 @@ class EntryAddUpdateTag implements AppAction {
       [
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
-                  selectedEntry: Maybe.some(entry),
-                  selectedTag: Maybe.some(Tag()),
+                  selectedEntry: Maybe<AppEntry>.some(entry),
+                  selectedTag: Maybe<Tag>.some(Tag()),
                   tags: tags,
                   searchedTags: const [],
-                  search: Maybe.none(),
+                  search: Maybe<String>.none(),
                 ))
       ],
     );
@@ -955,7 +955,7 @@ class EntrySelectDeselectTag implements AppAction {
   AppState updateState(AppState appState) {
     Tag selectedDeselectedTag = tag;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     List<String> entryTagIds = List.from(entry.tagIDs);
     bool entryHasTag = false;
 
@@ -997,10 +997,10 @@ class EntrySelectDeselectTag implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
-                selectedEntry: Maybe.some(entry.copyWith(tagIDs: entryTagIds)),
+                selectedEntry: Maybe<AppEntry>.some(entry.copyWith(tagIDs: entryTagIds)),
                 tags: tags,
                 searchedTags: const [],
-                search: Maybe.none())),
+                search: Maybe<String>.none())),
       ],
     );
   }
@@ -1070,7 +1070,7 @@ class EntryMemberFocus implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
     EntryMember member = memberMap[memberId];
     FocusNode focusNode;
@@ -1093,7 +1093,7 @@ class EntryMemberFocus implements AppAction {
         _userUpdateSingleEntryState((singleEntryState) =>
             singleEntryState.copyWith(
                 selectedEntry:
-                    Maybe.some(entry.copyWith(entryMembers: memberMap)))),
+                    Maybe<AppEntry>.some(entry.copyWith(entryMembers: memberMap)))),
       ],
     );
   }
@@ -1106,7 +1106,7 @@ class EntryNextFocus implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
     List<EntryMember> memberList = memberMap.values.toList();
     int memberFocusIndex;
@@ -1170,9 +1170,9 @@ class EntryNextFocus implements AppAction {
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
                   selectedEntry:
-                      Maybe.some(entry.copyWith(entryMembers: memberMap)),
-                  commentFocusNode: Maybe.some(commentFocusNode),
-                  tagFocusNode: Maybe.some(tagFocusNode),
+                      Maybe<AppEntry>.some(entry.copyWith(entryMembers: memberMap)),
+                  commentFocusNode: Maybe<FocusNode>.some(commentFocusNode),
+                  tagFocusNode: Maybe<FocusNode>.some(tagFocusNode),
                 )),
       ],
     );
@@ -1182,7 +1182,7 @@ class EntryNextFocus implements AppAction {
 class EntryClearAllFocus implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    MyEntry entry = appState.singleEntryState.selectedEntry.value;
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
     List<EntryMember> memberList = memberMap.values.toList();
     FocusNode commentFocusNode =
@@ -1212,9 +1212,9 @@ class EntryClearAllFocus implements AppAction {
         _userUpdateSingleEntryState(
             (singleEntryState) => singleEntryState.copyWith(
                   selectedEntry:
-                      Maybe.some(entry.copyWith(entryMembers: memberMap)),
-                  commentFocusNode: Maybe.some(commentFocusNode),
-                  tagFocusNode: Maybe.some(tagFocusNode),
+                      Maybe<AppEntry>.some(entry.copyWith(entryMembers: memberMap)),
+                  commentFocusNode: Maybe<FocusNode>.some(commentFocusNode),
+                  tagFocusNode: Maybe<FocusNode>.some(tagFocusNode),
                 )),
       ],
     );
@@ -1317,7 +1317,7 @@ Tag _decrementAppCategoryFrequency(
 }
 
 Map<String, Tag> categorySubcategoryUpdateAllTagFrequencies(
-    {@required MyEntry entry,
+    {@required AppEntry entry,
     String oldAppCategory,
     @required String newAppCategory,
     @required Map<String, Tag> tags}) {
@@ -1463,7 +1463,7 @@ Map<String, EntryMember> _setMembersList(
   return members;
 }
 
-bool _canSave({MyEntry entry}) {
+bool _canSave({AppEntry entry}) {
   bool canSubmit = false;
   if (entry?.amount != null && entry.amount != 0) {
     int totalMemberSpend = 0;

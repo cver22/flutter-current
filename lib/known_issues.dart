@@ -27,6 +27,7 @@
 //button on tags to visualize stats for that tag, spent, average, etc
 //add blank option to new log
 //multi select delete, if selected, they turn red, will need to add multiSelect to entries state, add icons to the tabBar, and have a confirmation dialog
+//modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 
 
 //TODO VISUAL
@@ -47,7 +48,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-
+//go through whole project to update correct typecasting of lists, maps, and maybes
 
 
 

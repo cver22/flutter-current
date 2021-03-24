@@ -10,7 +10,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class SingleEntryState extends Equatable {
-  final Maybe<MyEntry> selectedEntry;
+  final Maybe<AppEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
   final Map<String, Tag>
       tags; //collection of all log tags for updating if required
@@ -43,17 +43,17 @@ class SingleEntryState extends Equatable {
 
   factory SingleEntryState.initial() {
     return SingleEntryState(
-      selectedEntry: Maybe.none(),
-      selectedTag: Maybe.none(),
+      selectedEntry: Maybe<AppEntry>.none(),
+      selectedTag: Maybe<Tag>.none(),
       tags: LinkedHashMap(),
       searchedTags: const [],
-      categories: List<AppCategory>(),
-      subcategories: List<AppCategory>(),
+      categories: const [],
+      subcategories: const [],
       processing: true,
       userUpdated: false,
-      commentFocusNode: Maybe.none(),
-      tagFocusNode: Maybe.none(),
-      search: Maybe.none(),
+      commentFocusNode: Maybe<FocusNode>.none(),
+      tagFocusNode: Maybe<FocusNode>.none(),
+      search: Maybe<String>.none(),
       canSave: false,
     );
   }
@@ -78,7 +78,7 @@ class SingleEntryState extends Equatable {
   bool get stringify => true;
 
   SingleEntryState copyWith({
-    Maybe<MyEntry> selectedEntry,
+    Maybe<AppEntry> selectedEntry,
     Maybe<Tag> selectedTag,
     Map<String, Tag> tags,
     List<Tag> searchedTags,

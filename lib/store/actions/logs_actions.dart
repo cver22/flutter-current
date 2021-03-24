@@ -62,7 +62,7 @@ class SetNewLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.some(Log(currency: 'CAD')))),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(Log(currency: 'CAD')))),
       ],
     );
   }
@@ -78,7 +78,7 @@ class UpdateSelectedLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true)),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(log), userUpdated: true)),
       ],
     );
   }
@@ -102,7 +102,7 @@ class LogUpdateName implements AppAction {
       appState,
       [
         updateLogsState(
-            (logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true, canSave: canSave)),
+            (logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(log), userUpdated: true, canSave: canSave)),
       ],
     );
   }
@@ -151,7 +151,7 @@ class LogSelectLog implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(appState.logsState.logs[logId]),
+            selectedLog: Maybe<Log>.some(appState.logsState.logs[logId]),
             expandedCategories: expandedCategories,
             canSave: true)),
       ],
@@ -165,7 +165,7 @@ class LogClearSelected implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.none(), canSave: false)),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.none(), canSave: false)),
       ],
     );
   }
@@ -229,7 +229,7 @@ class LogAddUpdate implements AppAction {
 
       //if there are new log members, add them to all transaction
       if (logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
-        List<MyEntry> entries =
+        List<AppEntry> entries =
             appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
       }
@@ -269,7 +269,7 @@ class LogAddUpdate implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.none(), logs: logs, userUpdated: false)),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.none(), logs: logs, userUpdated: false)),
       ],
     );
   }
@@ -293,7 +293,7 @@ class LogAddMemberToSelectedLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true)),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(log), userUpdated: true)),
       ],
     );
   }
@@ -359,7 +359,7 @@ class LogAddEditCategory implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(log), expandedCategories: expandedCategories, userUpdated: true)),
+            selectedLog: Maybe<Log>.some(log), expandedCategories: expandedCategories, userUpdated: true)),
       ],
     );
   }
@@ -391,7 +391,7 @@ class LogDeleteCategory implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(log), expandedCategories: expandedCategories, userUpdated: true)),
+            selectedLog: Maybe<Log>.some(log), expandedCategories: expandedCategories, userUpdated: true)),
       ],
     );
   }
@@ -419,7 +419,7 @@ class LogAddEditSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true)),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(log), userUpdated: true)),
       ],
     );
   }
@@ -445,7 +445,7 @@ class LogDeleteSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe.some(log), userUpdated: true)),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(log), userUpdated: true)),
       ],
     );
   }
@@ -490,7 +490,7 @@ class LogReorderCategory implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
+            selectedLog: Maybe<Log>.some(appState.logsState.selectedLog.value.copyWith(categories: categories)),
             expandedCategories: expandedCategories,
             userUpdated: true)),
       ],
@@ -532,7 +532,7 @@ class LogReorderSubcategory implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories)),
+            selectedLog: Maybe<Log>.some(appState.logsState.selectedLog.value.copyWith(subcategories: subcategories)),
             userUpdated: true)),
       ],
     );
@@ -568,9 +568,9 @@ class DeleteLog implements AppAction {
     Settings settings = appState.settingsState.settings.value;
     updatedLogsState.logs.removeWhere((key, value) => key == log.id);
 
-    List<MyEntry> deletedEntriesList = [];
+    List<AppEntry> deletedEntriesList = [];
     List<Tag> deletedTagsList = [];
-    Map<String, MyEntry> entriesMap = Map.from(appState.entriesState.entries);
+    Map<String, AppEntry> entriesMap = Map.from(appState.entriesState.entries);
     Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
 
     entriesMap.forEach((key, entry) {
@@ -607,10 +607,10 @@ class DeleteLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => updatedLogsState.copyWith(selectedLog: Maybe.none(), userUpdated: false)),
+        updateLogsState((logsState) => updatedLogsState.copyWith(selectedLog: Maybe<Log>.none(), userUpdated: false)),
         updateEntriesState((entriesState) => entriesState.copyWith(entries: entriesMap)),
         updateTagState((tagState) => tagState.copyWith(tags: tagsMap)),
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
       ],
     );
   }
