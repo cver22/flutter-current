@@ -1,4 +1,6 @@
-//TODO KNOWN ISSUES
+//TODO KNOWN ISSUES/ERRORS
+//adding new category and subcategory to settings
+//navigating to account screen
 
 // TODO LONG TERM GOALS
 // TODO setting option for auto insert decimal
@@ -28,6 +30,7 @@
 //add blank option to new log
 //multi select delete, if selected, they turn red, will need to add multiSelect to entries state, add icons to the tabBar, and have a confirmation dialog
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
+//add anonymous sign in and create red banner asking the user to signup or risk losing their data
 
 
 //TODO VISUAL
@@ -48,7 +51,8 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//go through whole project to update correct typecasting of lists, maps, and maybes
+//rebuild tag to also have subcategoryTagFrequency and handle it differently
+
 
 
 
@@ -65,4 +69,4 @@
 //Conflicting outputs issue
 // flutter clean
 // flutter pub get
-// flutter packages pub run build_runner build --delete-conflicting-outputs
+// flutter packages pub run build_runner build --delete-conflicting-import 'package:flutter/foundation.dart';

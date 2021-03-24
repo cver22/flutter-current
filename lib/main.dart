@@ -1,9 +1,9 @@
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
 
-import 'file:///C:/version-control/flutter-current/lib/account/account_ui/account_screen.dart';
-
+import 'account/account_ui/account_screen.dart';
 import 'app/app_screen.dart';
 import 'app/home_screen.dart';
 import 'entry/entry_screen/add_edit_entry_screen.dart';

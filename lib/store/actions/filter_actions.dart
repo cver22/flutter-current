@@ -620,7 +620,8 @@ List<Tag> _sortTags({
     Map<String, int> categoryFrequency = {};
 
     tag.tagCategoryFrequency.forEach((categoryId, frequency) {
-      String categoryName = allCategories[categoryId].name;
+      String categoryName = allCategories[categoryId]?.name; //TODO this shouldn't need fixing after handling subcategories differently
+      print(categoryName);
       categoryFrequency.putIfAbsent(categoryName, () => frequency);
     });
 

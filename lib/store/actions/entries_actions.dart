@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-
 import 'package:meta/meta.dart';
 
 import '../../entry/entry_model/single_entry_state.dart';

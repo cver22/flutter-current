@@ -79,33 +79,39 @@ class _FilterDialogState extends State<FilterDialog> {
         where: notIdentical,
         map: (state) => state.filterState,
         builder: (filterState) {
-          filter = filterState.filter.value;
 
-          return AppDialogWithActions(
-            title: 'Filter',
-            actions:
-                _actions(filterState: filterState, entriesChart: entriesChart),
-            child: SingleChildScrollView(
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  _amountFilter(filter: filter),
-                  SizedBox(height: 8.0),
-                  _dateFilter(),
-                  SizedBox(height: 8.0),
-                  _categoryFilter(filterState: filterState),
-                  SizedBox(height: 8.0),
-                  _paidSpentFilter(filterState: filterState),
-                  SizedBox(height: 8.0),
-                  _logFilter(filterState: filterState),
-                  SizedBox(height: 8.0),
-                  _tagFilter(filterState: filterState),
-                ],
+          if(filterState.filter.isSome){
+            filter = filterState.filter.value;
+
+            return AppDialogWithActions(
+              title: 'Filter',
+              actions:
+              _actions(filterState: filterState, entriesChart: entriesChart),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _amountFilter(filter: filter),
+                    SizedBox(height: 8.0),
+                    _dateFilter(),
+                    SizedBox(height: 8.0),
+                    _categoryFilter(filterState: filterState),
+                    SizedBox(height: 8.0),
+                    _paidSpentFilter(filterState: filterState),
+                    SizedBox(height: 8.0),
+                    _logFilter(filterState: filterState),
+                    SizedBox(height: 8.0),
+                    _tagFilter(filterState: filterState),
+                  ],
+                ),
               ),
-            ),
-          );
+            );
+          } else {
+            return Container();
+          }
+
         });
   }
 
