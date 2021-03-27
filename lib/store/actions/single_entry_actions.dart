@@ -1264,7 +1264,7 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
   //TODO need to handle the remainder, could possibly do this by dividing the initial value by 3, then subtracting the value each time until the last member is reached
   //TODO, randomly assign the remainder
 
-  if (divisibleAmount != null && divisibleAmount != 0 && membersSpending > 0) {
+  if (divisibleAmount != null && divisibleAmount != 0 && membersSpending > 0 && members.length > 1) {
     remainder = divisibleAmount.remainder(membersSpending);
 
     //if member spent is user set, deduct it from the divisibleAmount
@@ -1289,6 +1289,10 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
       } else {
         return member;
       }
+    });
+  } else {
+    entryMembers.updateAll((key, member) {
+      return member.copyWith(spent: divisibleAmount);
     });
   }
 
