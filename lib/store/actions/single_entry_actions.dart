@@ -70,8 +70,10 @@ class EntrySetNew implements AppAction {
         updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe<AppEntry>.some(entry),
-              selectedTag: Maybe<Tag>.some(Tag(tagCategoryFrequency: <String, int>{},
-                tagSubcategoryFrequency: <String, int>{},)),
+              selectedTag: Maybe<Tag>.some(Tag(
+                tagCategoryFrequency: <String, int>{},
+                tagSubcategoryFrequency: <String, int>{},
+              )),
               tags: tags,
               categories: List<AppCategory>.from(log.categories),
               subcategories: List<AppCategory>.from(log.subcategories),
@@ -109,8 +111,10 @@ class EntrySelectEntry implements AppAction {
       [
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe<AppEntry>.some(entry.copyWith(entryMembers: entryMembers)),
-              selectedTag: Maybe.some(Tag(tagCategoryFrequency: <String, int>{},
-                tagSubcategoryFrequency: <String, int>{},)),
+              selectedTag: Maybe.some(Tag(
+                tagCategoryFrequency: <String, int>{},
+                tagSubcategoryFrequency: <String, int>{},
+              )),
               tags: tags,
               categories: List<AppCategory>.from(log.categories),
               subcategories: List<AppCategory>.from(log.subcategories),
@@ -118,6 +122,7 @@ class EntrySelectEntry implements AppAction {
               commentFocusNode: Maybe<FocusNode>.some(FocusNode()),
               tagFocusNode: Maybe<FocusNode>.some(FocusNode()),
               newEntry: false,
+              canSave: true,
             )),
       ],
     );
@@ -1162,7 +1167,6 @@ Tag _incrementAppCategoryFrequency(
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
   } else {
     updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
-
   }
   print('incremented tag: $updatedTag');
 
