@@ -11,6 +11,7 @@ class Tag extends Equatable {
   final String name;
   final int tagLogFrequency;
   final Map<String, int> tagCategoryFrequency;
+  final Map<String, int> tagSubcategoryFrequency;
   final List<String> memberList;
 
   Tag(
@@ -19,24 +20,8 @@ class Tag extends Equatable {
       this.name = '',
       this.tagLogFrequency = 0,
       this.tagCategoryFrequency = const {},
+      this.tagSubcategoryFrequency = const {},
       this.memberList = const []});
-
-  Tag copyWith(
-      {String logId,
-      String id,
-      String name,
-      int tagLogFrequency,
-      Map<String, int> tagCategoryFrequency,
-      List<String> memberList}) {
-    return Tag(
-      logId: logId ?? this.logId,
-      id: id ?? this.id,
-      name: name ?? this.name,
-      tagLogFrequency: tagLogFrequency ?? this.tagLogFrequency,
-      tagCategoryFrequency: tagCategoryFrequency ?? this.tagCategoryFrequency,
-      memberList: memberList ?? this.memberList,
-    );
-  }
 
   @override
   String toString() {
@@ -44,8 +29,7 @@ class Tag extends Equatable {
   }
 
   @override
-  List<Object> get props =>
-      [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   TagEntity toEntity() {
     return TagEntity(
@@ -54,6 +38,7 @@ class Tag extends Equatable {
       name: name,
       tagLogFrequency: tagLogFrequency,
       tagCategoryFrequency: tagCategoryFrequency,
+      tagSubcategoryFrequency: tagSubcategoryFrequency,
       memberList: memberList,
     );
   }
@@ -65,6 +50,7 @@ class Tag extends Equatable {
       name: entity.name,
       tagLogFrequency: entity.tagLogFrequency,
       tagCategoryFrequency: entity.tagCategoryFrequency,
+      tagSubcategoryFrequency: entity.tagSubcategoryFrequency,
       memberList: entity.memberList,
     );
   }
@@ -79,5 +65,35 @@ class Tag extends Equatable {
     } else {
       return this;
     }
+  }
+
+  Tag copyWith({
+    String logId,
+    String id,
+    String name,
+    int tagLogFrequency,
+    Map<String, int> tagCategoryFrequency,
+    Map<String, int> tagSubcategoryFrequency,
+    List<String> memberList,
+  }) {
+    if ((logId == null || identical(logId, this.logId)) &&
+        (id == null || identical(id, this.id)) &&
+        (name == null || identical(name, this.name)) &&
+        (tagLogFrequency == null || identical(tagLogFrequency, this.tagLogFrequency)) &&
+        (tagCategoryFrequency == null || identical(tagCategoryFrequency, this.tagCategoryFrequency)) &&
+        (tagSubcategoryFrequency == null || identical(tagSubcategoryFrequency, this.tagSubcategoryFrequency)) &&
+        (memberList == null || identical(memberList, this.memberList))) {
+      return this;
+    }
+
+    return new Tag(
+      logId: logId ?? this.logId,
+      id: id ?? this.id,
+      name: name ?? this.name,
+      tagLogFrequency: tagLogFrequency ?? this.tagLogFrequency,
+      tagCategoryFrequency: tagCategoryFrequency ?? this.tagCategoryFrequency,
+      tagSubcategoryFrequency: tagSubcategoryFrequency ?? this.tagSubcategoryFrequency,
+      memberList: memberList ?? this.memberList,
+    );
   }
 }

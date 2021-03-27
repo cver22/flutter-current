@@ -13,8 +13,8 @@ class TagEntity extends Equatable {
   final String id;
   final String name;
   final int tagLogFrequency; //how often the tag is used in its parent log
-  final Map<String, int>
-      tagCategoryFrequency; //how often the tag is used for each category
+  final Map<String, int> tagCategoryFrequency; //how often the tag is used for each category
+  final Map<String, int> tagSubcategoryFrequency; //how often the tag is used for each subcategory
   final List<String> memberList; //used for retrieval from database
 
   const TagEntity(
@@ -23,20 +23,19 @@ class TagEntity extends Equatable {
       this.name,
       this.tagLogFrequency,
       this.tagCategoryFrequency,
+      this.tagSubcategoryFrequency,
       this.memberList});
 
   @override
-  List<Object> get props =>
-      [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, tagSubcategoryFrequency, memberList];
 
   @override
   String toString() {
     return 'MyTagEntity {$LOG_ID: $logId, $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, '
-        '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
+        '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $TAG_SUBCATEGORY_FREQUENCY: $tagSubcategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
-  factory TagEntity.fromJson(Map<String, dynamic> json) =>
-      _$TagEntityFromJson(json);
+  factory TagEntity.fromJson(Map<String, dynamic> json) => _$TagEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$TagEntityToJson(this);
 
@@ -47,8 +46,9 @@ class TagEntity extends Equatable {
       name: snap.data()[NAME],
       tagLogFrequency: snap.data()[TAG_LOG_FREQUENCY],
       tagCategoryFrequency:
-          (snap.data()[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)
-              ?.map((key, value) => MapEntry(key, value)),
+          (snap.data()[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      tagSubcategoryFrequency:
+      (snap.data()[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
       memberList: List<String>.from(snap.data()[MEMBER_LIST] as List<dynamic>),
     );
   }

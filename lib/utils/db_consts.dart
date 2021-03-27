@@ -66,6 +66,7 @@ const String TAGS = 'tags';
 const String TAG = 'tag';
 const String TAG_LOG_FREQUENCY = 'tagLogFrequency';
 const String TAG_CATEGORY_FREQUENCY = 'tagCategoryFrequency';
+const String TAG_SUBCATEGORY_FREQUENCY = 'tagSubcategoryFrequency';
 const int MAX_TAGS = 10;
 
 //Account constants
