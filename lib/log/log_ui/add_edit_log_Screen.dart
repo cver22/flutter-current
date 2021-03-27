@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../app/common_widgets/app_button.dart';
-import '../../app/common_widgets/app_currency_picker.dart';
+import '../../currency/app_currency_picker.dart';
 import '../../app/common_widgets/simple_confirmation_dialog.dart';
 import '../../categories/categories_screens/category_button.dart';
 import '../../categories/categories_screens/master_category_list_dialog.dart';

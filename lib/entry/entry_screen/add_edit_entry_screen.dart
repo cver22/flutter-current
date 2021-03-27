@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../app/common_widgets/app_button.dart';
-import '../../app/common_widgets/app_currency_picker.dart';
+import '../../currency/app_currency_picker.dart';
 import '../../app/common_widgets/date_button.dart';
 import '../../app/common_widgets/loading_indicator.dart';
 import '../../app/common_widgets/simple_confirmation_dialog.dart';

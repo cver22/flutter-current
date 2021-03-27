@@ -8,7 +8,7 @@
 
 //TODO MAYBE GOALS
 //TODO give each person an emoji Icon option
-//TODO do I want to move to null safety?
+
 
 
 //TODO GENERAL
@@ -50,6 +50,7 @@
 //make entry list tiles the same size and trail off too many tags
 
 //TODO GENERAL IMPORTANT *************************
+//move to null safety
 
 //TODO START HERE
 
