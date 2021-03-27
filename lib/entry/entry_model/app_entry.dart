@@ -10,15 +10,15 @@ import 'app_entry_entity.dart';
 @immutable
 class AppEntry extends Equatable with ChangeNotifier {
   AppEntry({
-    this.id,
-    this.logId,
-    this.currency,
-    this.categoryId,
-    this.subcategoryId,
-    this.amount,
+    @required this.id,
+    @required this.logId,
+    @required this.currency,
+    this.categoryId = NO_CATEGORY,
+    this.subcategoryId = NO_SUBCATEGORY,
+    this.amount = 0,
     this.comment,
-    this.dateTime,
-    this.tagIDs,
+    @required this.dateTime,
+    this.tagIDs = const [],
     this.entryMembers = const {},
   });
 
@@ -33,42 +33,10 @@ class AppEntry extends Equatable with ChangeNotifier {
   final List<String> tagIDs;
   final Map<String, EntryMember> entryMembers;
 
-  //TODO need to get rid of this and move the logic to actions, will need to create a new entry with the relevant information
-  AppEntry changeCategories({
-    String category,
-  }) {
-    //safety checks if category has changed and thus nulls the selected subcategory
-    String subcategory;
-    if (category == this.categoryId) {
-      subcategory = this.subcategoryId;
-    }
-
-    return AppEntry(
-        id: this.id,
-        logId: this.logId,
-        currency: this.currency,
-        categoryId: category,
-        subcategoryId: subcategory,
-        amount: this.amount,
-        comment: this.comment,
-        dateTime: this.dateTime,
-        tagIDs: this.tagIDs,
-        entryMembers: this.entryMembers);
-  }
 
   @override
-  List<Object> get props => [
-        id,
-        logId,
-        currency,
-        categoryId,
-        subcategoryId,
-        amount,
-        comment,
-        dateTime,
-        tagIDs,
-        entryMembers
-      ];
+  List<Object> get props =>
+      [id, logId, currency, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, entryMembers];
 
   @override
   String toString() {
@@ -88,8 +56,7 @@ class AppEntry extends Equatable with ChangeNotifier {
       amount: amount,
       comment: comment,
       dateTime: dateTime,
-      tagIDs: Map<String, String>.fromIterable(tagIDs,
-          key: (e) => e, value: (e) => e),
+      tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
       entryMembers: entryMembers,
       memberList: entryMembers.keys.toList(),
     );
@@ -106,8 +73,7 @@ class AppEntry extends Equatable with ChangeNotifier {
       });
     }
 
-    entryMembersLinkedMap = entryMembersLinkedMap ??
-        entity.entryMembers; // ordering didn't work, pass the list anyway
+    entryMembersLinkedMap = entryMembersLinkedMap ?? entity.entryMembers; // ordering didn't work, pass the list anyway
 
     return AppEntry(
       id: entity.id,
@@ -139,8 +105,7 @@ class AppEntry extends Equatable with ChangeNotifier {
         (logId == null || identical(logId, this.logId)) &&
         (currency == null || identical(currency, this.currency)) &&
         (categoryId == null || identical(categoryId, this.categoryId)) &&
-        (subcategoryId == null ||
-            identical(subcategoryId, this.subcategoryId)) &&
+        (subcategoryId == null || identical(subcategoryId, this.subcategoryId)) &&
         (amount == null || identical(amount, this.amount)) &&
         (comment == null || identical(comment, this.comment)) &&
         (dateTime == null || identical(dateTime, this.dateTime)) &&

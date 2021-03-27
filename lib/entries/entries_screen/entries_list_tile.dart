@@ -15,8 +15,7 @@ class EntriesListTile extends StatelessWidget {
   final AppEntry entry;
   final Map<String, Tag> tags;
 
-  const EntriesListTile({Key key, @required this.entry, @required this.tags})
-      : super(key: key);
+  const EntriesListTile({Key key, @required this.entry, @required this.tags}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -24,9 +23,8 @@ class EntriesListTile extends StatelessWidget {
     DateTime date = entry.dateTime;
 
     if (entry?.logId != null) {
-      log = Env.store.state.logsState.logs?.values?.firstWhere(
-          (element) => element?.id == entry?.logId,
-          orElse: () => null);
+      log = Env.store.state.logsState.logs?.values
+          ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
     }
     if (log != null) {
       return Column(
@@ -47,10 +45,8 @@ class EntriesListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  _buildTagWidget(logId: log.id),
-                  entry?.comment != null && entry.comment.length > 0
-                      ? Text(entry.comment)
-                      : Container(),
+                  if (entry.tagIDs.length > 0) _buildTagWidget(logId: log.id),
+                  if (entry?.comment != null && entry.comment.length > 0) Text(entry.comment),
                 ],
               ),
             ),
@@ -94,31 +90,23 @@ class EntriesListTile extends StatelessWidget {
     String subcategoryId = entry?.subcategoryId;
 
     if (subcategoryId != null && !subcategoryId.contains(OTHER)) {
-      emojiChar = log.subcategories
-          .firstWhere((element) => element.id == subcategoryId,
-              orElse: () => null)
-          ?.emojiChar;
+      emojiChar = log.subcategories.firstWhere((element) => element.id == subcategoryId, orElse: () => null)?.emojiChar;
     }
 
     if (entry?.categoryId != null && emojiChar == null) {
-      emojiChar = log.categories
-              .firstWhere((element) => element.id == entry.categoryId,
-                  orElse: () => null)
-              ?.emojiChar ??
-          '\u{2757}';
+      emojiChar =
+          log.categories.firstWhere((element) => element.id == entry.categoryId, orElse: () => null)?.emojiChar ??
+              '\u{2757}';
     }
 
     return emojiChar;
   }
 
   Widget categoriesSubcategories({@required Log log}) {
-    AppCategory category = log?.categories?.firstWhere(
-        (element) => element.id == entry?.categoryId,
-        orElse: () => log?.categories
-            ?.firstWhere((element) => element.id == NO_CATEGORY));
-    AppCategory subcategory = log?.subcategories?.firstWhere(
-        (element) => element.id == entry?.subcategoryId,
-        orElse: () => null);
+    AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
+        orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
+    AppCategory subcategory =
+        log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
 
     bool hasSubcategory = subcategory != null;
 
@@ -145,21 +133,17 @@ class EntriesListTile extends StatelessWidget {
   Widget _buildTagWidget({@required String logId}) {
     String tagString = '';
 
-    if (entry.tagIDs.length > 0) {
-      for (int i = 0; i < entry.tagIDs.length; i++) {
-        Tag tag = tags[entry.tagIDs[i]];
-        if (tag != null) {
-          tagString += '#${tag.name}';
-
-          if (i < entry.tagIDs.length - 1) {
-            tagString += ', ';
-          }
-        }
+    for (int i = 0; i < entry.tagIDs.length; i++) {
+      Tag tag = tags[entry.tagIDs[i]];
+      if (i != 0 && tag != null) {
+        tagString += ', ';
       }
 
-      return Text(tagString);
+      if (tag != null) {
+        tagString += '#${tag.name}';
+      }
     }
 
-    return Container();
+    return Text(tagString);
   }
 }

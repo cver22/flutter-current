@@ -31,6 +31,7 @@
 //multi select delete, if selected, they turn red, will need to add multiSelect to entries state, add icons to the tabBar, and have a confirmation dialog
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 //add anonymous sign in and create red banner asking the user to signup or risk losing their data
+//TODO, give user option to change default payer on a log and from there the FAB button will chose that as default for EntrySetNewSelect, until then, it defaults to the user
 
 
 //TODO VISUAL
@@ -51,7 +52,7 @@
 //TODO GENERAL IMPORTANT *************************
 
 //TODO START HERE
-//rebuild tag to also have subcategoryTagFrequency and handle it differently
+
 
 
 
@@ -69,4 +70,5 @@
 //Conflicting outputs issue
 // flutter clean
 // flutter pub get
-// flutter packages pub run build_runner build --delete-conflicting-import 'package:flutter/foundation.dart';
+// flutter packages pub run build_runner build --delete-conflicting-import 'package:flutter/foundatioimport 'package:expenses/store/actions/single_entry_actions.dart';
+

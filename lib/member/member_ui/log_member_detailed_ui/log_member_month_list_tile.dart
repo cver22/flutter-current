@@ -26,7 +26,7 @@ class LogMemberMonthListTile extends StatelessWidget {
       children: [
         ListTile(
           onTap: () => {
-            Env.store.dispatch(EntrySetNewSelect(
+            Env.store.dispatch(EntrySetNew(
               logId: log.id,
               memberId: member.uid,
             )),

@@ -39,9 +39,11 @@ const String ORDER = 'order';
 
 //Category constants
 const String NO_CATEGORY = 'noCategory';
+const String NO_SUBCATEGORY = 'noSubcategory';
 const String OTHER = 'other';
 const String TRANSFER_FUNDS = 'transferFunds';
 const String PAYMENT = 'payment';
+
 
 //Entry constants
 const String ENTRY_COLLECTION = 'entries';

@@ -93,7 +93,7 @@ class FilterSetReset implements AppAction {
         bool insert = true;
         consolidatedSubcategories.forEach((key, cSub) {
           //check if the subcategory is a duplicate for its category
-          if (subcategory.name == cSub.name && subcategory.parentCategoryId == cSub.parentCategoryId) {
+          if (subcategory.name == cSub.name && subcategory.parentCategoryId == cSub.parentCategoryId && subcategory.id != NO_SUBCATEGORY) {
             insert = false;
           }
         });

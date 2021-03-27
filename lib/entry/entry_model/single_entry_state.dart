@@ -12,33 +12,32 @@ import 'package:meta/meta.dart';
 class SingleEntryState extends Equatable {
   final Maybe<AppEntry> selectedEntry;
   final Maybe<Tag> selectedTag; //new or selected tag being edited
-  final Map<String, Tag>
-      tags; //collection of all log tags for updating if required
+  final Map<String, Tag> tags; //collection of all log tags for updating if required
   final List<Tag> searchedTags;
-  final List<AppCategory>
-      categories; // collection of all log categories for updating if required;
-  final List<AppCategory>
-      subcategories; //collection of all log subcategories for updating if required;
+  final List<AppCategory> categories; // collection of all log categories for updating if required;
+  final List<AppCategory> subcategories; //collection of all log subcategories for updating if required;
   final bool processing;
   final bool userUpdated;
   final Maybe<FocusNode> commentFocusNode;
   final Maybe<FocusNode> tagFocusNode;
   final Maybe<String> search;
   final bool canSave;
+  final bool newEntry;
 
-  SingleEntryState({
-    this.selectedTag,
-    this.tags,
-    this.searchedTags,
-    this.selectedEntry,
-    this.categories,
-    this.subcategories,
-    this.processing,
-    this.userUpdated,
-    this.commentFocusNode,
-    this.tagFocusNode,
-    this.search,
-    this.canSave,
+  const SingleEntryState({
+    @required this.selectedEntry,
+    @required this.selectedTag,
+    @required this.tags,
+    @required this.searchedTags,
+    @required this.categories,
+    @required this.subcategories,
+    @required this.processing,
+    @required this.userUpdated,
+    @required this.commentFocusNode,
+    @required this.tagFocusNode,
+    @required this.search,
+    @required this.canSave,
+    @required this.newEntry,
   });
 
   factory SingleEntryState.initial() {
@@ -55,6 +54,7 @@ class SingleEntryState extends Equatable {
       tagFocusNode: Maybe<FocusNode>.none(),
       search: Maybe<String>.none(),
       canSave: false,
+      newEntry: false,
     );
   }
 
@@ -72,6 +72,7 @@ class SingleEntryState extends Equatable {
         tagFocusNode,
         search,
         canSave,
+        newEntry,
       ];
 
   @override
@@ -90,22 +91,21 @@ class SingleEntryState extends Equatable {
     Maybe<FocusNode> tagFocusNode,
     Maybe<String> search,
     bool canSave,
+    bool newEntry,
   }) {
-    if ((selectedEntry == null ||
-            identical(selectedEntry, this.selectedEntry)) &&
+    if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
         (tags == null || identical(tags, this.tags)) &&
         (searchedTags == null || identical(searchedTags, this.searchedTags)) &&
         (categories == null || identical(categories, this.categories)) &&
-        (subcategories == null ||
-            identical(subcategories, this.subcategories)) &&
+        (subcategories == null || identical(subcategories, this.subcategories)) &&
         (processing == null || identical(processing, this.processing)) &&
         (userUpdated == null || identical(userUpdated, this.userUpdated)) &&
-        (commentFocusNode == null ||
-            identical(commentFocusNode, this.commentFocusNode)) &&
+        (commentFocusNode == null || identical(commentFocusNode, this.commentFocusNode)) &&
         (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode)) &&
         (search == null || identical(search, this.search)) &&
-        (canSave == null || identical(canSave, this.canSave))) {
+        (canSave == null || identical(canSave, this.canSave)) &&
+        (newEntry == null || identical(newEntry, this.newEntry))) {
       return this;
     }
 
@@ -122,6 +122,7 @@ class SingleEntryState extends Equatable {
       tagFocusNode: tagFocusNode ?? this.tagFocusNode,
       search: search ?? this.search,
       canSave: canSave ?? this.canSave,
+      newEntry: newEntry ?? this.newEntry,
     );
   }
 }

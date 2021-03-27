@@ -22,24 +22,22 @@ AppState Function(AppState) _userUpdateSingleEntryState(SingleEntryState update(
 
 ///*SET, SELECT, SAVE ENTRY*//
 
-class EntrySetNewSelect implements AppAction {
+class EntrySetNew implements AppAction {
   //sets new entry and resets all entry data not yet available
   final String logId;
   final String memberId;
 
-  EntrySetNewSelect({this.logId, this.memberId});
+  EntrySetNew({this.logId, @required this.memberId});
 
   @override
   AppState updateState(AppState appState) {
-    //TODO can probably abstract away to either settings model or to settings actions, i think model would be better, only update if needed
-    //TODO if log in the settings is not present, this should also update the setting default
-
     AppEntry entry = AppEntry();
     Log log;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     String defaultLogId = appState.settingsState.settings?.value?.defaultLogId;
     Settings settings = appState.settingsState.settings.value;
 
+    //TODO possibly abstract this away as the setting log dropdown probably uses similar logic
     if (logId != null) {
       //add entry triggered from a selected log
       log = logs[logId];
@@ -54,31 +52,33 @@ class EntrySetNewSelect implements AppAction {
     }
 
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
-    Map<String, EntryMember> members =
-        _setMembersList(log: log, memberId: memberId, userId: appState.authState.user.value.id);
+    Map<String, EntryMember> members = _setMembersList(log: log, memberId: memberId);
 
     entry = entry.copyWith(
-        logId: log.id, currency: log.currency, dateTime: DateTime.now(), tagIDs: [], entryMembers: members);
-
-    List<AppCategory> categories = List.from(log.categories);
-    List<AppCategory> subcategories = List.from(log.subcategories);
+        logId: log.id,
+        currency: log.currency,
+        dateTime: DateTime.now(),
+        tagIDs: [],
+        entryMembers: members,
+        id: '${appState.authState.user.value.id}-${Uuid().v4()}');
 
     Env.settingsFetcher.writeAppSettings(settings);
 
     return updateSubstates(
       appState,
       [
-        //TODO start here
         updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe<AppEntry>.some(entry),
-              selectedTag: Maybe<Tag>.some(Tag()),
+              selectedTag: Maybe<Tag>.some(Tag(tagCategoryFrequency: <String, int>{},
+                tagSubcategoryFrequency: <String, int>{},)),
               tags: tags,
-              categories: categories,
-              subcategories: subcategories,
+              categories: List<AppCategory>.from(log.categories),
+              subcategories: List<AppCategory>.from(log.subcategories),
               processing: false,
               commentFocusNode: Maybe<FocusNode>.some(FocusNode()),
               tagFocusNode: Maybe<FocusNode>.some(FocusNode()),
+              newEntry: true,
             )),
       ],
     );
@@ -109,13 +109,15 @@ class EntrySelectEntry implements AppAction {
       [
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe<AppEntry>.some(entry.copyWith(entryMembers: entryMembers)),
-              selectedTag: Maybe.some(Tag()),
+              selectedTag: Maybe.some(Tag(tagCategoryFrequency: <String, int>{},
+                tagSubcategoryFrequency: <String, int>{},)),
               tags: tags,
               categories: List<AppCategory>.from(log.categories),
               subcategories: List<AppCategory>.from(log.subcategories),
               processing: false,
               commentFocusNode: Maybe<FocusNode>.some(FocusNode()),
               tagFocusNode: Maybe<FocusNode>.some(FocusNode()),
+              newEntry: false,
             )),
       ],
     );
@@ -135,11 +137,12 @@ class EntryAddUpdateEntryAndTags implements AppAction {
     Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     AppEntry updatedEntry = entry;
+    bool newEntry = appState.singleEntryState.newEntry;
 
     Env.store.dispatch(EntryProcessing());
 
     //update entry for state and database
-    if (updatedEntry.id != null &&
+    if (!newEntry &&
         updatedEntry !=
             appState.entriesState.entries.entries
                 .map((e) => e.value)
@@ -147,29 +150,9 @@ class EntryAddUpdateEntryAndTags implements AppAction {
                 .firstWhere((element) => element.id == entry.id)) {
       //update entry if id is not null and thus already exists an the entry has been modified
       Env.entriesFetcher.updateEntry(entry);
-    } else if (updatedEntry.id == null) {
-      //if no category has been chosen, automatically set NO_CATEGORY
-      String categoryId = updatedEntry?.categoryId ?? NO_CATEGORY;
-      String subcategoryId = updatedEntry?.subcategoryId;
-
-      if (categoryId != NO_CATEGORY && categoryId != TRANSFER_FUNDS && subcategoryId == null) {
-        //if the category has been chosen but not the subcategory, automatically set subcategory to "other"
-
-        List<AppCategory> subcategories = logs[updatedEntry.logId].subcategories;
-
-        subcategoryId = subcategories
-            .firstWhere((element) => element.parentCategoryId == categoryId && element.id.contains(OTHER))
-            .id;
-
-        addedUpdatedTags = categorySubcategoryUpdateAllTagFrequencies(
-            entry: entry, newAppCategory: subcategoryId, tags: addedUpdatedTags, categoryOrSubcategory: CategoryOrSubcategory.subcategory);
-      }
-
-      //save new entry using the user id to help minimize chance of duplication of entry ids in the database
-      Env.entriesFetcher.addEntry(updatedEntry.copyWith(
-          id: '${appState.authState.user.value.id}-${Uuid().v4()}',
-          categoryId: categoryId,
-          subcategoryId: subcategoryId));
+    } else if (newEntry) {
+      //save new entry
+      Env.entriesFetcher.addEntry(updatedEntry);
     }
 
     //update entries for total only
@@ -192,7 +175,7 @@ class EntryAddUpdateEntryAndTags implements AppAction {
     //update tags database
     Env.tagFetcher.batchAddUpdate(addedTags: tagsToAddToDatabase, updatedTags: tagsToUpdateInDatabase);
 
-    //update logs total in state
+    //TODO update logs total in state?
     //logs.updateAll((key, log) => _updateLogMemberTotals(entries: entries.values.toList(), log: log));
 
     //update log categories and subcategories if they have changed
@@ -284,34 +267,6 @@ class EntryUpdateDateTime implements AppAction {
   }
 }
 
-class EntrySelectSubcategory implements AppAction {
-  final String subcategory;
-
-  EntrySelectSubcategory({this.subcategory});
-
-  @override
-  AppState updateState(AppState appState) {
-    String updatedSubcategory = subcategory;
-    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
-    AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    String oldSubcategoryId = entry?.subcategoryId;
-
-    tags = categorySubcategoryUpdateAllTagFrequencies(
-        tags: tags, oldAppCategory: oldSubcategoryId, newAppCategory: updatedSubcategory, entry: entry, categoryOrSubcategory: CategoryOrSubcategory.subcategory);
-
-    return updateSubstates(
-      appState,
-      [
-        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-              selectedEntry:
-                  Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
-              tags: tags,
-            )),
-      ],
-    );
-  }
-}
-
 /*class ChangeEntryLog implements Action {
   final Log log;
 
@@ -343,29 +298,77 @@ class EntrySelectSubcategory implements AppAction {
 }*/
 
 class EntrySelectCategory implements AppAction {
-  final String newCategory;
+  final String newCategoryId;
 
-  EntrySelectCategory({@required this.newCategory});
+  EntrySelectCategory({@required this.newCategoryId});
 
   @override
   AppState updateState(AppState appState) {
-    String updatedCategory = newCategory ?? NO_CATEGORY;
+    String updatedCategory = newCategoryId;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     String oldCategoryId = entry.categoryId;
+    String newSubcategoryId = NO_SUBCATEGORY;
 
-    tags = categorySubcategoryUpdateAllTagFrequencies(
+    //set subcategory to OTHER if category has been selected
+    if (newCategoryId != NO_CATEGORY && newCategoryId != TRANSFER_FUNDS) {
+      newSubcategoryId = appState.singleEntryState.subcategories
+          .firstWhere((element) => element.parentCategoryId == newCategoryId && element.id.contains(OTHER))
+          .id;
+    }
+
+    tags = categoryOrSubcategoryUpdateAllTagFrequencies(
         entry: entry,
         oldAppCategory: oldCategoryId,
         newAppCategory: updatedCategory,
         tags: tags,
         categoryOrSubcategory: CategoryOrSubcategory.category);
 
+    tags = categoryOrSubcategoryUpdateAllTagFrequencies(
+        entry: entry,
+        oldAppCategory: entry?.subcategoryId,
+        newAppCategory: newSubcategoryId,
+        tags: tags,
+        categoryOrSubcategory: CategoryOrSubcategory.subcategory);
+
     return updateSubstates(
       appState,
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-              selectedEntry: Maybe<AppEntry>.some(entry.changeCategories(category: updatedCategory)),
+              selectedEntry:
+                  Maybe<AppEntry>.some(entry.copyWith(categoryId: newCategoryId, subcategoryId: newSubcategoryId)),
+              tags: tags,
+            )),
+      ],
+    );
+  }
+}
+
+class EntrySelectSubcategory implements AppAction {
+  final String subcategory;
+
+  EntrySelectSubcategory({this.subcategory});
+
+  @override
+  AppState updateState(AppState appState) {
+    String updatedSubcategory = subcategory;
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
+    String oldSubcategoryId = entry?.subcategoryId;
+
+    tags = categoryOrSubcategoryUpdateAllTagFrequencies(
+        tags: tags,
+        oldAppCategory: oldSubcategoryId,
+        newAppCategory: updatedSubcategory,
+        entry: entry,
+        categoryOrSubcategory: CategoryOrSubcategory.subcategory);
+
+    return updateSubstates(
+      appState,
+      [
+        _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
+              selectedEntry:
+                  Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
               tags: tags,
             )),
       ],
@@ -827,6 +830,8 @@ class EntryAddUpdateTag implements AppAction {
             id: '${Uuid().v4()}-${appState.authState.user.value.id}',
             logId: entry.logId,
             tagLogFrequency: 1,
+            tagCategoryFrequency: <String, int>{},
+            tagSubcategoryFrequency: <String, int>{},
             memberList: entry.entryMembers.keys.toList(),
           );
         } else {
@@ -849,7 +854,10 @@ class EntryAddUpdateTag implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe<AppEntry>.some(entry),
-              selectedTag: Maybe<Tag>.some(Tag()),
+              selectedTag: Maybe<Tag>.some(Tag(
+                tagCategoryFrequency: <String, int>{},
+                tagSubcategoryFrequency: <String, int>{},
+              )),
               tags: tags,
               searchedTags: <Tag>[],
               search: Maybe<String>.none(),
@@ -883,7 +891,7 @@ class EntrySelectDeselectTag implements AppAction {
       //remove tag from entry if present
 
       selectedDeselectedTag = decrementCategorySubcategoryLogFrequency(
-          updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId, subcategoryId: entry?.subcategoryId);
+          updatedTag: selectedDeselectedTag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.remove(tag.id);
@@ -892,7 +900,7 @@ class EntrySelectDeselectTag implements AppAction {
 
       //increment use of tag for this category
       selectedDeselectedTag = _incrementCategoryAndLogFrequency(
-          updatedTag: selectedDeselectedTag, categoryId: entry?.categoryId, subcategoryId: entry?.subcategoryId);
+          updatedTag: selectedDeselectedTag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
 
       //remove the tag from the entry tag list
       entryTagIds.add(tag.id);
@@ -906,7 +914,7 @@ class EntrySelectDeselectTag implements AppAction {
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe<AppEntry>.some(entry.copyWith(tagIDs: entryTagIds)),
             tags: tags,
-            searchedTags: const [],
+            searchedTags: <Tag>[],
             search: Maybe<String>.none())),
       ],
     );
@@ -1138,23 +1146,25 @@ Tag _incrementCategorySubcategoryFrequency(
 
 Tag _incrementAppCategoryFrequency(
     {@required String appCategoryId, @required Tag updatedTag, @required CategoryOrSubcategory categoryOrSubcategory}) {
-  if (appCategoryId != null) {
-    Map<String, int> tagCategoryFrequency = const {};
-    if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-      tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
-    } else {
-      tagCategoryFrequency = Map.from(updatedTag.tagSubcategoryFrequency);
-    }
+  print('increment tag: $updatedTag');
 
-    //adds frequency to tag for the category if present, adds it otherwise
-    tagCategoryFrequency.update(appCategoryId, (value) => value + 1, ifAbsent: () => 1);
-
-    if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-      updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
-    } else {
-      updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
-    }
+  Map<String, int> tagCategoryFrequency = const {};
+  if (categoryOrSubcategory == CategoryOrSubcategory.category) {
+    tagCategoryFrequency = Map<String, int>.from(updatedTag.tagCategoryFrequency);
+  } else {
+    tagCategoryFrequency = Map<String, int>.from(updatedTag.tagSubcategoryFrequency);
   }
+
+  //adds frequency to tag for the category if present, adds it otherwise
+  tagCategoryFrequency.update(appCategoryId, (value) => value + 1, ifAbsent: () => 1);
+
+  if (categoryOrSubcategory == CategoryOrSubcategory.category) {
+    updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
+  } else {
+    updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
+
+  }
+  print('incremented tag: $updatedTag');
 
   return updatedTag;
 }
@@ -1183,11 +1193,14 @@ Tag _decrementCategorySubcategory(
 
 Tag _decrementAppCategoryFrequency(
     {@required String categoryId, @required Tag updatedTag, @required CategoryOrSubcategory categoryOrSubcategory}) {
-  Map<String, int> tagCategoryFrequency = const {};
+  Map<String, int> tagCategoryFrequency = <String, int>{};
+
+  print('decrement tag: $updatedTag');
+
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-    tagCategoryFrequency = Map.from(updatedTag.tagCategoryFrequency);
+    tagCategoryFrequency = Map<String, int>.from(updatedTag.tagCategoryFrequency);
   } else {
-    tagCategoryFrequency = Map.from(updatedTag.tagSubcategoryFrequency);
+    tagCategoryFrequency = Map<String, int>.from(updatedTag?.tagSubcategoryFrequency);
   }
 
   //subtracts frequency to tag for the category if present, adds it otherwise
@@ -1200,10 +1213,12 @@ Tag _decrementAppCategoryFrequency(
     updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
   }
 
+  print('decremented tag: $updatedTag');
+
   return updatedTag;
 }
 
-Map<String, Tag> categorySubcategoryUpdateAllTagFrequencies(
+Map<String, Tag> categoryOrSubcategoryUpdateAllTagFrequencies(
     {@required AppEntry entry,
     String oldAppCategory,
     @required String newAppCategory,
@@ -1318,7 +1333,7 @@ Map<String, EntryMember> _distributeRemainingSpending(
   return entryMembers;
 }
 
-Map<String, EntryMember> _setMembersList({@required Log log, @required String memberId, @required String userId}) {
+Map<String, EntryMember> _setMembersList({@required Log log, @required String memberId}) {
   //adds the log members to the entry member list when creating a new entry of changing logs
 
   Map<String, EntryMember> members = {};
@@ -1329,18 +1344,13 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
         () => EntryMember(
               uid: value.uid,
               order: value.order,
-              paying: userId == value.uid ? true : false,
+              paying: memberId == value.uid ? true : false,
               payingController: TextEditingController(),
               spendingController: TextEditingController(),
               payingFocusNode: FocusNode(),
               spendingFocusNode: FocusNode(),
             ));
   });
-
-  if (memberId != null) {
-    //sets the selected user as paying unless the action is triggered from the FAB
-    members.updateAll((key, value) => value.copyWith(paying: key == memberId ? true : false));
-  }
 
   return members;
 }

@@ -8,6 +8,21 @@ import '../../utils/db_consts.dart';
 
 @immutable
 class MyEntryEntity extends Equatable {
+
+
+  const MyEntryEntity(
+      {this.id,
+      this.logId,
+      this.currency,
+      this.category = NO_CATEGORY,
+      this.subcategory = NO_SUBCATEGORY,
+      this.amount = 0,
+      this.comment,
+      this.dateTime,
+      this.tagIDs = const {},
+      this.entryMembers = const {},
+      this.memberList}); //TODO get rid of members list eventually? do i need it if I have entryMembers list?
+
   final String id;
   final String logId;
   final String currency;
@@ -19,19 +34,6 @@ class MyEntryEntity extends Equatable {
   final Map<String, String> tagIDs;
   final Map<String, EntryMember> entryMembers;
   final List<String> memberList;
-
-  const MyEntryEntity(
-      {this.id,
-      this.logId,
-      this.currency,
-      this.category,
-      this.subcategory,
-      this.amount,
-      this.comment,
-      this.dateTime,
-      this.tagIDs,
-      this.entryMembers,
-      this.memberList});
 
   @override
   List<Object> get props => [

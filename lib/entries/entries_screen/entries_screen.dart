@@ -31,7 +31,7 @@ class EntriesScreen extends StatelessWidget {
         backgroundColor: activateFAB ? null : Colors.grey,
         onPressed: activateFAB
             ? () {
-                Env.store.dispatch(EntrySetNewSelect());
+                Env.store.dispatch(EntrySetNew(memberId: Env.store.state.authState.user.value.id));
                 Get.toNamed(ExpenseRoutes.addEditEntries);
               }
             : null,

@@ -19,13 +19,13 @@ class Tag extends Equatable {
       this.id,
       this.name = '',
       this.tagLogFrequency = 0,
-      this.tagCategoryFrequency = const {},
-      this.tagSubcategoryFrequency = const {},
+      @required this.tagCategoryFrequency,
+      @required this.tagSubcategoryFrequency,
       this.memberList = const []});
 
   @override
   String toString() {
-    return 'Tag {$LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $MEMBER_LIST: $memberList}';
+    return 'Tag {$LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $TAG_SUBCATEGORY_FREQUENCY: $tagSubcategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
   @override
@@ -50,7 +50,7 @@ class Tag extends Equatable {
       name: entity.name,
       tagLogFrequency: entity.tagLogFrequency,
       tagCategoryFrequency: entity.tagCategoryFrequency,
-      tagSubcategoryFrequency: entity.tagSubcategoryFrequency,
+      tagSubcategoryFrequency: entity?.tagSubcategoryFrequency ?? <String, int>{},
       memberList: entity.memberList,
     );
   }
