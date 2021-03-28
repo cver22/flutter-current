@@ -44,27 +44,20 @@ class EntriesScreen extends StatelessWidget {
           print('Rendering entries screen');
 
           if (entriesState.isLoading == true) {
-            return ModalLoadingIndicator(
-                loadingMessage: 'Loading your entries...', activate: true);
-          } else if (entriesState.isLoading == false &&
-              entriesState.entries.isNotEmpty) {
-            entries = entriesState.entries.entries.map((e) => e.value).toList();
+            return ModalLoadingIndicator(loadingMessage: 'Loading your entries...', activate: true);
+          } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
+            entries = entriesState.entries.entries.map((e) => e.value).toList()
+              ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
 
-            if (entriesState.descending) {
-              entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
-            } else {
+            if (!entriesState.descending) {
+              //resort ascending if selected
               entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
             }
 
             return EntriesScreenBuildListView(
-                entries: _buildFilteredEntries(
-                    entries: List.from(entries),
-                    entriesFilter: entriesState.entriesFilter));
-          } else if (entriesState.isLoading == false &&
-              entriesState.entries.isEmpty) {
-            return Env.store.state.logsState.logs.isEmpty
-                ? LogEmptyContent()
-                : EntriesEmptyContent();
+                entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter));
+          } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
+            return Env.store.state.logsState.logs.isEmpty ? LogEmptyContent() : EntriesEmptyContent();
           } else {
             //TODO pass meaningful error message
             return ErrorContent();
@@ -84,18 +77,15 @@ List<AppEntry> _buildFilteredEntries({
     Filter filter = entriesFilter.value;
     //minimum entry date
     if (filter.startDate.isSome) {
-      entries.removeWhere(
-          (entry) => entry.dateTime.isBefore(filter.startDate.value));
+      entries.removeWhere((entry) => entry.dateTime.isBefore(filter.startDate.value));
     }
     //maximum entry date
     if (filter.endDate.isSome) {
-      entries
-          .removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value));
+      entries.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value));
     }
     //is the entry logId found in the list of logIds selected
     if (filter.selectedLogs.length > 0) {
-      entries
-          .removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
+      entries.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
     }
     //TODO currency filter
 
@@ -114,12 +104,10 @@ List<AppEntry> _buildFilteredEntries({
       entries.removeWhere((entry) {
         List<AppCategory> subcategories = logs[entry.logId].subcategories;
 
-        AppCategory subcategory = subcategories.firstWhere(
-            (subcategory) => subcategory.id == entry.subcategoryId,
-            orElse: () => null);
+        AppCategory subcategory =
+            subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
 
-        if (subcategory != null &&
-            filter.selectedSubcategories.contains(subcategory.id)) {
+        if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
           //filter contains subcategory, show entry
           return false;
         } else {
@@ -135,9 +123,7 @@ List<AppEntry> _buildFilteredEntries({
 
       entries.removeWhere((entry) {
         List<AppCategory> categories = logs[entry.logId].categories;
-        String categoryName = categories
-            .firstWhere((category) => category.id == entry.categoryId)
-            .name;
+        String categoryName = categories.firstWhere((category) => category.id == entry.categoryId).name;
 
         if (filter.selectedCategories.contains(categoryName)) {
           //filter contains category, show entry

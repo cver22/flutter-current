@@ -1,3 +1,5 @@
+import 'package:expenses/store/actions/currency_actions.dart';
+
 import '../../store/actions/single_entry_actions.dart';
 
 import '../../currency/currency_models/currency_state.dart';
@@ -34,9 +36,16 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
   }
 
   @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     Env.store.dispatch(EntryClearAllFocus());
     return AppDialogWithActions(
+      topWidget: searchBox(),
       child: _buildCurrencyList(logCurrencyCode: widget.logCurrency, returnCurrency: widget.returnCurrency),
       title: widget.title,
       actions: _actions(),
@@ -44,19 +53,29 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
   }
 
   Widget searchBox() {
-    return Expanded(
-      child: TextFormField(
-        decoration: InputDecoration(labelText: 'Tag'),
-        controller: _controller,
-        keyboardType: TextInputType.text,
-        textCapitalization: TextCapitalization.words,
-        inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9 ]"))],
-        textInputAction: TextInputAction.done,
-        onChanged: (value) {
-          setState(() {
-            //TODO update search
-          });
-        },
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Icon(Icons.search_outlined),
+          Expanded(
+            child: TextFormField(
+              decoration: InputDecoration(labelText: 'Search'),
+              controller: _controller,
+              autofocus: false,
+              keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.words,
+              inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9 ]"))],
+              textInputAction: TextInputAction.done,
+              onChanged: (search) {
+                setState(() {
+                  Env.store.dispatch(CurrencySearchCurrencies(search: search));
+                });
+              },
+            ),
+          ),
+        ],
       ),
     );
   }

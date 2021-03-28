@@ -18,7 +18,7 @@ class CategoryButton extends StatelessWidget {
   Widget build(BuildContext context) {
     String title = label;
 
-    if (!newEntry || (newEntry && category.id != NO_CATEGORY)) {
+    if (!filter && (!newEntry || (newEntry && category.id != NO_CATEGORY))) {
       title = category.name;
     }
 
@@ -39,7 +39,7 @@ class CategoryButton extends StatelessWidget {
 
   Widget _leadingWidget() {
     Widget leadingWidget = Container();
-    if (!newEntry || (newEntry && category.id != NO_CATEGORY)) {
+    if (!filter && (!newEntry || (newEntry && category.id != NO_CATEGORY))) {
       leadingWidget = Text(category.emojiChar, textAlign: TextAlign.center, style: TextStyle(fontSize: EMOJI_SIZE));
     }
     return leadingWidget;

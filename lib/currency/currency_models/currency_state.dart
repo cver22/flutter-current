@@ -18,7 +18,7 @@ class CurrencyState extends Equatable {
   factory CurrencyState.initial() {
     return CurrencyState(
       conversionRateMap: <String, ConversionRates>{},
-      allCurrencies: CurrencyService().getAll(),
+      allCurrencies: CurrencyService().getAll()..sort((a, b) => a.code.compareTo(b.code)),
       searchCurrencies: <Currency>[],
 
     );
