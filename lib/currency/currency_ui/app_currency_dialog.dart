@@ -1,7 +1,5 @@
-import 'package:expenses/store/actions/currency_actions.dart';
-
+import '../../store/actions/currency_actions.dart';
 import '../../store/actions/single_entry_actions.dart';
-
 import '../../currency/currency_models/currency_state.dart';
 import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
@@ -54,7 +52,7 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
 
   Widget searchBox() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 0),
+      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [

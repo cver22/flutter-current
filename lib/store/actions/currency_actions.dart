@@ -1,21 +1,14 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:meta/meta.dart';
-import '../../currency/currency_models/currency_state.dart';
-
 import '../../app/models/app_state.dart';
-import '../../utils/maybe.dart';
 import 'app_actions.dart';
-
-AppState Function(AppState) _updateCurrencyState(CurrencyState update(currencyState)) {
-  return (state) => state.copyWith(currencyState: update(state.currencyState));
-}
 
 class CurrencyInitializeCurrencies implements AppAction {
   AppState updateState(AppState appState) {
     return updateSubstates(
       appState,
       [
-        _updateCurrencyState((currencyState) => currencyState.copyWith()),
+        updateCurrencyState((currencyState) => currencyState.copyWith()),
       ],
     );
   }
@@ -39,7 +32,7 @@ class CurrencySearchCurrencies implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: searchCurrencies)),
+        updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: searchCurrencies)),
       ],
     );
   }

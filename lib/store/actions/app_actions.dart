@@ -18,6 +18,7 @@ import '../../settings/settings_model/settings_state.dart';
 import '../../tags/tag_model/tag.dart';
 import '../../tags/tag_model/tag_state.dart';
 import '../../utils/db_consts.dart';
+import '../../currency/currency_models/currency_state.dart';
 
 abstract class AppAction {
   AppState updateState(AppState appState);
@@ -62,6 +63,10 @@ AppState Function(AppState) updateFilterState(
     FilterState update(filterState)) {
   return (state) =>
       state.copyWith(filterState: update(state.filterState));
+}
+
+AppState Function(AppState) updateCurrencyState(CurrencyState update(currencyState)) {
+  return (state) => state.copyWith(currencyState: update(state.currencyState));
 }
 
 Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(

@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
@@ -233,6 +234,7 @@ class EntryUpdateCurrency implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
             selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(currency: currency)))),
+        updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: <Currency>[])),
       ],
     );
   }
