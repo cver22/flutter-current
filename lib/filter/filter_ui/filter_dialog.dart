@@ -12,7 +12,7 @@ import '../../log/log_model/log.dart';
 import '../../store/actions/entries_actions.dart';
 import '../../store/actions/filter_actions.dart';
 import '../../store/connect_state.dart';
-import '../../utils/currency.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/utils.dart';
 import '../filter_model/filter.dart';

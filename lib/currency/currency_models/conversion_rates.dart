@@ -7,7 +7,7 @@ class ConversionRates extends Equatable {
   final DateTime lastUpdated;
 
   ConversionRates({
-    @required this.conversionRates,
+    this.conversionRates = const {},
     @required this.lastUpdated,
   });
 

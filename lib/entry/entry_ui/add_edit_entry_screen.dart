@@ -1,8 +1,9 @@
+import '../../currency/currency_ui/app_currency_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../app/common_widgets/app_button.dart';
-import '../../currency/app_currency_picker.dart';
+import '../../currency/currency_ui/app_currency_picker.dart';
 import '../../app/common_widgets/date_button.dart';
 import '../../app/common_widgets/loading_indicator.dart';
 import '../../app/common_widgets/simple_confirmation_dialog.dart';
@@ -18,7 +19,7 @@ import '../../store/actions/logs_actions.dart';
 import '../../store/actions/single_entry_actions.dart';
 import '../../store/connect_state.dart';
 import '../../tags/tags_ui/tag_picker.dart';
-import '../../utils/currency.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/keys.dart';
 import '../../utils/utils.dart';
@@ -165,8 +166,12 @@ class AddEditEntryScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             AppCurrencyPicker(
+                logCurrency: log.currency,
                 currency: entry?.currency,
-                returnCurrency: (currency) => Env.store.dispatch(EntryUpdateCurrency(currency: currency))),
+                returnCurrency: (currency) {
+                  Env.store.dispatch(EntryUpdateCurrency(currency: currency));
+                }),
+
             Text(
                 'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
           ],
@@ -199,7 +204,6 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _categoryButton({@required AppEntry entry, @required List<AppCategory> categories, @required bool newEntry}) {
-
     return CategoryButton(
       newEntry: newEntry,
       label: 'Select a Category',

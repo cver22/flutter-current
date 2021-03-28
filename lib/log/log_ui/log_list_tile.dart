@@ -5,7 +5,7 @@ import '../../env.dart';
 import '../../member/member_ui/log_member_detailed_ui/log_member_month_list.dart';
 import '../../store/actions/entries_actions.dart';
 import '../../store/actions/logs_actions.dart';
-import '../../utils/currency.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/expense_routes.dart';
 import '../log_model/log.dart';

@@ -7,7 +7,7 @@ import '../../env.dart';
 import '../../log/log_model/log.dart';
 import '../../store/actions/single_entry_actions.dart';
 import '../../tags/tag_model/tag.dart';
-import '../../utils/currency.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/expense_routes.dart';
 

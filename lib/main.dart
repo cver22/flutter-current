@@ -6,7 +6,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'account/account_ui/account_screen.dart';
 import 'app/app_screen.dart';
 import 'app/home_screen.dart';
-import 'entry/entry_screen/add_edit_entry_screen.dart';
+import 'entry/entry_ui/add_edit_entry_screen.dart';
 import 'env.dart';
 import 'log/log_ui/add_edit_log_Screen.dart';
 import 'login_register/login_register_ui/login_register_screen.dart';

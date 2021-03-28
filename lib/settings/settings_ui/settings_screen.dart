@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/common_widgets/app_button.dart';
-import '../../currency/app_currency_picker.dart';
+import '../../currency/currency_ui/app_currency_picker.dart';
 import '../../categories/categories_screens/category_button.dart';
 import '../../categories/categories_screens/master_category_list_dialog.dart';
 import '../../env.dart';

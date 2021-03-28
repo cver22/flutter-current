@@ -41,6 +41,7 @@ dependencies:
   qr_flutter: ^4.0.0
   qr_code_scanner: ^0.4.0
   drag_and_drop_lists: ^0.2.10
+  sqflite: ^2.0.0+3
 
 
 

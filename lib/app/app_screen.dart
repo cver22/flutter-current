@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import '../entries/entries_model/entries_state.dart';
 import '../entries/entries_screen/entries_screen.dart';
 import '../env.dart';
-import '../filter/filter_screen/filter_dialog.dart';
+import '../filter/filter_ui/filter_dialog.dart';
 import '../log/log_ui/logs_screen.dart';
 import '../store/actions/entries_actions.dart';
 import '../store/actions/filter_actions.dart';

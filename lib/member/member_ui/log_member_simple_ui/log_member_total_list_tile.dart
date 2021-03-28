@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../env.dart';
-import '../../../utils/currency.dart';
+import '../../../currency/currency_utils/currency_formatters.dart';
 import '../../member_model/log_member_model/log_member.dart';
 
 class LogMemberTotalListTile extends StatelessWidget {

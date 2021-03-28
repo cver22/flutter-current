@@ -3,7 +3,7 @@ import 'package:flutter/services.dart';
 
 import '../../../env.dart';
 import '../../../store/actions/single_entry_actions.dart';
-import '../../../utils/currency.dart';
+import '../../../currency/currency_utils/currency_formatters.dart';
 import '../../../utils/db_consts.dart';
 import '../../member_model/entry_member_model/entry_member.dart';
 

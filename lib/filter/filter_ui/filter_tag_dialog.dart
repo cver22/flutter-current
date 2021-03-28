@@ -28,43 +28,41 @@ class FilterTagDialog extends StatelessWidget {
             ),
             actions: _actions(),
             child: SingleChildScrollView(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    filterState.search.isSome
-                        ? Text('Searched Tags')
-                        : Container(),
-                    filterState.search.isSome
-                        ? _buildAllTags(
-                            selectedCategories:
-                                filterState.filter.value.selectedCategories,
-                            search: filterState.search,
-                            allTags: filterState.allTags,
-                            searchedTags: filterState.searchedTags,
-                            selectedTagNames:
-                                filterState.filter.value.selectedTags)
-                        : Container(),
-                    Text('Selected Tags'),
-                    _buildSelectedTags(
-                      allTags: filterState.allTags,
-                      selectedTagIds: filterState.filter.value.selectedTags,
-                    ),
-                    SizedBox(height: 8.0),
-                    filterState.search.isNone
-                        ? Text('Tags by Frequency')
-                        : Container(),
-                    filterState.search.isNone
-                        ? _buildAllTags(
-                            selectedCategories:
-                                filterState.filter.value.selectedCategories,
-                            search: filterState.search,
-                            allTags: filterState.allTags,
-                            searchedTags: filterState.searchedTags,
-                            selectedTagNames:
-                                filterState.filter.value.selectedTags)
-                        : Container(),
-                  ],
-                ),
+              child: Column(
+                children: [
+                  filterState.search.isSome
+                      ? Text('Searched Tags')
+                      : Container(),
+                  filterState.search.isSome
+                      ? _buildAllTags(
+                          selectedCategories:
+                              filterState.filter.value.selectedCategories,
+                          search: filterState.search,
+                          allTags: filterState.allTags,
+                          searchedTags: filterState.searchedTags,
+                          selectedTagNames:
+                              filterState.filter.value.selectedTags)
+                      : Container(),
+                  Text('Selected Tags'),
+                  _buildSelectedTags(
+                    allTags: filterState.allTags,
+                    selectedTagIds: filterState.filter.value.selectedTags,
+                  ),
+                  SizedBox(height: 8.0),
+                  filterState.search.isNone
+                      ? Text('Tags by Frequency')
+                      : Container(),
+                  filterState.search.isNone
+                      ? _buildAllTags(
+                          selectedCategories:
+                              filterState.filter.value.selectedCategories,
+                          search: filterState.search,
+                          allTags: filterState.allTags,
+                          searchedTags: filterState.searchedTags,
+                          selectedTagNames:
+                              filterState.filter.value.selectedTags)
+                      : Container(),
+                ],
               ),
             ),
           );

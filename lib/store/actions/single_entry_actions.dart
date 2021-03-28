@@ -10,7 +10,7 @@ import '../../log/log_model/log.dart';
 import '../../member/member_model/entry_member_model/entry_member.dart';
 import '../../settings/settings_model/settings.dart';
 import '../../tags/tag_model/tag.dart';
-import '../../utils/currency.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
