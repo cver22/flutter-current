@@ -1,3 +1,5 @@
+import 'currency/currency_remote_repository.dart';
+import 'currency/currency_fetcher.dart';
 import 'app/models/app_state.dart';
 import 'auth_user/user_fetcher.dart';
 import 'auth_user/user_repository.dart';
@@ -35,4 +37,9 @@ class Env {
 
   static final settingsFetcher =
       SettingsFetcher(store: store); //SettingsFetcher
+
+  static final currencyFetcher = CurrencyFetcher(
+    store: store,
+    currencyRemoteRepository: ExchangeRatesApiRepository(),
+  );
 }

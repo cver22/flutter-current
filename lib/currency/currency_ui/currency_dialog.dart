@@ -46,15 +46,22 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
 
   @override
   Widget build(BuildContext context) {
-    return AppDialogWithActions(
-      topWidget: searchBox(),
-      child: _buildCurrencyList(
-          referenceCurrencyCode: widget.referenceCurrency,
-          returnCurrency: widget.returnCurrency,
-          withConversionRates: widget.withConversionRates),
-      title: widget.title,
-      actions: _actions(),
-    );
+    return ConnectState<CurrencyState>(
+        where: notIdentical,
+        map: (state) => state.currencyState,
+        builder: (currencyState) {
+          return AppDialogWithActions(
+            topWidget: searchBox(),
+            child: _buildCurrencyList(
+              referenceCurrencyCode: widget.referenceCurrency,
+              returnCurrency: widget.returnCurrency,
+              withConversionRates: widget.withConversionRates,
+              currencyState: currencyState,
+            ),
+            title: widget.title,
+            actions: _actions(withConversionRates: widget.withConversionRates),
+          );
+        });
   }
 
   Widget searchBox() {
@@ -85,14 +92,15 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     );
   }
 
-  List<Widget> _actions() {
+  List<Widget> _actions({@required bool withConversionRates}) {
     return [
-      TextButton(
-        child: Text('Refresh'),
-        onPressed: () {
-          //TODO refreshes exchange rates
-        },
-      ),
+      if (withConversionRates)
+        TextButton(
+          child: Text('Refresh'),
+          onPressed: () {
+            Env.currencyFetcher.loadRemoteConversionRates(referenceCurrency: 'CAD');
+          },
+        ),
       TextButton(
           child: Text('Done'),
           onPressed: () {
@@ -104,40 +112,36 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
   Widget _buildCurrencyList(
       {@required String referenceCurrencyCode,
       @required Function(String) returnCurrency,
-      @required bool withConversionRates}) {
+      @required bool withConversionRates,
+      @required CurrencyState currencyState}) {
     List<Currency> currencies = <Currency>[];
     Currency referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
-    return ConnectState<CurrencyState>(
-        where: notIdentical,
-        map: (state) => state.currencyState,
-        builder: (currencyState) {
-          if (currencyState.searchCurrencies.isNotEmpty) {
-            currencies = currencyState.searchCurrencies;
-          } else {
-            currencies = currencyState.allCurrencies;
+    if (currencyState.searchCurrencies.isNotEmpty) {
+      currencies = currencyState.searchCurrencies;
+    } else {
+      currencies = currencyState.allCurrencies;
+    }
+
+    return ListView.builder(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
+        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+        itemCount: currencies.length,
+        itemBuilder: (BuildContext context, int index) {
+          final Currency _currency = currencies[index];
+
+          double conversionRate;
+
+          if (withConversionRates && currencyState?.conversionRateMap[referenceCurrencyCode] != null) {
+            conversionRate = currencyState?.conversionRateMap[referenceCurrencyCode]?.conversionRates[_currency.code];
           }
 
-          return ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
-              itemCount: currencies.length,
-              itemBuilder: (BuildContext context, int index) {
-                final Currency _currency = currencies[index];
-
-                double conversionRate;
-
-                if (withConversionRates && currencyState?.conversionRateMap[referenceCurrencyCode] != null) {
-                  conversionRate = currencyState?.conversionRateMap[referenceCurrencyCode]?.conversionRates[_currency.code];
-                }
-
-                return CurrencyListTile(
-                    currency: _currency,
-                    conversionRate: conversionRate,
-                    logCurrency: referenceCurrency,
-                    returnCurrency: returnCurrency);
-              });
+          return CurrencyListTile(
+              currency: _currency,
+              conversionRate: conversionRate,
+              logCurrency: referenceCurrency,
+              returnCurrency: returnCurrency);
         });
   }
 }

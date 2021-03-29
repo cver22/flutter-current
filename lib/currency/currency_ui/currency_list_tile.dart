@@ -10,11 +10,7 @@ class CurrencyListTile extends StatelessWidget {
   final Function(String) returnCurrency;
 
   const CurrencyListTile(
-      {Key key,
-      @required this.currency,
-      this.conversionRate = 0.0,
-      this.logCurrency,
-      @required this.returnCurrency})
+      {Key key, @required this.currency, this.conversionRate = 0.0, this.logCurrency, @required this.returnCurrency})
       : super(key: key);
 
   @override
@@ -31,7 +27,7 @@ class CurrencyListTile extends StatelessWidget {
               Get.back();
             },
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 9.0, horizontal: 0.0),
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: <Widget>[
@@ -87,41 +83,6 @@ class CurrencyListTile extends StatelessWidget {
           Divider(height: 0.0),
         ],
       ),
-    );
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        ListTile(
-          leading: Text(
-            CurrencyUtils.countryCodeToEmoji(currency),
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: EMOJI_SIZE),
-          ),
-          title: Transform.translate(
-            offset: Offset(-16, 0),
-            child: Text(currency.code),
-          ),
-          subtitle: Transform.translate(
-            offset: Offset(-16, 0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(currency.name),
-                if (conversionRate != null && currency.code != logCurrency.code)
-                  Text(
-                      '1 ${CurrencyUtils.countryCodeToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.countryCodeToEmoji(logCurrency)}'),
-              ],
-            ),
-          ),
-          trailing: Text(currency.symbol),
-          onTap: () {
-            returnCurrency(currency.code);
-            Get.back();
-          },
-        ),
-        Divider(height: 0.0),
-      ],
     );
   }
 }

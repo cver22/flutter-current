@@ -37,3 +37,29 @@ class CurrencySearchCurrencies implements AppAction {
     );
   }
 }
+
+class CurrencySetLoading implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        updateCurrencyState((currencyState) => currencyState.copyWith()),
+      ],
+    );
+  }
+}
+
+class CurrencySetLoaded implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        updateCurrencyState((currencyState) => currencyState.copyWith()),
+      ],
+    );
+  }
+}
+
+

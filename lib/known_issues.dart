@@ -53,7 +53,11 @@
 //move to null safety
 
 //TODO START HERE
-//build currency fetcher remote and local
+//build build local repository for currency fetcher
+//build json decoder to show currency information
+//make entry member list tiles responsive to currencies
+//make entry responsive to currencies
+//refactor entries to handle foreign currencies
 
 
 
