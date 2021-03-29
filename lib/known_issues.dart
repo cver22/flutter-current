@@ -55,11 +55,10 @@
 //TODO START HERE
 //build build local repository for currency fetcher
 //build json decoder to show currency information
-//make entry member list tiles responsive to currencies
-//make entry responsive to currencies
+
+//TODO make entry responsive to currencies - DO THIS NEXT, edit currency_formatters, formatted amount
 //refactor entries to handle foreign currencies
-
-
+//changing currency clears all entered values, include warning
 
 
 

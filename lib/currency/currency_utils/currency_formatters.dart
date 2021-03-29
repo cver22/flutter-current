@@ -1,3 +1,4 @@
+import 'package:currency_picker/src/currency.dart';
 import 'package:meta/meta.dart';
 
 String formattedAmount({@required int value, bool withSeparator = false, bool emptyReturnZeroed = false}) {
@@ -42,7 +43,7 @@ String formattedAmount({@required int value, bool withSeparator = false, bool em
   return '${isNegative ? '-' : ''}$bigUnitsString.${smallUnits.toString().padLeft(2, '0')}';
 }
 
-int parseNewValue({@required String newValue}) {
+int parseNewValue({@required String newValue, @required Currency currency}) {
   bool isNegative = false;
   String absoluteString = newValue;
   int value = 0;
@@ -51,20 +52,33 @@ int parseNewValue({@required String newValue}) {
     if (absoluteString.startsWith('\-')) {
       isNegative = !isNegative;
       absoluteString = absoluteString.substring(1);
+
+      if (absoluteString.length == 0) {
+        return 0;
+      }
     }
 
-    if (absoluteString.contains('\.')) {
-      int decimalIndex = absoluteString.indexOf('\.');
-      value = decimalIndex > 0 ? (int.parse(absoluteString.substring(0, decimalIndex))) * 100 : 0;
-      String smallUnitsString = absoluteString.substring(decimalIndex + 1);
-      int smallUnitsInt = smallUnitsString.length < 2 ? int.parse('${smallUnitsString}0') : int.parse(smallUnitsString);
+    if (currency.decimalDigits > 0 && absoluteString.contains('.')) {
+      value = _parseBigAndSmallUnits(value, absoluteString.indexOf('.'), absoluteString);
 
+    } else if (currency.decimalDigits > 0 && absoluteString.contains(',')) {
+      value = _parseBigAndSmallUnits(value, absoluteString.indexOf(','), absoluteString);
 
-      value = value + smallUnitsInt; //adds trailing zero if the last digit has not been added
-    } else {
+    } else if (currency.decimalDigits > 0) {
       value = (int.parse(absoluteString)) * 100;
+    } else {
+      value = int.parse(absoluteString);
     }
   }
 
   return isNegative ? -value : value;
+}
+
+int _parseBigAndSmallUnits(int value, int decimalIndex, String absoluteString) {
+  value = decimalIndex > 0 ? (int.parse(absoluteString.substring(0, decimalIndex))) * 100 : 0;
+  String smallUnitsString = absoluteString.substring(decimalIndex + 1);
+  int smallUnitsInt = smallUnitsString.length < 2 ? int.parse('${smallUnitsString}0') : int.parse(smallUnitsString);
+
+  value = value + smallUnitsInt; //adds trailing zero if the last digit has not been added
+  return value;
 }

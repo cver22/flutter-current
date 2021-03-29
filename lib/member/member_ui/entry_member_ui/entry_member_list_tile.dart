@@ -1,3 +1,4 @@
+import 'package:currency_picker/src/currency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -12,13 +13,15 @@ class EntryMemberListTile extends StatefulWidget {
   final String name;
   final bool singleMemberLog;
   final bool autoFocus;
+  final Currency currency;
 
   const EntryMemberListTile(
       {Key key,
       @required this.member,
       @required this.name,
       this.singleMemberLog = false,
-      this.autoFocus = false})
+      this.autoFocus = false,
+      @required this.currency})
       : super(key: key);
 
   @override
@@ -58,6 +61,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
   @override
   Widget build(BuildContext context) {
     EntryMember member = widget.member;
+    Currency currency = widget.currency;
+
     return ListTile(
       contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
       title: Row(
@@ -77,9 +82,9 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             children: [
               _buildCheckBox(
                   checked: member.paying,
-                  onChanged: (value) => Env.store
-                      .dispatch(EntryToggleMemberPaying(member: member))),
+                  onChanged: (value) => Env.store.dispatch(EntryToggleMemberPaying(member: member))),
               _buildTextFormField(
+                currency: currency,
                 paidOrSpent: PaidOrSpent.paid,
                 controller: _payingController,
                 focusNode: _payingFocusNode,
@@ -87,23 +92,22 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               ),
             ],
           ),
-          widget.singleMemberLog
-              ? Container()
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    _buildCheckBox(
-                        checked: member.spending,
-                        onChanged: (value) => Env.store.dispatch(
-                            EntryToggleMemberSpending(member: member))),
-                    _buildTextFormField(
-                      paidOrSpent: PaidOrSpent.spent,
-                      controller: _spendingController,
-                      focusNode: _spendingFocusNode,
-                      member: member,
-                    ),
-                  ],
+          if (!widget.singleMemberLog)
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _buildCheckBox(
+                    checked: member.spending,
+                    onChanged: (value) => Env.store.dispatch(EntryToggleMemberSpending(member: member))),
+                _buildTextFormField(
+                  currency: currency,
+                  paidOrSpent: PaidOrSpent.spent,
+                  controller: _spendingController,
+                  focusNode: _spendingFocusNode,
+                  member: member,
                 ),
+              ],
+            ),
           // spending checkbox
         ],
       ),
@@ -111,10 +115,11 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
   }
 
   Widget _buildTextFormField(
-      {PaidOrSpent paidOrSpent,
-      TextEditingController controller,
-      FocusNode focusNode,
-      EntryMember member}) {
+      {@required PaidOrSpent paidOrSpent,
+      @required TextEditingController controller,
+      @required FocusNode focusNode,
+      @required EntryMember member,
+      @required Currency currency}) {
     bool inactive = true;
     if (paidOrSpent == PaidOrSpent.paid) {
       inactive = !member.paying;
@@ -125,16 +130,15 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.end,
       children: [
-        Text(
-          '\$ ',
-          style:
-              TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
-        ),
+        if (currency.symbolOnLeft)
+          Text(
+            '${currency.symbol} ',
+            style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
+          ),
         Container(
           width: 50.0,
           child: TextField(
-            style:
-                TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
+            style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
             controller: controller,
             focusNode: focusNode,
             decoration: InputDecoration(
@@ -143,12 +147,9 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   : paidOrSpent == PaidOrSpent.paid
                       ? PAID
                       : SPENT, //TODO this doesn't fully work as the initial focus does not operate
-              hintStyle: TextStyle(
-                  color: inactive ? INACTIVE_HINT_COLOR : ACTIVE_HINT_COLOR),
+              hintStyle: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : ACTIVE_HINT_COLOR),
             ),
-            inputFormatters: [
-              FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))
-            ],
+            inputFormatters: [FilteringTextInputFormatter.allow(_getRegex(currency: currency))],
             keyboardType: TextInputType.number,
             textInputAction: TextInputAction.next,
             onSubmitted: (value) {
@@ -159,8 +160,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               if (paidOrSpent == PaidOrSpent.paid) {
                 if (member.paying) {
                   //user already paying, update state with focus
-                  Env.store.dispatch(EntryMemberFocus(
-                      paidOrSpent: paidOrSpent, memberId: member.uid));
+                  Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
                   //user now paying, update focus and toggle
                   Env.store.dispatch(EntryToggleMemberPaying(member: member));
@@ -168,8 +168,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               } else if (paidOrSpent == PaidOrSpent.spent) {
                 if (member.spending) {
                   //user already spending, update state with focus
-                  Env.store.dispatch(EntryMemberFocus(
-                      paidOrSpent: paidOrSpent, memberId: member.uid));
+                  Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
                   //user now spending, update focus and toggle
                   Env.store.dispatch(EntryToggleMemberSpending(member: member));
@@ -179,26 +178,44 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
               //TODO need to update state so it knows the focus location when a member tile is tapped
             },
             onChanged: (newValue) {
-              int intValue = parseNewValue(newValue: newValue);
+              int intValue = parseNewValue(newValue: newValue, currency: currency);
               if (paidOrSpent == PaidOrSpent.paid) {
-                Env.store.dispatch(EntryUpdateMemberPaidAmount(
-                    paidValue: intValue, member: member));
+                Env.store.dispatch(EntryUpdateMemberPaidAmount(paidValue: intValue, member: member));
               } else {
-                Env.store.dispatch(EntryUpdateMemberSpentAmount(
-                    spentValue: intValue, member: member));
+                Env.store.dispatch(EntryUpdateMemberSpentAmount(spentValue: intValue, member: member));
               }
             },
           ),
         ),
+        if (!currency.symbolOnLeft)
+          Text(
+            ' ${currency.symbol}',
+            style: TextStyle(color: inactive ? INACTIVE_HINT_COLOR : Colors.black),
+          ),
       ],
     );
   }
 
-  Widget _buildCheckBox(
-      {@required bool checked, @required ValueChanged<bool> onChanged}) {
+  Widget _buildCheckBox({@required bool checked, @required ValueChanged<bool> onChanged}) {
     return Checkbox(
       value: checked,
       onChanged: onChanged,
     );
   }
+  
+  RegExp _getRegex({@required Currency currency}) {
+    if(currency.decimalDigits > 0) {
+      if(currency.decimalSeparator == '.') {
+        //decimal allowed
+        return RegExp(r"^\-?\d*\.?\d{0,2}");
+      } else if (currency.decimalSeparator == ',') {
+        //comma allowed
+        return RegExp(r"^\-?\d*\,?\d{0,2}");
+      }
+    } else {
+      //no decimal places
+      return RegExp(r"^\-?\d*");
+    }
+  }
+  
 }

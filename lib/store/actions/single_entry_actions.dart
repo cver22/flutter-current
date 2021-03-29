@@ -229,11 +229,18 @@ class EntryUpdateCurrency implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
+    Map<String, EntryMember> entryMembers =
+        Map<String, EntryMember>.from(appState.singleEntryState.selectedEntry.value.entryMembers);
+
+    //clear all paid and spent
+    entryMembers.updateAll((key, value) => value.copyWith(paid: 0, spent: 0));
+
     return updateSubstates(
       appState,
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(currency: currency)))),
+            selectedEntry: Maybe<AppEntry>.some(
+                singleEntryState.selectedEntry.value.copyWith(currency: currency, entryMembers: entryMembers)))),
         updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: <Currency>[])),
       ],
     );

@@ -181,6 +181,7 @@ class AddEditEntryScreen extends StatelessWidget {
         ),
         SizedBox(height: 10),
         EntryMembersListView(
+            currencyCode: entry.currency,
             members: entryState.selectedEntry.value.entryMembers,
             log: log,
             userUpdated: entryState.userUpdated,
