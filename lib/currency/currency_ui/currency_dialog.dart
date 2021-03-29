@@ -1,5 +1,4 @@
 import '../../store/actions/currency_actions.dart';
-import '../../store/actions/single_entry_actions.dart';
 import '../../currency/currency_models/currency_state.dart';
 import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
@@ -12,19 +11,25 @@ import 'package:get/get.dart';
 
 import 'currency_list_tile.dart';
 
-class AppCurrencyDialog extends StatefulWidget {
+class CurrencyDialog extends StatefulWidget {
   final String title;
-  final String logCurrency;
+  final String referenceCurrency;
   final Function(String) returnCurrency;
+  final bool withConversionRates;
 
-  const AppCurrencyDialog({Key key, @required this.title, @required this.logCurrency, @required this.returnCurrency})
+  const CurrencyDialog(
+      {Key key,
+      @required this.title,
+      @required this.referenceCurrency,
+      @required this.returnCurrency,
+      this.withConversionRates = false})
       : super(key: key);
 
   @override
-  _AppCurrencyDialogState createState() => _AppCurrencyDialogState();
+  _CurrencyDialogState createState() => _CurrencyDialogState();
 }
 
-class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
+class _CurrencyDialogState extends State<CurrencyDialog> {
   TextEditingController _controller;
 
   @override
@@ -41,10 +46,12 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
 
   @override
   Widget build(BuildContext context) {
-    Env.store.dispatch(EntryClearAllFocus());
     return AppDialogWithActions(
       topWidget: searchBox(),
-      child: _buildCurrencyList(logCurrencyCode: widget.logCurrency, returnCurrency: widget.returnCurrency),
+      child: _buildCurrencyList(
+          referenceCurrencyCode: widget.referenceCurrency,
+          returnCurrency: widget.returnCurrency,
+          withConversionRates: widget.withConversionRates),
       title: widget.title,
       actions: _actions(),
     );
@@ -52,7 +59,7 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
 
   Widget searchBox() {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 8.0),
+      padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         children: [
@@ -94,9 +101,12 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
     ];
   }
 
-  Widget _buildCurrencyList({@required String logCurrencyCode, @required Function(String) returnCurrency}) {
+  Widget _buildCurrencyList(
+      {@required String referenceCurrencyCode,
+      @required Function(String) returnCurrency,
+      @required bool withConversionRates}) {
     List<Currency> currencies = <Currency>[];
-    Currency logCurrency = CurrencyService().findByCode(logCurrencyCode);
+    Currency referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
     return ConnectState<CurrencyState>(
         where: notIdentical,
@@ -115,12 +125,17 @@ class _AppCurrencyDialogState extends State<AppCurrencyDialog> {
               itemCount: currencies.length,
               itemBuilder: (BuildContext context, int index) {
                 final Currency _currency = currencies[index];
-                final double conversionRate =
-                    0.00; //currencyState?.conversionRateMap[logCurrencyCode]?.conversionRates[_currency.code]; //TODO this needs better error checking
+
+                double conversionRate;
+
+                if (withConversionRates && currencyState?.conversionRateMap[referenceCurrencyCode] != null) {
+                  conversionRate = currencyState?.conversionRateMap[referenceCurrencyCode]?.conversionRates[_currency.code];
+                }
+
                 return CurrencyListTile(
                     currency: _currency,
                     conversionRate: conversionRate,
-                    logCurrency: logCurrency,
+                    logCurrency: referenceCurrency,
                     returnCurrency: returnCurrency);
               });
         });

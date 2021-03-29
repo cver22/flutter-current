@@ -135,7 +135,7 @@ class EntriesListTile extends StatelessWidget {
 
     for (int i = 0; i < entry.tagIDs.length; i++) {
       Tag tag = tags[entry.tagIDs[i]];
-      if (i != 0 && tag != null) {
+      if (tag != null && tagString.isNotEmpty) {
         tagString += ', ';
       }
 
@@ -144,6 +144,6 @@ class EntriesListTile extends StatelessWidget {
       }
     }
 
-    return Text(tagString);
+    return tagString.isNotEmpty ? Text(tagString) : Container();
   }
 }

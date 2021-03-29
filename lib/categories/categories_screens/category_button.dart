@@ -10,15 +10,17 @@ class CategoryButton extends StatelessWidget {
   final String label;
   final bool filter;
   final bool newEntry;
+  final bool entry;
 
-  const CategoryButton({Key key, this.category, this.onPressed, this.label, this.filter = false, this.newEntry = false})
+  const CategoryButton({Key key, this.category, this.onPressed, this.label, this.filter = false, this.newEntry = false, this.entry = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     String title = label;
 
-    if (!filter && (!newEntry || (newEntry && category.id != NO_CATEGORY))) {
+    //TODO this is ugly
+    if (entry && !filter && (!newEntry || (newEntry && category.id != NO_CATEGORY))) {
       title = category.name;
     }
 
@@ -39,7 +41,7 @@ class CategoryButton extends StatelessWidget {
 
   Widget _leadingWidget() {
     Widget leadingWidget = Container();
-    if (!filter && (!newEntry || (newEntry && category.id != NO_CATEGORY))) {
+    if (entry && !filter && (!newEntry || (newEntry && category.id != NO_CATEGORY))) {
       leadingWidget = Text(category.emojiChar, textAlign: TextAlign.center, style: TextStyle(fontSize: EMOJI_SIZE));
     }
     return leadingWidget;

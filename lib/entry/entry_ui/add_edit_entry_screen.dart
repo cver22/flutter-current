@@ -1,4 +1,4 @@
-import '../../currency/currency_ui/app_currency_dialog.dart';
+import '../../currency/currency_ui/currency_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -166,6 +166,9 @@ class AddEditEntryScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
             AppCurrencyPicker(
+                title: 'Entry Currency',
+                withConversionRates: true,
+                clearCallingFocus: () {Env.store.dispatch(EntryClearAllFocus());},
                 logCurrency: log.currency,
                 currency: entry?.currency,
                 returnCurrency: (currency) {
@@ -205,6 +208,7 @@ class AddEditEntryScreen extends StatelessWidget {
 
   Widget _categoryButton({@required AppEntry entry, @required List<AppCategory> categories, @required bool newEntry}) {
     return CategoryButton(
+      entry: true,
       newEntry: newEntry,
       label: 'Select a Category',
       onPressed: () => {
@@ -223,6 +227,7 @@ class AddEditEntryScreen extends StatelessWidget {
 
   Widget _subcategoryButton({@required AppEntry entry, @required List<AppCategory> subcategories}) {
     return CategoryButton(
+      entry: true,
       label: 'Select a Subcategory',
       onPressed: () => {
         Env.store.dispatch(EntryClearAllFocus()),

@@ -79,8 +79,7 @@ class AddEditLogScreen extends StatelessWidget {
           onTapConfirm: (delete) {
             deleteConfirmed = delete;
             if (deleteConfirmed) {
-              Env.store.dispatch(
-                  DeleteLog(log: Env.store.state.logsState.selectedLog.value));
+              Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
               Get.back();
             }
           },
@@ -140,11 +139,7 @@ class AddEditLogScreen extends StatelessWidget {
                       ),
               ],
             ),
-            body: _buildContents(
-                context: context,
-                log: log,
-                currency: currency,
-                logs: logsState.logs),
+            body: _buildContents(context: context, log: log, currency: currency, logs: logsState.logs),
           ),
         );
       },
@@ -152,10 +147,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   Widget _buildContents(
-      {@required BuildContext context,
-      @required Log log,
-      @required String currency,
-      @required Map<String, Log> logs}) {
+      {@required BuildContext context, @required Log log, @required String currency, @required Map<String, Log> logs}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -167,13 +159,9 @@ class AddEditLogScreen extends StatelessWidget {
               children: <Widget>[
                 LogNameForm(log: log),
                 log.uid == null ? SizedBox(height: 16.0) : Container(),
-                log.uid == null
-                    ? NewLogCategorySourceWidget(logs: logs, log: log)
-                    : Container(),
+                log.uid == null ? NewLogCategorySourceWidget(logs: logs, log: log) : Container(),
                 SizedBox(height: 16.0),
-                log.uid == null
-                    ? Container()
-                    : _categoryButton(context: context, log: log),
+                log.uid == null ? Container() : _categoryButton(context: context, log: log),
                 SizedBox(height: 16.0),
                 _buildLogMemberList(log: log),
                 SizedBox(height: 8.0),
@@ -246,11 +234,10 @@ class AddEditLogScreen extends StatelessWidget {
 
     return log.uid == null
         ? AppCurrencyPicker(
+            title: 'Log Currency',
             currency: currency,
-            returnCurrency: (currency) => Env.store.dispatch(
-                UpdateSelectedLog(log: log.copyWith(currency: currency))))
-        : Text(
-            '${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');
+            returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
+        : Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');
   }
 }
 
@@ -265,12 +252,10 @@ class NewLogCategorySourceWidget extends StatefulWidget {
   final Log log;
 
   @override
-  _NewLogCategorySourceWidgetState createState() =>
-      _NewLogCategorySourceWidgetState();
+  _NewLogCategorySourceWidgetState createState() => _NewLogCategorySourceWidgetState();
 }
 
-class _NewLogCategorySourceWidgetState
-    extends State<NewLogCategorySourceWidget> {
+class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget> {
   Log defaultLog;
   Log currentDropDownSelection;
   List<Log> temporaryLogs = [];

@@ -1,5 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
-import '../../currency/currency_ui/app_currency_dialog.dart';
+import '../../currency/currency_ui/currency_dialog.dart';
 import '../../store/actions/single_entry_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,8 +10,18 @@ class AppCurrencyPicker extends StatelessWidget {
   final String currency;
   final Function(String) returnCurrency;
   final String logCurrency;
+  final bool withConversionRates;
+  final String title;
+  final VoidCallback clearCallingFocus;
 
-  const AppCurrencyPicker({Key key, this.currency, @required this.returnCurrency, @required this.logCurrency})
+  const AppCurrencyPicker(
+      {Key key,
+      this.currency = 'CAD',
+      @required this.returnCurrency,
+      @required this.logCurrency,
+      this.withConversionRates = false,
+      @required this.title,
+      this.clearCallingFocus})
       : super(key: key);
 
   @override
@@ -20,22 +30,15 @@ class AppCurrencyPicker extends StatelessWidget {
 
     return AppButton(
       onPressed: () {
-        Get.dialog(AppCurrencyDialog(
-          title: 'Entry currency',
-          logCurrency: logCurrency,
-          returnCurrency: (currency) => Env.store.dispatch(EntryUpdateCurrency(currency: currency)),
+        if (clearCallingFocus != null) {
+          clearCallingFocus();
+        }
+        Get.dialog(CurrencyDialog(
+          title: title,
+          withConversionRates: withConversionRates,
+          referenceCurrency: logCurrency ?? _currency.code,
+          returnCurrency: returnCurrency,
         ));
-
-        /*showCurrencyPicker(
-          context: context,
-          showFlag: true,
-          showCurrencyName: true,
-          showCurrencyCode: true,
-          onSelect: (Currency currency) {
-            _currency = currency;
-            widget.returnCurrency(currency.code);
-          },
-        );*/
       },
       child: Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}'),
     );

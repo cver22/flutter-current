@@ -53,9 +53,8 @@
 //move to null safety
 
 //TODO START HERE
-//build currency search
 //build currency fetcher remote and local
-//sort currency
+
 
 
 
