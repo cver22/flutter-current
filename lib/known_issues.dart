@@ -59,6 +59,7 @@
 //TODO make entry responsive to currencies - DO THIS NEXT, edit currency_formatters, formatted amount
 //refactor entries to handle foreign currencies
 //changing currency clears all entered values, include warning
+//fix filter to handle multiple currencies
 
 
 

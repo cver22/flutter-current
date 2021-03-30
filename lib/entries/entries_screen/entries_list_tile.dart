@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,6 +28,7 @@ class EntriesListTile extends StatelessWidget {
           ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
     }
     if (log != null) {
+      Currency currency = CurrencyService().findByCode(log.currency);
       return Column(
         children: [
           ListTile(
@@ -50,7 +52,7 @@ class EntriesListTile extends StatelessWidget {
                 ],
               ),
             ),
-            trailing: _buildTrailingContents(date: date),
+            trailing: _buildTrailingContents(date: date, currency: currency),
             onTap: () => {
               Env.store.dispatch(EntrySelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
@@ -67,13 +69,13 @@ class EntriesListTile extends StatelessWidget {
     }
   }
 
-  Widget _buildTrailingContents({@required DateTime date}) {
+  Widget _buildTrailingContents({@required DateTime date, @required Currency currency}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '\$${formattedAmount(value: entry?.amount, withSeparator: true)}',
+          '${formattedAmount(value: entry?.amount, withSeparator: true, currency: currency, returnWithSymbol: true)}',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
         ),
         SizedBox(height: 8.0),

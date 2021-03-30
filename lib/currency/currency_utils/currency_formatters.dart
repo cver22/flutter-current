@@ -1,46 +1,79 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:currency_picker/src/currency.dart';
 import 'package:meta/meta.dart';
 
-String formattedAmount({@required int value, bool withSeparator = false, bool emptyReturnZeroed = false}) {
-  bool isNegative = false;
-  int absValue = value?.abs();
-  int smallUnits = 0;
-  int bigUnits = 0;
-  String bigUnitsString = '';
+String formattedAmount({int value = 0, bool withSeparator = false, bool returnZeros = false, Currency currency , bool returnWithSymbol = false}) {
 
-  if (absValue != null && absValue > 99) {
-    bigUnits = (absValue / 100).truncate();
-    smallUnits = absValue.remainder(100);
-  } else if (absValue != null && absValue > 0) {
-    smallUnits = absValue;
-  }
 
-  if (value != null && value < 0) {
-    isNegative = !isNegative;
-  }
+  String returnString = '';
 
-  if (bigUnits == 0 && smallUnits == 0) {
-    return emptyReturnZeroed ? '0.00' : '';
-  }
+  if (value != 0) {
 
-  //Adds separator to the string if big units is greater than 3
-  if (withSeparator && bigUnits.toString().length > 3) {
-    String oldString = bigUnits.toString();
-    int i = bigUnits.toString().length;
-    bigUnitsString = oldString.substring(i - 3, i);
-    oldString = oldString.substring(0, i - 3);
-    i -= 3;
 
-    while (i > 0) {
-      int j = i - 3 < 0 ? 0 : i - 3;
-      bigUnitsString = '${oldString.substring(j, i)},$bigUnitsString';
-      i = j;
+
+    bool isNegative = value < 0;
+    int absValue = value.abs();
+    int smallUnits = 0;
+    int bigUnits = 0;
+    String bigUnitsString = '';
+
+
+    //extract small digits if currency has decimal places
+    if (currency.decimalDigits > 0) {
+      if (absValue > 99) {
+        bigUnits = (absValue / 100).truncate();
+        smallUnits = absValue.remainder(100);
+      } else if (absValue > 0) {
+        smallUnits = absValue;
+      }
+    } else {
+      bigUnits = absValue;
+    }
+
+    //Adds separator to the string if big units is greater than 3
+    if (withSeparator && bigUnits
+        .toString()
+        .length > 3) {
+      String oldString = bigUnits.toString();
+      int i = bigUnits
+          .toString()
+          .length;
+      bigUnitsString = oldString.substring(i - 3, i);
+      oldString = oldString.substring(0, i - 3);
+      i -= 3;
+
+      while (i > 0) {
+        int j = i - 3 < 0 ? 0 : i - 3;
+        bigUnitsString = '${oldString.substring(j, i)}${currency.thousandsSeparator}$bigUnitsString';
+        i = j;
+      }
+    } else {
+      bigUnitsString = bigUnits.toString();
+    }
+
+    if (isNegative) {
+      returnString = '-';
+    }
+
+    returnString += bigUnitsString;
+
+
+    if (currency.decimalDigits > 0) {
+      returnString += '${currency.decimalSeparator}${smallUnits.toString().padLeft(2, '0')}';
     }
   } else {
-    bigUnitsString = bigUnits.toString();
+    returnString =  returnZeros ? '0.00' : returnString;
   }
 
-  return '${isNegative ? '-' : ''}$bigUnitsString.${smallUnits.toString().padLeft(2, '0')}';
+  if(returnWithSymbol && currency.symbolOnLeft){
+    return '${currency.symbol} $returnString';
+  } else if (returnWithSymbol && !currency.symbolOnLeft) {
+    return '$returnString ${currency.symbol}';
+  } else {
+    return returnString;
+  }
+
+
 }
 
 int parseNewValue({@required String newValue, @required Currency currency}) {

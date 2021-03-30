@@ -1,4 +1,4 @@
-import '../../currency/currency_ui/currency_dialog.dart';
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -78,6 +78,7 @@ class AddEditEntryScreen extends StatelessWidget {
             Log log;
             log = Env.store.state.logsState.logs[entry.logId];
 
+
             return WillPopScope(
               onWillPop: () async {
                 if (singleEntryState.userUpdated) {
@@ -129,11 +130,10 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContents(
-      {@required BuildContext context,
-      @required SingleEntryState entryState,
-      @required Log log,
-      @required AppEntry entry}) {
+  Widget _buildContents({@required BuildContext context,
+    @required SingleEntryState entryState,
+    @required Log log,
+    @required AppEntry entry}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
@@ -145,12 +145,12 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildForm(
-      {@required BuildContext context,
-      @required SingleEntryState entryState,
-      @required Log log,
-      @required AppEntry entry}) {
+  Widget _buildForm({@required BuildContext context,
+    @required SingleEntryState entryState,
+    @required Log log,
+    @required AppEntry entry}) {
     bool canSave = entryState.canSave;
+    Currency logCurrency = CurrencyService().findByCode(log.currency);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -168,15 +168,16 @@ class AddEditEntryScreen extends StatelessWidget {
             AppCurrencyPicker(
                 title: 'Entry Currency',
                 withConversionRates: true,
-                clearCallingFocus: () {Env.store.dispatch(EntryClearAllFocus());},
+                clearCallingFocus: () {
+                  Env.store.dispatch(EntryClearAllFocus());
+                },
                 logCurrency: log.currency,
                 currency: entry?.currency,
                 returnCurrency: (currency) {
                   Env.store.dispatch(EntryUpdateCurrency(currency: currency));
                 }),
 
-            Text(
-                'Total: \$ ${formattedAmount(value: entry.amount).length > 0 ? formattedAmount(value: entry.amount, withSeparator: true) : '0.00'}'), //TODO utilize money package here
+            _entryTotalLogCurrency(entry: entry, logCurrency: logCurrency), //TODO utilize money package here
           ],
         ),
         SizedBox(height: 10),
@@ -187,7 +188,7 @@ class AddEditEntryScreen extends StatelessWidget {
             userUpdated: entryState.userUpdated,
             entryId: entry.id),
 
-        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSave: canSave),
+        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSave: canSave, logCurrency: logCurrency),
         SizedBox(height: 10.0),
         DateButton(
           datePickerType: DatePickerType.entry,
@@ -207,12 +208,17 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
+  Text _entryTotalLogCurrency({@required AppEntry entry, @required Currency logCurrency}) {
+    return Text('Total: ${formattedAmount(value: entry.amount, withSeparator: true, currency: logCurrency, returnWithSymbol: true, returnZeros: true)}');
+  }
+
   Widget _categoryButton({@required AppEntry entry, @required List<AppCategory> categories, @required bool newEntry}) {
     return CategoryButton(
       entry: true,
       newEntry: newEntry,
       label: 'Select a Category',
-      onPressed: () => {
+      onPressed: () =>
+      {
         Env.store.dispatch(EntryClearAllFocus()),
         Get.dialog(
           EntryCategoryListDialog(
@@ -230,7 +236,8 @@ class AddEditEntryScreen extends StatelessWidget {
     return CategoryButton(
       entry: true,
       label: 'Select a Subcategory',
-      onPressed: () => {
+      onPressed: () =>
+      {
         Env.store.dispatch(EntryClearAllFocus()),
         Get.dialog(
           EntryCategoryListDialog(
@@ -251,9 +258,10 @@ class AddEditEntryScreen extends StatelessWidget {
       initialValue: entry?.comment,
       focusNode: commentFocusNode,
       textCapitalization: TextCapitalization.sentences,
-      onChanged: (value) => Env.store.dispatch(
-        EntryUpdateComment(comment: value),
-      ),
+      onChanged: (value) =>
+          Env.store.dispatch(
+            EntryUpdateComment(comment: value),
+          ),
       maxLines: 1,
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (value) {
@@ -265,7 +273,7 @@ class AddEditEntryScreen extends StatelessWidget {
   void handleClick(String value) async {
     switch (value) {
       case 'Delete Entry':
-        //confirm deletion
+      //confirm deletion
         await Get.dialog(
           SimpleConfirmationDialog(
             title: 'Are you sure you want to delete this Entry?',
@@ -286,23 +294,24 @@ class AddEditEntryScreen extends StatelessWidget {
     return entry?.id == null
         ? Container()
         : PopupMenuButton<String>(
-            onSelected: handleClick,
-            itemBuilder: (BuildContext context) {
-              return {'Delete Entry'}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
+      onSelected: handleClick,
+      itemBuilder: (BuildContext context) {
+        return {'Delete Entry'}.map((String choice) {
+          return PopupMenuItem<String>(
+            value: choice,
+            child: Text(choice),
           );
+        }).toList();
+      },
+    );
   }
 
   _updateCategoriesOnClose() {
     Env.store.dispatch(LogUpdateCategoriesSubcategoriesOnEntryScreenClose());
   }
 
-  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave}) {
+  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave, @required Currency logCurrency}) {
+    //TODO this will have to be changed to entry currency
     int remainingSpending = 0;
     members.forEach((key, member) {
       if (member.paying && member.paid != null) {
@@ -332,7 +341,7 @@ class AddEditEntryScreen extends StatelessWidget {
                     text: TextSpan(children: [
                       TextSpan(text: 'Distribute Remaining ', style: TextStyle(color: Colors.black)),
                       TextSpan(
-                          text: '\$${formattedAmount(value: remainingSpending)}',
+                          text: '${formattedAmount(value: remainingSpending, currency: logCurrency)}',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: Colors.black,

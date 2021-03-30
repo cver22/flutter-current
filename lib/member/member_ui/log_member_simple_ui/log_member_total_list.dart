@@ -12,6 +12,7 @@ class LogMemberTotalList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<LogMember> logMembers = log.logMembers.values.toList();
+
     return Column(
       children: [
         Divider(height: 0.0),
@@ -21,7 +22,7 @@ class LogMemberTotalList extends StatelessWidget {
           itemCount: logMembers.length,
           itemBuilder: (BuildContext context, int index) {
             final LogMember member = logMembers[index];
-            return LogMemberTotalListTile(member: member, logId: log.id);
+            return LogMemberTotalListTile(member: member, log: log);
           },
         ),
       ],

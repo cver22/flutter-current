@@ -1,3 +1,5 @@
+import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/log/log_model/log.dart';
 import 'package:flutter/material.dart';
 
 import '../../../env.dart';
@@ -6,13 +8,14 @@ import '../../member_model/log_member_model/log_member.dart';
 
 class LogMemberTotalListTile extends StatelessWidget {
   final LogMember member;
-  final String logId;
+  final Log log;
 
-  const LogMemberTotalListTile({Key key, this.member, this.logId})
+  const LogMemberTotalListTile({Key key, this.member, this.log})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    Currency currency = CurrencyService().findByCode(log.currency);
     return Column(
       children: [
         ListTile(
@@ -23,7 +26,7 @@ class LogMemberTotalListTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(member.name ?? 'Please enter a name'),
-              _totals(member: member, logId: logId),
+              _totals(member: member, logId: log.id, currency: currency),
             ],
           ),
         ),
@@ -33,7 +36,7 @@ class LogMemberTotalListTile extends StatelessWidget {
   }
 }
 
-Widget _totals({@required LogMember member, @required String logId}) {
+Widget _totals({@required LogMember member, @required String logId, @required Currency currency}) {
   int paid = 0;
   int spent = 0;
   int owed = 0;
@@ -51,11 +54,11 @@ Widget _totals({@required LogMember member, @required String logId}) {
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.end,
     children: [
-      Text('Paid: \$ ${formattedAmount(value: paid, emptyReturnZeroed: true)}'),
+      Text('Paid: ${formattedAmount(value: paid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
       Text(
-          'Spent: \$ ${formattedAmount(value: spent, emptyReturnZeroed: true)}'),
+          'Spent: ${formattedAmount(value: spent, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
       Text(
-          '${owed > 0 ? 'Owed' : 'Owes'}:  \$ ${formattedAmount(value: owed.abs(), emptyReturnZeroed: true)}'),
+          '${owed > 0 ? 'Owed' : 'Owes'}:  ${formattedAmount(value: owed.abs(), returnZeros: true, returnWithSymbol: true, currency: currency)}'),
     ],
   );
 }

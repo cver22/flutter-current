@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -27,6 +28,7 @@ class LogListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     int currentMonth = now.month;
+    Currency currency = CurrencyService().findByCode(log.currency);
 
     return Card(
       elevation: 10.0,
@@ -80,13 +82,13 @@ class LogListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: \$ ${formattedAmount(value: logTotal?.averagePerDay, emptyReturnZeroed: true)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: ${formattedAmount(value: logTotal?.averagePerDay, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} Total: \$ ${formattedAmount(value: logTotal?.thisMonthTotalPaid, emptyReturnZeroed: true)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Total: ${formattedAmount(value: logTotal?.thisMonthTotalPaid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: \$ ${formattedAmount(value: logTotal?.lastMonthTotalPaid, emptyReturnZeroed: true)}'),
+                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: ${formattedAmount(value: logTotal?.lastMonthTotalPaid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: \$ ${formattedAmount(value: logTotal?.sameMonthLastYearTotalPaid, emptyReturnZeroed: true)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: ${formattedAmount(value: logTotal?.sameMonthLastYearTotalPaid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
                   ],
                 ),
               ],

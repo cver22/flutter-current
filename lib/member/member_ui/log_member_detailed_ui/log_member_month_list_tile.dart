@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -22,6 +23,8 @@ class LogMemberMonthListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    Currency currency = CurrencyService().findByCode(log.currency);
+
     return Column(
       children: [
         ListTile(
@@ -42,11 +45,11 @@ class LogMemberMonthListTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                      'Paid: \$ ${formattedAmount(value: member.paid, emptyReturnZeroed: true)}'),
+                      'Paid: ${formattedAmount(value: member.paid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
                   singleMemberLog
                       ? Container()
                       : Text(
-                          '  Spent: \$ ${formattedAmount(value: member.spent, emptyReturnZeroed: true)}'),
+                          '  Spent: ${formattedAmount(value: member.spent, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
                 ],
               )
             ],

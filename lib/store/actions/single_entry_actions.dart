@@ -98,11 +98,12 @@ class EntrySelectEntry implements AppAction {
   AppState updateState(AppState appState) {
     AppEntry entry = appState.entriesState.entries[entryId];
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
     entryMembers.updateAll((key, value) => value.copyWith(
-          payingController: TextEditingController(text: formattedAmount(value: value?.paid)),
-          spendingController: TextEditingController(text: formattedAmount(value: value?.spent)),
+          payingController: TextEditingController(text: formattedAmount(value: value?.paid, currency: currency)),
+          spendingController: TextEditingController(text: formattedAmount(value: value?.spent, currency: currency)),
           payingFocusNode: FocusNode(),
           spendingFocusNode: FocusNode(),
         ));
@@ -600,6 +601,8 @@ class EntryUpdateMemberPaidAmount implements AppAction {
 
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
     int amount = 0;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
@@ -619,7 +622,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
       return value.copyWith(userEditedSpent: false);
     });
 
-    members = _divideSpendingEvenly(amount: amount, members: members);
+    members = _divideSpendingEvenly(amount: amount, members: members, currency: currency);
     entry = entry.copyWith(amount: amount, entryMembers: members);
 
     return updateSubstates(
@@ -644,11 +647,13 @@ class EntryUpdateMemberSpentAmount implements AppAction {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
 
     //update amount spent by individual member
     members.update(member.uid, (value) => member.copyWith(spent: spentValue, userEditedSpent: true));
 
-    members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    members = _divideSpendingEvenly(amount: entry.amount, members: members, currency: currency);
     entry = entry.copyWith(entryMembers: members);
 
     return updateSubstates(
@@ -669,8 +674,10 @@ class EntryDivideRemainingSpending implements AppAction {
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
 
-    members = _distributeRemainingSpending(amount: entry.amount, members: members);
+    members = _distributeRemainingSpending(amount: entry.amount, members: members, currency: currency);
     entry = entry.copyWith(entryMembers: members);
 
     return updateSubstates(
@@ -689,12 +696,14 @@ class EntryResetMemberSpendingToAll implements AppAction {
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
 
     members.updateAll((key, member) {
       return member.copyWith(userEditedSpent: false);
     });
 
-    members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    members = _divideSpendingEvenly(amount: entry.amount, members: members, currency: currency);
     entry = entry.copyWith(entryMembers: members);
 
     return updateSubstates(
@@ -717,6 +726,8 @@ class EntryToggleMemberPaying implements AppAction {
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
     EntryMember member = this.member;
     int amount = 0;
 
@@ -752,7 +763,7 @@ class EntryToggleMemberPaying implements AppAction {
     });
 
     //redistributes expense based on revision of who is paying
-    members = _divideSpendingEvenly(amount: amount, members: members);
+    members = _divideSpendingEvenly(amount: amount, members: members, currency: currency);
     entry = entry.copyWith(entryMembers: members, amount: amount);
 
     return updateSubstates(
@@ -776,6 +787,8 @@ class EntryToggleMemberSpending implements AppAction {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
+    Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
+    Currency currency = CurrencyService().findByCode(log.currency);
 
     //toggles member spending or not
     int membersSpending = 0;
@@ -792,7 +805,7 @@ class EntryToggleMemberSpending implements AppAction {
     }
 
     //redistributes expense based on revision of who is paying
-    members = _divideSpendingEvenly(amount: entry.amount, members: members);
+    members = _divideSpendingEvenly(amount: entry.amount, members: members, currency: currency);
     entry = entry.copyWith(entryMembers: members);
 
     return updateSubstates(
@@ -1256,7 +1269,8 @@ Map<String, Tag> categoryOrSubcategoryUpdateAllTagFrequencies(
   return tags;
 }
 
-Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required Map<String, EntryMember> members}) {
+Map<String, EntryMember> _divideSpendingEvenly(
+    {@required int amount, @required Map<String, EntryMember> members, @required Currency currency}) {
   Map<String, EntryMember> entryMembers = Map.from(members);
   int membersSpending = 0;
   int remainder = 0;
@@ -1293,7 +1307,8 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
           remainder--;
         }
 
-        member.spendingController.value = TextEditingValue(text: formattedAmount(value: memberSpentAmount));
+        member.spendingController.value =
+            TextEditingValue(text: formattedAmount(value: memberSpentAmount, currency: currency));
         return member.copyWith(spent: memberSpentAmount);
       } else {
         return member;
@@ -1308,8 +1323,11 @@ Map<String, EntryMember> _divideSpendingEvenly({@required int amount, @required 
   return entryMembers;
 }
 
-Map<String, EntryMember> _distributeRemainingSpending(
-    {@required int amount, @required Map<String, EntryMember> members}) {
+Map<String, EntryMember> _distributeRemainingSpending({
+  @required int amount,
+  @required Map<String, EntryMember> members,
+  @required Currency currency,
+}) {
   Map<String, EntryMember> entryMembers = Map.from(members);
   int membersSpending = 0;
   int remainder = 0;
@@ -1339,7 +1357,7 @@ Map<String, EntryMember> _distributeRemainingSpending(
           remainder--;
         }
 
-        member.spendingController.value = TextEditingValue(text: formattedAmount(value: memberSpentAmount));
+        member.spendingController.value = TextEditingValue(text: formattedAmount(value: memberSpentAmount, currency: currency));
         return member.copyWith(spent: memberSpentAmount);
       } else {
         return member;
