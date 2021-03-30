@@ -140,8 +140,9 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
           return CurrencyListTile(
               currency: _currency,
               conversionRate: conversionRate,
-              logCurrency: referenceCurrency,
-              returnCurrency: returnCurrency);
+              baseCurrency: referenceCurrency,
+              returnCurrency: returnCurrency,
+              withConversionRates: withConversionRates);
         });
   }
 }

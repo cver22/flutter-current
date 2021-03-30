@@ -1,16 +1,16 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:get/get.dart';
-import '../../utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 class CurrencyListTile extends StatelessWidget {
   final Currency currency;
   final double conversionRate;
-  final Currency logCurrency;
+  final Currency baseCurrency;
   final Function(String) returnCurrency;
+  final bool withConversionRates;
 
   const CurrencyListTile(
-      {Key key, @required this.currency, this.conversionRate = 0.0, this.logCurrency, @required this.returnCurrency})
+      {Key key, @required this.currency, this.conversionRate = 0.0, this.baseCurrency, @required this.returnCurrency, this.withConversionRates = false})
       : super(key: key);
 
   @override
@@ -55,9 +55,9 @@ class CurrencyListTile extends StatelessWidget {
                                   color: Theme.of(context).hintColor,
                                 ),
                               ),
-                              if (conversionRate != null && conversionRate > 0.0 && currency.code != logCurrency.code)
+                              if (withConversionRates && currency.code != baseCurrency.code)
                                 Text(
-                                  '1 ${CurrencyUtils.countryCodeToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.countryCodeToEmoji(logCurrency)}',
+                                  '1 ${CurrencyUtils.countryCodeToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.countryCodeToEmoji(baseCurrency)}',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Theme.of(context).hintColor,
