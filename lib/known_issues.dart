@@ -59,10 +59,10 @@
 
 //TODO START HERE
 //build build local repository for currency fetcher
-//build json decoder to show currency information
-//refactor entries to handle foreign currencies
-//changing currency clears all entered values, include warning
 //fix filter to handle multiple currencies
+//ask Ana, how should entry list look
+//currencies to show last updated
+//remove currency list filter from currency state
 
 
 

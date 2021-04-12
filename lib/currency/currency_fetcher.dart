@@ -21,9 +21,9 @@ class CurrencyFetcher {
   Future<void> loadRemoteConversionRates({@required String referenceCurrency}) async {
     _store.dispatch(CurrencySetLoading());
 
-    var json = await _currencyRemoteRepository.loadConversionRates(referenceCurrency: referenceCurrency);
+    Map<String, dynamic> json = await _currencyRemoteRepository.loadConversionRates(referenceCurrency: referenceCurrency);
 
-    print(json);
+    _store.dispatch(CurrencySetExchangeRatesFromRemote(json: json, referenceCurrency: referenceCurrency));
 
     _store.dispatch(CurrencySetLoaded());
   }

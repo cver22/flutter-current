@@ -3,16 +3,16 @@ import 'package:meta/meta.dart';
 
 @immutable
 class ConversionRates extends Equatable {
-  final Map<String, double> conversionRates; // Currency to convert from to log currency and rate
+  final Map<String, double> rates; // Currency to convert from to log currency and rate
   final DateTime lastUpdated;
 
   ConversionRates({
-    this.conversionRates = const {},
+    this.rates = const {},
     @required this.lastUpdated,
   });
 
   @override
-  List<Object> get props => [conversionRates, lastUpdated];
+  List<Object> get props => [rates, lastUpdated];
 
   @override
   bool get stringify => true;
@@ -21,13 +21,13 @@ class ConversionRates extends Equatable {
     Map<String, double> conversionRates,
     DateTime lastUpdated,
   }) {
-    if ((conversionRates == null || identical(conversionRates, this.conversionRates)) &&
+    if ((conversionRates == null || identical(conversionRates, this.rates)) &&
         (lastUpdated == null || identical(lastUpdated, this.lastUpdated))) {
       return this;
     }
 
     return new ConversionRates(
-      conversionRates: conversionRates ?? this.conversionRates,
+      rates: conversionRates ?? this.rates,
       lastUpdated: lastUpdated ?? this.lastUpdated,
     );
   }
