@@ -16,7 +16,9 @@ class AppEntry extends Equatable with ChangeNotifier {
     this.categoryId = NO_CATEGORY,
     this.subcategoryId = NO_SUBCATEGORY,
     this.amount = 0,
-    this.comment,
+    this.amountForeign = 0,
+    this.exchangeRate = 1.0,
+    this.comment = '',
     @required this.dateTime,
     this.tagIDs = const [],
     this.entryMembers = const {},
@@ -28,6 +30,8 @@ class AppEntry extends Equatable with ChangeNotifier {
   final String categoryId;
   final String subcategoryId;
   final int amount;
+  final int amountForeign;
+  final double exchangeRate;
   final String comment;
   final DateTime dateTime;
   final List<String> tagIDs;
@@ -36,24 +40,26 @@ class AppEntry extends Equatable with ChangeNotifier {
 
   @override
   List<Object> get props =>
-      [id, logId, currency, categoryId, subcategoryId, amount, comment, dateTime, tagIDs, entryMembers];
+      [id, logId, currency, categoryId, subcategoryId, amount, amountForeign, exchangeRate, comment, dateTime, tagIDs, entryMembers];
 
   @override
   String toString() {
     return 'Entry {id: $id, $LOG_ID: $logId, '
         'currency: $currency, $CATEGORY: $categoryId, '
-        '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, $COMMENT: $comment, '
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers}';
+        '$SUBCATEGORY: $subcategoryId, $AMOUNT: $amount, $AMOUNT_FOREIGN: $amountForeign, $EXCHANGE_RATE: $exchangeRate, '
+        '$COMMENT: $comment, $DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers}';
   }
 
-  MyEntryEntity toEntity() {
-    return MyEntryEntity(
+  AppEntryEntity toEntity() {
+    return AppEntryEntity(
       id: id,
       logId: logId,
       currency: currency,
       category: categoryId,
       subcategory: subcategoryId,
       amount: amount,
+      amountForeign: amountForeign,
+      exchangeRate: exchangeRate,
       comment: comment,
       dateTime: dateTime,
       tagIDs: Map<String, String>.fromIterable(tagIDs, key: (e) => e, value: (e) => e),
@@ -62,7 +68,7 @@ class AppEntry extends Equatable with ChangeNotifier {
     );
   }
 
-  static AppEntry fromEntity(MyEntryEntity entity) {
+  static AppEntry fromEntity(AppEntryEntity entity) {
     //re-order the entry members as per user preference prior to passing to the entry
     LinkedHashMap<String, EntryMember> entryMembersLinkedMap = LinkedHashMap();
     for (int i = 0; i < entity.entryMembers.length; i++) {
@@ -82,7 +88,9 @@ class AppEntry extends Equatable with ChangeNotifier {
       categoryId: entity.category,
       subcategoryId: entity.subcategory,
       amount: entity.amount,
-      comment: entity.comment,
+      amountForeign: entity.amountForeign,
+      exchangeRate: entity.exchangeRate,
+      comment: entity.comment ?? '',
       dateTime: entity.dateTime,
       tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
       entryMembers: entryMembersLinkedMap,
@@ -96,6 +104,8 @@ class AppEntry extends Equatable with ChangeNotifier {
     String categoryId,
     String subcategoryId,
     int amount,
+    int amountForeign,
+    double exchangeRate,
     String comment,
     DateTime dateTime,
     List<String> tagIDs,
@@ -107,6 +117,8 @@ class AppEntry extends Equatable with ChangeNotifier {
         (categoryId == null || identical(categoryId, this.categoryId)) &&
         (subcategoryId == null || identical(subcategoryId, this.subcategoryId)) &&
         (amount == null || identical(amount, this.amount)) &&
+        (amountForeign == null || identical(amountForeign, this.amountForeign)) &&
+        (exchangeRate == null || identical(exchangeRate, this.exchangeRate)) &&
         (comment == null || identical(comment, this.comment)) &&
         (dateTime == null || identical(dateTime, this.dateTime)) &&
         (tagIDs == null || identical(tagIDs, this.tagIDs)) &&
@@ -121,6 +133,8 @@ class AppEntry extends Equatable with ChangeNotifier {
       categoryId: categoryId ?? this.categoryId,
       subcategoryId: subcategoryId ?? this.subcategoryId,
       amount: amount ?? this.amount,
+      amountForeign: amountForeign ?? this.amountForeign,
+      exchangeRate: exchangeRate ?? this.exchangeRate,
       comment: comment ?? this.comment,
       dateTime: dateTime ?? this.dateTime,
       tagIDs: tagIDs ?? this.tagIDs,

@@ -14,6 +14,8 @@ class EntryMember extends Member {
   final FocusNode payingFocusNode;
   final FocusNode spendingFocusNode;
   final bool userEditedSpent;
+  final int paidForeign;
+  final int spentForeign;
 
   EntryMember({
     uid,
@@ -27,16 +29,34 @@ class EntryMember extends Member {
     this.payingFocusNode,
     this.spendingFocusNode,
     this.userEditedSpent = false,
+    this.paidForeign = 0,
+    this.spentForeign = 0,
   }) : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
-  List<Object> get props => [uid, paid, spent, paying, spending, order];
+  List<Object> get props => [
+        uid,
+        paid,
+        spent,
+        paying,
+        spending,
+        order,
+        paying,
+        spending,
+        payingController,
+        spendingController,
+        payingFocusNode,
+        spendingFocusNode,
+        userEditedSpent,
+        paidForeign,
+        spentForeign,
+      ];
 
   @override
   String toString() {
     return 'EntryMember {$UID: $uid, paid: $paid, spent: $spent, paying: $paying, spending: $spending, '
         'payingController: $payingController, spendingController: $spendingController, '
-        'payingFocusNode: $payingFocusNode, spendingFocusNode: $spendingFocusNode, $ORDER: $order, userEditedSpent: $userEditedSpent}';
+        'payingFocusNode: $payingFocusNode, spendingFocusNode: $spendingFocusNode, $ORDER: $order, userEditedSpent: $userEditedSpent, $PAID_FOREIGN: $paidForeign, $SPENT_FOREIGN: $spentForeign}';
   }
 
   EntryMemberEntity toEntity() {
@@ -47,6 +67,8 @@ class EntryMember extends Member {
       paying: paying,
       spending: spending,
       order: order,
+      paidForeign: paidForeign,
+      spentForeign: spentForeign,
     );
   }
 
@@ -58,6 +80,8 @@ class EntryMember extends Member {
       paying: entity.paying,
       spending: entity.spending,
       order: entity.order,
+      paidForeign: entity.paidForeign,
+      spentForeign: entity.spentForeign,
     );
   }
 
@@ -73,23 +97,22 @@ class EntryMember extends Member {
     FocusNode payingFocusNode,
     FocusNode spendingFocusNode,
     bool userEditedSpent,
+    int paidForeign,
+    int spentForeign,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (paid == null || identical(paid, this.paid)) &&
         (spent == null || identical(spent, this.spent)) &&
         (paying == null || identical(paying, this.paying)) &&
         (spending == null || identical(spending, this.spending)) &&
-        (payingController == null ||
-            identical(payingController, this.payingController)) &&
-        (spendingController == null ||
-            identical(spendingController, this.spendingController)) &&
-        (payingFocusNode == null ||
-            identical(payingFocusNode, this.payingFocusNode)) &&
-        (spendingFocusNode == null ||
-            identical(spendingFocusNode, this.spendingFocusNode)) &&
+        (payingController == null || identical(payingController, this.payingController)) &&
+        (spendingController == null || identical(spendingController, this.spendingController)) &&
+        (payingFocusNode == null || identical(payingFocusNode, this.payingFocusNode)) &&
+        (spendingFocusNode == null || identical(spendingFocusNode, this.spendingFocusNode)) &&
         (order == null || identical(order, this.order)) &&
-        (userEditedSpent == null ||
-            identical(userEditedSpent, this.userEditedSpent))) {
+        (userEditedSpent == null || identical(userEditedSpent, this.userEditedSpent)) &&
+        (paidForeign == null || identical(paidForeign, this.paidForeign)) &&
+        (spentForeign == null || identical(spentForeign, this.spentForeign))) {
       return this;
     }
 
@@ -105,6 +128,8 @@ class EntryMember extends Member {
       payingFocusNode: payingFocusNode ?? this.payingFocusNode,
       spendingFocusNode: spendingFocusNode ?? this.spendingFocusNode,
       userEditedSpent: userEditedSpent ?? this.userEditedSpent,
+      paidForeign: paidForeign ?? this.paidForeign,
+      spentForeign: spentForeign ?? this.spentForeign,
     );
   }
 }

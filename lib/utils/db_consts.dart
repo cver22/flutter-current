@@ -17,10 +17,10 @@ const String PARENT_CATEGORY_ID = 'parentCategoryId';
 const String DEFAULT_CATEGORY = 'defaultCategory';
 enum CategoryOrSubcategory { category, subcategory }
 enum SettingsLogFilter { settings, log, filter }
-enum EntriesCharts {entries, charts}
+enum EntriesCharts { entries, charts }
 enum TagCollectionType { entry, category, log }
-enum SortMethod {alphabetical, frequency}
-enum DatePickerType {start, end, entry}
+enum SortMethod { alphabetical, frequency }
+enum DatePickerType { start, end, entry }
 //TODO implement filtering later
 //enum GroupBy {day, week, month, year}
 //enum FilterBy {none, all, category, subcategory, tag}
@@ -44,7 +44,6 @@ const String OTHER = 'other';
 const String TRANSFER_FUNDS = 'transferFunds';
 const String PAYMENT = 'payment';
 
-
 //Entry constants
 const String ENTRY_COLLECTION = 'entries';
 const String LOG_ID = 'logId';
@@ -52,6 +51,9 @@ const String ENTRY_NAME = 'entryName';
 const String ENTRY_MEMBERS = 'entryMembers';
 const String ENTRY_MEMBER = 'entryMember';
 const String AMOUNT = 'amount';
+const String AMOUNT_FOREIGN = 'amountForeign';
+const String ENTRY_CURRENCY = 'entryCurrency';
+const String EXCHANGE_RATE = 'exchangeRate';
 const String COMMENT = 'comment';
 const String LOCATION = 'location';
 const String DATE_TIME = 'dateTime';
@@ -61,6 +63,8 @@ enum PaidOrSpent { paid, spent }
 const String AMOUNT_MY_CURRENCY = 'amountInMyCurrency';
 const String PAID = 'paid';
 const String SPENT = 'spent';
+const String PAID_FOREIGN = 'paidForeign';
+const String SPENT_FOREIGN = 'spentForeign';
 
 //Tags constants
 const String TAG_COLLECTION = 'tags';

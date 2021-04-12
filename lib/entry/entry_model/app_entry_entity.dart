@@ -7,17 +7,17 @@ import '../../member/member_model/entry_member_model/entry_member_entity.dart';
 import '../../utils/db_consts.dart';
 
 @immutable
-class MyEntryEntity extends Equatable {
-
-
-  const MyEntryEntity(
+class AppEntryEntity extends Equatable {
+  const AppEntryEntity(
       {this.id,
       this.logId,
       this.currency,
       this.category = NO_CATEGORY,
       this.subcategory = NO_SUBCATEGORY,
       this.amount = 0,
-      this.comment,
+      this.amountForeign = 0,
+      this.exchangeRate = 1.0,
+      this.comment ='',
       this.dateTime,
       this.tagIDs = const {},
       this.entryMembers = const {},
@@ -29,6 +29,8 @@ class MyEntryEntity extends Equatable {
   final String category;
   final String subcategory;
   final int amount;
+  final int amountForeign;
+  final double exchangeRate;
   final String comment;
   final DateTime dateTime;
   final Map<String, String> tagIDs;
@@ -43,6 +45,8 @@ class MyEntryEntity extends Equatable {
         category,
         subcategory,
         amount,
+        amountForeign,
+        exchangeRate,
         comment,
         dateTime,
         tagIDs,
@@ -54,25 +58,25 @@ class MyEntryEntity extends Equatable {
   String toString() {
     return 'EntryEntity {$ID: $id, $LOG_ID: $logId, '
         'currency: $currency, $CATEGORY: $category, '
-        '$SUBCATEGORY: $subcategory, $AMOUNT: $amount, $COMMENT: $comment'
-        '$DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, memberList: $memberList)}';
+        '$SUBCATEGORY: $subcategory, $AMOUNT: $amount, $AMOUNT_FOREIGN: $amountForeign, $EXCHANGE_RATE: $exchangeRate, '
+        '$COMMENT: $comment, $DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, memberList: $memberList)}';
   }
 
-  static MyEntryEntity fromSnapshot(DocumentSnapshot snap) {
-    return MyEntryEntity(
+  static AppEntryEntity fromSnapshot(DocumentSnapshot snap) {
+    return AppEntryEntity(
       id: snap.id,
       logId: snap.data()[LOG_ID],
       currency: snap.data()[CURRENCY_NAME],
       category: snap.data()[CATEGORY],
       subcategory: snap.data()[SUBCATEGORY],
       amount: snap.data()[AMOUNT],
+      amountForeign: snap.data()[AMOUNT_FOREIGN],
+      exchangeRate: snap.data()[EXCHANGE_RATE],
       comment: snap.data()[COMMENT],
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()[DATE_TIME]),
-      tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)
-          ?.map((key, value) => MapEntry(key, value)),
-      entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)?.map(
-          (key, value) => MapEntry(
-              key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
+      tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
+          ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }
 
@@ -83,11 +87,12 @@ class MyEntryEntity extends Equatable {
       CATEGORY: category,
       SUBCATEGORY: subcategory,
       AMOUNT: amount,
+      AMOUNT_FOREIGN: amountForeign,
+      EXCHANGE_RATE: exchangeRate,
       COMMENT: comment,
       DATE_TIME: dateTime.millisecondsSinceEpoch,
       TAGS: tagIDs.map((key, value) => MapEntry(key, value)),
-      MEMBERS: entryMembers
-          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       MEMBER_LIST: memberList
     };
   }

@@ -82,13 +82,13 @@ class LogListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: ${formattedAmount(value: logTotal?.averagePerDay, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: ${formattedAmount(value: logTotal.averagePerDay, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} Total: ${formattedAmount(value: logTotal?.thisMonthTotalPaid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Total: ${formattedAmount(value: logTotal.thisMonthTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: ${formattedAmount(value: logTotal?.lastMonthTotalPaid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: ${formattedAmount(value: logTotal.lastMonthTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: ${formattedAmount(value: logTotal?.sameMonthLastYearTotalPaid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: ${formattedAmount(value: logTotal.sameMonthLastYearTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                   ],
                 ),
               ],

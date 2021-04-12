@@ -54,11 +54,11 @@ Widget _totals({@required LogMember member, @required String logId, @required Cu
     mainAxisSize: MainAxisSize.min,
     crossAxisAlignment: CrossAxisAlignment.end,
     children: [
-      Text('Paid: ${formattedAmount(value: paid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+      Text('Paid: ${formattedAmount(value: paid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
       Text(
-          'Spent: ${formattedAmount(value: spent, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+          'Spent: ${formattedAmount(value: spent, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
       Text(
-          '${owed > 0 ? 'Owed' : 'Owes'}:  ${formattedAmount(value: owed.abs(), returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+          '${owed > 0 ? 'Owed' : 'Owes'}:  ${formattedAmount(value: owed.abs(), showTrailingZeros: true, showSymbol: true, currency: currency)}'),
     ],
   );
 }

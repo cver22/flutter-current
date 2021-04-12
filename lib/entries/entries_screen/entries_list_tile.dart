@@ -28,7 +28,7 @@ class EntriesListTile extends StatelessWidget {
           ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
     }
     if (log != null) {
-      Currency currency = CurrencyService().findByCode(log.currency);
+      Currency logCurrency = CurrencyService().findByCode(log.currency);
       return Column(
         children: [
           ListTile(
@@ -48,12 +48,13 @@ class EntriesListTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (entry.tagIDs.length > 0) _buildTagWidget(logId: log.id),
-                  if (entry?.comment != null && entry.comment.length > 0) Text(entry.comment),
+                  if (entry.comment.length > 0) Text(entry.comment),
                 ],
               ),
             ),
-            trailing: _buildTrailingContents(date: date, currency: currency),
-            onTap: () => {
+            trailing: _buildTrailingContents(date: date, logCurrency: logCurrency),
+            onTap: () =>
+            {
               Env.store.dispatch(EntrySelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
             },
@@ -69,16 +70,25 @@ class EntriesListTile extends StatelessWidget {
     }
   }
 
-  Widget _buildTrailingContents({@required DateTime date, @required Currency currency}) {
+  Widget _buildTrailingContents({@required DateTime date, @required Currency logCurrency}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
       children: [
         Text(
-          '${formattedAmount(value: entry?.amount, withSeparator: true, currency: currency, returnWithSymbol: true)}',
+          '${formattedAmount(value: entry.amount, showSeparators: true, currency: logCurrency, showSymbol: true)}',
           style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
         ),
-        SizedBox(height: 8.0),
+        if(entry.currency != logCurrency.code)
+          Text(
+            '${formattedAmount(value: entry.amountForeign,
+                showSeparators: true,
+                currency: CurrencyService().findByCode(entry.currency),
+                showSymbol: true,
+                showCurrency: true)}',
+            style: TextStyle(fontSize: 14.0),
+          ),
+        SizedBox(height: 4.0),
         Text(
           '${MONTHS_SHORT[date.month - 1]} ${date.day.toString()}, ${date.year.toString()}',
           style: TextStyle(fontSize: 12.0),
@@ -92,12 +102,16 @@ class EntriesListTile extends StatelessWidget {
     String subcategoryId = entry?.subcategoryId;
 
     if (subcategoryId != null && !subcategoryId.contains(OTHER)) {
-      emojiChar = log.subcategories.firstWhere((element) => element.id == subcategoryId, orElse: () => null)?.emojiChar;
+      emojiChar = log.subcategories
+          .firstWhere((element) => element.id == subcategoryId, orElse: () => null)
+          ?.emojiChar;
     }
 
     if (entry?.categoryId != null && emojiChar == null) {
       emojiChar =
-          log.categories.firstWhere((element) => element.id == entry.categoryId, orElse: () => null)?.emojiChar ??
+          log.categories
+              .firstWhere((element) => element.id == entry.categoryId, orElse: () => null)
+              ?.emojiChar ??
               '\u{2757}';
     }
 
@@ -108,7 +122,7 @@ class EntriesListTile extends StatelessWidget {
     AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
         orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
     AppCategory subcategory =
-        log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
+    log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
 
     bool hasSubcategory = subcategory != null;
 
@@ -116,18 +130,18 @@ class EntriesListTile extends StatelessWidget {
       children: [
         hasSubcategory
             ? Text(
-                '${subcategory.name}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              )
+          '${subcategory.name}',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        )
             : Container(),
         hasSubcategory
             ? Text(
-                '${category.emojiChar} ${category.name}',
-              )
+          '${category.emojiChar} ${category.name}',
+        )
             : Text(
-                '${category.name}',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
+          '${category.name}',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
       ],
     );
   }

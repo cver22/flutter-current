@@ -45,11 +45,11 @@ class LogMemberMonthListTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   Text(
-                      'Paid: ${formattedAmount(value: member.paid, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+                      'Paid: ${formattedAmount(value: member.paid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                   singleMemberLog
                       ? Container()
                       : Text(
-                          '  Spent: ${formattedAmount(value: member.spent, returnZeros: true, returnWithSymbol: true, currency: currency)}'),
+                          '  Spent: ${formattedAmount(value: member.spent, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                 ],
               )
             ],

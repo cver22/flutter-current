@@ -32,6 +32,10 @@
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 //add anonymous sign in and create red banner asking the user to signup or risk losing their data
 //TODO, give user option to change default payer on a log and from there the FAB button will chose that as default for EntrySetNewSelect, until then, it defaults to the user
+//TODO entry time stamp at 12pm is wrong
+//TODO modify tags to also include date of recent use
+//TODO need to trigger log totals calculator when getting added to a log
+//TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? should the adding of someone go through an update all the entries?
 
 
 //TODO VISUAL
@@ -40,6 +44,7 @@
 //TODO settings for month/day separator on the entries screen
 //TODO make note that transfer funds do not show up in monthly totals
 //TODO is there a better way to handle "Other" in entries tiles
+
 
 
 
@@ -55,8 +60,6 @@
 //TODO START HERE
 //build build local repository for currency fetcher
 //build json decoder to show currency information
-
-//TODO make entry responsive to currencies - DO THIS NEXT, edit currency_formatters, formatted amount
 //refactor entries to handle foreign currencies
 //changing currency clears all entered values, include warning
 //fix filter to handle multiple currencies

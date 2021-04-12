@@ -2,21 +2,21 @@ import 'package:currency_picker/currency_picker.dart';
 import 'package:currency_picker/src/currency.dart';
 import 'package:meta/meta.dart';
 
-String formattedAmount({int value = 0, bool withSeparator = false, bool returnZeros = false, Currency currency , bool returnWithSymbol = false}) {
-
-
+String formattedAmount(
+    {int value = 0,
+    bool showSeparators = false,
+    bool showTrailingZeros = false,
+    Currency currency,
+    bool showSymbol = false,
+    bool showCurrency = false}) {
   String returnString = '';
 
   if (value != 0) {
-
-
-
     bool isNegative = value < 0;
     int absValue = value.abs();
     int smallUnits = 0;
     int bigUnits = 0;
     String bigUnitsString = '';
-
 
     //extract small digits if currency has decimal places
     if (currency.decimalDigits > 0) {
@@ -31,13 +31,9 @@ String formattedAmount({int value = 0, bool withSeparator = false, bool returnZe
     }
 
     //Adds separator to the string if big units is greater than 3
-    if (withSeparator && bigUnits
-        .toString()
-        .length > 3) {
+    if (showSeparators && bigUnits.toString().length > 3) {
       String oldString = bigUnits.toString();
-      int i = bigUnits
-          .toString()
-          .length;
+      int i = bigUnits.toString().length;
       bigUnitsString = oldString.substring(i - 3, i);
       oldString = oldString.substring(0, i - 3);
       i -= 3;
@@ -57,23 +53,24 @@ String formattedAmount({int value = 0, bool withSeparator = false, bool returnZe
 
     returnString += bigUnitsString;
 
-
     if (currency.decimalDigits > 0) {
       returnString += '${currency.decimalSeparator}${smallUnits.toString().padLeft(2, '0')}';
     }
   } else {
-    returnString =  returnZeros ? '0.00' : returnString;
+    returnString = showTrailingZeros ? '0.00' : returnString;
   }
 
-  if(returnWithSymbol && currency.symbolOnLeft){
-    return '${currency.symbol} $returnString';
-  } else if (returnWithSymbol && !currency.symbolOnLeft) {
-    return '$returnString ${currency.symbol}';
-  } else {
-    return returnString;
+  if (showSymbol && currency.symbolOnLeft) {
+    returnString = '${currency.symbol} $returnString';
+  } else if (showSymbol && !currency.symbolOnLeft) {
+    returnString = '$returnString ${currency.symbol}';
   }
 
+  if (showCurrency) {
+    returnString = '${currency.code} $returnString';
+  }
 
+  return returnString;
 }
 
 int parseNewValue({@required String newValue, @required Currency currency}) {
@@ -93,10 +90,8 @@ int parseNewValue({@required String newValue, @required Currency currency}) {
 
     if (currency.decimalDigits > 0 && absoluteString.contains('.')) {
       value = _parseBigAndSmallUnits(value, absoluteString.indexOf('.'), absoluteString);
-
     } else if (currency.decimalDigits > 0 && absoluteString.contains(',')) {
       value = _parseBigAndSmallUnits(value, absoluteString.indexOf(','), absoluteString);
-
     } else if (currency.decimalDigits > 0) {
       value = (int.parse(absoluteString)) * 100;
     } else {

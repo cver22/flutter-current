@@ -42,7 +42,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
         .map((snapshot) {
       // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
       return snapshot.docs
-          .map((doc) => AppEntry.fromEntity(MyEntryEntity.fromSnapshot(doc)))
+          .map((doc) => AppEntry.fromEntity(AppEntryEntity.fromSnapshot(doc)))
           .toList();
     });
   }

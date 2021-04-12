@@ -78,7 +78,6 @@ class AddEditEntryScreen extends StatelessWidget {
             Log log;
             log = Env.store.state.logsState.logs[entry.logId];
 
-
             return WillPopScope(
               onWillPop: () async {
                 if (singleEntryState.userUpdated) {
@@ -130,10 +129,11 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildContents({@required BuildContext context,
-    @required SingleEntryState entryState,
-    @required Log log,
-    @required AppEntry entry}) {
+  Widget _buildContents(
+      {@required BuildContext context,
+      @required SingleEntryState entryState,
+      @required Log log,
+      @required AppEntry entry}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
@@ -145,12 +145,15 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildForm({@required BuildContext context,
-    @required SingleEntryState entryState,
-    @required Log log,
-    @required AppEntry entry}) {
+  Widget _buildForm(
+      {@required BuildContext context,
+      @required SingleEntryState entryState,
+      @required Log log,
+      @required AppEntry entry}) {
     bool canSave = entryState.canSave;
+    bool foreignTransaction = entry.currency != log.currency;
     Currency logCurrency = CurrencyService().findByCode(log.currency);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -176,8 +179,23 @@ class AddEditEntryScreen extends StatelessWidget {
                 returnCurrency: (currency) {
                   Env.store.dispatch(EntryUpdateCurrency(currency: currency));
                 }),
-
-            _entryTotalLogCurrency(entry: entry, logCurrency: logCurrency), //TODO utilize money package here
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                if (foreignTransaction)
+                  _entryTotalForeignCurrency(
+                    entry: entry,
+                    currency: CurrencyService().findByCode(entry.currency),
+                    foreignTransaction: foreignTransaction,
+                  ),
+                if (foreignTransaction) SizedBox(height: 4.0),
+                _entryTotalLogCurrency(
+                  entry: entry,
+                  currency: logCurrency,
+                  foreignTransaction: foreignTransaction,
+                ),
+              ],
+            )
           ],
         ),
         SizedBox(height: 10),
@@ -188,7 +206,11 @@ class AddEditEntryScreen extends StatelessWidget {
             userUpdated: entryState.userUpdated,
             entryId: entry.id),
 
-        _distributeAmountButtons(members: entryState.selectedEntry.value.entryMembers, canSave: canSave, logCurrency: logCurrency),
+        _distributeAmountButtons(
+            members: entryState.selectedEntry.value.entryMembers,
+            canSave: canSave,
+            logCurrency: logCurrency,
+            remainingSpending: entryState.remainingSpending),
         SizedBox(height: 10.0),
         DateButton(
           datePickerType: DatePickerType.entry,
@@ -208,8 +230,41 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Text _entryTotalLogCurrency({@required AppEntry entry, @required Currency logCurrency}) {
-    return Text('Total: ${formattedAmount(value: entry.amount, withSeparator: true, currency: logCurrency, returnWithSymbol: true, returnZeros: true)}');
+  Text _entryTotalLogCurrency({
+    @required AppEntry entry,
+    @required Currency currency,
+    @required bool foreignTransaction,
+  }) {
+    return Text(
+      '${foreignTransaction ? '${currency.code}: ' : 'Total: '} ${formattedAmount(
+        value: entry.amount,
+        showSeparators: true,
+        currency: currency,
+        showSymbol: true,
+        showTrailingZeros: true,
+      )}',
+      style: foreignTransaction
+          ? TextStyle(fontWeight: FontWeight.normal, fontSize: 12.0)
+          : TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+    );
+  }
+
+  Text _entryTotalForeignCurrency({
+    @required AppEntry entry,
+    @required Currency currency,
+    @required bool foreignTransaction,
+  }) {
+    return Text(
+      '${formattedAmount(
+        value: entry.amountForeign,
+        showSeparators: true,
+        currency: currency,
+        showSymbol: true,
+        showTrailingZeros: true,
+        showCurrency: true,
+      )}',
+      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+    );
   }
 
   Widget _categoryButton({@required AppEntry entry, @required List<AppCategory> categories, @required bool newEntry}) {
@@ -217,8 +272,7 @@ class AddEditEntryScreen extends StatelessWidget {
       entry: true,
       newEntry: newEntry,
       label: 'Select a Category',
-      onPressed: () =>
-      {
+      onPressed: () => {
         Env.store.dispatch(EntryClearAllFocus()),
         Get.dialog(
           EntryCategoryListDialog(
@@ -236,8 +290,7 @@ class AddEditEntryScreen extends StatelessWidget {
     return CategoryButton(
       entry: true,
       label: 'Select a Subcategory',
-      onPressed: () =>
-      {
+      onPressed: () => {
         Env.store.dispatch(EntryClearAllFocus()),
         Get.dialog(
           EntryCategoryListDialog(
@@ -258,10 +311,9 @@ class AddEditEntryScreen extends StatelessWidget {
       initialValue: entry?.comment,
       focusNode: commentFocusNode,
       textCapitalization: TextCapitalization.sentences,
-      onChanged: (value) =>
-          Env.store.dispatch(
-            EntryUpdateComment(comment: value),
-          ),
+      onChanged: (value) => Env.store.dispatch(
+        EntryUpdateComment(comment: value),
+      ),
       maxLines: 1,
       textInputAction: TextInputAction.next,
       onFieldSubmitted: (value) {
@@ -273,7 +325,7 @@ class AddEditEntryScreen extends StatelessWidget {
   void handleClick(String value) async {
     switch (value) {
       case 'Delete Entry':
-      //confirm deletion
+        //confirm deletion
         await Get.dialog(
           SimpleConfirmationDialog(
             title: 'Are you sure you want to delete this Entry?',
@@ -294,34 +346,27 @@ class AddEditEntryScreen extends StatelessWidget {
     return entry?.id == null
         ? Container()
         : PopupMenuButton<String>(
-      onSelected: handleClick,
-      itemBuilder: (BuildContext context) {
-        return {'Delete Entry'}.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
+            onSelected: handleClick,
+            itemBuilder: (BuildContext context) {
+              return {'Delete Entry'}.map((String choice) {
+                return PopupMenuItem<String>(
+                  value: choice,
+                  child: Text(choice),
+                );
+              }).toList();
+            },
           );
-        }).toList();
-      },
-    );
   }
 
   _updateCategoriesOnClose() {
     Env.store.dispatch(LogUpdateCategoriesSubcategoriesOnEntryScreenClose());
   }
 
-  Widget _distributeAmountButtons({@required Map<String, EntryMember> members, @required bool canSave, @required Currency logCurrency}) {
-    //TODO this will have to be changed to entry currency
-    int remainingSpending = 0;
-    members.forEach((key, member) {
-      if (member.paying && member.paid != null) {
-        remainingSpending += member.paid;
-      }
-      if (member.spending && member.spent != null) {
-        remainingSpending -= member.spent;
-      }
-    });
-
+  Widget _distributeAmountButtons(
+      {@required Map<String, EntryMember> members,
+      @required bool canSave,
+      @required Currency logCurrency,
+      @required int remainingSpending}) {
     if (!canSave && remainingSpending != 0) {
       return Column(
         mainAxisSize: MainAxisSize.min,

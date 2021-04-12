@@ -23,6 +23,7 @@ class SingleEntryState extends Equatable {
   final Maybe<String> search;
   final bool canSave;
   final bool newEntry;
+  final int remainingSpending;
 
   const SingleEntryState({
     @required this.selectedEntry,
@@ -38,6 +39,7 @@ class SingleEntryState extends Equatable {
     @required this.search,
     @required this.canSave,
     @required this.newEntry,
+    @required this.remainingSpending,
   });
 
   factory SingleEntryState.initial() {
@@ -55,6 +57,7 @@ class SingleEntryState extends Equatable {
       search: Maybe<String>.none(),
       canSave: false,
       newEntry: false,
+      remainingSpending: 0,
     );
   }
 
@@ -73,6 +76,7 @@ class SingleEntryState extends Equatable {
         search,
         canSave,
         newEntry,
+        remainingSpending,
       ];
 
   @override
@@ -92,6 +96,7 @@ class SingleEntryState extends Equatable {
     Maybe<String> search,
     bool canSave,
     bool newEntry,
+    int remainingSpending,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&
@@ -105,7 +110,8 @@ class SingleEntryState extends Equatable {
         (tagFocusNode == null || identical(tagFocusNode, this.tagFocusNode)) &&
         (search == null || identical(search, this.search)) &&
         (canSave == null || identical(canSave, this.canSave)) &&
-        (newEntry == null || identical(newEntry, this.newEntry))) {
+        (newEntry == null || identical(newEntry, this.newEntry)) &&
+        (remainingSpending == null || identical(remainingSpending, this.remainingSpending))) {
       return this;
     }
 
@@ -123,6 +129,7 @@ class SingleEntryState extends Equatable {
       search: search ?? this.search,
       canSave: canSave ?? this.canSave,
       newEntry: newEntry ?? this.newEntry,
+      remainingSpending: remainingSpending ?? this.remainingSpending,
     );
   }
 }
