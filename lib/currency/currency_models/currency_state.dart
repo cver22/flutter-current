@@ -20,42 +20,10 @@ class CurrencyState extends Equatable {
   factory CurrencyState.initial() {
     return CurrencyState(
       conversionRateMap: <String, ConversionRates>{},
-      //TODO remove temporary restriction of currency types when implementing full currency api
       allCurrencies: CurrencyService().getAll()
-        ..retainWhere((element) =>
-            element.code.contains('CAD') ||
-            element.code.contains('ISK') ||
-            element.code.contains('PHP') ||
-            element.code.contains('DKK') ||
-            element.code.contains('HUF') ||
-            element.code.contains('CZK') ||
-            element.code.contains('GBP') ||
-            element.code.contains('RON') ||
-            element.code.contains('SEK') ||
-            element.code.contains('IDR') ||
-            element.code.contains('INR') ||
-            element.code.contains('BRL') ||
-            element.code.contains('RUB') ||
-            element.code.contains('HRK') ||
-            element.code.contains('JPY') ||
-            element.code.contains('THB') ||
-            element.code.contains('CHF') ||
-            element.code.contains('EUR') ||
-            element.code.contains('MYR') ||
-            element.code.contains('BGN') ||
-            element.code.contains('TRY') ||
-            element.code.contains('CNY') ||
-            element.code.contains('NOK') ||
-            element.code.contains('NZD') ||
-            element.code.contains('ZAR') ||
-            element.code.contains('USD') ||
-            element.code.contains('MXN') ||
-            element.code.contains('SGD') ||
-            element.code.contains('AUD') ||
-            element.code.contains('ILS') ||
-            element.code.contains('KRW') ||
-            element.code.contains('PLN'))
+        ..removeWhere((element) => element.code.contains('BI') || element.code.contains('VEF'))
         ..sort((a, b) => a.code.compareTo(b.code)),
+      //removes currencies not available in current conversion API and sorts alphabetically
       searchCurrencies: <Currency>[],
       isLoading: false,
     );

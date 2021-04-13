@@ -1400,7 +1400,7 @@ Map<String, EntryMember> _divideSpending({
     } else {
       //single member
       entryMembers.updateAll((key, member) {
-        return member.copyWith(spentForeign: entry.amountForeign, spent: (entry.amount / exchangeRate).round());
+        return member.copyWith(spentForeign: entry.amountForeign, spent: (entry.amountForeign / exchangeRate).round());
       });
     }
   } else {
@@ -1554,7 +1554,7 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
 
 bool _canSave({AppEntry entry}) {
   bool canSubmit = false;
-  if (entry?.amount != null && entry.amount != 0) {
+  if (entry.amount != 0) {
     int totalMemberSpend = 0;
 
     entry.entryMembers.forEach((key, value) {
@@ -1565,6 +1565,7 @@ bool _canSave({AppEntry entry}) {
     if (totalMemberSpend == entry.amount) {
       canSubmit = true;
     }
+
   }
   return canSubmit;
 }

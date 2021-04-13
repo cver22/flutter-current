@@ -72,16 +72,20 @@ class CurrencySetExchangeRatesFromRemote implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    //print(json);
     Map<String, ConversionRates> conversionRateMap =
         Map<String, ConversionRates>.from(appState.currencyState.conversionRateMap);
     Map<String, double> rates = Map<String, double>();
     List<Currency> allCurrencies = appState.currencyState.allCurrencies;
 
     allCurrencies.forEach((currency) {
-      double conversionRate = json['conversion_rates'][currency.code].toDouble();
+      var jsonConversionRate = json['conversion_rates'][currency.code];
 
-      rates.update(currency.code, (value) => conversionRate, ifAbsent: () => conversionRate);
+      //error checking to prevent attempting to convert null return from json for a particular currency
+      if (jsonConversionRate != null) {
+        double conversionRate = jsonConversionRate.toDouble();
+
+        rates.update(currency.code, (value) => conversionRate, ifAbsent: () => conversionRate);
+      }
     });
 
     ConversionRates conversionRates = ConversionRates(

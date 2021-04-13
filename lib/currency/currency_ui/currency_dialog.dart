@@ -51,7 +51,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         map: (state) => state.currencyState,
         builder: (currencyState) {
           return AppDialogWithActions(
-            topWidget: searchBox(),
+            topWidget: searchBox(lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency].lastUpdated),
             child: _buildCurrencyList(
               referenceCurrencyCode: widget.referenceCurrency,
               returnCurrency: widget.returnCurrency,
@@ -64,28 +64,33 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         });
   }
 
-  Widget searchBox() {
+  Widget searchBox({@required DateTime lastUpdated}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
+      child: Column(
         children: [
-          Icon(Icons.search_outlined),
-          Expanded(
-            child: TextFormField(
-              decoration: InputDecoration(labelText: 'Search'),
-              controller: _controller,
-              autofocus: false,
-              keyboardType: TextInputType.text,
-              textCapitalization: TextCapitalization.words,
-              inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9 ]"))],
-              textInputAction: TextInputAction.done,
-              onChanged: (search) {
-                setState(() {
-                  Env.store.dispatch(CurrencySearchCurrencies(search: search));
-                });
-              },
-            ),
+          Text('Updated: ${lastUpdated.year}/${lastUpdated.month}/${lastUpdated.day}', style: TextStyle(fontSize: 10.0, fontStyle: FontStyle.italic)),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              Icon(Icons.search_outlined),
+              Expanded(
+                child: TextFormField(
+                  decoration: InputDecoration(labelText: 'Search'),
+                  controller: _controller,
+                  autofocus: false,
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.words,
+                  inputFormatters: [FilteringTextInputFormatter.allow(RegExp("[a-zA-Z0-9 ]"))],
+                  textInputAction: TextInputAction.done,
+                  onChanged: (search) {
+                    setState(() {
+                      Env.store.dispatch(CurrencySearchCurrencies(search: search));
+                    });
+                  },
+                ),
+              ),
+            ],
           ),
         ],
       ),

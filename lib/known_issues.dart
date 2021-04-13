@@ -61,8 +61,6 @@
 //build build local repository for currency fetcher
 //fix filter to handle multiple currencies
 //ask Ana, how should entry list look
-//currencies to show last updated
-//remove currency list filter from currency state
 
 
 
