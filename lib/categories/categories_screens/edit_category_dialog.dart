@@ -1,3 +1,4 @@
+import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -5,7 +6,7 @@ import '../../app/common_widgets/app_button.dart';
 import '../../app/common_widgets/app_dialog.dart';
 import '../../utils/db_consts.dart';
 import '../categories_model/app_category/app_category.dart';
-import 'emoji/emoji_picker.dart';
+
 
 class EditCategoryDialog extends StatefulWidget {
   final VoidCallback delete;
@@ -118,12 +119,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       ),
       shrinkWrap: true,
       child: showEmojiGrid
-          ? EmojiPicker(
+          ? _emojiPicker() /*EmojiPicker(
               emojiSelection: (emoji) => {
                     setState(() {
                       emojiChar = emoji;
                     })
-                  })
+                  })*/
           : Container(
               height: 0.0,
             ),
@@ -280,5 +281,34 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     return categoryId == NO_CATEGORY ||
         categoryId.contains(OTHER) ||
         categoryId == TRANSFER_FUNDS;
+  }
+
+  Widget _emojiPicker() {
+
+    //TODO adda border around this
+
+    return EmojiPicker(
+      onEmojiSelected: (category, emoji) {
+        setState(() {
+          emojiChar = emoji.emoji;
+        });
+      },
+      config: Config(
+          columns: 7,
+          emojiSizeMax: 24.0,
+          verticalSpacing: 0,
+          horizontalSpacing: 0,
+          initCategory: Category.OBJECTS,
+          bgColor: Colors.white,
+          indicatorColor: Colors.blue,
+          iconColor: Colors.grey,
+          iconColorSelected: Colors.blue,
+          progressIndicatorColor: Colors.blue,
+          showRecentsTab: false,
+          categoryIcons: const CategoryIcons(),
+          buttonMode: ButtonMode.MATERIAL
+      ),
+    );
+
   }
 }
