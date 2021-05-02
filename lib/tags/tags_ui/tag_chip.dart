@@ -10,7 +10,7 @@ import 'edit_tag_dialog.dart';
 import 'tag_rich_text_spans.dart';
 
 class TagChip extends StatelessWidget {
-  final Tag tag;
+  final Tag/*!*/ tag;
   final Maybe<String> search;
   final bool editable;
   final bool filterSelect;

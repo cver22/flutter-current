@@ -4,8 +4,8 @@ import 'package:meta/meta.dart';
 
 @immutable
 class AuthState {
-  final Maybe<AppUser> user;
-  final bool isLoading;
+  final Maybe<AppUser>/*!*/ user;
+  final bool/*!*/ isLoading;
 
   AuthState({
     this.user,

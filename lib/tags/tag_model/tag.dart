@@ -15,8 +15,8 @@ class Tag extends Equatable {
   final List<String> memberList;
 
   Tag(
-      {this.logId,
-      this.id,
+      {this.logId = '',
+      this.id = '',
       this.name = '',
       this.tagLogFrequency = 0,
       @required this.tagCategoryFrequency,

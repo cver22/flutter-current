@@ -7,7 +7,7 @@ import 'log_member_total_list_tile.dart';
 class LogMemberTotalList extends StatelessWidget {
   final Log log;
 
-  const LogMemberTotalList({Key key, this.log}) : super(key: key);
+  const LogMemberTotalList({Key key, @required this.log}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

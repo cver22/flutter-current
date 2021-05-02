@@ -26,7 +26,7 @@ class _QRReaderState extends State<QRReader> {
   Barcode result;
   var flashState = flashOn;
   var cameraState = frontCamera;
-  QRViewController controller;
+  /*late*/ QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   // In order to get hot reload to work we need to pause the camera if the platform

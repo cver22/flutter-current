@@ -5,9 +5,9 @@ import '../../utils/db_consts.dart';
 import '../categories_model/app_category/app_category.dart';
 
 class CategoryButton extends StatelessWidget {
-  final AppCategory category;
-  final Function onPressed;
-  final String label;
+  final AppCategory/*!*/ category;
+  final Function/*!*/ onPressed;
+  final String/*!*/ label;
   final bool filter;
   final bool newEntry;
   final bool entry;

@@ -21,30 +21,30 @@ import '../../utils/db_consts.dart';
 import '../../currency/currency_models/currency_state.dart';
 
 abstract class AppAction {
-  AppState updateState(AppState appState);
+  AppState/*!*/ updateState(AppState/*!*/ appState);
 }
 
-AppState updateSubstates(
-    AppState state, List<AppState Function(AppState)> updates) {
+AppState/*!*/ updateSubstates(
+    AppState/*!*/ state, List<AppState Function(AppState/*!*/)> updates) {
   return updates.fold(state, (updatedState, update) => update(updatedState));
 }
 
-AppState Function(AppState) updateLogsState(LogsState update(logsState)) {
+AppState Function(AppState/*!*/) updateLogsState(LogsState/*!*/ update(logsState)) {
   return (state) => state.copyWith(logsState: update(state.logsState));
 }
 
-AppState Function(AppState) updateEntriesState(
-    EntriesState update(entriesState)) {
+AppState Function(AppState/*!*/) updateEntriesState(
+    EntriesState/*!*/ update(entriesState)) {
   return (state) => state.copyWith(entriesState: update(state.entriesState));
 }
 
 AppState Function(AppState) updateSettingsState(
-    SettingsState update(settingsState)) {
+    SettingsState/*!*/ update(settingsState)) {
   return (state) => state.copyWith(settingsState: update(state.settingsState));
 }
 
-AppState Function(AppState) updateSingleEntryState(
-    SingleEntryState update(singleEntryState)) {
+AppState Function(AppState/*!*/) updateSingleEntryState(
+    SingleEntryState/*!*/ update(singleEntryState)) {
   return (state) =>
       state.copyWith(singleEntryState: update(state.singleEntryState));
 }
@@ -53,19 +53,19 @@ AppState Function(AppState) updateTagState(TagState update(tagState)) {
   return (state) => state.copyWith(tagState: update(state.tagState));
 }
 
-AppState Function(AppState) updateLogTotalsState(
-    LogTotalsState update(logTotalsState)) {
+AppState Function(AppState/*!*/) updateLogTotalsState(
+    LogTotalsState/*!*/ update(logTotalsState)) {
   return (state) =>
       state.copyWith(logTotalsState: update(state.logTotalsState));
 }
 
-AppState Function(AppState) updateFilterState(
-    FilterState update(filterState)) {
+AppState Function(AppState/*!*/) updateFilterState(
+    FilterState/*!*/ update(filterState)) {
   return (state) =>
       state.copyWith(filterState: update(state.filterState));
 }
 
-AppState Function(AppState) updateCurrencyState(CurrencyState update(currencyState)) {
+AppState Function(AppState/*!*/) updateCurrencyState(CurrencyState/*!*/ update(currencyState)) {
   return (state) => state.copyWith(currencyState: update(state.currencyState));
 }
 

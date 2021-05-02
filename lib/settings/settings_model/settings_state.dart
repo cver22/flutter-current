@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../utils/maybe.dart';
 import 'settings.dart';
@@ -8,8 +9,8 @@ class SettingsState extends Equatable {
   final List<bool> expandedCategories;
 
   SettingsState({
-    this.settings,
-    this.expandedCategories,
+  @required this.settings,
+  @required this.expandedCategories,
   });
 
   factory SettingsState.initial() {

@@ -7,7 +7,7 @@ import '../../store/actions/single_entry_actions.dart';
 import '../tag_model/tag.dart';
 
 class EditTagDialog extends StatefulWidget {
-  final Tag tag;
+  final Tag/*!*/ tag;
 
   const EditTagDialog({
     Key key,
@@ -19,7 +19,7 @@ class EditTagDialog extends StatefulWidget {
 }
 
 class _EditTagDialogState extends State<EditTagDialog> {
-  TextEditingController _controller;
+  /*late*/ TextEditingController _controller;
   bool canSave;
 
   void initState() {

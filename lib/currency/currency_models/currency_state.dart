@@ -11,10 +11,10 @@ class CurrencyState extends Equatable {
   final bool isLoading;
 
   CurrencyState({
-    this.conversionRateMap = const {},
-    this.allCurrencies = const [],
-    this.searchCurrencies = const [],
-    this.isLoading = false,
+    @required this.conversionRateMap,
+  @required this.allCurrencies,
+  @required this.searchCurrencies,
+  @required this.isLoading,
   });
 
   factory CurrencyState.initial() {

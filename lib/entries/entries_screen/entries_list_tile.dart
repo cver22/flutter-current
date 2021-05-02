@@ -20,8 +20,8 @@ class EntriesListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Log log;
-    DateTime date = entry.dateTime;
+    /*late*/ Log log;
+    /*late*/ DateTime date = entry.dateTime;
 
     if (entry?.logId != null) {
       log = Env.store.state.logsState.logs?.values

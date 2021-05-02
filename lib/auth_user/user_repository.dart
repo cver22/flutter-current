@@ -11,9 +11,9 @@ import 'models/app_user.dart';
 abstract class UserRepository {
   Future<User> signInWithGoogle();
 
-  Future<void> signInWithCredentials({String email, String password});
+  Future<void> signInWithCredentials({String/*!*/ email, String/*!*/ password});
 
-  Future<void> signUp({String email, String password});
+  Future<void> signUp({String/*!*/ email, String/*!*/ password});
 
   Future<void> signOut();
 
@@ -49,13 +49,13 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> signInWithCredentials({String email, String password}) {
+  Future<void> signInWithCredentials({String/*!*/ email, String/*!*/ password}) {
     return _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
   }
 
   @override
-  Future<void> signUp({String email, String password}) async {
+  Future<void> signUp({String/*!*/ email, String/*!*/ password}) async {
     var auth = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     auth.toString();

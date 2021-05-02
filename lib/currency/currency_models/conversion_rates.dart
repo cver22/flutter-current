@@ -3,7 +3,7 @@ import 'package:meta/meta.dart';
 
 @immutable
 class ConversionRates extends Equatable {
-  final Map<String, double> rates; // Currency to convert from to log currency and rate
+  final Map<String, double/*!*/> rates; // Currency to convert from to log currency and rate
   final DateTime lastUpdated;
 
   ConversionRates({

@@ -944,7 +944,7 @@ class EntryAddUpdateTag implements AppAction {
       }
     }
     if (!duplicateNewTag) {
-      if (addedUpdatedTag.id == null) {
+      if (addedUpdatedTag.id.isEmpty) {
         if (existingTag == null) {
           //save new tag using the user id to help minimize chance of duplication of entry ids in the database
           addedUpdatedTag = addedUpdatedTag.copyWith(

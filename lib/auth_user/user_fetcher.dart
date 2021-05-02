@@ -64,7 +64,7 @@ class UserFetcher {
   }
 
   Future<void> signInOrRegisterWithCredentials(
-      {String email, String password, LoginRegState loginRegState}) async {
+      {String/*!*/ email, String/*!*/ password, LoginRegState loginRegState}) async {
     _setLoadingAndSubmitting(loginRegState);
     try {
       if (loginRegState.loginOrRegister == LoginOrRegister.login) {

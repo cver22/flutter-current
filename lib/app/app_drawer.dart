@@ -33,8 +33,8 @@ class AppDrawer extends StatelessWidget {
 }
 
 class DrawerListTile extends StatelessWidget {
-  final String name;
-  final String route;
+  final String/*!*/ name;
+  final String/*!*/ route;
 
   const DrawerListTile({
     this.name,

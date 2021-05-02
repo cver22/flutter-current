@@ -5,7 +5,7 @@ import '../../member/member_model/log_member_model/log_member.dart';
 
 @immutable
 class LogTotal extends Equatable {
-  final Map<String, LogMember> logMembers;
+  final Map<String, LogMember>/*!*/ logMembers;
   final int thisMonthTotalPaid;
   final int lastMonthTotalPaid;
   final int sameMonthLastYearTotalPaid;

@@ -7,12 +7,12 @@ import 'settings_entity.dart';
 
 @immutable
 class Settings extends Equatable {
-  final String homeCurrency;
-  final List<AppCategory> defaultCategories;
-  final List<AppCategory> defaultSubcategories;
+  final String/*!*/ homeCurrency;
+  final List<AppCategory>/*!*/ defaultCategories;
+  final List<AppCategory>/*!*/ defaultSubcategories;
   final String defaultLogId;
   final bool autoInsertDecimalPoint;
-  final List<String> logOrder;
+  final List<String>/*!*/ logOrder;
 
   Settings(
       {this.homeCurrency,

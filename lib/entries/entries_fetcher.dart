@@ -12,7 +12,7 @@ import 'entries_repository.dart';
 class EntriesFetcher {
   final AppStore _store;
   final EntriesRepository _entriesRepository;
-  StreamSubscription _entriesSubscription;
+  /*late*/ StreamSubscription _entriesSubscription;
 
   EntriesFetcher({
     @required AppStore store,

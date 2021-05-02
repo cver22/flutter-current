@@ -9,7 +9,7 @@ import 'log_total.dart';
 class LogTotalsState extends Equatable {
   final Map<String, LogTotal> logTotals;
 
-  LogTotalsState({this.logTotals});
+  LogTotalsState({@required this.logTotals});
 
   @override
   List<Object> get props => [logTotals];

@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 
 import '../auth_user/models/app_user.dart';
 import '../utils/db_consts.dart';
@@ -14,11 +15,11 @@ abstract class TagRepository {
 
   Future<void> deleteTag(Tag tag);
 
-  Future<void> batchUpdateTags({List<Tag> updatedTags}) {}
+  Future<void> batchAddTags({@required List<Tag> addedTags}) {}
 
-  Future<void> batchAddTags({List<Tag> addedTags}) {}
+  Future<void> batchDeleteTags({@required List<Tag> deletedTags}) {}
 
-  Future<void> batchDeleteTags({List<Tag> deletedTags}) {}
+  Future<void> batchUpdateTags({@required List<Tag> updatedTags}) {}
 }
 
 class FirebaseTagRepository implements TagRepository {
@@ -59,7 +60,7 @@ class FirebaseTagRepository implements TagRepository {
   }
 
   @override
-  Future<void> batchAddTags({List<Tag> addedTags}) {
+  Future<void> batchAddTags({@required List<Tag> addedTags}) {
     WriteBatch batch = db.batch();
 
     addedTags.forEach((tag) {
@@ -72,7 +73,7 @@ class FirebaseTagRepository implements TagRepository {
   }
 
   @override
-  Future<void> batchUpdateTags({List<Tag> updatedTags}) {
+  Future<void> batchUpdateTags({@required List<Tag> updatedTags}) {
     WriteBatch batch = db.batch();
 
     updatedTags.forEach((tag) {
@@ -85,7 +86,7 @@ class FirebaseTagRepository implements TagRepository {
   }
 
   @override
-  Future<void> batchDeleteTags({List<Tag> deletedTags}) {
+  Future<void> batchDeleteTags({@required List<Tag> deletedTags}) {
     WriteBatch batch = db.batch();
 
     deletedTags.forEach((tag) {

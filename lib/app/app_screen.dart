@@ -27,7 +27,7 @@ class AppScreen extends StatefulWidget {
 
 class _AppScreenState extends State<AppScreen>
     with SingleTickerProviderStateMixin {
-  TabController _controller;
+  /*late*/ TabController _controller;
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   List<Widget> tabs = [

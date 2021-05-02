@@ -10,7 +10,7 @@ class LogMemberTotalListTile extends StatelessWidget {
   final LogMember member;
   final Log log;
 
-  const LogMemberTotalListTile({Key key, this.member, this.log})
+  const LogMemberTotalListTile({Key key, @required this.member, @required this.log})
       : super(key: key);
 
   @override

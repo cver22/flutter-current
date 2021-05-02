@@ -24,7 +24,7 @@ class _TagPickerState extends State<TagPicker> {
       subcategoryRecentTags = [],
       logRecentTags = [];
 
-  AppEntry entry;
+  /*late*/ AppEntry entry;
   Log log;
   SingleEntryState currentSingleEntryState;
 
@@ -98,7 +98,7 @@ class _TagPickerState extends State<TagPicker> {
     );
   }
 
-  void tagListBuilders({@required SingleEntryState entryState, int maxTags}) {
+  void tagListBuilders({@required SingleEntryState entryState, @required int maxTags}) {
     //Map<String, Tag> categoryTagMap = <String, Tag>{}; //all tags for the category
     Map<String, int> categoryAllTags = <String, int>{};
     //Map<String, Tag> subcategoryTagMap = <String, Tag>{};// tag frequency for the category

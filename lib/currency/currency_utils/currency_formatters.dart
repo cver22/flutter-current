@@ -6,7 +6,7 @@ String formattedAmount(
     {int value = 0,
     bool showSeparators = false,
     bool showTrailingZeros = false,
-    Currency currency,
+    Currency/*!*/ currency,
     bool showSymbol = false,
     bool showCurrency = false}) {
   String returnString = '';

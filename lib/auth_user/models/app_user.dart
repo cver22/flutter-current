@@ -3,12 +3,17 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class AppUser extends Equatable {
-  final String id;
+  final String/*!*/ id;
   final String displayName;
   final String email;
   final String photoUrl;
 
-  AppUser({this.id, this.displayName, this.email, this.photoUrl});
+  AppUser({
+    this.id,
+    this.displayName,
+    this.email,
+    this.photoUrl,
+  });
 
   @override
   List<Object> get props => [id, displayName, email, photoUrl];

@@ -1,6 +1,7 @@
 import 'package:flutter/widgets.dart';
 
 import '../app/models/app_state.dart';
+import '../utils/bool_extensions.dart';
 import '../env.dart';
 
 class ConnectState<T> extends StatelessWidget {
@@ -11,7 +12,7 @@ class ConnectState<T> extends StatelessWidget {
   const ConnectState({
     Key key,
     @required this.map,
-    @required this.where,
+    this.where,
     @required this.builder,
   }) : super(key: key);
 
@@ -20,12 +21,12 @@ class ConnectState<T> extends StatelessWidget {
     return StreamBuilder<T>(
         stream: Env.store.state$
             .map(map)
-            .distinct((T prev, T next) => !where(prev, next)),
+            .distinct((T prev, T next) => this.where?.call(prev, next).negate() ?? identical(prev, next)),
         builder: (context, snapshot) {
           if (snapshot.data == null) {
             return Container();
           }
-          return builder(snapshot.data);
+          return builder(snapshot.data/*!*/);
         });
   }
 }

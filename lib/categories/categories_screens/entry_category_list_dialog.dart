@@ -16,7 +16,7 @@ import 'edit_category_dialog.dart';
 
 class EntryCategoryListDialog extends StatelessWidget {
   final VoidCallback backChevron;
-  final CategoryOrSubcategory categoryOrSubcategory;
+  final CategoryOrSubcategory/*!*/ categoryOrSubcategory;
 
   const EntryCategoryListDialog(
       {Key key, this.backChevron, this.categoryOrSubcategory})

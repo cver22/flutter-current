@@ -9,11 +9,11 @@ import '../../utils/maybe.dart';
 
 @immutable
 class EntriesState extends Equatable {
-  final Map<String, AppEntry> entries;
-  final bool isLoading;
-  final Maybe<Filter> entriesFilter;
-  final Maybe<Filter> chartFilter;
-  final bool descending;
+  final Map<String, AppEntry>/*!*/ entries;
+  final bool/*!*/ isLoading;
+  final Maybe<Filter>/*!*/ entriesFilter;
+  final Maybe<Filter>/*!*/ chartFilter;
+  final bool/*!*/ descending;
 
   EntriesState(
       {this.entries,

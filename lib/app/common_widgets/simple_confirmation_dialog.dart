@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class SimpleConfirmationDialog extends StatelessWidget {
-  final Function(bool) onTapConfirm;
+  final Function(bool)/*!*/ onTapConfirm;
   final Function(bool) onTapDiscard;
-  final String title;
+  final String/*!*/ title;
   final String content;
   final String confirmText;
   final bool canConfirm;

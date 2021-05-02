@@ -18,10 +18,10 @@ class EntryMember extends Member {
   final int spentForeign;
 
   EntryMember({
-    uid,
+    @required uid,
     paid,
     spent,
-    order,
+    @required order,
     this.paying = false,
     this.spending = true,
     this.payingController,
@@ -31,7 +31,7 @@ class EntryMember extends Member {
     this.userEditedSpent = false,
     this.paidForeign = 0,
     this.spentForeign = 0,
-  }) : super(uid: uid, paid: paid, spent: spent, order: order);
+  }) : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
 
   @override
   List<Object> get props => [

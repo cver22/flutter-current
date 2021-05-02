@@ -31,8 +31,8 @@ class FilterDialog extends StatefulWidget {
 }
 
 class _FilterDialogState extends State<FilterDialog> {
-  TextEditingController _minAmountController;
-  TextEditingController _maxAmountController;
+  /*late*/ TextEditingController _minAmountController;
+  /*late*/ TextEditingController _maxAmountController;
   FocusNode _minFocusNode;
   FocusNode _maxFocusNode;
   Filter filter;
@@ -202,8 +202,8 @@ class _FilterDialogState extends State<FilterDialog> {
       {@required TextEditingController controller,
       @required String label,
       @required FocusNode focusNode,
-      Function(int) onChange,
-      TextInputAction textInputAction,
+      Function(int)/*!*/ onChange,
+      TextInputAction/*!*/ textInputAction,
       bool minExceedMax}) {
     return TextField(
       style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),

@@ -6,10 +6,10 @@ import '../categories_model/app_category/app_category.dart';
 
 class CategoryListTile extends StatelessWidget {
   final AppCategory category;
-  final VoidCallback onTap;
-  final VoidCallback onTapEdit;
+  final VoidCallback/*!*/ onTap;
+  final VoidCallback/*!*/ onTapEdit;
   final bool inset;
-  final SettingsLogFilter setLogFilter;
+  final SettingsLogFilter/*!*/ setLogFilter;
   final bool selected;
 
   const CategoryListTile(
@@ -18,7 +18,7 @@ class CategoryListTile extends StatelessWidget {
       this.onTap,
       this.onTapEdit,
       this.inset = false,
-      this.selected,
+      this.selected = false,
       this.setLogFilter})
       : super(key: key);
 

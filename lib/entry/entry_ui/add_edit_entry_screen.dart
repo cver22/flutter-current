@@ -75,8 +75,7 @@ class AddEditEntryScreen extends StatelessWidget {
             if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
               entry = singleEntryState.selectedEntry.value;
             }
-            Log log;
-            log = Env.store.state.logsState.logs[entry.logId];
+            Log log = Env.store.state.logsState.logs[entry.logId];
 
             return WillPopScope(
               onWillPop: () async {

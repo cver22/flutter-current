@@ -12,10 +12,10 @@ import 'category_list_tile.dart';
 import 'category_list_tools.dart';
 
 class MasterCategoryDragAndDropList extends StatelessWidget {
-  final List<String> selectedCategories;
-  final List<String> selectedSubcategories;
+  final List<String>/*!*/ selectedCategories;
+  final List<String>/*!*/ selectedSubcategories;
   final List<AppCategory> categories;
-  final List<AppCategory> subcategories;
+  final List<AppCategory>/*!*/ subcategories;
   final SettingsLogFilter setLogFilter;
 
   const MasterCategoryDragAndDropList(
@@ -89,7 +89,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   }
 
   Widget _setTrailingIcon(
-      {AppCategory category, List<bool> expandedCategories, int outerIndex}) {
+      {AppCategory/*!*/ category, List<bool>/*!*/ expandedCategories, int/*!*/ outerIndex}) {
     if (setLogFilter == SettingsLogFilter.filter) {
       return FilterListTileTrailing(
           onSelect: () =>

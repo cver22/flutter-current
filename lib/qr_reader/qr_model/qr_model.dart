@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import '../../utils/db_consts.dart';
 
@@ -6,7 +7,7 @@ class QRModel extends Equatable {
   final String uid;
   final String name;
 
-  QRModel({this.uid, this.name});
+  QRModel({@required this.uid, @required this.name});
 
   @override
   // TODO: implement props

@@ -5,17 +5,17 @@ import 'package:equatable/equatable.dart';
 import '../../utils/maybe.dart';
 
 class Filter extends Equatable {
-  final Maybe<DateTime> startDate;
-  final Maybe<DateTime> endDate;
-  final Map<String, String> currency; // code, name
-  final List<String> selectedCategories; //name
-  final List<String> selectedSubcategories; //id
-  final Maybe<int> minAmount;
-  final Maybe<int> maxAmount;
-  final List<String> membersPaid; //id
-  final List<String> membersSpent; //id
-  final List<String> selectedLogs;
-  final List<String> selectedTags;
+  final Maybe<DateTime>/*!*/ startDate;
+  final Maybe<DateTime>/*!*/ endDate;
+  final Map<String, String>/*!*/ currency; // code, name
+  final List<String>/*!*/ selectedCategories; //name
+  final List<String>/*!*/ selectedSubcategories; //id
+  final Maybe<int>/*!*/ minAmount;
+  final Maybe<int>/*!*/ maxAmount;
+  final List<String>/*!*/ membersPaid; //id
+  final List<String>/*!*/ membersSpent; //id
+  final List<String>/*!*/ selectedLogs;
+  final List<String>/*!*/ selectedTags;
 
   Filter({
     this.startDate,

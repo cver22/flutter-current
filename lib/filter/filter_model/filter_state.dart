@@ -9,16 +9,16 @@ import '../../utils/maybe.dart';
 import 'filter.dart';
 
 class FilterState extends Equatable {
-  final Maybe<Filter> filter;
-  final List<bool> expandedCategories;
-  final List<AppCategory> consolidatedCategories;
-  final List<AppCategory> consolidatedSubcategories;
-  final Map<String, String> allMembers; //id, name
-  final List<Tag> allTags;
-  final bool updated;
-  final Maybe<String> search;
-  final List<Tag> searchedTags;
-  final Maybe<SortMethod> sortMethod; //currently unused , implement later
+  final Maybe<Filter>/*!*/ filter;
+  final List<bool>/*!*/ expandedCategories;
+  final List<AppCategory>/*!*/ consolidatedCategories;
+  final List<AppCategory>/*!*/ consolidatedSubcategories;
+  final Map<String, String>/*!*/ allMembers; //id, name
+  final List<Tag>/*!*/ allTags;
+  final bool/*!*/ updated;
+  final Maybe<String>/*!*/ search;
+  final List<Tag>/*!*/ searchedTags;
+  final Maybe<SortMethod>/*!*/ sortMethod; //currently unused , implement later
 
   FilterState({
     this.filter,
@@ -36,7 +36,7 @@ class FilterState extends Equatable {
   factory FilterState.initial() {
     return FilterState(
       filter: Maybe.none(),
-      expandedCategories: List(),
+      expandedCategories: const [],
       consolidatedCategories: const [],
       consolidatedSubcategories: const [],
       allMembers: LinkedHashMap(),

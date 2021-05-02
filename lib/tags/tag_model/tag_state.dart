@@ -1,6 +1,7 @@
 import 'dart:collection';
 
 import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
 import 'tag.dart';
 
@@ -8,7 +9,7 @@ class TagState extends Equatable {
   final Map<String, Tag> tags;
   final bool isLoading;
 
-  TagState({this.tags, this.isLoading});
+  TagState({@required this.tags, @required this.isLoading});
 
   factory TagState.initial() {
     return TagState(

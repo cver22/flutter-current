@@ -22,8 +22,8 @@ class Log extends Equatable {
     this.categories,
     this.subcategories,
     this.archive = false,
-    this.defaultCategory,
-    this.logMembers,
+    this.defaultCategory = NO_CATEGORY,
+    this.logMembers = const {},
     this.order,
   });
 

@@ -31,9 +31,9 @@ class LogEntity extends Equatable {
       this.currency,
       this.categories,
       this.subcategories,
-      this.archive,
-      this.defaultCategory,
-      this.logMembers,
+      this.archive = false ,
+      this.defaultCategory = NO_CATEGORY,
+      this.logMembers = const {},
       this.memberList,
       this.order});
 

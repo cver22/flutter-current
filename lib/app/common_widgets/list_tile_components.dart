@@ -45,7 +45,7 @@ class CategoryListTileTrailing extends StatelessWidget {
     this.addSubcategory = false,
   }) : super(key: key);
 
-  final VoidCallback onTapEdit;
+  final VoidCallback/*!*/ onTapEdit;
   final bool addSubcategory;
 
   @override
@@ -73,8 +73,8 @@ class FilterListTileTrailing extends StatelessWidget {
     @required this.selected,
   }) : super(key: key);
 
-  final VoidCallback onSelect;
-  final bool selected;
+  final VoidCallback/*!*/ onSelect;
+  final bool/*!*/ selected;
 
   @override
   Widget build(BuildContext context) {

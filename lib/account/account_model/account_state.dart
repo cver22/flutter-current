@@ -5,12 +5,12 @@ import 'package:meta/meta.dart';
 //AccountState is used for tracking password changes by the user
 @immutable
 class AccountState extends Equatable {
-  final LoginStatus loginStatus;
-  final bool isUserSignedInWithEmail;
-  final bool showPasswordForm;
-  final bool isOldPasswordValid;
-  final bool isNewPasswordValid;
-  final bool newPasswordsMatch;
+  final LoginStatus/*!*/ loginStatus;
+  final bool/*!*/ isUserSignedInWithEmail;
+  final bool/*!*/ showPasswordForm;
+  final bool/*!*/ isOldPasswordValid;
+  final bool/*!*/ isNewPasswordValid;
+  final bool/*!*/ newPasswordsMatch;
 
   AccountState(
       {this.loginStatus,

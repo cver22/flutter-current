@@ -10,7 +10,7 @@ class AppButton extends StatelessWidget {
     this.buttonColor,
   }) : super(key: key);
 
-  final Function onPressed;
+  final Function/*!*/ onPressed;
   final Widget child;
   final Color buttonColor;
 
