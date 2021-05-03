@@ -124,9 +124,8 @@ class AddEditLogScreen extends StatelessWidget {
                   ),
                   onPressed: canSave ? () => _submit() : null,
                 ),
-                log.id == null
-                    ? Container()
-                    : PopupMenuButton<String>(
+                log.id.length > 0
+                    ? PopupMenuButton<String>(
                         onSelected: handleClick,
                         itemBuilder: (BuildContext context) {
                           return {'Delete Log'}.map((String choice) {
@@ -136,7 +135,8 @@ class AddEditLogScreen extends StatelessWidget {
                             );
                           }).toList();
                         },
-                      ),
+                      )
+                    : Container(),
               ],
             ),
             body: _buildContents(context: context, log: log, currency: currency, logs: logsState.logs),

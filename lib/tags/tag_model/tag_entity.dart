@@ -4,7 +4,7 @@ import '../../utils/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-part 'tag_entity.g.dart';
+//part 'tag_entity.g.dart';
 
 @immutable
 @JsonSerializable()
@@ -35,9 +35,9 @@ class TagEntity extends Equatable {
         '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $TAG_SUBCATEGORY_FREQUENCY: $tagSubcategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
-  factory TagEntity.fromJson(Map<String, dynamic> json) => _$TagEntityFromJson(json);
+  //factory TagEntity.fromJson(Map<String, dynamic> json) => _$TagEntityFromJson(json);
 
-  Map<String, dynamic> toJson() => _$TagEntityToJson(this);
+ // Map<String, dynamic> toJson() => _$TagEntityToJson(this);
 
   static TagEntity fromSnapshot(DocumentSnapshot snap) {
     return TagEntity(

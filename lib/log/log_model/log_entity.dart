@@ -24,18 +24,21 @@ class LogEntity extends Equatable {
   final List<String> memberList;
   final int order;
 
-  const LogEntity(
-      {this.uid,
-      this.id,
-      this.name,
-      this.currency,
-      this.categories,
-      this.subcategories,
-      this.archive = false ,
-      this.defaultCategory = NO_CATEGORY,
-      this.logMembers = const {},
-      this.memberList,
-      this.order});
+
+  const LogEntity({
+    this.uid ='',
+    this.id ='',
+    this.name ='',
+    this.currency = 'CAD',
+    this.categories = const {},
+    this.subcategories = const {},
+    this.archive = false,
+    this.defaultCategory = NO_CATEGORY,
+    this.logMembers = const {},
+    this.memberList = const [],
+    this.order,
+  });
+
 
   @override
   List<Object> get props => [
@@ -65,18 +68,18 @@ class LogEntity extends Equatable {
       id: snap.id,
       name: snap.data()[LOG_NAME],
       currency: snap.data()[CURRENCY_NAME],
-      categories: (snap.data()[CATEGORIES] as LinkedHashMap<String, dynamic>)
+      /*categories: (snap.data()[CATEGORIES] as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(
               key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
       subcategories: (snap.data()[SUBCATEGORIES]
               as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(
-              key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
+              key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),*/
       archive: snap.data()[ARCHIVE],
       defaultCategory: snap.data()[DEFAULT_CATEGORY],
-      logMembers: (snap.data()[MEMBERS] as Map<String, dynamic>).map((key,
+      /*logMembers: (snap.data()[MEMBERS] as Map<String, dynamic>).map((key,
               value) =>
-          MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
+          MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),*/
       order: snap.data()[ORDER],
     );
   }
@@ -86,14 +89,14 @@ class LogEntity extends Equatable {
       UID: uid,
       LOG_NAME: name,
       CURRENCY_NAME: currency,
-      CATEGORIES: categories
+      /*CATEGORIES: categories
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       SUBCATEGORIES: subcategories
-          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),*/
       ARCHIVE: archive,
       DEFAULT_CATEGORY: defaultCategory,
-      MEMBERS: logMembers
-          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      /*MEMBERS: logMembers
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),*/
       MEMBER_LIST: memberList,
       ORDER: order
     };

@@ -4,7 +4,7 @@ import 'package:meta/meta.dart';
 
 import '../../categories/categories_model/app_category/app_category_entity.dart';
 
-part 'settings_entity.g.dart';
+//part 'settings_entity.g.dart';
 
 @immutable
 @JsonSerializable()
@@ -38,8 +38,8 @@ class SettingsEntity implements Equatable {
   @override
   bool get stringify => true;
 
-  factory SettingsEntity.fromJson(Map<String, dynamic> json) =>
+ /* factory SettingsEntity.fromJson(Map<String, dynamic> json) =>
       _$SettingsEntityFromJson(json);
 
-  Map<String, dynamic> toJson() => _$SettingsEntityToJson(this);
+  Map<String, dynamic> toJson() => _$SettingsEntityToJson(this);*/
 }

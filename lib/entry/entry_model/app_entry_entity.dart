@@ -9,19 +9,19 @@ import '../../utils/db_consts.dart';
 @immutable
 class AppEntryEntity extends Equatable {
   const AppEntryEntity(
-      {this.id,
-      this.logId,
-      this.currency,
+      {this.id = '',
+      this.logId = '',
+      this.currency = '',
       this.category = NO_CATEGORY,
       this.subcategory = NO_SUBCATEGORY,
       this.amount = 0,
       this.amountForeign = 0,
       this.exchangeRate = 1.0,
       this.comment ='',
-      this.dateTime,
+      @required this.dateTime,
       this.tagIDs = const {},
       this.entryMembers = const {},
-      this.memberList}); //TODO get rid of members list eventually? do i need it if I have entryMembers list?
+      this.memberList = const []}); //TODO get rid of members list eventually? do i need it if I have entryMembers list?
 
   final String id;
   final String logId;
@@ -75,8 +75,8 @@ class AppEntryEntity extends Equatable {
       comment: snap.data()[COMMENT],
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()[DATE_TIME]),
       tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
-      entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
-          ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
+      /*entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
+          ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),*/
     );
   }
 
@@ -92,7 +92,7 @@ class AppEntryEntity extends Equatable {
       COMMENT: comment,
       DATE_TIME: dateTime.millisecondsSinceEpoch,
       TAGS: tagIDs.map((key, value) => MapEntry(key, value)),
-      MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
+      /*MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),*/
       MEMBER_LIST: memberList
     };
   }

@@ -49,23 +49,23 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   String emojiChar;
   AppCategory selectedCategory;
   bool canSave;
-  bool notModifiable;
+  bool modifiable;
 
   //TODO prevent NoCategory and NoSubcategory from being edited or deleted
 
   void initState() {
     super.initState();
     showEmojiGrid = false;
-    categories = widget?.categories;
-    categoryOrSubcategory = widget?.categoryOrSubcategory;
+    categories = widget.categories;
+    categoryOrSubcategory = widget.categoryOrSubcategory;
     String exclamationMark = '\u{2757}'; // exclamation_mark
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
-    category = widget?.category;
-    if (category.id != null) {
+    category = widget.category;
+    if (category.id.length > 0) {
       newCategory = false;
       emojiChar = category.emojiChar ?? exclamationMark;
-      name = category?.name;
-      id = category?.id;
+      name = category.name;
+      id = category.id;
     } else {
       newCategory = true;
       showEmojiGrid = true;
@@ -75,9 +75,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
 
     if (categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
       if (newCategory) {
-        parentCategoryId = widget?.initialParent ?? NO_CATEGORY;
+        parentCategoryId = widget.initialParent ?? NO_CATEGORY;
       } else {
-        parentCategoryId = category?.parentCategoryId ?? NO_CATEGORY;
+        parentCategoryId = category.parentCategoryId ?? NO_CATEGORY;
       }
 
       selectedCategory =
@@ -85,9 +85,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     }
 
     controller = TextEditingController(text: name);
-    canSave = controller.text != null && controller.value.text.length > 0;
+    canSave = controller.text != null && controller.value.text.length > 0 && controller.text != NO_CATEGORY && controller.text != NO_PARENT;
 
-    notModifiable = _notModifiable(categoryId: id);
+    modifiable = _modifiable(categoryId: id);
   }
 
   void dispose() {
@@ -173,17 +173,17 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   Expanded _buildNameField() {
     return Expanded(
       flex: 5,
-      child: notModifiable
-          ? Text(name)
-          : TextField(
-              controller: controller,
-              decoration: InputDecoration(border: OutlineInputBorder()),
-              onChanged: (value) {
-                setState(() {
-                  canSave = value != null && value.length > 0;
-                });
-              },
-            ),
+      child: modifiable
+          ? TextField(
+        controller: controller,
+        decoration: InputDecoration(border: OutlineInputBorder()),
+        onChanged: (value) {
+          setState(() {
+            canSave = value != null && value.length > 0;
+          });
+        },
+      )
+          : Text(name),
     );
   }
 
@@ -218,26 +218,26 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
           ),
         ),
         SizedBox(width: 10),
-        notModifiable
-            ? Text(initialCategory.name)
-            : Expanded(
-                flex: 2,
-                child: DropdownButton<AppCategory>(
-                    isExpanded: true,
-                    value: initialCategory,
-                    items: selectableCategories.map((AppCategory category) {
-                      return DropdownMenuItem<AppCategory>(
-                        value: category,
-                        child: Text(
-                          category.name,
-                          overflow: TextOverflow.visible,
-                          maxLines: 2,
-                          style: TextStyle(color: Colors.black),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: _onParentCategoryChanged),
-              ),
+        modifiable
+            ? Expanded(
+          flex: 2,
+          child: DropdownButton<AppCategory>(
+              isExpanded: true,
+              value: initialCategory,
+              items: selectableCategories.map((AppCategory category) {
+                return DropdownMenuItem<AppCategory>(
+                  value: category,
+                  child: Text(
+                    category.name,
+                    overflow: TextOverflow.visible,
+                    maxLines: 2,
+                    style: TextStyle(color: Colors.black),
+                  ),
+                );
+              }).toList(),
+              onChanged: _onParentCategoryChanged),
+        )
+            : Text(initialCategory.name),
       ],
     );
   }
@@ -262,7 +262,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   bool _canDelete({String categoryId}) {
-    if (categoryId == null ||
+    if (categoryId == '' ||
         categoryId == NO_CATEGORY ||
         categoryId.contains(OTHER) ||
         categoryId == TRANSFER_FUNDS) {
@@ -271,16 +271,16 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     return true;
   }
 
-  bool _notModifiable({String categoryId}) {
-    //catch null as modifiable
-    if (categoryId == null) {
+  bool _modifiable({String categoryId}) {
+
+    //special categories and subcategories can not be renamed
+    if (categoryId == NO_CATEGORY ||
+        categoryId.contains(OTHER) ||
+        categoryId == TRANSFER_FUNDS) {
       return false;
     }
 
-    //special categories and subcategories can not be renamed
-    return categoryId == NO_CATEGORY ||
-        categoryId.contains(OTHER) ||
-        categoryId == TRANSFER_FUNDS;
+    return true;
   }
 
   Widget _emojiPicker() {

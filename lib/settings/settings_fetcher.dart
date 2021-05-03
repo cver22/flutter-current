@@ -45,7 +45,7 @@ class SettingsFetcher {
     final file = await _localFile;
     try {
       // Write settings to file from store as a json.
-      file.writeAsString(json.encode(settings.toEntity().toJson()));
+      /*file.writeAsString(json.encode(settings.toEntity().toJson()));*/
     } catch (e) {
       print('Error writing settings: ${e.toString()}');
     }
@@ -72,10 +72,10 @@ class SettingsFetcher {
         String jsonString =
             await rootBundle.loadString('assets/default_settings.txt');
 
-        _store.dispatch(SettingsUpdate(
+       /* _store.dispatch(SettingsUpdate(
           settings: Maybe.some(Settings.fromEntity(
               SettingsEntity.fromJson(json.decode(jsonString)))),
-        ));
+        ));*/
 
         //marks that default settings have previously been read from assets
         prefs.setBool('settings_initialized', true);
@@ -86,10 +86,10 @@ class SettingsFetcher {
         Map<String, dynamic> jsonData = LinkedHashMap();
         jsonData = json.decode(await file.readAsString());
 
-        _store.dispatch(SettingsUpdate(
+        /*_store.dispatch(SettingsUpdate(
           settings: Maybe.some(
               Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
-        ));
+        ));*/
       }
     } catch (e) {
       // If encountering an error

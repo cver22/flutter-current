@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
 
 import 'app_category_entity.dart';
@@ -11,10 +12,10 @@ class AppCategory extends Equatable {
   final String parentCategoryId; //only used for subcategories
 
   AppCategory(
-      {this.id,
+      {this.id = '',
       this.name = '',
       this.emojiChar = '\u{1F4B2}',
-      this.parentCategoryId});
+      this.parentCategoryId = NO_PARENT});
 
   @override
   List<Object> get props => [id, name, emojiChar, parentCategoryId];

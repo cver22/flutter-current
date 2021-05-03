@@ -62,7 +62,7 @@ class SetNewLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(Log(currency: 'CAD')))),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(Log(currency: 'CAD', uid: appState.authState.user.value.id)))),
       ],
     );
   }

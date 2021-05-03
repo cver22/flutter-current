@@ -27,7 +27,7 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> addNewTag(Tag tag) {
-    return db.collection(TAG_COLLECTION).add(tag.toEntity().toJson());
+    /*return db.collection(TAG_COLLECTION).add(tag.toEntity().toJson());*/
   }
 
   //TODO need to filter by UID for groups
@@ -48,10 +48,10 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> updateTag(Tag tag) {
-    return db
+    /*return db
         .collection(TAG_COLLECTION)
         .doc(tag.id)
-        .update(tag.toEntity().toJson());
+        .update(tag.toEntity().toJson());*/
   }
 
   @override
@@ -63,10 +63,10 @@ class FirebaseTagRepository implements TagRepository {
   Future<void> batchAddTags({@required List<Tag> addedTags}) {
     WriteBatch batch = db.batch();
 
-    addedTags.forEach((tag) {
+    /*addedTags.forEach((tag) {
       batch.set(
           db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
-    });
+    });*/
 
 //TODO maybe add a whenComplete to this?
     return batch.commit();
@@ -76,10 +76,10 @@ class FirebaseTagRepository implements TagRepository {
   Future<void> batchUpdateTags({@required List<Tag> updatedTags}) {
     WriteBatch batch = db.batch();
 
-    updatedTags.forEach((tag) {
+    /*updatedTags.forEach((tag) {
       batch.update(
           db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
-    });
+    });*/
 
 //TODO maybe add a whenComplete to this?
     return batch.commit();

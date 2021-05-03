@@ -10,17 +10,16 @@ import 'log_entity.dart';
 
 @immutable
 class Log extends Equatable {
-  //TODO log keeps track of who owes who how much "debt map"?
   //TODO need default to last or home currency for entries in this log
   //TODO each log to have its own settings
 
   Log({
-    this.uid,
-    this.id,
-    this.name,
-    this.currency,
-    this.categories,
-    this.subcategories,
+    @required this.uid,
+    this.id ='',
+    this.name ='',
+    @required this.currency,
+    this.categories = const [],
+    this.subcategories = const [],
     this.archive = false,
     this.defaultCategory = NO_CATEGORY,
     this.logMembers = const {},

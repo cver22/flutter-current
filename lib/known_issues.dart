@@ -75,7 +75,9 @@
 
 //HELPFUL COMMANDS
 //flutter pub run build_runner build
+//flutter pub run build_runner build --delete-conflicting-outputs
 //flutter packages pub run build_runner build --delete-conflicting-import 'package:qr_flutter/qr_flutter.dart';
+//flutter packages pub run build_runner build lib --delete-conflicting-outputs
 
 //Conflicting outputs issue
 // flutter clean
