@@ -4,17 +4,17 @@ import 'package:meta/meta.dart';
 
 @immutable
 class AuthState {
-  final Maybe<AppUser>/*!*/ user;
-  final bool/*!*/ isLoading;
+  final Maybe<AppUser> user;
+  final bool isLoading;
 
   AuthState({
-    this.user,
-    this.isLoading,
+    required this.user,
+    required this.isLoading,
   });
 
   AuthState copyWith({
-    Maybe<AppUser> user,
-    bool isLoading,
+    Maybe<AppUser>? user,
+    bool? isLoading,
   }) {
     return AuthState(
       user: user ?? this.user,

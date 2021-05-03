@@ -9,7 +9,7 @@ import 'log_total.dart';
 class LogTotalsState extends Equatable {
   final Map<String, LogTotal> logTotals;
 
-  LogTotalsState({@required this.logTotals});
+  LogTotalsState({required this.logTotals});
 
   @override
   List<Object> get props => [logTotals];
@@ -24,7 +24,7 @@ class LogTotalsState extends Equatable {
   bool get stringify => true;
 
   LogTotalsState copyWith({
-    Map<String, LogTotal> logTotals,
+    Map<String, LogTotal>? logTotals,
   }) {
     if ((logTotals == null || identical(logTotals, this.logTotals))) {
       return this;

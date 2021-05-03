@@ -9,8 +9,8 @@ class SettingsState extends Equatable {
   final List<bool> expandedCategories;
 
   SettingsState({
-  @required this.settings,
-  @required this.expandedCategories,
+  required this.settings,
+  required this.expandedCategories,
   });
 
   factory SettingsState.initial() {
@@ -27,8 +27,8 @@ class SettingsState extends Equatable {
   bool get stringify => true;
 
   SettingsState copyWith({
-    Maybe<Settings> settings,
-    List<bool> expandedCategories,
+    Maybe<Settings>? settings,
+    List<bool>? expandedCategories,
   }) {
     if ((settings == null || identical(settings, this.settings)) &&
         (expandedCategories == null ||

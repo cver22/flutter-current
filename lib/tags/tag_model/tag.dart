@@ -19,8 +19,8 @@ class Tag extends Equatable {
       this.id = '',
       this.name = '',
       this.tagLogFrequency = 0,
-      @required this.tagCategoryFrequency,
-      @required this.tagSubcategoryFrequency,
+      this.tagCategoryFrequency = const {},
+      this.tagSubcategoryFrequency = const {},
       this.memberList = const []});
 
   @override
@@ -29,7 +29,7 @@ class Tag extends Equatable {
   }
 
   @override
-  List<Object> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object?> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
 
   TagEntity toEntity() {
     return TagEntity(
@@ -50,7 +50,7 @@ class Tag extends Equatable {
       name: entity.name,
       tagLogFrequency: entity.tagLogFrequency,
       tagCategoryFrequency: entity.tagCategoryFrequency,
-      tagSubcategoryFrequency: entity?.tagSubcategoryFrequency ?? <String, int>{},
+      tagSubcategoryFrequency: entity.tagSubcategoryFrequency,
       memberList: entity.memberList,
     );
   }
@@ -68,13 +68,13 @@ class Tag extends Equatable {
   }
 
   Tag copyWith({
-    String logId,
-    String id,
-    String name,
-    int tagLogFrequency,
-    Map<String, int> tagCategoryFrequency,
-    Map<String, int> tagSubcategoryFrequency,
-    List<String> memberList,
+    String? logId,
+    String? id,
+    String? name,
+    int? tagLogFrequency,
+    Map<String, int>? tagCategoryFrequency,
+    Map<String, int>? tagSubcategoryFrequency,
+    List<String>? memberList,
   }) {
     if ((logId == null || identical(logId, this.logId)) &&
         (id == null || identical(id, this.id)) &&

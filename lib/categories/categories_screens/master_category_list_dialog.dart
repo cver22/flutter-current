@@ -17,53 +17,53 @@ import 'category_list_tools.dart';
 import 'master_category_drag_and_drop_list.dart';
 
 class MasterCategoryListDialog extends StatelessWidget {
-  final SettingsLogFilter setLogFilter;
+  final SettingsLogFilterEntry setLogFilter;
 
-  const MasterCategoryListDialog({Key key, @required this.setLogFilter})
+  const MasterCategoryListDialog({Key? key, required this.setLogFilter})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<AppCategory> categories = [];
-    List<AppCategory> subcategories = [];
+    List<AppCategory>? categories = [];
+    List<AppCategory>? subcategories = [];
 
-    if (setLogFilter == SettingsLogFilter.log) {
+    if (setLogFilter == SettingsLogFilterEntry.log) {
       return ConnectState(
         where: notIdentical,
         map: (state) => state.logsState,
-        builder: (logsState) {
+        builder: (dynamic logsState) {
           Log log = logsState.selectedLog.value;
 
           return _buildDialog(
               categories: log.categories, subcategories: log.subcategories);
         },
       );
-    } else if (setLogFilter == SettingsLogFilter.settings) {
+    } else if (setLogFilter == SettingsLogFilterEntry.settings) {
       return ConnectState(
         where: notIdentical,
         map: (state) => state.settingsState,
-        builder: (settingsState) {
+        builder: (dynamic settingsState) {
           print('Rendering Settings Category Dialog');
           Settings settings = settingsState.settings.value;
           categories = settings.defaultCategories;
           subcategories = settings.defaultSubcategories;
 
           return _buildDialog(
-              categories: categories, subcategories: subcategories);
+              categories: categories!, subcategories: subcategories);
         },
       );
-    } else if (setLogFilter == SettingsLogFilter.filter) {
+    } else if (setLogFilter == SettingsLogFilterEntry.filter) {
       return ConnectState(
         where: notIdentical,
         map: (state) => state.filterState,
-        builder: (filterState) {
+        builder: (dynamic filterState) {
           print('Rendering Filter Category Dialog');
           Filter filter = filterState.filter.value;
           categories = filterState.consolidatedCategories;
           subcategories = filterState.consolidatedSubcategories;
 
           return _buildDialog(
-            categories: categories,
+            categories: categories!,
             subcategories: subcategories,
             selectedSubcategories: filter.selectedSubcategories,
             selectedCategories: filter.selectedCategories,
@@ -76,21 +76,21 @@ class MasterCategoryListDialog extends StatelessWidget {
   }
 
   Widget _buildDialog(
-      {@required List<AppCategory> categories,
-      @required List<AppCategory> subcategories,
-      List<String> selectedCategories,
-      List<String> selectedSubcategories}) {
+      {required List<AppCategory?> categories,
+      required List<AppCategory?>? subcategories,
+      List<String>? selectedCategories,
+      List<String>? selectedSubcategories}) {
     return AppDialogWithActions(
       trailingTitleWidget:
-          setLogFilter == SettingsLogFilter.filter ? null : _displayAddButton(),
+          setLogFilter == SettingsLogFilterEntry.filter ? null : _displayAddButton(),
       title: CATEGORY,
-      actions: setLogFilter == SettingsLogFilter.filter ? _actions() : null,
+      actions: setLogFilter == SettingsLogFilterEntry.filter ? _actions() : null,
       child: categories.length > 0
           ? MasterCategoryDragAndDropList(
-              selectedCategories: selectedCategories,
-              selectedSubcategories: selectedSubcategories,
+              selectedCategories: selectedCategories!,
+              selectedSubcategories: selectedSubcategories!,
               categories: categories,
-              subcategories: subcategories,
+              subcategories: subcategories!,
               setLogFilter: setLogFilter,
             )
           : EmptyContent(),
@@ -102,11 +102,11 @@ class MasterCategoryListDialog extends StatelessWidget {
     return IconButton(
       icon: Icon(Icons.add),
       onPressed: () => {
-        if (setLogFilter == SettingsLogFilter.log)
+        if (setLogFilter == SettingsLogFilterEntry.log)
           {
             getLogAddEditCategoryDialog(category: category),
           }
-        else if (setLogFilter == SettingsLogFilter.settings)
+        else if (setLogFilter == SettingsLogFilterEntry.settings)
           {getSettingsAddEditCategoryDialog(category: category)}
         else
           {

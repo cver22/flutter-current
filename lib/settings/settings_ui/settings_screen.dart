@@ -15,7 +15,7 @@ import '../../utils/utils.dart';
 import '../settings_model/settings_state.dart';
 
 class SettingsScreen extends StatelessWidget {
-  SettingsScreen({Key key}) : super(key: key);
+  SettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -109,13 +109,13 @@ class SettingsScreen extends StatelessWidget {
         });
   }
 
-  Widget _logNameDropDown({SettingsState settingsState}) {
+  Widget _logNameDropDown({SettingsState? settingsState}) {
     AppStore _store = Env.store;
-    if (_store.state.logsState.logs.isNotEmpty) {
-      Map<String, Log> _logsMap = _store.state.logsState.logs;
+    if (_store.state!.logsState.logs.isNotEmpty) {
+      Map<String, Log> _logsMap = _store.state!.logsState.logs;
       List<Log> _logs = _logsMap.entries.map((e) => e.value).toList();
 
-      String _defaultLogId = settingsState.settings.value.defaultLogId;
+      String? _defaultLogId = settingsState!.settings.value.defaultLogId;
 
       //catches error if default log is null or is no longer active
       if (_defaultLogId == null || !_logsMap.containsKey(_defaultLogId)) {
@@ -125,15 +125,15 @@ class SettingsScreen extends StatelessWidget {
 
       return DropdownButton<Log>(
         value: _logs?.firstWhere((e) => e.id == _defaultLogId),
-        onChanged: (Log log) {
-          _defaultLogId = log.id;
+        onChanged: (Log? log) {
+          _defaultLogId = log!.id;
           _store.dispatch(SettingsChangeDefaultLog(log: log));
         },
         items: _logs.map((Log log) {
           return DropdownMenuItem<Log>(
             value: log,
             child: Text(
-              log.name,
+              log.name!,
               style: TextStyle(color: Colors.black),
             ),
           );
@@ -144,17 +144,17 @@ class SettingsScreen extends StatelessWidget {
     }
   }
 
-  Widget _categoryButton({SettingsState settingsState, BuildContext context}) {
+  Widget _categoryButton({SettingsState? settingsState, BuildContext? context}) {
     return CategoryButton(
       label: 'Edit Default Categories',
       onPressed: () => {
         /*Get.dialog(CategoryListDialog()),*/
         showDialog(
-          context: context,
+          context: context!,
           builder: (_) {
             Env.store.dispatch(SettingsSetExpandedCategories());
             return MasterCategoryListDialog(
-                setLogFilter: SettingsLogFilter.settings);
+                setLogFilter: SettingsLogFilterEntry.settings);
           },
         ),
       },

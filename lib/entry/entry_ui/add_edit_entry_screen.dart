@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -28,14 +29,14 @@ import '../entry_model/single_entry_state.dart';
 
 //TODO this does not load the modal, the state isn't changed until the entire submit action is completed
 class AddEditEntryScreen extends StatelessWidget {
-  AddEditEntryScreen({Key key}) : super(key: key);
+  AddEditEntryScreen({Key? key}) : super(key: key);
 
-  void _save({@required AppEntry entry}) {
+  void _save({required AppEntry? entry}) {
     Env.store.dispatch(EntryAddUpdateEntryAndTags(entry: entry));
     Get.back();
   }
 
-  Future<bool> _closeConfirmationDialog({@required bool canSave, @required AppEntry entry}) async {
+  Future<bool> _closeConfirmationDialog({required bool canSave, required AppEntry? entry}) async {
     bool onWillPop = false;
     await Get.dialog(
       SimpleConfirmationDialog(
@@ -62,7 +63,7 @@ class AddEditEntryScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    AppEntry entry;
+    AppEntry? entry;
     return ConnectState<SingleEntryState>(
         where: notIdentical,
         map: (state) => state.singleEntryState,
@@ -75,7 +76,7 @@ class AddEditEntryScreen extends StatelessWidget {
             if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
               entry = singleEntryState.selectedEntry.value;
             }
-            Log log = Env.store.state.logsState.logs[entry.logId];
+            Log log = Env.store.state!.logsState.logs[entry!.logId]!;
 
             return WillPopScope(
               onWillPop: () async {
@@ -90,7 +91,7 @@ class AddEditEntryScreen extends StatelessWidget {
                 children: [
                   Scaffold(
                     appBar: _buildAppBar(entry: entry, singleEntryState: singleEntryState, log: log),
-                    body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry),
+                    body: _buildContents(context: context, entryState: singleEntryState, log: log, entry: entry!),
                   ),
                   ModalLoadingIndicator(loadingMessage: '', activate: singleEntryState.processing),
                 ],
@@ -100,7 +101,7 @@ class AddEditEntryScreen extends StatelessWidget {
         });
   }
 
-  AppBar _buildAppBar({@required AppEntry entry, @required SingleEntryState singleEntryState, @required Log log}) {
+  AppBar _buildAppBar({required AppEntry? entry, required SingleEntryState singleEntryState, required Log log}) {
     bool canSave = singleEntryState.canSave;
 
     return AppBar(
@@ -129,10 +130,10 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _buildContents(
-      {@required BuildContext context,
-      @required SingleEntryState entryState,
-      @required Log log,
-      @required AppEntry entry}) {
+      {required BuildContext context,
+      required SingleEntryState entryState,
+      required Log log,
+      required AppEntry entry}) {
     return SingleChildScrollView(
       child: Card(
         margin: EdgeInsets.all(8.0),
@@ -145,13 +146,13 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _buildForm(
-      {@required BuildContext context,
-      @required SingleEntryState entryState,
-      @required Log log,
-      @required AppEntry entry}) {
+      {required BuildContext context,
+      required SingleEntryState entryState,
+      required Log log,
+      required AppEntry entry}) {
     bool canSave = entryState.canSave;
     bool foreignTransaction = entry.currency != log.currency;
-    Currency logCurrency = CurrencyService().findByCode(log.currency);
+    Currency logCurrency = CurrencyService().findByCode(log.currency!)!;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -174,7 +175,7 @@ class AddEditEntryScreen extends StatelessWidget {
                   Env.store.dispatch(EntryClearAllFocus());
                 },
                 logCurrency: log.currency,
-                currency: entry?.currency,
+                currency: entry.currency,
                 returnCurrency: (currency) {
                   Env.store.dispatch(EntryUpdateCurrency(currency: currency));
                 }),
@@ -184,7 +185,7 @@ class AddEditEntryScreen extends StatelessWidget {
                 if (foreignTransaction)
                   _entryTotalForeignCurrency(
                     entry: entry,
-                    currency: CurrencyService().findByCode(entry.currency),
+                    currency: CurrencyService().findByCode(entry.currency)!,
                     foreignTransaction: foreignTransaction,
                   ),
                 if (foreignTransaction) SizedBox(height: 4.0),
@@ -218,7 +219,7 @@ class AddEditEntryScreen extends StatelessWidget {
           onSave: (newDateTIme) => Env.store.dispatch(EntryUpdateDateTime(dateTime: newDateTIme)),
         ),
         SizedBox(height: 10.0),
-        _categoryButton(categories: entryState?.categories, entry: entry, newEntry: entryState.newEntry),
+        _categoryButton(categories: entryState.categories, entry: entry, newEntry: entryState.newEntry),
         //Transfer funds and No_category do not have a sub categories
         if (entry.categoryId != NO_CATEGORY && entry.categoryId != TRANSFER_FUNDS)
           _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
@@ -230,9 +231,9 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Text _entryTotalLogCurrency({
-    @required AppEntry entry,
-    @required Currency currency,
-    @required bool foreignTransaction,
+    required AppEntry entry,
+    required Currency currency,
+    required bool foreignTransaction,
   }) {
     return Text(
       '${foreignTransaction ? '${currency.code}: ' : 'Total: '} ${formattedAmount(
@@ -249,9 +250,9 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Text _entryTotalForeignCurrency({
-    @required AppEntry entry,
-    @required Currency currency,
-    @required bool foreignTransaction,
+    required AppEntry entry,
+    required Currency currency,
+    required bool foreignTransaction,
   }) {
     return Text(
       '${formattedAmount(
@@ -266,7 +267,7 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _categoryButton({@required AppEntry entry, @required List<AppCategory> categories, @required bool newEntry}) {
+  Widget _categoryButton({required AppEntry entry, required List<AppCategory?> categories, required bool newEntry}) {
     return CategoryButton(
       entry: true,
       newEntry: newEntry,
@@ -280,12 +281,12 @@ class AddEditEntryScreen extends StatelessWidget {
           ),
         ),
       },
-      category: categories?.firstWhere((element) => element.id == entry.categoryId,
-          orElse: () => categories?.firstWhere((element) => element.id == NO_CATEGORY, orElse: () => null)),
+      category: categories.firstWhere((element) => element!.id == entry.categoryId,
+          orElse: () => categories.firstWhere((element) => element!.id == NO_CATEGORY, orElse: () => null))!,
     );
   }
 
-  Widget _subcategoryButton({@required AppEntry entry, @required List<AppCategory> subcategories}) {
+  Widget _subcategoryButton({required AppEntry entry, required List<AppCategory> subcategories}) {
     return CategoryButton(
       entry: true,
       label: 'Select a Subcategory',
@@ -298,16 +299,16 @@ class AddEditEntryScreen extends StatelessWidget {
           ),
         ),
       },
-      category: entry?.subcategoryId == null
+      category: entry.subcategoryId.length > 0
           ? null
-          : subcategories?.firstWhere((element) => element.id == entry.subcategoryId, orElse: () => null),
+          : subcategories.firstWhereOrNull((element) => element.id == entry.subcategoryId)!,
     );
   }
 
-  Widget _commentFormField({@required AppEntry entry, @required FocusNode commentFocusNode}) {
+  Widget _commentFormField({required AppEntry entry, required FocusNode commentFocusNode}) {
     return TextFormField(
       decoration: InputDecoration(labelText: 'Comment'),
-      initialValue: entry?.comment,
+      initialValue: entry.comment,
       focusNode: commentFocusNode,
       textCapitalization: TextCapitalization.sentences,
       onChanged: (value) => Env.store.dispatch(
@@ -341,7 +342,7 @@ class AddEditEntryScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildDeleteEntryButton({AppEntry entry}) {
+  Widget _buildDeleteEntryButton({AppEntry? entry}) {
     return entry?.id == null
         ? Container()
         : PopupMenuButton<String>(
@@ -362,10 +363,10 @@ class AddEditEntryScreen extends StatelessWidget {
   }
 
   Widget _distributeAmountButtons(
-      {@required Map<String, EntryMember> members,
-      @required bool canSave,
-      @required Currency logCurrency,
-      @required int remainingSpending}) {
+      {required Map<String?, EntryMember?> members,
+      required bool canSave,
+      required Currency logCurrency,
+      required int remainingSpending}) {
     if (!canSave && remainingSpending != 0) {
       return Column(
         mainAxisSize: MainAxisSize.min,

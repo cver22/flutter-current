@@ -1,7 +1,5 @@
 import 'dart:async';
 
-import 'package:meta/meta.dart';
-
 import '../entry/entry_model/app_entry.dart';
 import '../member/member_model/entry_member_model/entry_member.dart';
 import '../member/member_model/log_member_model/log_member.dart';
@@ -12,19 +10,19 @@ import 'entries_repository.dart';
 class EntriesFetcher {
   final AppStore _store;
   final EntriesRepository _entriesRepository;
-  /*late*/ StreamSubscription _entriesSubscription;
+  late StreamSubscription _entriesSubscription;
 
   EntriesFetcher({
-    @required AppStore store,
-    @required EntriesRepository entriesRepository,
+    required AppStore store,
+    required EntriesRepository entriesRepository,
   })  : _store = store,
         _entriesRepository = entriesRepository;
 
   Future<void> loadEntries() async {
     _store.dispatch(EntriesSetLoading());
-    _entriesSubscription?.cancel();
+    _entriesSubscription.cancel();
     _entriesSubscription = _entriesRepository
-        .loadEntries(_store.state.authState.user.value)
+        .loadEntries(_store.state!.authState.user.value)
         .listen(
           (entries) => _store.dispatch(EntriesSetEntries(entryList: entries)),
         );
@@ -56,8 +54,8 @@ class EntriesFetcher {
   }
 
   Future<void> batchUpdateEntries(
-      {@required List<AppEntry> entries,
-      @required Map<String, LogMember> logMembers}) {
+      {required List<AppEntry> entries,
+      required Map<String?, LogMember> logMembers}) async {
     List<AppEntry> updatedEntries = [];
 
     //adds any new log members to all entries for the log
@@ -66,7 +64,7 @@ class EntriesFetcher {
       logMembers.forEach((key, logMember) {
         if (!entry.entryMembers.containsKey(key)) {
           entryMembers.putIfAbsent(
-              key, () => EntryMember(uid: logMember.uid, spending: false));
+              key!, () => EntryMember(uid: logMember.uid, spending: false, order: entry.entryMembers.length));
         }
       });
       updatedEntries.add(entry.copyWith(entryMembers: entryMembers));
@@ -75,6 +73,7 @@ class EntriesFetcher {
     if (updatedEntries.isNotEmpty) {
       try {
         _entriesRepository.batchUpdateEntries(updatedEntries: updatedEntries);
+
       } catch (e) {
         print(e.toString());
       }
@@ -82,7 +81,7 @@ class EntriesFetcher {
   }
 
   Future<void> batchDeleteEntries(
-      {@required List<AppEntry> deletedEntries}) async {
+      {required List<AppEntry> deletedEntries}) async {
     //log has been deleted, delete all associated entries
 
     if (deletedEntries.isNotEmpty) {
@@ -96,6 +95,6 @@ class EntriesFetcher {
 
   //TODO where to close the subscription when exiting the app?
   Future<void> close() async {
-    _entriesSubscription?.cancel();
+    _entriesSubscription.cancel();
   }
 }

@@ -10,7 +10,7 @@ import '../account_model/account_state.dart';
 class ChangePasswordForm extends StatefulWidget {
   final AccountState accountState;
 
-  const ChangePasswordForm({Key key, @required this.accountState})
+  const ChangePasswordForm({Key? key, required this.accountState})
       : super(key: key);
 
   @override
@@ -25,7 +25,7 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
   final FocusNode _oldPasswordFocus = FocusNode();
   final FocusNode _newPasswordFocus = FocusNode();
   final FocusNode _verifyPasswordFocus = FocusNode();
-  AccountState accountState;
+  late AccountState accountState;
 
   @override
   void initState() {
@@ -120,13 +120,13 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
   }
 
   TextFormField _passwordFormField({
-    @required TextEditingController controller,
-    @required String label,
-    String Function(String) validator,
-    @required TextInputAction textInputAction,
-    void Function(String) onFieldSubmitted,
-    FocusNode focusNode,
-    bool autoFocus,
+    required TextEditingController controller,
+    required String label,
+    String? Function(String?)? validator,
+    required TextInputAction textInputAction,
+    void Function(String)? onFieldSubmitted,
+    FocusNode? focusNode,
+    bool? autoFocus,
   }) {
     return TextFormField(
       autofocus: autoFocus ?? false,

@@ -6,14 +6,14 @@ import '../env.dart';
 
 class ConnectState<T> extends StatelessWidget {
   final T Function(AppState appState) map;
-  final bool Function(T prev, T next) where;
+  final bool Function(T prev, T next)? where;
   final Widget Function(T state) builder;
 
   const ConnectState({
-    Key key,
-    @required this.map,
+    Key? key,
+    required this.map,
     this.where,
-    @required this.builder,
+    required this.builder,
   }) : super(key: key);
 
   @override
@@ -26,7 +26,7 @@ class ConnectState<T> extends StatelessWidget {
           if (snapshot.data == null) {
             return Container();
           }
-          return builder(snapshot.data/*!*/);
+          return builder(snapshot.data!);
         });
   }
 }

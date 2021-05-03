@@ -6,20 +6,20 @@ import '../categories_model/app_category/app_category.dart';
 
 class CategoryListTile extends StatelessWidget {
   final AppCategory category;
-  final VoidCallback/*!*/ onTap;
-  final VoidCallback/*!*/ onTapEdit;
+  final VoidCallback? onTap;
+  final VoidCallback onTapEdit;
   final bool inset;
-  final SettingsLogFilter/*!*/ setLogFilter;
+  final SettingsLogFilterEntry setLogFilter;
   final bool selected;
 
   const CategoryListTile(
-      {Key key,
-      @required this.category,
+      {Key? key,
+      required this.category,
       this.onTap,
-      this.onTapEdit,
+      required this.onTapEdit,
       this.inset = false,
       this.selected = false,
-      this.setLogFilter})
+      required this.setLogFilter})
       : super(key: key);
 
   @override
@@ -38,7 +38,7 @@ class CategoryListTile extends StatelessWidget {
         sublist: inset, //only a sublist if there is no ontap method
       ),
       title: Text(category.name),
-      trailing: setLogFilter == SettingsLogFilter.filter
+      trailing: setLogFilter == SettingsLogFilterEntry.filter
           ? FilterListTileTrailing(onSelect: onTapEdit, selected: selected)
           : CategoryListTileTrailing(onTapEdit: onTapEdit),
       onTap: onTap,

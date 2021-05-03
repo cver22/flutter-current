@@ -36,12 +36,12 @@ class LogEntity extends Equatable {
     this.defaultCategory = NO_CATEGORY,
     this.logMembers = const {},
     this.memberList = const [],
-    this.order,
+    this.order = 0,
   });
 
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         uid,
         id,
         name,
@@ -64,39 +64,39 @@ class LogEntity extends Equatable {
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
     return LogEntity(
-      uid: snap.data()[UID],
+      uid: snap.data()![UID],
       id: snap.id,
-      name: snap.data()[LOG_NAME],
-      currency: snap.data()[CURRENCY_NAME],
-      /*categories: (snap.data()[CATEGORIES] as LinkedHashMap<String, dynamic>)
+      name: snap.data()![LOG_NAME],
+      currency: snap.data()![CURRENCY_NAME],
+      categories: (snap.data()![CATEGORIES] as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(
               key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
-      subcategories: (snap.data()[SUBCATEGORIES]
+      subcategories: (snap.data()![SUBCATEGORIES]
               as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(
-              key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),*/
-      archive: snap.data()[ARCHIVE],
-      defaultCategory: snap.data()[DEFAULT_CATEGORY],
-      /*logMembers: (snap.data()[MEMBERS] as Map<String, dynamic>).map((key,
+              key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
+      archive: snap.data()![ARCHIVE],
+      defaultCategory: snap.data()![DEFAULT_CATEGORY],
+      logMembers: (snap.data()![MEMBERS] as Map<String, dynamic>).map((key,
               value) =>
-          MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),*/
-      order: snap.data()[ORDER],
+          MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
+      order: snap.data()![ORDER],
     );
   }
 
-  Map<String, Object> toDocument() {
+  Map<String, Object?> toDocument() {
     return {
       UID: uid,
       LOG_NAME: name,
       CURRENCY_NAME: currency,
-      /*CATEGORIES: categories
+      CATEGORIES: categories
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       SUBCATEGORIES: subcategories
-          .map((key, value) => MapEntry(key, value.toEntity().toJson())),*/
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       ARCHIVE: archive,
       DEFAULT_CATEGORY: defaultCategory,
-      /*MEMBERS: logMembers
-          .map((key, value) => MapEntry(key, value.toEntity().toJson())),*/
+      MEMBERS: logMembers
+          .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       MEMBER_LIST: memberList,
       ORDER: order
     };

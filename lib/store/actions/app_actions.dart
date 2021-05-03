@@ -1,7 +1,3 @@
-
-import 'package:flutter/material.dart';
-import 'package:meta/meta.dart';
-
 import '../../filter/filter_model/filter_state.dart';
 import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
@@ -21,59 +17,59 @@ import '../../utils/db_consts.dart';
 import '../../currency/currency_models/currency_state.dart';
 
 abstract class AppAction {
-  AppState/*!*/ updateState(AppState/*!*/ appState);
+  AppState updateState(AppState appState);
 }
 
-AppState/*!*/ updateSubstates(
-    AppState/*!*/ state, List<AppState Function(AppState/*!*/)> updates) {
+AppState updateSubstates(
+    AppState state, List<AppState Function(AppState)> updates) {
   return updates.fold(state, (updatedState, update) => update(updatedState));
 }
 
-AppState Function(AppState/*!*/) updateLogsState(LogsState/*!*/ update(logsState)) {
+AppState Function(AppState) updateLogsState(LogsState update(logsState)) {
   return (state) => state.copyWith(logsState: update(state.logsState));
 }
 
-AppState Function(AppState/*!*/) updateEntriesState(
-    EntriesState/*!*/ update(entriesState)) {
+AppState Function(AppState) updateEntriesState(
+    EntriesState update(entriesState)) {
   return (state) => state.copyWith(entriesState: update(state.entriesState));
 }
 
 AppState Function(AppState) updateSettingsState(
-    SettingsState/*!*/ update(settingsState)) {
+    SettingsState update(settingsState)) {
   return (state) => state.copyWith(settingsState: update(state.settingsState));
 }
 
-AppState Function(AppState/*!*/) updateSingleEntryState(
-    SingleEntryState/*!*/ update(singleEntryState)) {
+AppState Function(AppState) updateSingleEntryState(
+    SingleEntryState update(singleEntryState)) {
   return (state) =>
       state.copyWith(singleEntryState: update(state.singleEntryState));
 }
 
-AppState Function(AppState) updateTagState(TagState update(tagState)) {
+AppState Function(AppState) updateTagState(TagState? update(tagState)) {
   return (state) => state.copyWith(tagState: update(state.tagState));
 }
 
-AppState Function(AppState/*!*/) updateLogTotalsState(
-    LogTotalsState/*!*/ update(logTotalsState)) {
+AppState Function(AppState) updateLogTotalsState(
+    LogTotalsState update(logTotalsState)) {
   return (state) =>
       state.copyWith(logTotalsState: update(state.logTotalsState));
 }
 
-AppState Function(AppState/*!*/) updateFilterState(
-    FilterState/*!*/ update(filterState)) {
+AppState Function(AppState) updateFilterState(
+    FilterState update(filterState)) {
   return (state) =>
       state.copyWith(filterState: update(state.filterState));
 }
 
-AppState Function(AppState/*!*/) updateCurrencyState(CurrencyState/*!*/ update(currencyState)) {
+AppState Function(AppState) updateCurrencyState(CurrencyState update(currencyState)) {
   return (state) => state.copyWith(currencyState: update(state.currencyState));
 }
 
 Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
-    {@required AppState appState,
-    @required String logId,
-    @required Map<String, Log> logs}) {
-  Log log = logs[logId];
+    {required AppState appState,
+    required String? logId,
+    required Map<String, Log> logs}) {
+  Log log = logs[logId!]!;
   if (appState.singleEntryState.categories != log.categories ||
       appState.singleEntryState.subcategories != log.subcategories) {
     log = log.copyWith(
@@ -87,8 +83,8 @@ Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
 }
 
 LogTotal updateLogMemberTotals(
-    {@required List<AppEntry> entries, @required Log log}) {
-  Map<String, LogMember> logMembers = Map.from(log.logMembers);
+    {required List<AppEntry> entries, required Log log}) {
+  Map<String?, LogMember> logMembers = Map.from(log.logMembers);
   DateTime now = DateTime.now();
 
   int currentMonth = now.month;
@@ -108,31 +104,31 @@ LogTotal updateLogMemberTotals(
   logMembers.updateAll((key, value) => value.copyWith(paid: 0, spent: 0));
 
   entries.forEach((entry) {
-    DateTime entryDate = entry?.dateTime;
+    DateTime entryDate = entry.dateTime;
     int entryMonth = entryDate.month;
     int entryYear = entryDate.year;
 
     if (entryYear == currentYear && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
-        int paid = member?.paid ?? 0;
-        int spent = member?.spent ?? 0;
+        int paid = member.paid ?? 0;
+        int spent = member.spent ?? 0;
         thisMonthTotalPaid += paid;
 
         logMembers.update(
             key,
             (value) => value.copyWith(
-                paid: value.paid + paid, spent: value.spent + spent));
+                paid: value.paid! + paid, spent: value.spent! + spent));
       });
     } else if (entryYear == lastMonthYear && entryMonth == lastMonth) {
       entry.entryMembers.forEach((key, member) {
         if (member.paid != null) {
-          lastMonthTotalPaid += member.paid;
+          lastMonthTotalPaid += member.paid!;
         }
       });
     } else if (entryYear == currentYear - 1 && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
         if (member.paid != null) {
-          sameMonthLastYearTotalPaid += member.paid;
+          sameMonthLastYearTotalPaid += member.paid!;
         }
       });
     }
@@ -146,14 +142,14 @@ LogTotal updateLogMemberTotals(
       averagePerDay: (thisMonthTotalPaid / daysSoFar).round());
 }
 
-bool canDeleteCategory({@required String id}) {
+bool canDeleteCategory({required String id}) {
   if (id == NO_CATEGORY || id == TRANSFER_FUNDS) {
     return false;
   }
   return true;
 }
 
-bool canDeleteSubcategory({@required AppCategory subcategory}) {
+bool canDeleteSubcategory({required AppCategory subcategory}) {
   if (subcategory.id.contains(OTHER)) {
     return false;
   }
@@ -162,12 +158,12 @@ bool canDeleteSubcategory({@required AppCategory subcategory}) {
 
 //used by setting and log to reorder subcategories
 List<AppCategory> reorderSubcategoriesLogSetting(
-    {@required AppCategory subcategory,
-    @required String newParentId,
-    @required String oldParentId,
-    @required List<AppCategory> subsetOfSubcategories,
-    @required List<AppCategory> subcategories,
-    @required int newSubcategoryIndex}) {
+    {required AppCategory subcategory,
+    required String newParentId,
+    required String oldParentId,
+    required List<AppCategory> subsetOfSubcategories,
+    required List<AppCategory> subcategories,
+    required int newSubcategoryIndex}) {
   //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
   if (_canReorderSubcategory(
       subcategory: subcategory, newParentId: newParentId)) {
@@ -199,7 +195,7 @@ List<AppCategory> reorderSubcategoriesLogSetting(
 
 //determine if the subcategory is special and cannot be reOrdered
 bool _canReorderSubcategory(
-    {@required AppCategory subcategory, @required String newParentId}) {
+    {required AppCategory subcategory, required String newParentId}) {
   if (newParentId == NO_CATEGORY ||
       subcategory.id.contains(OTHER) ||
       newParentId == TRANSFER_FUNDS) {
@@ -209,10 +205,10 @@ bool _canReorderSubcategory(
 }
 
 List<Tag> buildSearchedTagsList(
-    {@required List<Tag> tags,
-    @required List<String> tagIds,
+    {required List<Tag> tags,
+    required List<String> tagIds,
     int maxTags = -1,
-    @required String search}) {
+    required String? search}) {
   int tagCount = 0;
   List<Tag> searchedTags = [];
 
@@ -240,18 +236,18 @@ List<Tag> buildSearchedTagsList(
 }
 
 List<AppCategory> reorderLogSettingsCategories(
-    {@required List<AppCategory> categories,
-    @required int oldCategoryIndex,
-    @required int newCategoryIndex}) {
+    {required List<AppCategory> categories,
+    required int oldCategoryIndex,
+    required int newCategoryIndex}) {
   AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
   categories.insert(newCategoryIndex, movedCategory);
   return categories;
 }
 
 List<bool> reorderLogSettingsExpandedCategories(
-    {@required List<bool> expandedCategories,
-    @required int oldCategoryIndex,
-    @required int newCategoryIndex}) {
+    {required List<bool> expandedCategories,
+    required int oldCategoryIndex,
+    required int newCategoryIndex}) {
   bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
   expandedCategories.insert(newCategoryIndex, movedExpansion);
   return expandedCategories;

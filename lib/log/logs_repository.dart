@@ -12,9 +12,9 @@ abstract class LogsRepository {
 
   Stream<List<Log>> loadLogs(AppUser user);
 
-  Future<void> updateLog(Log log);
+  Future<void> updateLog(Log? log);
 
-  void deleteLog(Log log);
+  void deleteLog(Log? log);
 }
 
 class FirebaseLogsRepository implements LogsRepository {
@@ -40,12 +40,12 @@ class FirebaseLogsRepository implements LogsRepository {
   }
 
   @override
-  Future<void> updateLog(Log update) {
-    return logsCollection.doc(update.id).update(update.toEntity().toDocument());
+  Future<void> updateLog(Log? update) {
+    return logsCollection.doc(update!.id).update(update.toEntity().toDocument());
   }
 
   @override
-  void deleteLog(Log log) {
-    logsCollection.doc(log.id).delete();
+  void deleteLog(Log? log) {
+    logsCollection.doc(log!.id).delete();
   }
 }

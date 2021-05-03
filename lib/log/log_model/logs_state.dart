@@ -9,20 +9,20 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class LogsState extends Equatable {
-  final Map<String, Log>/*!*/ logs; // id, log
-  final bool/*!*/ isLoading;
-  final Maybe<Log>/*!*/ selectedLog;
-  final List<bool>/*!*/ expandedCategories;
-  final bool/*!*/ userUpdated;
-  final bool/*!*/ canSave;
+  final Map<String, Log> logs; // id, log
+  final bool isLoading;
+  final Maybe<Log> selectedLog;
+  final List<bool> expandedCategories;
+  final bool userUpdated;
+  final bool canSave;
 
   LogsState(
-      {this.logs,
-      this.isLoading,
-      this.selectedLog,
-      this.expandedCategories,
-      this.userUpdated,
-      this.canSave});
+      {required this.logs,
+      required this.isLoading,
+      required this.selectedLog,
+      required this.expandedCategories,
+      required this.userUpdated,
+      required this.canSave});
 
   factory LogsState.initial() {
     return LogsState(
@@ -49,12 +49,12 @@ class LogsState extends Equatable {
   bool get stringify => true;
 
   LogsState copyWith({
-    Map<String, Log> logs,
-    bool isLoading,
-    Maybe<Log> selectedLog,
-    List<bool> expandedCategories,
-    bool userUpdated,
-    bool canSave,
+    Map<String, Log>? logs,
+    bool? isLoading,
+    Maybe<Log>? selectedLog,
+    List<bool>? expandedCategories,
+    bool? userUpdated,
+    bool? canSave,
   }) {
     if ((logs == null || identical(logs, this.logs)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&

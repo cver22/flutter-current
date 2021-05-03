@@ -10,11 +10,11 @@ import 'tag_repository.dart';
 class TagFetcher {
   final AppStore _store;
   final TagRepository _tagRepository;
-  StreamSubscription _tagSubscription;
+  StreamSubscription? _tagSubscription;
 
   TagFetcher({
-    @required AppStore store,
-    @required TagRepository tagRepository,
+    required AppStore store,
+    required TagRepository tagRepository,
   })  : _store = store,
         _tagRepository = tagRepository;
 
@@ -22,7 +22,7 @@ class TagFetcher {
     _store.dispatch(TagsSetLoading());
     _tagSubscription?.cancel();
     _tagSubscription =
-        _tagRepository.loadTags(_store.state.authState.user.value).listen(
+        _tagRepository.loadTags(_store.state!.authState.user.value).listen(
               (tags) => _store.dispatch(TagsSetTags(tagList: tags)),
             );
     _store.dispatch(TagsSetLoaded());
@@ -45,7 +45,7 @@ class TagFetcher {
   }
 
   Future<void> batchAddUpdate(
-      {List<Tag> addedTags, List<Tag> updatedTags}) async {
+      {required List<Tag> addedTags, required List<Tag> updatedTags}) async {
     if (addedTags.isNotEmpty) {
       try {
         _tagRepository.batchAddTags(addedTags: addedTags);
@@ -71,7 +71,7 @@ class TagFetcher {
     }
   }
 
-  Future<void> batchDeleteTags({@required List<Tag> deletedTags}) async {
+  Future<void> batchDeleteTags({required List<Tag> deletedTags}) async {
     //log has been deleted, delete all associated tags
 
     if (deletedTags.isNotEmpty) {

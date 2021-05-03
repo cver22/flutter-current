@@ -8,7 +8,7 @@ import '../login_register_model/login_reg_state.dart';
 import 'login_register_form.dart';
 
 class LoginRegisterScreen extends StatelessWidget {
-  const LoginRegisterScreen({Key key}) : super(key: key);
+  const LoginRegisterScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -30,8 +30,8 @@ class LoginRegisterScreen extends StatelessWidget {
             ),
             body: LoginRegisterForm(),
           ),
-          onWillPop: () =>
-              SystemChannels.platform.invokeMethod('SystemNavigator.pop'),
+          onWillPop: (() =>
+              SystemChannels.platform.invokeMethod('SystemNavigator.pop') as Future<bool>) as Future<bool> Function()?,
         );
       },
     );

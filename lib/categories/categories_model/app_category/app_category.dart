@@ -1,10 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
+import 'package:functional_data/functional_data.dart';
 
 import 'app_category_entity.dart';
 
 @immutable
+@FunctionalData()
 class AppCategory extends Equatable {
   final String id;
   final String name;
@@ -44,10 +46,10 @@ class AppCategory extends Equatable {
   }
 
   AppCategory copyWith({
-    String id,
-    String name,
-    String emojiChar,
-    String parentCategoryId,
+    String? id,
+    String? name,
+    String? emojiChar,
+    String? parentCategoryId,
   }) {
     if ((id == null || identical(id, this.id)) &&
         (name == null || identical(name, this.name)) &&

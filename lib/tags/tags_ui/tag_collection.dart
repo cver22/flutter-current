@@ -5,17 +5,17 @@ import '../tag_model/tag.dart';
 import 'tag_chip.dart';
 
 class TagCollection extends StatelessWidget {
-  final List<Tag> tags;
-  final String collectionName;
+  final List<Tag?> tags;
+  final String? collectionName;
   final Maybe<String> search;
   final bool chipsEditable;
   final bool filterSelect;
 
   const TagCollection(
-      {Key key,
-      @required this.tags,
+      {Key? key,
+      required this.tags,
       this.collectionName,
-      @required this.search,
+      required this.search,
       this.chipsEditable = true,
       this.filterSelect = false})
       : super(key: key);
@@ -26,7 +26,7 @@ class TagCollection extends StatelessWidget {
 
     tags.forEach((tag) {
       tagChips.add(TagChip(
-        tag: tag,
+        tag: tag!,
         search: search,
         editable: chipsEditable,
         filterSelect: filterSelect,
@@ -34,7 +34,7 @@ class TagCollection extends StatelessWidget {
     });
     return Column(
       children: [
-        collectionName == null ? Container() : Text(collectionName),
+        collectionName == null ? Container() : Text(collectionName!),
         Wrap(
           spacing: 5.0,
           runSpacing: 3.0,

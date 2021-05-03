@@ -7,23 +7,23 @@ import 'settings_entity.dart';
 
 @immutable
 class Settings extends Equatable {
-  final String/*!*/ homeCurrency;
-  final List<AppCategory>/*!*/ defaultCategories;
-  final List<AppCategory>/*!*/ defaultSubcategories;
-  final String defaultLogId;
+  final String homeCurrency;
+  final List<AppCategory> defaultCategories;
+  final List<AppCategory> defaultSubcategories;
+  final String? defaultLogId;
   final bool autoInsertDecimalPoint;
-  final List<String>/*!*/ logOrder;
+  final List<String> logOrder;
 
   Settings(
-      {this.homeCurrency,
-      this.defaultCategories,
-      this.defaultSubcategories,
+      {required this.homeCurrency,
+      required this.defaultCategories,
+      required this.defaultSubcategories,
       this.defaultLogId,
-      this.autoInsertDecimalPoint,
-      this.logOrder});
+      this.autoInsertDecimalPoint = false,
+      required this.logOrder});
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         homeCurrency,
         defaultCategories,
         defaultSubcategories,
@@ -61,33 +61,34 @@ class Settings extends Equatable {
   static Settings fromEntity(SettingsEntity entity) {
     //converts entity back to model
     List<AppCategory> returnedDefaultCategories = [];
-    entity.defaultCategoryEntities.every((e) {
+    entity.defaultCategoryEntities!.every((e) {
       returnedDefaultCategories.add(AppCategory.fromEntity(e));
       return true;
     });
 
     List<AppCategory> returnedDefaultSubcategories = [];
-    entity.defaultSubcategoryEntities.every((e) {
+    entity.defaultSubcategoryEntities!.every((e) {
       returnedDefaultSubcategories.add(AppCategory.fromEntity(e));
       return true;
     });
 
     return Settings(
-      homeCurrency: entity.homeCurrency,
+      homeCurrency: entity.homeCurrency!,
       defaultCategories: returnedDefaultCategories,
       defaultSubcategories: returnedDefaultSubcategories,
       defaultLogId: entity.defaultLogId,
       autoInsertDecimalPoint: entity.autoInsertDecimalPoint,
+      logOrder: entity.logOrder,
     );
   }
 
   Settings copyWith({
-    String homeCurrency,
-    List<AppCategory> defaultCategories,
-    List<AppCategory> defaultSubcategories,
-    String defaultLogId,
-    bool autoInsertDecimalPoint,
-    List<String> logOrder,
+    String? homeCurrency,
+    List<AppCategory>? defaultCategories,
+    List<AppCategory>? defaultSubcategories,
+    String? defaultLogId,
+    bool? autoInsertDecimalPoint,
+    List<String>? logOrder,
   }) {
     if ((homeCurrency == null || identical(homeCurrency, this.homeCurrency)) &&
         (defaultCategories == null ||

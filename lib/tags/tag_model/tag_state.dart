@@ -9,7 +9,7 @@ class TagState extends Equatable {
   final Map<String, Tag> tags;
   final bool isLoading;
 
-  TagState({@required this.tags, @required this.isLoading});
+  TagState({required this.tags, required this.isLoading});
 
   factory TagState.initial() {
     return TagState(
@@ -19,8 +19,8 @@ class TagState extends Equatable {
   }
 
   TagState copyWith({
-    Map<String, Tag> tags,
-    bool isLoading,
+    Map<String, Tag>? tags,
+    bool? isLoading,
   }) {
     if ((tags == null || identical(tags, this.tags)) &&
         (isLoading == null || identical(isLoading, this.isLoading))) {

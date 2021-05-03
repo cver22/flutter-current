@@ -7,11 +7,11 @@ import '../../store/actions/single_entry_actions.dart';
 import '../tag_model/tag.dart';
 
 class EditTagDialog extends StatefulWidget {
-  final Tag/*!*/ tag;
+  final Tag tag;
 
   const EditTagDialog({
-    Key key,
-    this.tag,
+    Key? key,
+    required this.tag,
   }) : super(key: key);
 
   @override
@@ -19,12 +19,12 @@ class EditTagDialog extends StatefulWidget {
 }
 
 class _EditTagDialogState extends State<EditTagDialog> {
-  /*late*/ TextEditingController _controller;
-  bool canSave;
+  late TextEditingController _controller;
+  late bool canSave;
 
   void initState() {
     _controller = TextEditingController();
-    _controller.value = TextEditingValue(text: widget.tag.name);
+    _controller.value = TextEditingValue(text: widget.tag.name!);
     canSave = _controller.text != null && _controller.text.length > 0;
     super.initState();
   }

@@ -15,15 +15,15 @@ class LogMemberMonthListTile extends StatelessWidget {
   final bool singleMemberLog;
 
   const LogMemberMonthListTile(
-      {Key key,
-      @required this.log,
-      @required this.member,
+      {Key? key,
+      required this.log,
+      required this.member,
       this.singleMemberLog = false})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Currency currency = CurrencyService().findByCode(log.currency);
+    Currency currency = CurrencyService().findByCode(log.currency!)!;
 
     return Column(
       children: [

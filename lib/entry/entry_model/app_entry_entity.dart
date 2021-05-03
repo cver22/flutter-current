@@ -18,7 +18,7 @@ class AppEntryEntity extends Equatable {
       this.amountForeign = 0,
       this.exchangeRate = 1.0,
       this.comment ='',
-      @required this.dateTime,
+      required this.dateTime,
       this.tagIDs = const {},
       this.entryMembers = const {},
       this.memberList = const []}); //TODO get rid of members list eventually? do i need it if I have entryMembers list?
@@ -35,10 +35,10 @@ class AppEntryEntity extends Equatable {
   final DateTime dateTime;
   final Map<String, String> tagIDs;
   final Map<String, EntryMember> entryMembers;
-  final List<String> memberList;
+  final List<String?> memberList;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         id,
         logId,
         currency,
@@ -65,22 +65,22 @@ class AppEntryEntity extends Equatable {
   static AppEntryEntity fromSnapshot(DocumentSnapshot snap) {
     return AppEntryEntity(
       id: snap.id,
-      logId: snap.data()[LOG_ID],
-      currency: snap.data()[CURRENCY_NAME],
-      category: snap.data()[CATEGORY],
-      subcategory: snap.data()[SUBCATEGORY],
-      amount: snap.data()[AMOUNT],
-      amountForeign: snap.data()[AMOUNT_FOREIGN],
-      exchangeRate: snap.data()[EXCHANGE_RATE],
-      comment: snap.data()[COMMENT],
-      dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()[DATE_TIME]),
-      tagIDs: (snap.data()[TAGS] as Map<String, dynamic>)?.map((key, value) => MapEntry(key, value)),
+      logId: snap.data()![LOG_ID],
+      currency: snap.data()![CURRENCY_NAME],
+      category: snap.data()![CATEGORY],
+      subcategory: snap.data()![SUBCATEGORY],
+      amount: snap.data()![AMOUNT],
+      amountForeign: snap.data()![AMOUNT_FOREIGN],
+      exchangeRate: snap.data()![EXCHANGE_RATE],
+      comment: snap.data()![COMMENT],
+      dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()![DATE_TIME]),
+      tagIDs: (snap.data()![TAGS] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
       /*entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
           ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),*/
     );
   }
 
-  Map<String, Object> toDocument() {
+  Map<String, Object?> toDocument() {
     return {
       LOG_ID: logId,
       CURRENCY_NAME: currency,

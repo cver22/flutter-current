@@ -11,10 +11,10 @@ class CurrencyState extends Equatable {
   final bool isLoading;
 
   CurrencyState({
-    @required this.conversionRateMap,
-  @required this.allCurrencies,
-  @required this.searchCurrencies,
-  @required this.isLoading,
+    required this.conversionRateMap,
+  required this.allCurrencies,
+  required this.searchCurrencies,
+  required this.isLoading,
   });
 
   factory CurrencyState.initial() {
@@ -33,10 +33,10 @@ class CurrencyState extends Equatable {
   List<Object> get props => [conversionRateMap, allCurrencies, searchCurrencies, isLoading];
 
   CurrencyState copyWith({
-    Map<String, ConversionRates> conversionRateMap,
-    List<Currency> allCurrencies,
-    List<Currency> searchCurrencies,
-    bool isLoading,
+    Map<String, ConversionRates>? conversionRateMap,
+    List<Currency>? allCurrencies,
+    List<Currency>? searchCurrencies,
+    bool? isLoading,
   }) {
     if ((conversionRateMap == null || identical(conversionRateMap, this.conversionRateMap)) &&
         (allCurrencies == null || identical(allCurrencies, this.allCurrencies)) &&

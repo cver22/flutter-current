@@ -19,7 +19,7 @@ import 'change_password_controller.dart';
 
 //AccountScreen contains user information, picture, QR code, password changes, logout
 class AccountScreen extends StatefulWidget {
-  const AccountScreen({Key key}) : super(key: key);
+  const AccountScreen({Key? key}) : super(key: key);
 
   @override
   _AccountScreenState createState() => _AccountScreenState();
@@ -30,11 +30,11 @@ class _AccountScreenState extends State<AccountScreen> {
   bool showQRCode = false;
   bool showPasswordFields = false;
   bool editDisplayName = false;
-  AppUser user;
+  late AppUser user;
 
   @override
   void initState() {
-    user = Env.store.state.authState.user.value;
+    user = Env.store.state!.authState.user.value;
     _displayNameController.value = TextEditingValue(text: user.displayName ?? '');
     super.initState();
   }
@@ -50,7 +50,7 @@ class _AccountScreenState extends State<AccountScreen> {
     return ConnectState(
         where: notIdentical,
         map: (state) => state.authState,
-        builder: (authState) {
+        builder: (dynamic authState) {
           return WillPopScope(
             onWillPop: () async {
               Get.back();
@@ -108,7 +108,7 @@ class _AccountScreenState extends State<AccountScreen> {
       ]),
       child: CircleAvatar(
           radius: 60.0,
-          backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl) : null,
+          backgroundImage: user.photoUrl != null ? NetworkImage(user.photoUrl!) : null,
           child: user.photoUrl == null ? Icon(Icons.camera_alt, size: 60.0) : null),
     );
   }
@@ -125,7 +125,7 @@ class _AccountScreenState extends State<AccountScreen> {
               textCapitalization: TextCapitalization.sentences,
             ),
           )
-        : Text(user.displayName != null && user.displayName.length > 0 ? user.displayName : 'Please enter a name');
+        : Text(user.displayName != null && user.displayName!.length > 0 ? user.displayName! : 'Please enter a name');
   }
 
   Widget _showEditDisplayIcon() {
@@ -141,7 +141,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 Env.userFetcher.updateDisplayName(displayName: displayName);
                 Env.store.dispatch(AuthUpdateDisplayName(displayName: displayName));
                 Env.store.dispatch(LogUpdateLogMember());
-                user = Env.store.state.authState.user.value;
+                user = Env.store.state!.authState.user.value;
               }
               setState(() {
                 editDisplayName = false;
@@ -162,7 +162,7 @@ class _AccountScreenState extends State<AccountScreen> {
   }
 
   Widget _showUserEmail() {
-    return Text(user.email != null ? user.email : 'Email missing');
+    return Text(user.email != null ? user.email! : 'Email missing');
   }
 
   Widget _showQRCode() {

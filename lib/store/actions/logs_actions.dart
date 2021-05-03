@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app/models/app_state.dart';
@@ -71,7 +70,7 @@ class SetNewLog implements AppAction {
 class UpdateSelectedLog implements AppAction {
   final Log log;
 
-  UpdateSelectedLog({@required this.log});
+  UpdateSelectedLog({required this.log});
 
   @override
   AppState updateState(AppState appState) {
@@ -87,7 +86,7 @@ class UpdateSelectedLog implements AppAction {
 class LogUpdateName implements AppAction {
   final String name;
 
-  LogUpdateName({@required this.name});
+  LogUpdateName({required this.name});
 
   @override
   AppState updateState(AppState appState) {
@@ -109,10 +108,10 @@ class LogUpdateName implements AppAction {
 }
 
 class LogSetCategories implements AppAction {
-  final Log log;
+  final Log? log;
   final bool userUpdated;
 
-  LogSetCategories({@required this.log, this.userUpdated = false});
+  LogSetCategories({required this.log, this.userUpdated = false});
 
   @override
   AppState updateState(AppState appState) {
@@ -124,8 +123,8 @@ class LogSetCategories implements AppAction {
         updateLogsState((logsState) => logsState.copyWith(
               selectedLog: Maybe.some(
                 newLog.copyWith(
-                  categories: List.from(log.categories),
-                  subcategories: List.from(log.subcategories),
+                  categories: List.from(log!.categories),
+                  subcategories: List.from(log!.subcategories),
                 ),
               ),
               userUpdated: userUpdated,
@@ -136,14 +135,14 @@ class LogSetCategories implements AppAction {
 }
 
 class LogSelectLog implements AppAction {
-  final String logId;
+  final String? logId;
 
   LogSelectLog({this.logId});
 
   @override
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = [];
-    appState.logsState.logs[logId].categories.forEach((element) {
+    appState.logsState.logs[logId!]!.categories.forEach((element) {
       expandedCategories.add(false);
     });
 
@@ -151,7 +150,7 @@ class LogSelectLog implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe<Log>.some(appState.logsState.logs[logId]),
+            selectedLog: Maybe<Log?>.some(appState.logsState.logs[logId!]),
             expandedCategories: expandedCategories,
             canSave: true)),
       ],
@@ -172,7 +171,7 @@ class LogClearSelected implements AppAction {
 }
 
 class SetLogs implements AppAction {
-  final Iterable<Log> logList;
+  final Iterable<Log>? logList;
 
   SetLogs({this.logList});
 
@@ -180,7 +179,7 @@ class SetLogs implements AppAction {
   AppState updateState(AppState appState) {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
-        logList.map(
+        logList!.map(
           (log) => MapEntry(log.id, log),
         ),
       );
@@ -189,19 +188,19 @@ class SetLogs implements AppAction {
 }
 
 class LogReorder implements AppAction {
-  final int oldIndex;
-  final int newIndex;
-  final List<Log> logs;
+  final int? oldIndex;
+  final int? newIndex;
+  final List<Log>? logs;
 
   LogReorder({this.oldIndex, this.newIndex, this.logs});
 
   @override
   AppState updateState(AppState appState) {
     Map<String, Log> logsMap = Map.from(appState.logsState.logs);
-    List<Log> organizedLogs = logs;
+    List<Log> organizedLogs = logs!;
 
-    Log movedLog = organizedLogs.removeAt(oldIndex);
-    organizedLogs.insert(newIndex, movedLog);
+    Log movedLog = organizedLogs.removeAt(oldIndex!);
+    organizedLogs.insert(newIndex!, movedLog);
 
     organizedLogs.forEach((log) {
       logsMap[log.id] = log.copyWith(order: organizedLogs.indexOf(log));
@@ -223,12 +222,12 @@ class LogAddUpdate implements AppAction {
     // Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
 
     //check is the log currently exists
-    if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
+    if (addedUpdatedLog.id.length > 0 && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
       //update an existing log
       Env.logsFetcher.updateLog(addedUpdatedLog);
 
       //if there are new log members, add them to all transaction
-      if (logs[addedUpdatedLog.id].logMembers.length != addedUpdatedLog.logMembers.length) {
+      if (logs[addedUpdatedLog.id]!.logMembers.length != addedUpdatedLog.logMembers.length) {
         List<AppEntry> entries =
             appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
         Env.entriesFetcher.batchUpdateEntries(entries: entries, logMembers: addedUpdatedLog.logMembers);
@@ -279,7 +278,7 @@ class LogAddMemberToSelectedLog implements AppAction {
   final String uid;
   final String name;
 
-  LogAddMemberToSelectedLog({this.uid, this.name});
+  LogAddMemberToSelectedLog({required this.uid, required this.name});
 
   @override
   AppState updateState(AppState appState) {
@@ -305,7 +304,7 @@ class LogUpdateLogMember implements AppAction {
   AppState updateState(AppState appState) {
     AppUser user = appState.authState.user.value;
     String uid = user.id;
-    String displayName = user.displayName;
+    String? displayName = user.displayName;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
 
     appState.logsState.logs.forEach((key, log) {
@@ -327,7 +326,7 @@ class LogUpdateLogMember implements AppAction {
 class LogAddEditCategory implements AppAction {
   final AppCategory category;
 
-  LogAddEditCategory({@required this.category});
+  LogAddEditCategory({required this.category});
 
   @override
   AppState updateState(AppState appState) {
@@ -337,10 +336,7 @@ class LogAddEditCategory implements AppAction {
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
     AppCategory updatedCategory = category;
 
-    if (updatedCategory?.id != null) {
-      //category exists, update category
-      categories[categories.indexWhere((e) => e.id == updatedCategory.id)] = updatedCategory;
-    } else {
+    if (updatedCategory.id.length > 0 ) {
       //category does not exists, create category
       updatedCategory = updatedCategory.copyWith(id: Uuid().v4());
       categories.add(updatedCategory);
@@ -348,9 +344,13 @@ class LogAddEditCategory implements AppAction {
 
       //every new category automatically gets a new subcategory "other"
       AppCategory otherSubcategory =
-          AppCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
+      AppCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
 
       subcategories.add(otherSubcategory);
+    } else {
+      //category exists, update category
+      categories[categories.indexWhere((e) => e.id == updatedCategory.id)] = updatedCategory;
+
     }
 
     log = log.copyWith(categories: categories, subcategories: subcategories);
@@ -368,7 +368,7 @@ class LogAddEditCategory implements AppAction {
 class LogDeleteCategory implements AppAction {
   final AppCategory category;
 
-  LogDeleteCategory({@required this.category});
+  LogDeleteCategory({required this.category});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -400,19 +400,20 @@ class LogDeleteCategory implements AppAction {
 class LogAddEditSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  LogAddEditSubcategory({@required this.subcategory});
+  LogAddEditSubcategory({required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
     List<AppCategory> subcategories = List.from(log.subcategories);
 
-    if (subcategory?.id != null) {
-      //category exists, update category
-      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
-    } else {
+    if (subcategory.id.length > 0) {
       //category does not exists, create category
       subcategories.add(subcategory.copyWith(id: Uuid().v4()));
+    } else {
+      //category exists, update category
+      subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
+
     }
 
     log = log.copyWith(subcategories: subcategories);
@@ -428,7 +429,7 @@ class LogAddEditSubcategory implements AppAction {
 class LogDeleteSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  LogDeleteSubcategory({@required this.subcategory});
+  LogDeleteSubcategory({required this.subcategory});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -454,7 +455,7 @@ class LogDeleteSubcategory implements AppAction {
 class LogExpandCollapseCategory implements AppAction {
   final int index;
 
-  LogExpandCollapseCategory({@required this.index});
+  LogExpandCollapseCategory({required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
@@ -473,7 +474,7 @@ class LogReorderCategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
-  LogReorderCategory({@required this.oldCategoryIndex, @required this.newCategoryIndex});
+  LogReorderCategory({required this.oldCategoryIndex, required this.newCategoryIndex});
 
   AppState updateState(AppState appState) {
     //reorder categories
@@ -505,10 +506,10 @@ class LogReorderSubcategory implements AppAction {
   final int newSubcategoryIndex;
 
   LogReorderSubcategory(
-      {@required this.oldCategoryIndex,
-      @required this.newCategoryIndex,
-      @required this.oldSubcategoryIndex,
-      @required this.newSubcategoryIndex});
+      {required this.oldCategoryIndex,
+      required this.newCategoryIndex,
+      required this.oldSubcategoryIndex,
+      required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
@@ -558,7 +559,7 @@ class LogUpdateCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
 }
 
 class DeleteLog implements AppAction {
-  final Log log;
+  final Log? log;
 
   DeleteLog({this.log});
 
@@ -566,7 +567,7 @@ class DeleteLog implements AppAction {
   AppState updateState(AppState appState) {
     LogsState updatedLogsState = appState.logsState;
     Settings settings = appState.settingsState.settings.value;
-    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
+    updatedLogsState.logs.removeWhere((key, value) => key == log!.id);
 
     List<AppEntry> deletedEntriesList = [];
     List<Tag> deletedTagsList = [];
@@ -574,26 +575,26 @@ class DeleteLog implements AppAction {
     Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
 
     entriesMap.forEach((key, entry) {
-      if (entry.logId == log.id) {
+      if (entry.logId == log!.id) {
         deletedEntriesList.add(entry);
       }
     });
 
-    entriesMap.removeWhere((key, entry) => entry.logId == log.id);
+    entriesMap.removeWhere((key, entry) => entry.logId == log!.id);
 
     tagsMap.forEach((key, tag) {
-      if (tag.logId == log.id) {
+      if (tag.logId == log!.id) {
         deletedTagsList.add(tag);
       }
     });
 
-    tagsMap.removeWhere((key, tag) => tag.logId == log.id);
+    tagsMap.removeWhere((key, tag) => tag.logId == log!.id);
 
     //ensures the default log is updated if the current log is default and deleted
-    if (appState.settingsState.settings.value.defaultLogId == log.id) {
+    if (appState.settingsState.settings.value.defaultLogId == log!.id) {
       if (updatedLogsState.logs.isNotEmpty) {
         settings = settings.copyWith(
-            defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id);
+            defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log!.id).id);
       } else {
         settings = settings.copyWith(defaultLogId: '');
       }

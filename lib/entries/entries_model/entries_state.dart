@@ -9,18 +9,18 @@ import '../../utils/maybe.dart';
 
 @immutable
 class EntriesState extends Equatable {
-  final Map<String, AppEntry>/*!*/ entries;
-  final bool/*!*/ isLoading;
-  final Maybe<Filter>/*!*/ entriesFilter;
-  final Maybe<Filter>/*!*/ chartFilter;
-  final bool/*!*/ descending;
+  final Map<String, AppEntry> entries;
+  final bool isLoading;
+  final Maybe<Filter> entriesFilter;
+  final Maybe<Filter> chartFilter;
+  final bool descending;
 
   EntriesState(
-      {this.entries,
-      this.isLoading,
-      this.entriesFilter,
-      this.chartFilter,
-      this.descending});
+      {required this.entries,
+      required this.isLoading,
+      required this.entriesFilter,
+      required this.chartFilter,
+      required this.descending});
 
   factory EntriesState.initial() {
     return EntriesState(
@@ -40,11 +40,11 @@ class EntriesState extends Equatable {
   bool get stringify => true;
 
   EntriesState copyWith({
-    Map<String, AppEntry> entries,
-    bool isLoading,
-    Maybe<Filter> entriesFilter,
-    Maybe<Filter> chartFilter,
-    bool descending,
+    Map<String, AppEntry>? entries,
+    bool? isLoading,
+    Maybe<Filter>? entriesFilter,
+    Maybe<Filter>? chartFilter,
+    bool? descending,
   }) {
     if ((entries == null || identical(entries, this.entries)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&

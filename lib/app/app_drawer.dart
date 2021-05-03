@@ -33,19 +33,19 @@ class AppDrawer extends StatelessWidget {
 }
 
 class DrawerListTile extends StatelessWidget {
-  final String/*!*/ name;
-  final String/*!*/ route;
+  final String name;
+  final String route;
 
   const DrawerListTile({
-    this.name,
-    Key key,
-    this.route,
+    required this.name,
+    Key? key,
+    required this.route,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      onTap: () => SchedulerBinding.instance.addPostFrameCallback((_) {
+      onTap: () => SchedulerBinding.instance!.addPostFrameCallback((_) {
         Env.store.dispatch(AccountResetState());
         Get.back(); //pops drawer prior to opening next screen
         Get.toNamed(route);

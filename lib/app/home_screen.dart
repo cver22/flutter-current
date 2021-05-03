@@ -11,7 +11,7 @@ import 'package:get/get.dart';
 //signed in users have their content loaded, once the content is loaded, the user is directed to the AppScreen
 
 class HomeScreen extends StatelessWidget {
-  const HomeScreen({Key key}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

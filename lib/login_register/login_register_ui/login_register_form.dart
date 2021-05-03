@@ -50,7 +50,7 @@ class _LoginRegisterFormState extends State<LoginRegisterForm> {
           print('Login status: ${state.loginStatus}');
           print('LoginOrRegister: ${state.loginOrRegister}');
 
-          if (Env.store.state.authState.user.isSome) {
+          if (Env.store.state!.authState.user.isSome) {
             Future.delayed(Duration.zero, () {
               Get.toNamed(ExpenseRoutes.home);
             });

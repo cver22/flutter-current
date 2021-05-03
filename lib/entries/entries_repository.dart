@@ -10,13 +10,13 @@ abstract class EntriesRepository {
 
   Stream<List<AppEntry>> loadEntries(AppUser user);
 
-  Future<void> updateEntry(AppEntry/*!*/ entry);
+  Future<void> updateEntry(AppEntry entry);
 
   Future<void> deleteEntry(AppEntry entry);
 
-  Future<void> batchDeleteEntries({List<AppEntry>/*!*/ deletedEntries}) {}
+  Future<void> batchDeleteEntries({required List<AppEntry> deletedEntries}) async {}
 
-  Future<void> batchUpdateEntries({List<AppEntry>/*!*/ updatedEntries}) {}
+  Future<void> batchUpdateEntries({required List<AppEntry> updatedEntries}) async {}
 }
 
 class FirebaseEntriesRepository implements EntriesRepository {
@@ -48,7 +48,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> updateEntry(AppEntry/*!*/ update) {
+  Future<void> updateEntry(AppEntry update) {
     return db
         .collection(ENTRY_COLLECTION)
         .doc(update.id)
@@ -61,7 +61,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> batchDeleteEntries({List<AppEntry>/*!*/ deletedEntries}) {
+  Future<void> batchDeleteEntries({required List<AppEntry> deletedEntries}) async {
     WriteBatch batch = db.batch();
 
     deletedEntries.forEach((entry) {
@@ -73,7 +73,7 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> batchUpdateEntries({List<AppEntry>/*!*/ updatedEntries}) {
+  Future<void> batchUpdateEntries({required List<AppEntry> updatedEntries}) async {
     WriteBatch batch = db.batch();
 
     updatedEntries.forEach((entry) {

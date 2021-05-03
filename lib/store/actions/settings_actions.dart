@@ -14,7 +14,7 @@ import 'app_actions.dart';
 class SettingsUpdate implements AppAction {
   final Maybe<Settings> settings;
 
-  SettingsUpdate({@required this.settings});
+  SettingsUpdate({required this.settings});
 
   @override
   AppState updateState(AppState appState) {
@@ -30,7 +30,7 @@ class SettingsUpdate implements AppAction {
 }
 
 class SettingsChangeDefaultLog implements AppAction {
-  final Log log;
+  final Log? log;
 
   SettingsChangeDefaultLog({this.log});
 
@@ -38,8 +38,8 @@ class SettingsChangeDefaultLog implements AppAction {
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
     Map<String, Log> logs = appState.logsState.logs;
-    if (log != null && logs.containsKey(log.id)) {
-      settings = settings.copyWith(defaultLogId: log.id);
+    if (log != null && logs.containsKey(log!.id)) {
+      settings = settings.copyWith(defaultLogId: log!.id);
     }
 
     Env.settingsFetcher.writeAppSettings(settings);
@@ -56,7 +56,7 @@ class SettingsChangeDefaultLog implements AppAction {
 class SettingsAddEditCategory implements AppAction {
   final AppCategory category;
 
-  SettingsAddEditCategory({@required this.category});
+  SettingsAddEditCategory({required this.category});
 
   @override
   AppState updateState(AppState appState) {
@@ -84,7 +84,7 @@ class SettingsAddEditCategory implements AppAction {
 class SettingsDeleteCategory implements AppAction {
   final AppCategory category;
 
-  SettingsDeleteCategory({@required this.category});
+  SettingsDeleteCategory({required this.category});
 
   @override
   AppState updateState(AppState appState) {
@@ -109,7 +109,7 @@ class SettingsDeleteCategory implements AppAction {
 class SettingsAddEditSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  SettingsAddEditSubcategory({@required this.subcategory});
+  SettingsAddEditSubcategory({required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
@@ -137,7 +137,7 @@ class SettingsAddEditSubcategory implements AppAction {
 class SettingsDeleteSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  SettingsDeleteSubcategory({@required this.subcategory});
+  SettingsDeleteSubcategory({required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
@@ -177,7 +177,7 @@ class SettingsSetExpandedCategories implements AppAction {
 class SettingsExpandCollapseCategory implements AppAction {
   final int index;
 
-  SettingsExpandCollapseCategory({@required this.index});
+  SettingsExpandCollapseCategory({required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.settingsState.expandedCategories);
@@ -196,7 +196,7 @@ class SettingsReorderCategory implements AppAction {
   final int oldCategoryIndex;
   final int newCategoryIndex;
 
-  SettingsReorderCategory({@required this.oldCategoryIndex, @required this.newCategoryIndex});
+  SettingsReorderCategory({required this.oldCategoryIndex, required this.newCategoryIndex});
 
   AppState updateState(AppState appState) {
     //reorder categories list
@@ -230,10 +230,10 @@ class SettingsReorderSubcategory implements AppAction {
   final int newSubcategoryIndex;
 
   SettingsReorderSubcategory(
-      {@required this.oldCategoryIndex,
-      @required this.newCategoryIndex,
-      @required this.oldSubcategoryIndex,
-      @required this.newSubcategoryIndex});
+      {required this.oldCategoryIndex,
+      required this.newCategoryIndex,
+      required this.oldSubcategoryIndex,
+      required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;

@@ -17,7 +17,7 @@ import 'log_list_tile.dart';
 class LogsScreen extends StatelessWidget {
   final TabController tabController;
 
-  LogsScreen({Key key, @required this.tabController}) : super(key: key);
+  LogsScreen({Key? key, required this.tabController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -33,7 +33,7 @@ class LogsScreen extends StatelessWidget {
                 print('Rendering Logs Screen');
 
                 if (logsState.isLoading == true &&
-                    Env.store.state.singleEntryState.selectedEntry.isNone) {
+                    Env.store.state!.singleEntryState.selectedEntry.isNone) {
                   return ModalLoadingIndicator(
                       loadingMessage: 'Loading your logs...', activate: true);
                 } else if (logsState.isLoading == false &&
@@ -41,7 +41,7 @@ class LogsScreen extends StatelessWidget {
                   //TODO create archive bool to show logs that have been archived and not visible
                   logs = logsState.logs.entries.map((e) => e.value).toList();
                   logs.sort((a, b) =>
-                      a.order.compareTo(b.order)); //display based on order
+                      a.order!.compareTo(b.order!)); //display based on order
 
                   return _buildReorderableList(
                       logs: logs,
@@ -60,10 +60,10 @@ class LogsScreen extends StatelessWidget {
   }
 
   Widget _buildReorderableList(
-      {@required List<Log> logs,
-      @required LogTotalsState logTotalsState,
-      BuildContext context,
-      @required TabController tabController}) {
+      {required List<Log> logs,
+      required LogTotalsState logTotalsState,
+      BuildContext? context,
+      required TabController tabController}) {
     //TODO need better way of handling size of reorderablelist
     return DragAndDropLists(
       onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) {
@@ -97,10 +97,10 @@ class LogsScreen extends StatelessWidget {
   }
 
   _buildList(
-      {int outerIndex,
-      @required List<Log> logs,
-      @required LogTotalsState logTotalsState,
-      @required TabController tabController}) {
+      {required int outerIndex,
+      required List<Log> logs,
+      required LogTotalsState logTotalsState,
+      required TabController tabController}) {
     Log log = logs[outerIndex];
     return DragAndDropList(
         header: LogListTile(

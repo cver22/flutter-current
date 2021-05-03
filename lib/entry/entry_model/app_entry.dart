@@ -10,16 +10,16 @@ import 'app_entry_entity.dart';
 @immutable
 class AppEntry extends Equatable with ChangeNotifier {
   AppEntry({
-    @required this.id,
-    @required this.logId,
-    @required this.currency,
+    required this.id,
+    required this.logId,
+    required this.currency,
     this.categoryId = NO_CATEGORY,
     this.subcategoryId = NO_SUBCATEGORY,
     this.amount = 0,
     this.amountForeign = 0,
     this.exchangeRate = 1.0,
     this.comment = '',
-    @required this.dateTime,
+    required this.dateTime,
     this.tagIDs = const [],
     this.entryMembers = const {},
   });
@@ -34,12 +34,12 @@ class AppEntry extends Equatable with ChangeNotifier {
   final double exchangeRate;
   final String comment;
   final DateTime dateTime;
-  final List<String> tagIDs;
+  final List<String?> tagIDs;
   final Map<String, EntryMember> entryMembers;
 
 
   @override
-  List<Object> get props =>
+  List<Object?> get props =>
       [id, logId, currency, categoryId, subcategoryId, amount, amountForeign, exchangeRate, comment, dateTime, tagIDs, entryMembers];
 
   @override
@@ -72,14 +72,14 @@ class AppEntry extends Equatable with ChangeNotifier {
     //re-order the entry members as per user preference prior to passing to the entry
     LinkedHashMap<String, EntryMember> entryMembersLinkedMap = LinkedHashMap();
     for (int i = 0; i < entity.entryMembers.length; i++) {
-      entity.entryMembers.forEach((key, value) {
-        if (value.order == i) {
-          entryMembersLinkedMap.putIfAbsent(key, () => value);
+      entity.entryMembers.forEach((key, member) {
+        if (member.order == i) {
+          entryMembersLinkedMap.putIfAbsent(key, () => member);
         }
       });
     }
 
-    entryMembersLinkedMap = entryMembersLinkedMap ?? entity.entryMembers; // ordering didn't work, pass the list anyway
+    entryMembersLinkedMap = entryMembersLinkedMap; // ordering didn't work, pass the list anyway
 
     return AppEntry(
       id: entity.id,
@@ -90,26 +90,26 @@ class AppEntry extends Equatable with ChangeNotifier {
       amount: entity.amount,
       amountForeign: entity.amountForeign,
       exchangeRate: entity.exchangeRate,
-      comment: entity.comment ?? '',
+      comment: entity.comment,
       dateTime: entity.dateTime,
-      tagIDs: entity.tagIDs?.entries?.map((e) => e.value)?.toList(),
+      tagIDs: entity.tagIDs.entries.map((e) => e.value).toList(),
       entryMembers: entryMembersLinkedMap,
     );
   }
 
   AppEntry copyWith({
-    String id,
-    String logId,
-    String currency,
-    String categoryId,
-    String subcategoryId,
-    int amount,
-    int amountForeign,
-    double exchangeRate,
-    String comment,
-    DateTime dateTime,
-    List<String> tagIDs,
-    Map<String, EntryMember> entryMembers,
+    String? id,
+    String? logId,
+    String? currency,
+    String? categoryId,
+    String? subcategoryId,
+    int? amount,
+    int? amountForeign,
+    double? exchangeRate,
+    String? comment,
+    DateTime? dateTime,
+    List<String?>? tagIDs,
+    Map<String, EntryMember>? entryMembers,
   }) {
     if ((id == null || identical(id, this.id)) &&
         (logId == null || identical(logId, this.logId)) &&

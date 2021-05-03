@@ -7,10 +7,10 @@ import 'log_member_month_list_tile.dart';
 
 class LogMemberMonthList extends StatelessWidget {
   final Log log;
-  final LogTotal logTotal;
+  final LogTotal? logTotal;
 
   const LogMemberMonthList(
-      {Key key, @required this.log, @required this.logTotal})
+      {Key? key, required this.log, required this.logTotal})
       : super(key: key);
 
   @override

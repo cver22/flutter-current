@@ -14,16 +14,16 @@ class Log extends Equatable {
   //TODO each log to have its own settings
 
   Log({
-    @required this.uid,
+    required this.uid,
     this.id ='',
     this.name ='',
-    @required this.currency,
+    required this.currency,
     this.categories = const [],
     this.subcategories = const [],
     this.archive = false,
     this.defaultCategory = NO_CATEGORY,
     this.logMembers = const {},
-    this.order,
+    this.order = 0,
   });
 
   final String uid;
@@ -38,7 +38,7 @@ class Log extends Equatable {
   final int order;
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         uid,
         id,
         name,
@@ -122,16 +122,16 @@ class Log extends Equatable {
   }
 
   Log copyWith({
-    String uid,
-    String id,
-    String name,
-    String currency,
-    bool archive,
-    String defaultCategory,
-    List<AppCategory> categories,
-    List<AppCategory> subcategories,
-    Map<String, LogMember> logMembers,
-    int order,
+    String? uid,
+    String? id,
+    String? name,
+    String? currency,
+    bool? archive,
+    String? defaultCategory,
+    List<AppCategory>? categories,
+    List<AppCategory>? subcategories,
+    Map<String, LogMember>? logMembers,
+    int? order,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (id == null || identical(id, this.id)) &&

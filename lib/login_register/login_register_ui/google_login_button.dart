@@ -5,10 +5,10 @@ import '../../env.dart';
 import '../login_register_model/login_reg_state.dart';
 
 class GoogleLoginButton extends StatelessWidget {
-  final bool enabled;
-  final LoginRegState loginRegState;
+  final bool? enabled;
+  final LoginRegState? loginRegState;
 
-  const GoogleLoginButton({Key key, this.enabled, this.loginRegState})
+  const GoogleLoginButton({Key? key, this.enabled, this.loginRegState})
       : super(key: key);
 
   @override
@@ -18,7 +18,7 @@ class GoogleLoginButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(30.0),
         ),
-        primary: enabled ? Colors.redAccent : Colors.grey,
+        primary: enabled! ? Colors.redAccent : Colors.grey,
       ),
       icon: Icon(
         FontAwesomeIcons.google,
@@ -26,7 +26,7 @@ class GoogleLoginButton extends StatelessWidget {
       ),
       label: Text('Sign in with Google', style: TextStyle(color: Colors.white)),
       onPressed: () =>
-          enabled ? Env.userFetcher.signInWithGoogle(loginRegState) : null,
+          enabled! ? Env.userFetcher.signInWithGoogle(loginRegState) : null,
     );
   }
 }

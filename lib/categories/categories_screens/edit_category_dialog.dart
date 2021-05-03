@@ -9,23 +9,23 @@ import '../categories_model/app_category/app_category.dart';
 
 
 class EditCategoryDialog extends StatefulWidget {
-  final VoidCallback delete;
-  final Function(AppCategory) setDefault;
-  final Function(String, String, String)
+  final VoidCallback? delete;
+  final Function(AppCategory)? setDefault;
+  final Function(String, String?, String?)
       save; //Category (name, emojiChar, parentCategoryId)
-  final AppCategory category;
-  final String initialParent;
+  final AppCategory? category;
+  final String? initialParent;
 
   //TODO I can likely simplify the category and subcategory system where all parent categories have no parent ID, only subcategories do
   final CategoryOrSubcategory categoryOrSubcategory;
-  final List<AppCategory> categories;
+  final List<AppCategory?>? categories;
 
   const EditCategoryDialog({
-    Key key,
+    Key? key,
     this.delete,
     this.setDefault,
-    @required this.categoryOrSubcategory,
-    @required this.save,
+    required this.categoryOrSubcategory,
+    required this.save,
     this.category,
     this.categories,
     this.initialParent,
@@ -36,20 +36,20 @@ class EditCategoryDialog extends StatefulWidget {
 }
 
 class _EditCategoryDialogState extends State<EditCategoryDialog> {
-  CategoryOrSubcategory categoryOrSubcategory;
-  AppCategory subcategory;
-  AppCategory category;
-  TextEditingController controller;
-  String parentCategoryId;
-  String name;
-  String id;
-  List<AppCategory> categories = [];
-  bool newCategory;
-  bool showEmojiGrid;
-  String emojiChar;
-  AppCategory selectedCategory;
-  bool canSave;
-  bool modifiable;
+  CategoryOrSubcategory? categoryOrSubcategory;
+  AppCategory? subcategory;
+  AppCategory? category;
+  TextEditingController? controller;
+  String? parentCategoryId;
+  String? name;
+  String? id;
+  List<AppCategory?>? categories = [];
+  bool? newCategory;
+  late bool showEmojiGrid;
+  String? emojiChar;
+  AppCategory? selectedCategory;
+  late bool canSave;
+  late bool modifiable;
 
   //TODO prevent NoCategory and NoSubcategory from being edited or deleted
 
@@ -61,11 +61,11 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     String exclamationMark = '\u{2757}'; // exclamation_mark
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
     category = widget.category;
-    if (category.id.length > 0) {
+    if (category!.id.length > 0) {
       newCategory = false;
-      emojiChar = category.emojiChar ?? exclamationMark;
-      name = category.name;
-      id = category.id;
+      emojiChar = category!.emojiChar ?? exclamationMark;
+      name = category!.name;
+      id = category!.id;
     } else {
       newCategory = true;
       showEmojiGrid = true;
@@ -74,24 +74,24 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     }
 
     if (categoryOrSubcategory == CategoryOrSubcategory.subcategory) {
-      if (newCategory) {
+      if (newCategory!) {
         parentCategoryId = widget.initialParent ?? NO_CATEGORY;
       } else {
-        parentCategoryId = category.parentCategoryId ?? NO_CATEGORY;
+        parentCategoryId = category!.parentCategoryId ?? NO_CATEGORY;
       }
 
       selectedCategory =
-          categories?.firstWhere((e) => e.id == parentCategoryId);
+          categories?.firstWhere((e) => e!.id == parentCategoryId);
     }
 
     controller = TextEditingController(text: name);
-    canSave = controller.text != null && controller.value.text.length > 0 && controller.text != NO_CATEGORY && controller.text != NO_PARENT;
+    canSave = controller!.text != null && controller!.value.text.length > 0 && controller!.text != NO_CATEGORY && controller!.text != NO_PARENT;
 
     modifiable = _modifiable(categoryId: id);
   }
 
   void dispose() {
-    controller.dispose();
+    controller!.dispose();
     super.dispose();
   }
 
@@ -129,7 +129,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               height: 0.0,
             ),
       actions: <Widget>[
-        _canDelete(categoryId: category.id)
+        _canDelete(categoryId: category!.id)
             ? TextButton(child: Text('Delete'), onPressed: widget.delete)
             : Container(),
 
@@ -161,7 +161,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ? () => {
                     //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
 
-                    widget?.save(controller.text, emojiChar, parentCategoryId),
+                    widget?.save(controller!.text, emojiChar, parentCategoryId),
                     Get.back(),
                   }
               : null,
@@ -183,7 +183,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
           });
         },
       )
-          : Text(name),
+          : Text(name!),
     );
   }
 
@@ -192,7 +192,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       flex: 1,
       child: AppButton(
         child: Text(
-          emojiChar,
+          emojiChar!,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 22),
         ),
@@ -203,8 +203,8 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     );
   }
 
-  Widget _selectParentCategory(AppCategory initialCategory) {
-    List<AppCategory> selectableCategories = List.from(categories);
+  Widget _selectParentCategory(AppCategory? initialCategory) {
+    List<AppCategory> selectableCategories = List.from(categories!);
     selectableCategories.removeWhere(
         (element) => element.id == NO_CATEGORY || element.id == TRANSFER_FUNDS);
 
@@ -237,45 +237,45 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               }).toList(),
               onChanged: _onParentCategoryChanged),
         )
-            : Text(initialCategory.name),
+            : Text(initialCategory!.name),
       ],
     );
   }
 
   String dialogTitle(
-      CategoryOrSubcategory _categoryOrSubcategory, bool newCategory) {
+      CategoryOrSubcategory? _categoryOrSubcategory, bool? newCategory) {
     if (_categoryOrSubcategory == CategoryOrSubcategory.category) {
-      if (newCategory) return 'New Category';
+      if (newCategory!) return 'New Category';
       return 'Edit Category';
     } else {
-      if (newCategory) return 'New Subcategory';
+      if (newCategory!) return 'New Subcategory';
       return 'Edit Subcategory';
     }
   }
 
-  void _onParentCategoryChanged(AppCategory category) {
+  void _onParentCategoryChanged(AppCategory? category) {
     setState(() {
-      parentCategoryId = category.id;
+      parentCategoryId = category!.id;
       selectedCategory =
-          categories?.firstWhere((e) => e.id == parentCategoryId);
+          categories?.firstWhere((e) => e!.id == parentCategoryId);
     });
   }
 
-  bool _canDelete({String categoryId}) {
+  bool _canDelete({String? categoryId}) {
     if (categoryId == '' ||
         categoryId == NO_CATEGORY ||
-        categoryId.contains(OTHER) ||
+        categoryId!.contains(OTHER) ||
         categoryId == TRANSFER_FUNDS) {
       return false;
     }
     return true;
   }
 
-  bool _modifiable({String categoryId}) {
+  bool _modifiable({String? categoryId}) {
 
     //special categories and subcategories can not be renamed
     if (categoryId == NO_CATEGORY ||
-        categoryId.contains(OTHER) ||
+        categoryId!.contains(OTHER) ||
         categoryId == TRANSFER_FUNDS) {
       return false;
     }

@@ -4,15 +4,15 @@ import '../../utils/db_consts.dart';
 
 class AppButton extends StatelessWidget {
   const AppButton({
-    Key key,
-    @required this.onPressed,
-    @required this.child,
+    Key? key,
+    this.onPressed,
+    required this.child,
     this.buttonColor,
   }) : super(key: key);
 
-  final Function/*!*/ onPressed;
+  final VoidCallback? onPressed;
   final Widget child;
-  final Color buttonColor;
+  final Color? buttonColor;
 
   @override
   Widget build(BuildContext context) {

@@ -10,18 +10,18 @@ import '../../member_model/entry_member_model/entry_member.dart';
 
 class EntryMemberListTile extends StatefulWidget {
   final EntryMember member;
-  final String name;
+  final String? name;
   final bool singleMemberLog;
   final bool autoFocus;
-  final Currency currency;
+  final Currency? currency;
 
   const EntryMemberListTile(
-      {Key key,
-      @required this.member,
-      @required this.name,
+      {Key? key,
+      required this.member,
+      required this.name,
       this.singleMemberLog = false,
       this.autoFocus = false,
-      @required this.currency})
+      required this.currency})
       : super(key: key);
 
   @override
@@ -29,10 +29,10 @@ class EntryMemberListTile extends StatefulWidget {
 }
 
 class _EntryMemberListTileState extends State<EntryMemberListTile> {
-  TextEditingController _payingController;
-  TextEditingController _spendingController;
-  FocusNode _payingFocusNode;
-  FocusNode _spendingFocusNode;
+  TextEditingController? _payingController;
+  TextEditingController? _spendingController;
+  FocusNode? _payingFocusNode;
+  FocusNode? _spendingFocusNode;
 
   @override
   void initState() {
@@ -42,8 +42,8 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
     _spendingController = member.spendingController;
     _payingFocusNode = member.payingFocusNode;
     _spendingFocusNode = member.spendingFocusNode;
-    if (widget.autoFocus && member.paying) {
-      _payingFocusNode.requestFocus();
+    if (widget.autoFocus && member.paying!) {
+      _payingFocusNode!.requestFocus();
     }
 
     super.initState();
@@ -51,17 +51,17 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
 
   @override
   void dispose() {
-    _payingController.dispose();
-    _spendingController.dispose();
-    _payingFocusNode.dispose();
-    _spendingFocusNode.dispose();
+    _payingController!.dispose();
+    _spendingController!.dispose();
+    _payingFocusNode!.dispose();
+    _spendingFocusNode!.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     EntryMember member = widget.member;
-    Currency currency = widget.currency;
+    Currency currency = widget.currency!;
 
     return ListTile(
       contentPadding: EdgeInsets.only(left: 0.0, right: 0.0),
@@ -71,7 +71,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
         children: [
           ConstrainedBox(
               constraints: BoxConstraints(maxWidth: 120.0),
-              child: Text(widget?.name ?? 'Please enter a name in account')),
+              child: Text(widget.name ?? 'Please enter a name in account')),
           Expanded(
             flex: 5,
             child: Container(),
@@ -87,7 +87,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                 currency: currency,
                 paidOrSpent: PaidOrSpent.paid,
                 controller: _payingController,
-                focusNode: _payingFocusNode,
+                focusNode: _payingFocusNode!,
                 member: member,
               ),
             ],
@@ -103,7 +103,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
                   currency: currency,
                   paidOrSpent: PaidOrSpent.spent,
                   controller: _spendingController,
-                  focusNode: _spendingFocusNode,
+                  focusNode: _spendingFocusNode!,
                   member: member,
                 ),
               ],
@@ -115,14 +115,14 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
   }
 
   Widget _buildTextFormField(
-      {@required PaidOrSpent paidOrSpent,
-      @required TextEditingController controller,
-      @required FocusNode focusNode,
-      @required EntryMember member,
-      @required Currency currency}) {
+      {required PaidOrSpent paidOrSpent,
+      required TextEditingController? controller,
+      required FocusNode focusNode,
+      required EntryMember member,
+      required Currency currency}) {
     bool inactive = true;
     if (paidOrSpent == PaidOrSpent.paid) {
-      inactive = !member.paying;
+      inactive = !member.paying!;
     } else {
       inactive = !member.spending;
     }
@@ -158,7 +158,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             onTap: () {
               //toggle member spending on if the the user taps in the textField
               if (paidOrSpent == PaidOrSpent.paid) {
-                if (member.paying) {
+                if (member.paying!) {
                   //user already paying, update state with focus
                   Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {
@@ -196,26 +196,24 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
     );
   }
 
-  Widget _buildCheckBox({@required bool checked, @required ValueChanged<bool> onChanged}) {
+  Widget _buildCheckBox({required bool? checked, required ValueChanged<bool?> onChanged}) {
     return Checkbox(
       value: checked,
       onChanged: onChanged,
     );
   }
-  
-  RegExp _getRegex({@required Currency currency}) {
-    if(currency.decimalDigits > 0) {
-      if(currency.decimalSeparator == '.') {
+
+  RegExp _getRegex({required Currency currency}) {
+    if (currency.decimalDigits > 0) {
+      if (currency.decimalSeparator == '.') {
         //decimal allowed
         return RegExp(r"^\-?\d*\.?\d{0,2}");
       } else if (currency.decimalSeparator == ',') {
         //comma allowed
         return RegExp(r"^\-?\d*\,?\d{0,2}");
       }
-    } else {
-      //no decimal places
-      return RegExp(r"^\-?\d*");
     }
+    //no decimal places
+    return RegExp(r"^\-?\d*");
   }
-  
 }

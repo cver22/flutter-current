@@ -8,14 +8,14 @@ import '../log_model/log.dart';
 class LogNameForm extends StatefulWidget {
   final Log log;
 
-  const LogNameForm({Key key, @required this.log}) : super(key: key);
+  const LogNameForm({Key? key, required this.log}) : super(key: key);
 
   @override
   _LogNameFormState createState() => _LogNameFormState();
 }
 
 class _LogNameFormState extends State<LogNameForm> {
-  Log log;
+  late Log log;
   bool editName = false;
 
   @override
@@ -33,7 +33,7 @@ class _LogNameFormState extends State<LogNameForm> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(log.name),
+              Text(log.name!),
               SizedBox(width: 16.0),
               Icon(Icons.edit_outlined),
             ],

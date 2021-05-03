@@ -17,7 +17,7 @@ import '../../utils/maybe.dart';
 import 'app_actions.dart';
 
 //to be used when user updates a parameter of the entry. Generally not when they add/edit of categories/subcategories/tags
-AppState Function(AppState) _userUpdateSingleEntryState(SingleEntryState update(singleEntryState)) {
+AppState Function(AppState) _userUpdateSingleEntryState(SingleEntryState? update(singleEntryState)) {
   return (state) => state.copyWith(singleEntryState: update(state.singleEntryState.copyWith(userUpdated: true)));
 }
 
@@ -25,22 +25,22 @@ AppState Function(AppState) _userUpdateSingleEntryState(SingleEntryState update(
 
 class EntrySetNew implements AppAction {
   //sets new entry and resets all entry data not yet available
-  final String logId;
+  final String? logId;
   final String memberId;
 
-  EntrySetNew({this.logId, @required this.memberId});
+  EntrySetNew({this.logId, required this.memberId});
 
   @override
   AppState updateState(AppState appState) {
-    Log log;
+    Log? log;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
-    String defaultLogId = appState.settingsState.settings?.value?.defaultLogId;
+    String? defaultLogId = appState.settingsState.settings.value.defaultLogId;
     Settings settings = appState.settingsState.settings.value;
 
     //TODO possibly abstract this away as the setting log dropdown probably uses similar logic
     if (logId != null) {
       //add entry triggered from a selected log
-      log = logs[logId];
+      log = logs[logId!];
     } else if (defaultLogId != null && logs.containsKey(defaultLogId)) {
       log = logs[defaultLogId];
     } else {
@@ -51,8 +51,8 @@ class EntrySetNew implements AppAction {
       Env.settingsFetcher.writeAppSettings(settings);
     }
 
-    Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
-    Map<String, EntryMember> members = _setMembersList(log: log, memberId: memberId);
+    Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log!.id);
+    Map<String, EntryMember> members = _setMembersList(log: log!, memberId: memberId);
 
     AppEntry entry = AppEntry(
         logId: log.id,
@@ -73,7 +73,7 @@ class EntrySetNew implements AppAction {
                 tagSubcategoryFrequency: <String, int>{},
               )),
               tags: tags,
-              categories: List<AppCategory>.from(log.categories),
+              categories: List<AppCategory>.from(log!.categories),
               subcategories: List<AppCategory>.from(log.subcategories),
               processing: false,
               commentFocusNode: Maybe<FocusNode>.some(FocusNode()),
@@ -89,17 +89,17 @@ class EntrySelectEntry implements AppAction {
   //sets selected entry and resets all entry data not yet available
   final String entryId;
 
-  EntrySelectEntry({@required this.entryId});
+  EntrySelectEntry({required this.entryId});
 
   @override
   AppState updateState(AppState appState) {
-    AppEntry entry = appState.entriesState.entries[entryId];
+    AppEntry entry = appState.entriesState.entries[entryId]!;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    Currency currency = CurrencyService().findByCode(entry.currency);
+    Currency? currency = CurrencyService().findByCode(entry.currency);
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
     entryMembers.updateAll((key, value) => value.copyWith(
-          payingController: TextEditingController(text: formattedAmount(value: value.paid, currency: currency)),
+          payingController: TextEditingController(text: formattedAmount(value: value.paid, currency: currency!)),
           spendingController: TextEditingController(text: formattedAmount(value: value.spent, currency: currency)),
           payingFocusNode: FocusNode(),
           spendingFocusNode: FocusNode(),
@@ -129,9 +129,9 @@ class EntrySelectEntry implements AppAction {
 }
 
 class EntryAddUpdateEntryAndTags implements AppAction {
-  final AppEntry entry;
+  final AppEntry? entry;
 
-  EntryAddUpdateEntryAndTags({@required this.entry});
+  EntryAddUpdateEntryAndTags({required this.entry});
 
   AppState updateState(AppState appState) {
     List<Tag> tagsToAddToDatabase = [];
@@ -140,7 +140,7 @@ class EntryAddUpdateEntryAndTags implements AppAction {
     Map<String, Tag> masterTagList = Map.from(appState.tagState.tags);
     Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, Log> logs = Map.from(appState.logsState.logs);
-    AppEntry updatedEntry = entry;
+    AppEntry updatedEntry = entry!;
     bool newEntry = appState.singleEntryState.newEntry;
 
     Env.store.dispatch(EntryProcessing());
@@ -151,9 +151,9 @@ class EntryAddUpdateEntryAndTags implements AppAction {
             appState.entriesState.entries.entries
                 .map((e) => e.value)
                 .toList()
-                .firstWhere((element) => element.id == entry.id)) {
+                .firstWhere((element) => element.id == entry!.id)) {
       //update entry if id is not null and thus already exists an the entry has been modified
-      Env.entriesFetcher.updateEntry(entry);
+      Env.entriesFetcher.updateEntry(entry!);
     } else if (newEntry) {
       //save new entry
       Env.entriesFetcher.addEntry(updatedEntry);
@@ -223,7 +223,7 @@ class EntryClearState implements AppAction {
 class EntryUpdateCurrency implements AppAction {
   final String currency;
 
-  EntryUpdateCurrency({@required this.currency});
+  EntryUpdateCurrency({required this.currency});
 
   @override
   AppState updateState(AppState appState) {
@@ -233,22 +233,22 @@ class EntryUpdateCurrency implements AppAction {
 
     //clear all paid and spent
     entryMembers.updateAll((key, member) {
-      member.spendingController.value = TextEditingValue(text: '');
-      member.payingController.value = TextEditingValue(text: '');
+      member.spendingController!.value = TextEditingValue(text: '');
+      member.payingController!.value = TextEditingValue(text: '');
       member = member.copyWith(paid: 0, spent: 0, paidForeign: 0, spentForeign: 0);
 
       return member;
     });
 
     //TODO set exchange rate from API
-    double exchangeRate = appState.currencyState.conversionRateMap[log.currency].rates[currency];
+    double? exchangeRate = appState.currencyState.conversionRateMap[log.currency]!.rates[currency];
 
     return updateSubstates(
       appState,
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
             remainingSpending: 0,
-            selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(
+            selectedEntry: Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(
               currency: currency,
               entryMembers: entryMembers,
               exchangeRate: exchangeRate,
@@ -264,7 +264,7 @@ class EntryUpdateCurrency implements AppAction {
 class EntryUpdateComment implements AppAction {
   final String comment;
 
-  EntryUpdateComment({@required this.comment});
+  EntryUpdateComment({required this.comment});
 
   @override
   AppState updateState(AppState appState) {
@@ -272,14 +272,14 @@ class EntryUpdateComment implements AppAction {
       appState,
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(comment: comment)))),
+            selectedEntry: Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(comment: comment)))),
       ],
     );
   }
 }
 
 class EntryUpdateDateTime implements AppAction {
-  final DateTime dateTime;
+  final DateTime? dateTime;
 
   EntryUpdateDateTime({this.dateTime});
 
@@ -289,7 +289,7 @@ class EntryUpdateDateTime implements AppAction {
       appState,
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(dateTime: dateTime)))),
+            selectedEntry: Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(dateTime: dateTime)))),
       ],
     );
   }
@@ -328,14 +328,14 @@ class EntryUpdateDateTime implements AppAction {
 class EntrySelectCategory implements AppAction {
   final String newCategoryId;
 
-  EntrySelectCategory({@required this.newCategoryId});
+  EntrySelectCategory({required this.newCategoryId});
 
   @override
   AppState updateState(AppState appState) {
     String updatedCategory = newCategoryId;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    String oldCategoryId = entry.categoryId;
+    String? oldCategoryId = entry.categoryId;
     String newSubcategoryId = NO_SUBCATEGORY;
 
     //set subcategory to OTHER if category has been selected
@@ -354,7 +354,7 @@ class EntrySelectCategory implements AppAction {
 
     tags = categoryOrSubcategoryUpdateAllTagFrequencies(
         entry: entry,
-        oldAppCategory: entry?.subcategoryId,
+        oldAppCategory: entry.subcategoryId,
         newAppCategory: newSubcategoryId,
         tags: tags,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory);
@@ -375,14 +375,14 @@ class EntrySelectCategory implements AppAction {
 class EntrySelectSubcategory implements AppAction {
   final String subcategory;
 
-  EntrySelectSubcategory({this.subcategory});
+  EntrySelectSubcategory({required this.subcategory});
 
   @override
   AppState updateState(AppState appState) {
-    String updatedSubcategory = subcategory;
+    String? updatedSubcategory = subcategory;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    String oldSubcategoryId = entry?.subcategoryId;
+    String? oldSubcategoryId = entry.subcategoryId;
 
     tags = categoryOrSubcategoryUpdateAllTagFrequencies(
         tags: tags,
@@ -396,7 +396,7 @@ class EntrySelectSubcategory implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry:
-                  Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
+                  Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
               tags: tags,
             )),
       ],
@@ -408,7 +408,7 @@ class EntryReorderCategories implements AppAction {
   final int newIndex;
   final int oldIndex;
 
-  EntryReorderCategories({@required this.newIndex, @required this.oldIndex});
+  EntryReorderCategories({required this.newIndex, required this.oldIndex});
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
@@ -433,7 +433,7 @@ class EntryReorderSubcategories implements AppAction {
   final int newIndex;
   final int oldIndex;
 
-  EntryReorderSubcategories({@required this.newIndex, @required this.oldIndex, @required this.reorderedSubcategories});
+  EntryReorderSubcategories({required this.newIndex, required this.oldIndex, required this.reorderedSubcategories});
 
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
@@ -465,7 +465,7 @@ class EntryReorderSubcategories implements AppAction {
 class EntryAddEditCategory implements AppAction {
   final AppCategory category;
 
-  EntryAddEditCategory({@required this.category});
+  EntryAddEditCategory({required this.category});
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
@@ -492,7 +492,7 @@ class EntryAddEditCategory implements AppAction {
 class EntryDeleteCategory implements AppAction {
   final AppCategory category;
 
-  EntryDeleteCategory({@required this.category});
+  EntryDeleteCategory({required this.category});
 
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
@@ -532,13 +532,13 @@ class EntryDeleteCategory implements AppAction {
 class EntryAddEditSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  EntryAddEditSubcategory({@required this.subcategory});
+  EntryAddEditSubcategory({required this.subcategory});
 
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
-    String previousParentId = entry.categoryId;
+    Map<String?, Tag?> tags = Map.from(appState.singleEntryState.tags);
+    String? previousParentId = entry.categoryId;
 
     if (subcategory.id.length > 0) {
       //edit subcategory
@@ -547,7 +547,7 @@ class EntryAddEditSubcategory implements AppAction {
       //if the parent category of the subcategory was changed and thus the entry category changed, decrement the previous category and increment the new category
       if (previousParentId != subcategory.parentCategoryId && entry.subcategoryId == subcategory.id) {
         entry.tagIDs.forEach((tagId) {
-          Tag tag = tags[tagId];
+          Tag tag = tags[tagId]!;
 
           tag = _decrementAppCategoryFrequency(
               categoryId: previousParentId, updatedTag: tag, categoryOrSubcategory: CategoryOrSubcategory.category);
@@ -579,7 +579,7 @@ class EntryAddEditSubcategory implements AppAction {
 class EntryDeleteSubcategory implements AppAction {
   final AppCategory subcategory;
 
-  EntryDeleteSubcategory({@required this.subcategory});
+  EntryDeleteSubcategory({required this.subcategory});
 
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
@@ -610,13 +610,13 @@ class EntryUpdateMemberPaidAmount implements AppAction {
   final int paidValue;
   final EntryMember member;
 
-  EntryUpdateMemberPaidAmount({@required this.paidValue, @required this.member});
+  EntryUpdateMemberPaidAmount({required this.paidValue, required this.member});
 
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
     String logCurrency = log.currency;
-    double exchangeRate = entry.exchangeRate;
+    double? exchangeRate = entry.exchangeRate;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember entryMember = this.member;
     int amount = 0;
@@ -629,7 +629,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
 
       //update total amount paid by all members
       members.forEach((key, value) {
-        if (value.paid != null && value.paying) {
+        if (value.paying!) {
           amount = amount + value.paid;
         }
       });
@@ -640,10 +640,10 @@ class EntryUpdateMemberPaidAmount implements AppAction {
 
       //update total amountForeign paid by all members
       members.forEach((key, value) {
-        if (value.paidForeign != null && value.paying) {
+        if (value.paying!) {
           amountForeign = amountForeign + value.paidForeign;
         }
-        if (value.paid != null && value.paying) {
+        if (value.paying!) {
           amount = amount + value.paid;
         }
       });
@@ -653,7 +653,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
 
     members = _divideSpending(
       members: members,
-      logCurrency: CurrencyService().findByCode(logCurrency),
+      logCurrency: CurrencyService().findByCode(logCurrency)!,
       entry: entry,
     );
 
@@ -676,14 +676,14 @@ class EntryUpdateMemberSpentAmount implements AppAction {
   final int spentValue;
   final EntryMember member;
 
-  EntryUpdateMemberSpentAmount({this.spentValue = 0, @required this.member});
+  EntryUpdateMemberSpentAmount({this.spentValue = 0, required this.member});
 
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    String logCurrency = log.currency;
+    String? logCurrency = log.currency;
 
     if (logCurrency == appState.singleEntryState.selectedEntry.value.currency) {
       //update amount spent by individual member
@@ -696,7 +696,7 @@ class EntryUpdateMemberSpentAmount implements AppAction {
     members = _divideSpending(
       entry: entry,
       members: members,
-      logCurrency: CurrencyService().findByCode(log.currency),
+      logCurrency: CurrencyService().findByCode(log.currency)!,
       distributeEvenly: false,
     );
     entry = entry.copyWith(entryMembers: members);
@@ -726,7 +726,7 @@ class EntryDivideRemainingSpending implements AppAction {
     members = _divideSpending(
       entry: entry,
       members: members,
-      logCurrency: CurrencyService().findByCode(logCurrency),
+      logCurrency: CurrencyService().findByCode(logCurrency)!,
       divideRemaining: true,
     );
 
@@ -760,7 +760,7 @@ class EntryResetMemberSpendingToAll implements AppAction {
     members = _divideSpending(
       entry: entry,
       members: members,
-      logCurrency: CurrencyService().findByCode(logCurrency),
+      logCurrency: CurrencyService().findByCode(logCurrency)!,
     );
 
     entry = entry.copyWith(entryMembers: members);
@@ -781,7 +781,7 @@ class EntryResetMemberSpendingToAll implements AppAction {
 class EntryToggleMemberPaying implements AppAction {
   final EntryMember member;
 
-  EntryToggleMemberPaying({@required this.member});
+  EntryToggleMemberPaying({required this.member});
 
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -802,23 +802,23 @@ class EntryToggleMemberPaying implements AppAction {
     //if the selected payer is the last, they cannot be removed
     if (membersPaying > 1 || member.paying == false) {
       //toggles member paying or not
-      FocusNode payingFocusNode = member.payingFocusNode;
+      FocusNode? payingFocusNode = member.payingFocusNode;
 
       //if member is now paying, focus on their paid amount variable
       if (member.paying == false) {
-        payingFocusNode.requestFocus();
-      } else if (payingFocusNode.hasFocus) {
+        payingFocusNode!.requestFocus();
+      } else if (payingFocusNode!.hasFocus) {
         payingFocusNode.unfocus();
       }
 
       members.update(
         member.uid,
-        (value) => member.copyWith(paying: !member.paying, payingFocusNode: payingFocusNode),
+        (value) => member.copyWith(paying: !member.paying!, payingFocusNode: payingFocusNode),
       );
     }
 
     members.forEach((key, value) {
-      if (value.paid != null && value.paying) {
+      if (value.paying!) {
         amount = amount + value.paid;
       }
     });
@@ -829,7 +829,7 @@ class EntryToggleMemberPaying implements AppAction {
     members = _divideSpending(
       entry: entry,
       members: members,
-      logCurrency: CurrencyService().findByCode(logCurrency),
+      logCurrency: CurrencyService().findByCode(logCurrency)!,
     );
     entry = entry.copyWith(entryMembers: members);
 
@@ -849,7 +849,7 @@ class EntryToggleMemberPaying implements AppAction {
 class EntryToggleMemberSpending implements AppAction {
   final EntryMember member;
 
-  EntryToggleMemberSpending({@required this.member});
+  EntryToggleMemberSpending({required this.member});
 
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
@@ -878,7 +878,7 @@ class EntryToggleMemberSpending implements AppAction {
     members = _divideSpending(
       entry: entry,
       members: members,
-      logCurrency: CurrencyService().findByCode(logCurrency),
+      logCurrency: CurrencyService().findByCode(logCurrency)!,
     );
     entry = entry.copyWith(entryMembers: members);
 
@@ -900,14 +900,14 @@ class EntryToggleMemberSpending implements AppAction {
 class EntryAddUpdateTag implements AppAction {
   final Tag tag;
 
-  EntryAddUpdateTag({@required this.tag});
+  EntryAddUpdateTag({required this.tag});
 
   @override
   AppState updateState(AppState appState) {
     Tag addedUpdatedTag = tag;
     Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    Tag existingTag;
+    Tag? existingTag;
     bool duplicateNewTag = false;
 
     for (Tag value in tags.values.toList()) {
@@ -917,7 +917,7 @@ class EntryAddUpdateTag implements AppAction {
       }
     }
 
-    for (Tag value in appState.singleEntryState.tags.values.toList()) {
+    for (Tag? value in appState.singleEntryState.tags.values.toList()) {
       if (value.name.toLowerCase() == tag.name.toLowerCase()) {
         //user attempting to add duplicate new tags
         duplicateNewTag = true;
@@ -944,7 +944,7 @@ class EntryAddUpdateTag implements AppAction {
         entry.tagIDs.add(addedUpdatedTag.id);
 
         addedUpdatedTag = _incrementCategorySubcategoryFrequency(
-            updatedTag: addedUpdatedTag, categoryId: entry?.categoryId, subcategoryId: entry?.subcategoryId);
+            updatedTag: addedUpdatedTag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
       }
 
       //updates existing tag or add it
@@ -972,14 +972,14 @@ class EntryAddUpdateTag implements AppAction {
 class EntrySelectDeselectTag implements AppAction {
   final Tag tag;
 
-  EntrySelectDeselectTag({@required this.tag});
+  EntrySelectDeselectTag({required this.tag});
 
   @override
   AppState updateState(AppState appState) {
     Tag selectedDeselectedTag = tag;
-    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
+    Map<String?, Tag> tags = Map.from(appState.singleEntryState.tags);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<String> entryTagIds = List.from(entry.tagIDs);
+    List<String?> entryTagIds = List.from(entry.tagIDs);
     bool entryHasTag = false;
 
     //determines if the tag is in the entry or in another list
@@ -1024,7 +1024,7 @@ class EntrySelectDeselectTag implements AppAction {
 }
 
 class EntrySetSearchedTags implements AppAction {
-  final String search;
+  final String? search;
 
   EntrySetSearchedTags({this.search});
 
@@ -1033,7 +1033,7 @@ class EntrySetSearchedTags implements AppAction {
     Map<String, Tag> tagMap = Map.from(appState.singleEntryState.tags);
     List<Tag> tags = tagMap.values.toList();
     List<Tag> searchedTags = [];
-    Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe.some(search) : Maybe.none();
+    Maybe<String?> searchMaybe = search != null && search!.length > 0 ? Maybe.some(search) : Maybe.none();
     int maxTags = MAX_TAGS;
     List<String> selectedTagIds = List.from(appState.singleEntryState.selectedEntry.value.tagIDs);
 
@@ -1052,7 +1052,7 @@ class EntrySetSearchedTags implements AppAction {
 class EntryDeleteTag implements AppAction {
   final Tag tag;
 
-  EntryDeleteTag({@required this.tag});
+  EntryDeleteTag({required this.tag});
 
   @override
   AppState updateState(AppState appState) {
@@ -1079,22 +1079,22 @@ class EntryMemberFocus implements AppAction {
   final String memberId;
   final PaidOrSpent paidOrSpent;
 
-  EntryMemberFocus({@required this.memberId, @required this.paidOrSpent});
+  EntryMemberFocus({required this.memberId, required this.paidOrSpent});
 
   @override
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
-    EntryMember member = memberMap[memberId];
-    FocusNode focusNode;
+    EntryMember member = memberMap[memberId]!;
+    FocusNode? focusNode;
 
     if (paidOrSpent == PaidOrSpent.paid) {
       focusNode = member.payingFocusNode;
-      focusNode.requestFocus();
+      focusNode!.requestFocus();
       member = member.copyWith(payingFocusNode: focusNode);
     } else if (paidOrSpent == PaidOrSpent.spent) {
       focusNode = member.spendingFocusNode;
-      focusNode.requestFocus();
+      focusNode!.requestFocus();
       member = member.copyWith(spendingFocusNode: focusNode);
     }
 
@@ -1111,7 +1111,7 @@ class EntryMemberFocus implements AppAction {
 }
 
 class EntryNextFocus implements AppAction {
-  final PaidOrSpent paidOrSpent;
+  final PaidOrSpent? paidOrSpent;
 
   EntryNextFocus({this.paidOrSpent});
 
@@ -1120,24 +1120,24 @@ class EntryNextFocus implements AppAction {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> memberMap = Map.from(entry.entryMembers);
     List<EntryMember> memberList = memberMap.values.toList();
-    int memberFocusIndex;
+    int? memberFocusIndex;
     bool membersHaveFocus = false;
     FocusNode commentFocusNode = appState.singleEntryState.commentFocusNode.value;
     FocusNode tagFocusNode = appState.singleEntryState.tagFocusNode.value;
 
     for (int i = 0; i < memberList.length; i++) {
-      FocusNode focusNode;
-      if (memberList[i].spendingFocusNode.hasFocus) {
+      FocusNode? focusNode;
+      if (memberList[i].spendingFocusNode!.hasFocus) {
         //remove focus from current focused member
         memberFocusIndex = i;
         focusNode = memberList[i].spendingFocusNode;
-        focusNode.unfocus();
+        focusNode!.unfocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: focusNode));
-      } else if (memberList[i].payingFocusNode.hasFocus) {
+      } else if (memberList[i].payingFocusNode!.hasFocus) {
         //remove focus from current focused member
         memberFocusIndex = i;
         focusNode = memberList[i].payingFocusNode;
-        focusNode.unfocus();
+        focusNode!.unfocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: focusNode));
       } else if (paidOrSpent == PaidOrSpent.paid &&
           memberFocusIndex != null &&
@@ -1145,7 +1145,7 @@ class EntryNextFocus implements AppAction {
           memberList[i].paying == true) {
         //focus on next paying member if there is one
         focusNode = memberList[i].payingFocusNode;
-        focusNode.requestFocus();
+        focusNode!.requestFocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(payingFocusNode: focusNode));
         membersHaveFocus = true;
         break;
@@ -1154,7 +1154,7 @@ class EntryNextFocus implements AppAction {
           i > memberFocusIndex &&
           memberList[i].spending == true) {
         focusNode = memberList[i].spendingFocusNode;
-        focusNode.requestFocus();
+        focusNode!.requestFocus();
         memberMap.update(memberList[i].uid, (value) => memberList[i].copyWith(spendingFocusNode: focusNode));
         membersHaveFocus = true;
         break;
@@ -1193,13 +1193,13 @@ class EntryClearAllFocus implements AppAction {
     FocusNode tagFocusNode = appState.singleEntryState.tagFocusNode.value;
 
     for (int i = 0; i < memberList.length; i++) {
-      FocusNode spendingFocus;
-      FocusNode payingFocus;
+      FocusNode? spendingFocus;
+      FocusNode? payingFocus;
 
       spendingFocus = memberList[i].spendingFocusNode;
-      spendingFocus.unfocus();
+      spendingFocus!.unfocus();
       payingFocus = memberList[i].payingFocusNode;
-      payingFocus.unfocus();
+      payingFocus!.unfocus();
       memberMap.update(memberList[i].uid,
           (value) => memberList[i].copyWith(spendingFocusNode: spendingFocus, payingFocusNode: payingFocus));
     }
@@ -1223,7 +1223,7 @@ class EntryClearAllFocus implements AppAction {
 ///*METHODS*/
 
 Tag _incrementCategoryAndLogFrequency(
-    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
   updatedTag = _incrementCategorySubcategoryFrequency(
       updatedTag: updatedTag, categoryId: categoryId, subcategoryId: subcategoryId);
 
@@ -1234,7 +1234,7 @@ Tag _incrementCategoryAndLogFrequency(
 }
 
 Tag _incrementCategorySubcategoryFrequency(
-    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
   //increment use of tag for this category if present
   updatedTag = _incrementAppCategoryFrequency(
       appCategoryId: categoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.category);
@@ -1247,7 +1247,7 @@ Tag _incrementCategorySubcategoryFrequency(
 }
 
 Tag _incrementAppCategoryFrequency(
-    {@required String appCategoryId, @required Tag updatedTag, @required CategoryOrSubcategory categoryOrSubcategory}) {
+    {required String appCategoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
   print('increment tag: $updatedTag');
 
   Map<String, int> tagCategoryFrequency = const {};
@@ -1271,7 +1271,7 @@ Tag _incrementAppCategoryFrequency(
 }
 
 Tag decrementCategorySubcategoryLogFrequency(
-    {@required Tag updatedTag, @required String categoryId, String subcategoryId}) {
+    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
   updatedTag =
       _decrementCategorySubcategory(updatedTag: updatedTag, categoryId: categoryId, subcategoryId: subcategoryId);
 
@@ -1282,7 +1282,7 @@ Tag decrementCategorySubcategoryLogFrequency(
 }
 
 Tag _decrementCategorySubcategory(
-    {@required Tag updatedTag, @required String categoryId, @required String subcategoryId}) {
+    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
   //decrement use of tag for this category if present
   updatedTag = _decrementAppCategoryFrequency(
       categoryId: categoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.category);
@@ -1293,15 +1293,13 @@ Tag _decrementCategorySubcategory(
 }
 
 Tag _decrementAppCategoryFrequency(
-    {@required String categoryId, @required Tag updatedTag, @required CategoryOrSubcategory categoryOrSubcategory}) {
+    {required String categoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
   Map<String, int> tagCategoryFrequency = <String, int>{};
-
-  print('decrement tag: $updatedTag');
 
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
     tagCategoryFrequency = Map<String, int>.from(updatedTag.tagCategoryFrequency);
   } else {
-    tagCategoryFrequency = Map<String, int>.from(updatedTag?.tagSubcategoryFrequency);
+    tagCategoryFrequency = Map<String, int>.from(updatedTag.tagSubcategoryFrequency);
   }
 
   //subtracts frequency to tag for the category if present, adds it otherwise
@@ -1314,20 +1312,18 @@ Tag _decrementAppCategoryFrequency(
     updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
   }
 
-  print('decremented tag: $updatedTag');
-
   return updatedTag;
 }
 
 Map<String, Tag> categoryOrSubcategoryUpdateAllTagFrequencies(
-    {@required AppEntry entry,
-    String oldAppCategory,
-    @required String newAppCategory,
-    @required Map<String, Tag> tags,
-    @required CategoryOrSubcategory categoryOrSubcategory}) {
+    {required AppEntry entry,
+    String? oldAppCategory,
+    required String newAppCategory,
+    required Map<String, Tag> tags,
+    required CategoryOrSubcategory categoryOrSubcategory}) {
   if (entry.tagIDs.length > 0) {
     entry.tagIDs.forEach((tagId) {
-      Tag tag = tags[tagId];
+      Tag tag = tags[tagId]!;
 
       if (oldAppCategory != null) {
         tag = _decrementAppCategoryFrequency(
@@ -1345,15 +1341,15 @@ Map<String, Tag> categoryOrSubcategoryUpdateAllTagFrequencies(
 }
 
 Map<String, EntryMember> _divideSpending({
-  @required Map<String, EntryMember> members,
-  @required Currency logCurrency,
-  @required AppEntry entry,
+  required Map<String, EntryMember> members,
+  required Currency logCurrency,
+  required AppEntry entry,
   bool distributeEvenly = true,
   bool divideRemaining = false,
 }) {
   Map<String, EntryMember> entryMembers = Map.from(members);
-  Currency entryCurrency = CurrencyService().findByCode(entry.currency);
-  double exchangeRate = entry.exchangeRate;
+  Currency entryCurrency = CurrencyService().findByCode(entry.currency)!;
+  double? exchangeRate = entry.exchangeRate;
 
   //used for resetting values
   if (distributeEvenly && !divideRemaining) {
@@ -1403,9 +1399,9 @@ Map<String, EntryMember> _divideSpending({
 }
 
 Map<String, EntryMember> _distributeDivisibleAmount({
-  @required Map<String, EntryMember> entryMembers,
-  @required int divisibleAmount,
-  @required Currency logCurrency,
+  required Map<String, EntryMember> entryMembers,
+  required int divisibleAmount,
+  required Currency logCurrency,
   bool divideRemaining = false,
 }) {
   int remainder = 0;
@@ -1445,7 +1441,7 @@ Map<String, EntryMember> _distributeDivisibleAmount({
         remainder--;
       }
 
-      member.spendingController.value =
+      member.spendingController!.value =
           TextEditingValue(text: formattedAmount(value: memberSpentAmount, currency: logCurrency));
       return member.copyWith(spent: memberSpentAmount);
     }
@@ -1455,10 +1451,10 @@ Map<String, EntryMember> _distributeDivisibleAmount({
 }
 
 Map<String, EntryMember> _distributeDivisibleAmountForeign({
-  @required Map<String, EntryMember> entryMembers,
-  @required int divisibleAmount,
-  @required Currency entryCurrency,
-  @required double exchangeRate,
+  required Map<String, EntryMember> entryMembers,
+  required int divisibleAmount,
+  required Currency entryCurrency,
+  required double exchangeRate,
   bool divideRemaining = false,
 }) {
   int remainder = 0;
@@ -1498,7 +1494,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
         remainder--;
       }
 
-      member.spendingController.value =
+      member.spendingController!.value =
           TextEditingValue(text: formattedAmount(value: memberSpentAmount, currency: entryCurrency));
       return member.copyWith(spentForeign: memberSpentAmount, spent: (memberSpentAmount / exchangeRate).round());
     }
@@ -1507,7 +1503,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
   return entryMembers;
 }
 
-Map<String, EntryMember> _setMembersList({@required Log log, @required String memberId}) {
+Map<String, EntryMember> _setMembersList({required Log log, required String memberId}) {
   //adds the log members to the entry member list when creating a new entry of changing logs
 
   Map<String, EntryMember> members = {};
@@ -1529,7 +1525,7 @@ Map<String, EntryMember> _setMembersList({@required Log log, @required String me
   return members;
 }
 
-bool _canSave({AppEntry entry}) {
+bool _canSave({required AppEntry entry}) {
   bool canSubmit = false;
   if (entry.amount != 0) {
     int totalMemberSpend = 0;
@@ -1546,11 +1542,11 @@ bool _canSave({AppEntry entry}) {
   return canSubmit;
 }
 
-int _remainingSpending({Map<String, EntryMember> entryMembers, @required bool isForeign}) {
+int _remainingSpending({required Map<String, EntryMember> entryMembers, required bool isForeign}) {
   int remainingSpending = 0;
 
   entryMembers.forEach((key, member) {
-    if (member.paying) {
+    if (member.paying!) {
       if (isForeign) {
         remainingSpending += member.paidForeign;
       } else {

@@ -17,8 +17,8 @@ class FilterLogDialog extends StatelessWidget {
         where: notIdentical,
         map: (state) => state.filterState,
         builder: (state) {
-          List<String> selectedLogs = state.filter.value.selectedLogs;
-          List<Log> allLogs = Env.store.state.logsState.logs.values.toList();
+          List<String?> selectedLogs = state.filter.value.selectedLogs;
+          List<Log> allLogs = Env.store.state!.logsState.logs.values.toList();
 
           return AppDialogWithActions(
               title: 'Logs',

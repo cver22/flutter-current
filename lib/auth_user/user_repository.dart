@@ -9,22 +9,22 @@ import 'models/app_user.dart';
 //TODO implement error checking
 
 abstract class UserRepository {
-  Future<User> signInWithGoogle();
+  Future<User?> signInWithGoogle();
 
-  Future<void> signInWithCredentials({String/*!*/ email, String/*!*/ password});
+  Future<void> signInWithCredentials({required String email, required String password});
 
-  Future<void> signUp({String/*!*/ email, String/*!*/ password});
+  Future<UserCredential> signUp({required String email, required String password});
 
-  Future<void> signOut();
+  Future<List<void>> signOut();
 
   Future<bool> isSignedIn();
 
   Future<AppUser> getUser();
 
-  Future<AppUser> updateUserProfile({@required String displayName});
+  Future<AppUser> updateUserProfile({required String displayName});
 
   Future<bool> updatePassword(
-      {@required String currentPassword, @required String newPassword});
+      {required String currentPassword, required String newPassword});
 
   Future<bool> isUserSignedInWithEmail();
 }
@@ -33,13 +33,13 @@ class FirebaseUserRepository implements UserRepository {
   final FirebaseAuth _firebaseAuth;
   final GoogleSignIn _googleSignIn;
 
-  FirebaseUserRepository({FirebaseAuth firebaseAuth, GoogleSignIn googleSignIn})
+  FirebaseUserRepository({FirebaseAuth? firebaseAuth, GoogleSignIn? googleSignIn})
       : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
         _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
-  Future<User> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await _googleSignIn.signIn();
+  Future<User?> signInWithGoogle() async {
+    final GoogleSignInAccount googleUser = await (_googleSignIn.signIn() as FutureOr<GoogleSignInAccount>);
     final GoogleSignInAuthentication googleAuth =
         await googleUser.authentication;
     final AuthCredential credential = GoogleAuthProvider.credential(
@@ -49,13 +49,13 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> signInWithCredentials({String/*!*/ email, String/*!*/ password}) {
+  Future<void> signInWithCredentials({required String email, required String password}) {
     return _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
   }
 
   @override
-  Future<void> signUp({String/*!*/ email, String/*!*/ password}) async {
+  Future<UserCredential> signUp({required String email, required String password}) async {
     var auth = await _firebaseAuth.createUserWithEmailAndPassword(
         email: email, password: password);
     auth.toString();
@@ -64,7 +64,7 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<void> signOut() async {
+  Future<List<void>> signOut() async {
     return Future.wait([
       _firebaseAuth.signOut(),
       _googleSignIn.signOut(),
@@ -79,7 +79,7 @@ class FirebaseUserRepository implements UserRepository {
 
   @override
   Future<AppUser> getUser() async {
-    User user = _firebaseAuth.currentUser;
+    User user = _firebaseAuth.currentUser!;
 
     return AppUser(
         id: user.uid,
@@ -89,11 +89,11 @@ class FirebaseUserRepository implements UserRepository {
   }
 
   @override
-  Future<AppUser> updateUserProfile({@required String displayName}) async {
-    User user = _firebaseAuth.currentUser;
+  Future<AppUser> updateUserProfile({required String displayName}) async {
+    User user = _firebaseAuth.currentUser!;
     user.updateProfile(displayName: displayName);
     await user.reload();
-    user = _firebaseAuth.currentUser;
+    user = _firebaseAuth.currentUser!;
 
     return AppUser(
         id: user.uid,
@@ -105,7 +105,7 @@ class FirebaseUserRepository implements UserRepository {
   //only available if user has signed in with email
   @override
   Future<bool> updatePassword(
-      {@required String currentPassword, @required String newPassword}) async {
+      {required String currentPassword, required String newPassword}) async {
     // FirebaseUser user = await _firebaseAuth.currentUser();
     bool success = false;
 
@@ -132,7 +132,7 @@ class FirebaseUserRepository implements UserRepository {
   //used for AccountScreen password change form
   @override
   Future<bool> isUserSignedInWithEmail() async {
-    User user = _firebaseAuth.currentUser;
+    User user = _firebaseAuth.currentUser!;
 
     //returns true if user has signed into the app with their email
     return user.providerData[0].providerId == EmailAuthProvider.PROVIDER_ID;

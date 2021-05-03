@@ -19,7 +19,7 @@ import 'app_drawer.dart';
 //main screen of the app from which we can navigate to other areas of the app
 
 class AppScreen extends StatefulWidget {
-  AppScreen({Key key}) : super(key: key);
+  AppScreen({Key? key}) : super(key: key);
 
   @override
   _AppScreenState createState() => _AppScreenState();
@@ -27,7 +27,7 @@ class AppScreen extends StatefulWidget {
 
 class _AppScreenState extends State<AppScreen>
     with SingleTickerProviderStateMixin {
-  /*late*/ TabController _controller;
+  late TabController _controller;
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
   List<Widget> tabs = [
@@ -67,7 +67,7 @@ class _AppScreenState extends State<AppScreen>
               } else if (_controller.index != 0) {
                 _controller.animateTo(0);
                 return false;
-              } else if (_key.currentState.isDrawerOpen) {
+              } else if (_key.currentState!.isDrawerOpen) {
                 Navigator.of(context).pop();
                 return false;
               }
@@ -109,7 +109,7 @@ class _AppScreenState extends State<AppScreen>
   }
 
   PopupMenuButton<String> _buildEntriesPopupMenuButton(
-      {@required EntriesState state}) {
+      {required EntriesState state}) {
     return PopupMenuButton<String>(
       onSelected: handleClick,
       itemBuilder: (BuildContext context) {

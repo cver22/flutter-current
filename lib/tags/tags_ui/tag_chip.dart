@@ -10,7 +10,7 @@ import 'edit_tag_dialog.dart';
 import 'tag_rich_text_spans.dart';
 
 class TagChip extends StatelessWidget {
-  final Tag/*!*/ tag;
+  final Tag tag;
   final Maybe<String> search;
   final bool editable;
   final bool filterSelect;
@@ -18,9 +18,9 @@ class TagChip extends StatelessWidget {
   //TODO have chips change colour when selected?
 
   const TagChip(
-      {Key key,
-      @required this.tag,
-      @required this.search,
+      {Key? key,
+      required this.tag,
+      required this.search,
       this.editable = true,
       this.filterSelect = false})
       : super(key: key);
@@ -29,7 +29,7 @@ class TagChip extends StatelessWidget {
   Widget build(BuildContext context) {
     GlobalKey key = GlobalKey(debugLabel: tag.id);
 
-    RichText searchedText = tagRichTextSpans(tag: tag, search: search);
+    RichText? searchedText = tagRichTextSpans(tag: tag, search: search);
 
     return InputChip(
       label: searchedText == null ? Text('#${tag.name}') : searchedText,

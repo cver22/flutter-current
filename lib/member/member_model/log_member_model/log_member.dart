@@ -6,14 +6,14 @@ import 'log_member_entity.dart';
 
 @immutable
 class LogMember extends Member {
-  final String name;
+  final String? name;
   final String role;
 
-  LogMember({uid, paid,spent, order, @required this.name, this.role = WRITER})
+  LogMember({uid, paid,spent, order, required this.name, this.role = WRITER})
       : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
 
   @override
-  List<Object> get props => [uid, name, paid, spent, role, order];
+  List<Object?> get props => [uid, name, paid, spent, role, order];
 
   @override
   String toString() {
@@ -21,12 +21,12 @@ class LogMember extends Member {
   }
 
   LogMember copyWith({
-    String uid,
-    String name,
-    int paid,
-    int spent,
-    String role,
-    int order,
+    String? uid,
+    String? name,
+    int? paid,
+    int? spent,
+    String? role,
+    int? order,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (name == null || identical(name, this.name)) &&

@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 class ErrorContent extends StatelessWidget {
-  final String errorMessage;
+  final String? errorMessage;
 
-  const ErrorContent({Key key, this.errorMessage}) : super(key: key);
+  const ErrorContent({Key? key, this.errorMessage}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

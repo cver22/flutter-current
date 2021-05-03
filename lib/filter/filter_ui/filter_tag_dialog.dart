@@ -86,8 +86,8 @@ class FilterTagDialog extends StatelessWidget {
   }
 
   Widget _buildSelectedTags({
-    @required List<Tag> allTags,
-    @required List<String> selectedTagIds,
+    required List<Tag> allTags,
+    required List<String?> selectedTagIds,
   }) {
     List<Tag> collectionTags = List.from(allTags);
 
@@ -112,11 +112,11 @@ class FilterTagDialog extends StatelessWidget {
   }
 
   Widget _buildAllTags({
-    @required Maybe<String> search,
-    @required List<Tag> allTags,
-    @required List<String> selectedTagNames,
-    @required List<Tag> searchedTags,
-    @required List<String> selectedCategories,
+    required Maybe<String> search,
+    required List<Tag> allTags,
+    required List<String?> selectedTagNames,
+    required List<Tag> searchedTags,
+    required List<String> selectedCategories,
   }) {
     List<Tag> collectionTags =
         search.isNone ? List.from(allTags) : List.from(searchedTags);
@@ -137,7 +137,7 @@ class FilterTagDialog extends StatelessWidget {
     if (selectedCategories.isNotEmpty) {
       collectionTags.removeWhere((tag) {
         bool remove = true;
-        tag.tagCategoryFrequency.forEach((categoryName, value) {
+        tag.tagCategoryFrequency!.forEach((categoryName, value) {
           if (selectedCategories.contains(categoryName)) {
             remove = false;
           }

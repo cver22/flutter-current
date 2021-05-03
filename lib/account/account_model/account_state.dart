@@ -5,20 +5,20 @@ import 'package:meta/meta.dart';
 //AccountState is used for tracking password changes by the user
 @immutable
 class AccountState extends Equatable {
-  final LoginStatus/*!*/ loginStatus;
-  final bool/*!*/ isUserSignedInWithEmail;
-  final bool/*!*/ showPasswordForm;
-  final bool/*!*/ isOldPasswordValid;
-  final bool/*!*/ isNewPasswordValid;
-  final bool/*!*/ newPasswordsMatch;
+  final LoginStatus loginStatus;
+  final bool isUserSignedInWithEmail;
+  final bool showPasswordForm;
+  final bool isOldPasswordValid;
+  final bool isNewPasswordValid;
+  final bool newPasswordsMatch;
 
   AccountState(
-      {this.loginStatus,
-      this.isUserSignedInWithEmail,
-      this.showPasswordForm,
-      this.isOldPasswordValid,
-      this.isNewPasswordValid,
-      this.newPasswordsMatch});
+      {required this.loginStatus,
+      required this.isUserSignedInWithEmail,
+      required this.showPasswordForm,
+      required this.isOldPasswordValid,
+      required this.isNewPasswordValid,
+      required this.newPasswordsMatch});
 
   factory AccountState.initial() {
     return AccountState(
@@ -88,12 +88,12 @@ class AccountState extends Equatable {
   bool get stringify => true;
 
   AccountState copyWith({
-    LoginStatus loginStatus,
-    bool isUserSignedInWithEmail,
-    bool showPasswordForm,
-    bool isOldPasswordValid,
-    bool isNewPasswordValid,
-    bool newPasswordsMatch,
+    LoginStatus? loginStatus,
+    bool? isUserSignedInWithEmail,
+    bool? showPasswordForm,
+    bool? isOldPasswordValid,
+    bool? isNewPasswordValid,
+    bool? newPasswordsMatch,
   }) {
     if ((loginStatus == null || identical(loginStatus, this.loginStatus)) &&
         (isUserSignedInWithEmail == null ||

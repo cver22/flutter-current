@@ -9,28 +9,28 @@ import '../../utils/maybe.dart';
 import 'filter.dart';
 
 class FilterState extends Equatable {
-  final Maybe<Filter>/*!*/ filter;
-  final List<bool>/*!*/ expandedCategories;
-  final List<AppCategory>/*!*/ consolidatedCategories;
-  final List<AppCategory>/*!*/ consolidatedSubcategories;
-  final Map<String, String>/*!*/ allMembers; //id, name
-  final List<Tag>/*!*/ allTags;
-  final bool/*!*/ updated;
-  final Maybe<String>/*!*/ search;
-  final List<Tag>/*!*/ searchedTags;
-  final Maybe<SortMethod>/*!*/ sortMethod; //currently unused , implement later
+  final Maybe<Filter> filter;
+  final List<bool> expandedCategories;
+  final List<AppCategory> consolidatedCategories;
+  final List<AppCategory> consolidatedSubcategories;
+  final Map<String, String> allMembers; //id, name
+  final List<Tag> allTags;
+  final bool updated;
+  final Maybe<String> search;
+  final List<Tag> searchedTags;
+  final Maybe<SortMethod> sortMethod; //currently unused , implement later
 
   FilterState({
-    this.filter,
-    this.expandedCategories,
-    this.consolidatedCategories,
-    this.consolidatedSubcategories,
-    this.allMembers,
-    this.allTags,
-    this.updated,
-    this.search,
-    this.searchedTags,
-    this.sortMethod,
+    required this.filter,
+    required this.expandedCategories,
+    required this.consolidatedCategories,
+    required this.consolidatedSubcategories,
+    required this.allMembers,
+    required this.allTags,
+    required this.updated,
+    required this.search,
+    required this.searchedTags,
+    required this.sortMethod,
   });
 
   factory FilterState.initial() {
@@ -66,16 +66,16 @@ class FilterState extends Equatable {
   bool get stringify => true;
 
   FilterState copyWith({
-    Maybe<Filter> filter,
-    List<bool> expandedCategories,
-    List<AppCategory> consolidatedCategories,
-    List<AppCategory> consolidatedSubcategories,
-    Map<String, String> allMembers,
-    List<Tag> allTags,
-    bool updated,
-    Maybe<String> search,
-    List<Tag> searchedTags,
-    Maybe<SortMethod> sortMethod,
+    Maybe<Filter>? filter,
+    List<bool>? expandedCategories,
+    List<AppCategory>? consolidatedCategories,
+    List<AppCategory>? consolidatedSubcategories,
+    Map<String, String>? allMembers,
+    List<Tag>? allTags,
+    bool? updated,
+    Maybe<String>? search,
+    List<Tag>? searchedTags,
+    Maybe<SortMethod>? sortMethod,
   }) {
     if ((filter == null || identical(filter, this.filter)) &&
         (expandedCategories == null ||

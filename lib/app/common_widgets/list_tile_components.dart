@@ -8,8 +8,8 @@ import '../../utils/db_consts.dart';
 
 class CategoryListTileLeading extends StatelessWidget {
   const CategoryListTileLeading({
-    Key key,
-    @required this.category,
+    Key? key,
+    required this.category,
     this.sublist = false,
   }) : super(key: key);
 
@@ -40,12 +40,12 @@ class CategoryListTileLeading extends StatelessWidget {
 
 class CategoryListTileTrailing extends StatelessWidget {
   const CategoryListTileTrailing({
-    Key key,
-    @required this.onTapEdit,
+    Key? key,
+    required this.onTapEdit,
     this.addSubcategory = false,
   }) : super(key: key);
 
-  final VoidCallback/*!*/ onTapEdit;
+  final VoidCallback onTapEdit;
   final bool addSubcategory;
 
   @override
@@ -68,13 +68,13 @@ class CategoryListTileTrailing extends StatelessWidget {
 
 class FilterListTileTrailing extends StatelessWidget {
   const FilterListTileTrailing({
-    Key key,
-    @required this.onSelect,
-    @required this.selected,
+    Key? key,
+    required this.onSelect,
+    required this.selected,
   }) : super(key: key);
 
-  final VoidCallback/*!*/ onSelect;
-  final bool/*!*/ selected;
+  final VoidCallback onSelect;
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -98,17 +98,17 @@ class FilterListTileTrailing extends StatelessWidget {
 
 class MasterCategoryListTileTrailing extends StatelessWidget {
   const MasterCategoryListTileTrailing({
-    Key key,
-    @required this.setLogFilter,
-    @required this.category,
-    @required this.expanded,
-    @required this.categories,
+    Key? key,
+    required this.setLogFilter,
+    required this.category,
+    required this.expanded,
+    required this.categories,
   }) : super(key: key);
 
-  final SettingsLogFilter setLogFilter;
+  final SettingsLogFilterEntry setLogFilter;
   final AppCategory category;
   final bool expanded;
-  final List<AppCategory> categories;
+  final List<AppCategory?> categories;
 
   @override
   Widget build(BuildContext context) {
@@ -119,19 +119,19 @@ class MasterCategoryListTileTrailing extends StatelessWidget {
   }
 
   _onTapEdit() {
-    if (setLogFilter == SettingsLogFilter.log) {
+    if (setLogFilter == SettingsLogFilterEntry.log) {
       getLogAddEditCategoryDialog(category: category);
-    } else if (setLogFilter == SettingsLogFilter.settings) {
+    } else if (setLogFilter == SettingsLogFilterEntry.settings) {
       getSettingsAddEditCategoryDialog(category: category);
     }
   }
 
   _onTapAdd() {
     AppCategory subcategory = AppCategory(parentCategoryId: category.id);
-    if (setLogFilter == SettingsLogFilter.log) {
+    if (setLogFilter == SettingsLogFilterEntry.log) {
       getLogAddEditSubcategoryDialog(
           subcategory: subcategory, categories: categories);
-    } else if (setLogFilter == SettingsLogFilter.settings) {
+    } else if (setLogFilter == SettingsLogFilterEntry.settings) {
       getSettingsAddEditSubcategoryDialog(
           subcategory: subcategory, categories: categories);
     }

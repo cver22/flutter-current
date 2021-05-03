@@ -18,7 +18,7 @@ class SettingsFetcher {
   final AppStore _store;
 
   SettingsFetcher({
-    @required AppStore store,
+    required AppStore store,
   }) : _store = store;
 
   //TODO create setter and getter to the JSON file
@@ -51,7 +51,7 @@ class SettingsFetcher {
     }
   }
 
-  Future<void> readResetAppSettings({bool resetSettings}) async {
+  Future<void> readResetAppSettings({required bool resetSettings}) async {
     Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
     final SharedPreferences prefs = await _prefs;
     //determines if this is the first instance the user has logged in and sets the default settings
@@ -63,7 +63,7 @@ class SettingsFetcher {
 
     try {
       if (settingsInitialized &&
-          Env.store.state.settingsState.settings.isSome) {
+          Env.store.state!.settingsState.settings.isSome) {
         //if the settings are already loaded, do nothing
         return;
       } else if (!settingsInitialized) {
@@ -83,7 +83,7 @@ class SettingsFetcher {
         //reads the settings from the saved file to reload them if they are not yet loaded
         final file = await _localFile;
 
-        Map<String, dynamic> jsonData = LinkedHashMap();
+        Map<String, dynamic>? jsonData = LinkedHashMap();
         jsonData = json.decode(await file.readAsString());
 
         /*_store.dispatch(SettingsUpdate(

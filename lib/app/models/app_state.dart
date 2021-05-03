@@ -28,17 +28,17 @@ class AppState extends Equatable {
   final CurrencyState currencyState;
 
   AppState({
-    @required this.authState,
-    @required this.loginRegState,
-    @required this.logsState,
-    @required this.entriesState,
-    @required this.settingsState,
-    @required this.singleEntryState,
-    @required this.tagState,
-    @required this.logTotalsState,
-    @required this.accountState,
-    @required this.filterState,
-    @required this.currencyState,
+    required this.authState,
+    required this.loginRegState,
+    required this.logsState,
+    required this.entriesState,
+    required this.settingsState,
+    required this.singleEntryState,
+    required this.tagState,
+    required this.logTotalsState,
+    required this.accountState,
+    required this.filterState,
+    required this.currencyState,
   });
 
   factory AppState.initial() {
@@ -77,17 +77,17 @@ class AppState extends Equatable {
       ];
 
   AppState copyWith({
-    AuthState authState,
-    LoginRegState loginRegState,
-    LogsState logsState,
-    EntriesState entriesState,
-    SettingsState settingsState,
-    SingleEntryState singleEntryState,
-    TagState tagState,
-    LogTotalsState logTotalsState,
-    AccountState accountState,
-    FilterState filterState,
-    CurrencyState currencyState,
+    AuthState? authState,
+    LoginRegState? loginRegState,
+    LogsState? logsState,
+    EntriesState? entriesState,
+    SettingsState? settingsState,
+    SingleEntryState? singleEntryState,
+    TagState? tagState,
+    LogTotalsState? logTotalsState,
+    AccountState? accountState,
+    FilterState? filterState,
+    CurrencyState? currencyState,
   }) {
     if ((authState == null || identical(authState, this.authState)) &&
         (loginRegState == null || identical(loginRegState, this.loginRegState)) &&

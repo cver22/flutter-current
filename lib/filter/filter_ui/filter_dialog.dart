@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -24,18 +25,18 @@ import 'filter_tag_dialog.dart';
 class FilterDialog extends StatefulWidget {
   final EntriesCharts entriesChart;
 
-  const FilterDialog({Key key, @required this.entriesChart}) : super(key: key);
+  const FilterDialog({Key? key, required this.entriesChart}) : super(key: key);
 
   @override
   _FilterDialogState createState() => _FilterDialogState();
 }
 
 class _FilterDialogState extends State<FilterDialog> {
-  /*late*/ TextEditingController _minAmountController;
-  /*late*/ TextEditingController _maxAmountController;
-  FocusNode _minFocusNode;
-  FocusNode _maxFocusNode;
-  Filter filter;
+  late TextEditingController _minAmountController;
+  late TextEditingController _maxAmountController;
+  late FocusNode _minFocusNode;
+  late FocusNode _maxFocusNode;
+  late Filter filter;
 
   @override
   void initState() {
@@ -50,16 +51,17 @@ class _FilterDialogState extends State<FilterDialog> {
       setState(() {});
     });
 
-    if (Env.store.state.filterState.filter.value.minAmount.isSome) {
+    //TODO change both of these to search based on settings default
+    if (Env.store.state!.filterState.filter.value.minAmount.isSome) {
       _minAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state.filterState.filter.value.minAmount.value));
+              value: Env.store.state!.filterState.filter.value.minAmount.value, currency: CurrencyService().findByCode('CAD')!));
     }
 
-    if (Env.store.state.filterState.filter.value.maxAmount.isSome) {
+    if (Env.store.state!.filterState.filter.value.maxAmount.isSome) {
       _maxAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state.filterState.filter.value.maxAmount.value));
+              value: Env.store.state!.filterState.filter.value.maxAmount.value, currency: CurrencyService().findByCode('CAD')!));
     }
 
     super.initState();
@@ -116,8 +118,8 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   List<Widget> _actions(
-      {@required FilterState filterState,
-      @required EntriesCharts entriesChart}) {
+      {required FilterState filterState,
+      required EntriesCharts entriesChart}) {
     return [
       TextButton(
         child: Text('Cancel'),
@@ -146,17 +148,17 @@ class _FilterDialogState extends State<FilterDialog> {
     ];
   }
 
-  bool _minExceedMax({@required Filter filter}) {
+  bool _minExceedMax({required Filter filter}) {
     bool canSave = false;
     if (filter.minAmount.isSome &&
         filter.maxAmount.isSome &&
-        filter.minAmount.value >= filter.maxAmount.value) {
+        filter.minAmount.value! >= filter.maxAmount.value!) {
       canSave = true;
     }
     return canSave;
   }
 
-  Widget _amountFilter({Filter filter}) {
+  Widget _amountFilter({required Filter filter}) {
     bool minExceedMax = _minExceedMax(filter: filter);
     return Flex(
       direction: Axis.horizontal,
@@ -199,12 +201,12 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   TextField _minMaxTextField(
-      {@required TextEditingController controller,
-      @required String label,
-      @required FocusNode focusNode,
-      Function(int)/*!*/ onChange,
-      TextInputAction/*!*/ textInputAction,
-      bool minExceedMax}) {
+      {required TextEditingController controller,
+      required String label,
+      required FocusNode focusNode,
+      required Function(int) onChange,
+      required TextInputAction textInputAction,
+      required bool minExceedMax}) {
     return TextField(
       style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),
       controller: controller,
@@ -220,7 +222,7 @@ class _FilterDialogState extends State<FilterDialog> {
         hintStyle: TextStyle(color: ACTIVE_HINT_COLOR),
       ),
       onChanged: (newValue) {
-        int intValue = parseNewValue(newValue: newValue);
+        int intValue = parseNewValue(newValue: newValue, currency: CurrencyService().findByCode('CAD')!); //TODO need this to work based on settings
         onChange(intValue);
       },
     );
@@ -257,7 +259,7 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  Widget _categoryFilter({@required FilterState filterState}) {
+  Widget _categoryFilter({required FilterState filterState}) {
     String categories = '';
 
     filterState.filter.value.selectedCategories.forEach((categoryName) {
@@ -276,14 +278,14 @@ class _FilterDialogState extends State<FilterDialog> {
         showDialog(
           context: context,
           builder: (_) => MasterCategoryListDialog(
-            setLogFilter: SettingsLogFilter.filter,
+            setLogFilter: SettingsLogFilterEntry.filter,
           ),
         ),
       },
     );
   }
 
-  Widget _paidSpentFilter({@required FilterState filterState}) {
+  Widget _paidSpentFilter({required FilterState filterState}) {
     String membersPaidString = '';
     String membersSpentString = '';
 
@@ -350,16 +352,16 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  Widget _logFilter({@required FilterState filterState}) {
-    if (Env.store.state.logsState.logs.length > 0) {
+  Widget _logFilter({required FilterState filterState}) {
+    if (Env.store.state!.logsState.logs.length > 0) {
       String selectedLogString = '';
-      Map<String, Log> logs = Env.store.state.logsState.logs;
+      Map<String, Log> logs = Env.store.state!.logsState.logs;
 
       filterState.filter.value.selectedLogs.forEach((logId) {
         if (selectedLogString.length > 0) {
-          selectedLogString += '\, ${logs[logId].name}';
+          selectedLogString += '\, ${logs[logId!]!.name}';
         } else {
-          selectedLogString += 'Logs: ${logs[logId].name}';
+          selectedLogString += 'Logs: ${logs[logId!]!.name}';
         }
       });
 
@@ -379,8 +381,8 @@ class _FilterDialogState extends State<FilterDialog> {
     }
   }
 
-  Widget _tagFilter({FilterState filterState}) {
-    List<String> selectedTags = filterState.filter.value.selectedTags;
+  Widget _tagFilter({required FilterState filterState}) {
+    List<String?> selectedTags = filterState.filter.value.selectedTags;
     String tagString = '';
     if (selectedTags.isNotEmpty) {
       filterState.filter.value.selectedTags.forEach((tagName) {

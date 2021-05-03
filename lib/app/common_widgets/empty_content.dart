@@ -9,14 +9,14 @@ import 'app_button.dart';
 
 class EmptyContent extends StatelessWidget {
   const EmptyContent({
-    Key key,
+    Key? key,
     this.title = 'Nothing here',
     this.message = 'Add a new item to get started',
     this.child,
   }) : super(key: key);
   final String title;
   final String message;
-  final Widget child;
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +47,7 @@ class EmptyContent extends StatelessWidget {
 
 class LogEmptyContent extends StatelessWidget {
   const LogEmptyContent({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -73,7 +73,7 @@ class LogEmptyContent extends StatelessWidget {
 
 class EntriesEmptyContent extends StatelessWidget {
   const EntriesEmptyContent({
-    Key key,
+    Key? key,
   }) : super(key: key);
 
   @override
@@ -89,7 +89,8 @@ class EntriesEmptyContent extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          Env.store.dispatch(EntrySetNew());
+          String? uid = Env.store.state?.authState.user.value.id;
+          Env.store.dispatch(EntrySetNew(memberId: uid!));
           Get.toNamed(ExpenseRoutes.addEditEntries);
         },
       ),

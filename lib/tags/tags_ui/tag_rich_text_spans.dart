@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 import '../../utils/maybe.dart';
 import '../tag_model/tag.dart';
 
-RichText tagRichTextSpans({@required Tag tag, @required Maybe<String> search}) {
-  String name = tag.name;
+RichText? tagRichTextSpans({required Tag tag, required Maybe<String> search}) {
+  String? name = tag.name;
   if (search.isSome &&
       search.value.length > 0 &&
-      name.toLowerCase().contains(search.value.toLowerCase())) {
+      name!.toLowerCase().contains(search.value.toLowerCase())) {
     List<TextSpan> textSpans = [];
     textSpans.add(TextSpan(text: '#', style: TextStyle(color: Colors.black)));
-    while (name.length > 0) {
+    while (name!.length > 0) {
       int index = name.toLowerCase().indexOf(search.value.toLowerCase());
       if (index == 0) {
         String substring = name.substring(0, search.value.length).trim();

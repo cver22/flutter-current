@@ -11,17 +11,17 @@ class CurrencyFetcher {
   //final CurrencyLocalRepository _currencyLocalRepository;
 
   CurrencyFetcher({
-    @required AppStore store,
-    @required CurrencyRemoteRepository currencyRemoteRepository,
+    required AppStore store,
+    required CurrencyRemoteRepository currencyRemoteRepository,
     //@required CurrencyLocalRepository currencyLocalRepository,
   })  : _store = store,
         _currencyRemoteRepository = currencyRemoteRepository/*,
         _currencyLocalRepository = currencyLocalRepository*/;
 
-  Future<void> loadRemoteConversionRates({@required String referenceCurrency}) async {
+  Future<void> loadRemoteConversionRates({required String referenceCurrency}) async {
     _store.dispatch(CurrencySetLoading());
 
-    Map<String, dynamic> json = await _currencyRemoteRepository.loadConversionRates(referenceCurrency: referenceCurrency);
+    Map<String, dynamic>? json = await _currencyRemoteRepository.loadConversionRates(referenceCurrency: referenceCurrency);
 
     _store.dispatch(CurrencySetExchangeRatesFromRemote(json: json, referenceCurrency: referenceCurrency));
 

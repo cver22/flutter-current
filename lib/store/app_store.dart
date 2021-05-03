@@ -11,7 +11,7 @@ class AppStore {
       : _stateSubject = BehaviorSubject.seeded(initialState);
 
   AppState get state {
-    return _stateSubject.value;
+    return _stateSubject.requireValue;
   }
 
   //Observable deprecated
@@ -21,6 +21,6 @@ class AppStore {
 
   void dispatch(AppAction action) {
     print("Action: ${action.runtimeType}");
-    _stateSubject.add(action.updateState(_stateSubject.value));
+    _stateSubject.add(action.updateState(_stateSubject.value!));
   }
 }

@@ -20,11 +20,11 @@ class LoginRegState extends Equatable {
   bool get isFormValid => isEmailValid && isPasswordValid;
 
   LoginRegState({
-    @required this.loginStatus,
-    @required this.loginOrRegister,
-    @required this.isEmailValid,
-    @required this.isPasswordValid,
-    @required this.isSubmitting,
+    required this.loginStatus,
+    required this.loginOrRegister,
+    required this.isEmailValid,
+    required this.isPasswordValid,
+    required this.isSubmitting,
   });
 
   factory LoginRegState.initial() {
@@ -67,8 +67,8 @@ class LoginRegState extends Equatable {
   }
 
   LoginRegState updateCredentials({
-    bool isEmailValid,
-    bool isPasswordValid,
+    bool? isEmailValid,
+    bool? isPasswordValid,
   }) {
     return copyWith(
       loginStatus: LoginStatus.updated,
@@ -80,11 +80,11 @@ class LoginRegState extends Equatable {
   }
 
   LoginRegState copyWith({
-    LoginStatus loginStatus,
-    LoginOrRegister loginOrRegister,
-    bool isEmailValid,
-    bool isPasswordValid,
-    bool isSubmitting,
+    LoginStatus? loginStatus,
+    LoginOrRegister? loginOrRegister,
+    bool? isEmailValid,
+    bool? isPasswordValid,
+    bool? isSubmitting,
   }) {
     return LoginRegState(
       loginStatus: loginStatus ?? this.loginStatus,

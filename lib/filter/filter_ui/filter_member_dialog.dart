@@ -13,7 +13,7 @@ import 'filter_list_tile.dart';
 class FilterMemberDialog extends StatelessWidget {
   final PaidOrSpent paidOrSpent;
 
-  const FilterMemberDialog({Key key, @required this.paidOrSpent})
+  const FilterMemberDialog({Key? key, required this.paidOrSpent})
       : super(key: key);
 
   @override

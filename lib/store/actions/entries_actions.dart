@@ -41,7 +41,7 @@ class EntriesSetLoaded implements AppAction {
 }
 
 class EntriesSetEntries implements AppAction {
-  final Iterable<AppEntry> entryList;
+  final Iterable<AppEntry>? entryList;
 
   EntriesSetEntries({this.entryList});
 
@@ -51,7 +51,7 @@ class EntriesSetEntries implements AppAction {
     Map<String, LogTotal> logTotals = LinkedHashMap();
 
     entries.addEntries(
-      entryList.map((entry) => MapEntry(entry.id, entry)),
+      entryList!.map((entry) => MapEntry(entry.id, entry)),
     );
 
     logTotals =
@@ -92,10 +92,10 @@ class EntriesDeleteSelectedEntry implements AppAction {
 
     entry.tagIDs.forEach((tagId) {
       //updates log list of tags
-      Tag tag = tags[tagId];
+      Tag tag = tags[tagId]!;
 
       //decrement use of tag for this category and log
-      tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry?.categoryId);
+      tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
 
       tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
     });
@@ -119,7 +119,7 @@ class EntriesDeleteSelectedEntry implements AppAction {
 }
 
 class EntriesSetEntriesFilter implements AppAction {
-  final String logId;
+  final String? logId;
 
   EntriesSetEntriesFilter({this.logId});
 
@@ -134,7 +134,7 @@ class EntriesSetEntriesFilter implements AppAction {
       updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
     } else {
       //filter was set fro a logListTile and should only filter based on the log
-      List<String> selectedLogs = [];
+      List<String?> selectedLogs = [];
       selectedLogs.add(logId);
       updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
@@ -192,9 +192,9 @@ class EntriesClearChartFilter implements AppAction {
 }
 
 Map<String, LogTotal> entriesUpdateLogsTotals(
-    {@required Map<String, Log> logs,
-    @required Map<String, LogTotal> logTotals,
-    @required Map<String, AppEntry> entries}) {
+    {required Map<String, Log> logs,
+    required Map<String, LogTotal> logTotals,
+    required Map<String, AppEntry> entries}) {
   logs.forEach((key, log) {
     logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
   });

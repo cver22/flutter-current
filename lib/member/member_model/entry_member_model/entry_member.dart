@@ -7,21 +7,21 @@ import 'entry_member_entity.dart';
 
 @immutable
 class EntryMember extends Member {
-  final bool paying;
+  final bool? paying;
   final bool spending;
-  final TextEditingController payingController;
-  final TextEditingController spendingController;
-  final FocusNode payingFocusNode;
-  final FocusNode spendingFocusNode;
+  final TextEditingController? payingController;
+  final TextEditingController? spendingController;
+  final FocusNode? payingFocusNode;
+  final FocusNode? spendingFocusNode;
   final bool userEditedSpent;
   final int paidForeign;
   final int spentForeign;
 
   EntryMember({
-    @required uid,
+    required uid,
     paid,
     spent,
-    @required order,
+    required order,
     this.paying = false,
     this.spending = true,
     this.payingController,
@@ -34,7 +34,7 @@ class EntryMember extends Member {
   }) : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
 
   @override
-  List<Object> get props => [
+  List<Object?> get props => [
         uid,
         paid,
         spent,
@@ -86,19 +86,19 @@ class EntryMember extends Member {
   }
 
   EntryMember copyWith({
-    String uid,
-    int paid,
-    int spent,
-    int order,
-    bool paying,
-    bool spending,
-    TextEditingController payingController,
-    TextEditingController spendingController,
-    FocusNode payingFocusNode,
-    FocusNode spendingFocusNode,
-    bool userEditedSpent,
-    int paidForeign,
-    int spentForeign,
+    String? uid,
+    int? paid,
+    int? spent,
+    int? order,
+    bool? paying,
+    bool? spending,
+    TextEditingController? payingController,
+    TextEditingController? spendingController,
+    FocusNode? payingFocusNode,
+    FocusNode? spendingFocusNode,
+    bool? userEditedSpent,
+    int? paidForeign,
+    int? spentForeign,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (paid == null || identical(paid, this.paid)) &&

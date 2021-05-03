@@ -4,15 +4,15 @@ import '../../tags/tag_model/tag_state.dart';
 import 'app_actions.dart';
 
 
-AppState Function(AppState) _updateTagState(TagState update(tagState)) {
+AppState Function(AppState) _updateTagState(TagState? update(tagState)) {
   return (state) => state.copyWith(tagState: update(state.tagState));
 }
 
 AppState _updateTags(
   AppState appState,
-  void updateInPlace(Map<String, Tag> tags),
+  void updateInPlace(Map<String?, Tag> tags),
 ) {
-  Map<String, Tag> cloneMap = Map.from(appState.tagState.tags);
+  Map<String?, Tag> cloneMap = Map.from(appState.tagState.tags);
   updateInPlace(cloneMap);
 
   return updateSubstates(
@@ -42,7 +42,7 @@ class TagsSetLoaded implements AppAction {
 }
 
 class TagsSetTags implements AppAction {
-  final Iterable<Tag> tagList;
+  final Iterable<Tag>? tagList;
 
   TagsSetTags({this.tagList});
 
@@ -50,7 +50,7 @@ class TagsSetTags implements AppAction {
   AppState updateState(AppState appState) {
     return _updateTags(appState, (tag) {
       tag.addEntries(
-        tagList.map(
+        tagList!.map(
           (tag) => MapEntry(tag.id, tag),
         ),
       );

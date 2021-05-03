@@ -4,27 +4,27 @@ import 'package:meta/meta.dart';
 import '../../../utils/db_consts.dart';
 import '../member_entity.dart';
 
-//part 'log_member_entity.g.dart';
+part 'log_member_entity.g.dart';
 
 @immutable
 @JsonSerializable(explicitToJson: true)
 class LogMemberEntity extends MemberEntity {
-  final String name;
+  final String? name;
   final String role;
 
   LogMemberEntity({uid, paid, spent, order, this.name, this.role = WRITER})
       : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
-  List<Object> get props => [uid, name, paid, spent, role, order];
+  List<Object?> get props => [uid, name, paid, spent, role, order];
 
   @override
   String toString() {
     return 'LogMemberEntity {$UID: $uid, $NAME: $name, $PAID: $paid, $SPENT: $spent, role: $role, $ORDER: $order}';
   }
 
- /*factory LogMemberEntity.fromJson(Map<String, dynamic> json) =>
-      _$LogMemberEntityFromJson(json);*/
+ factory LogMemberEntity.fromJson(Map<String, dynamic> json) =>
+      _$LogMemberEntityFromJson(json);
 
- // Map<String, dynamic> toJson() => _$LogMemberEntityToJson(this);
+ Map<String, dynamic> toJson() => _$LogMemberEntityToJson(this);
 }

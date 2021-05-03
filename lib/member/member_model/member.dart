@@ -11,10 +11,10 @@ class Member extends Equatable {
   final int spent;
   final int order;
 
-  Member({@required this.uid, this.paid = 0, this.spent = 0, this.order});
+  Member({required this.uid, this.paid = 0, this.spent = 0, this.order = 0});
 
   @override
-  List<Object> get props => [uid, paid, spent, order];
+  List<Object?> get props => [uid, paid, spent, order];
 
   @override
   String toString() {

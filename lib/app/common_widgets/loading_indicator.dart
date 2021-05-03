@@ -4,7 +4,7 @@ class ModalLoadingIndicator extends StatelessWidget {
   final String loadingMessage;
   final bool activate;
 
-  ModalLoadingIndicator({@required this.loadingMessage, @required this.activate});
+  ModalLoadingIndicator({required this.loadingMessage, required this.activate});
 
   //TODO how to implement modal barrier with a message as I keep getting renderflex issues
 

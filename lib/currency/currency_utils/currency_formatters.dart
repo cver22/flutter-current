@@ -3,16 +3,16 @@ import 'package:currency_picker/src/currency.dart';
 import 'package:meta/meta.dart';
 
 String formattedAmount(
-    {int value = 0,
+    {int? value = 0,
     bool showSeparators = false,
     bool showTrailingZeros = false,
-    Currency/*!*/ currency,
+    required Currency currency,
     bool showSymbol = false,
     bool showCurrency = false}) {
   String returnString = '';
 
   if (value != 0) {
-    bool isNegative = value < 0;
+    bool isNegative = value! < 0;
     int absValue = value.abs();
     int smallUnits = 0;
     int bigUnits = 0;
@@ -73,12 +73,12 @@ String formattedAmount(
   return returnString;
 }
 
-int parseNewValue({@required String newValue, @required Currency currency}) {
+int parseNewValue({required String newValue, required Currency currency}) {
   bool isNegative = false;
   String absoluteString = newValue;
   int value = 0;
 
-  if (absoluteString != null && absoluteString.length > 0) {
+  if (absoluteString.length > 0) {
     if (absoluteString.startsWith('\-')) {
       isNegative = !isNegative;
       absoluteString = absoluteString.substring(1);

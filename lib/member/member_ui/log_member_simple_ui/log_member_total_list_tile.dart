@@ -10,12 +10,12 @@ class LogMemberTotalListTile extends StatelessWidget {
   final LogMember member;
   final Log log;
 
-  const LogMemberTotalListTile({Key key, @required this.member, @required this.log})
+  const LogMemberTotalListTile({Key? key, required this.member, required this.log})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Currency currency = CurrencyService().findByCode(log.currency);
+    Currency currency = CurrencyService().findByCode(log.currency!)!;
     return Column(
       children: [
         ListTile(
@@ -36,12 +36,12 @@ class LogMemberTotalListTile extends StatelessWidget {
   }
 }
 
-Widget _totals({@required LogMember member, @required String logId, @required Currency currency}) {
+Widget _totals({required LogMember member, required String logId, required Currency currency}) {
   int paid = 0;
   int spent = 0;
   int owed = 0;
 
-  Env.store.state.entriesState.entries.values
+  Env.store.state!.entriesState.entries.values
       .where((entry) => entry.logId == logId)
       .forEach((element) {
     paid += element.entryMembers[member.uid]?.paid ?? 0;

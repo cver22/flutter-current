@@ -1,5 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/foundation.dart';
 
 import '../auth_user/models/app_user.dart';
 import '../utils/db_consts.dart';
@@ -15,11 +14,11 @@ abstract class TagRepository {
 
   Future<void> deleteTag(Tag tag);
 
-  Future<void> batchAddTags({@required List<Tag> addedTags}) {}
+  Future<void> batchAddTags({required List<Tag> addedTags}) async {}
 
-  Future<void> batchDeleteTags({@required List<Tag> deletedTags}) {}
+  Future<void> batchDeleteTags({required List<Tag> deletedTags}) async {}
 
-  Future<void> batchUpdateTags({@required List<Tag> updatedTags}) {}
+  Future<void> batchUpdateTags({required List<Tag> updatedTags}) async {}
 }
 
 class FirebaseTagRepository implements TagRepository {
@@ -27,7 +26,7 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> addNewTag(Tag tag) {
-    /*return db.collection(TAG_COLLECTION).add(tag.toEntity().toJson());*/
+    return db.collection(TAG_COLLECTION).add(tag.toEntity().toJson());
   }
 
   //TODO need to filter by UID for groups
@@ -48,10 +47,10 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> updateTag(Tag tag) {
-    /*return db
+    return db
         .collection(TAG_COLLECTION)
         .doc(tag.id)
-        .update(tag.toEntity().toJson());*/
+        .update(tag.toEntity().toJson());
   }
 
   @override
@@ -60,33 +59,33 @@ class FirebaseTagRepository implements TagRepository {
   }
 
   @override
-  Future<void> batchAddTags({@required List<Tag> addedTags}) {
+  Future<void> batchAddTags({required List<Tag> addedTags}) async {
     WriteBatch batch = db.batch();
 
-    /*addedTags.forEach((tag) {
+    addedTags.forEach((tag) {
       batch.set(
           db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
-    });*/
+    });
 
 //TODO maybe add a whenComplete to this?
     return batch.commit();
   }
 
   @override
-  Future<void> batchUpdateTags({@required List<Tag> updatedTags}) {
+  Future<void> batchUpdateTags({required List<Tag> updatedTags}) async {
     WriteBatch batch = db.batch();
 
-    /*updatedTags.forEach((tag) {
+    updatedTags.forEach((tag) {
       batch.update(
           db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
-    });*/
+    });
 
 //TODO maybe add a whenComplete to this?
     return batch.commit();
   }
 
   @override
-  Future<void> batchDeleteTags({@required List<Tag> deletedTags}) {
+  Future<void> batchDeleteTags({required List<Tag> deletedTags}) async {
     WriteBatch batch = db.batch();
 
     deletedTags.forEach((tag) {

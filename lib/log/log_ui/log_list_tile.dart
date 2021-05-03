@@ -14,21 +14,21 @@ import '../log_totals_model/log_total.dart';
 
 class LogListTile extends StatelessWidget {
   final Log log;
-  final LogTotal logTotal;
+  final LogTotal? logTotal;
   final TabController tabController;
 
   const LogListTile(
-      {Key key,
-      @required this.log,
-      @required this.logTotal,
-      @required this.tabController})
+      {Key? key,
+      required this.log,
+      required this.logTotal,
+      required this.tabController})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     int currentMonth = now.month;
-    Currency currency = CurrencyService().findByCode(log.currency);
+    Currency currency = CurrencyService().findByCode(log.currency!)!;
 
     return Card(
       elevation: 10.0,
@@ -42,7 +42,7 @@ class LogListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(log.name),
+                Text(log.name!),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
@@ -82,13 +82,13 @@ class LogListTile extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: ${formattedAmount(value: logTotal.averagePerDay, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Daily Average: ${formattedAmount(value: logTotal!.averagePerDay, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} Total: ${formattedAmount(value: logTotal.thisMonthTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} Total: ${formattedAmount(value: logTotal!.thisMonthTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: ${formattedAmount(value: logTotal.lastMonthTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 2 < 0 ? 11 : currentMonth - 2]}: ${formattedAmount(value: logTotal!.lastMonthTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                     Text(
-                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: ${formattedAmount(value: logTotal.sameMonthLastYearTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
+                        '${MONTHS_SHORT[currentMonth - 1]} ${now.year - 1}: ${formattedAmount(value: logTotal!.sameMonthLastYearTotalPaid, showTrailingZeros: true, showSymbol: true, currency: currency)}'),
                   ],
                 ),
               ],

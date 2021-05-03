@@ -10,11 +10,11 @@ import 'logs_repository.dart';
 class LogsFetcher {
   final AppStore _store;
   final LogsRepository _logsRepository;
-  StreamSubscription _logsSubscription;
+  StreamSubscription? _logsSubscription;
 
   LogsFetcher({
-    @required AppStore store,
-    @required LogsRepository logsRepository,
+    required AppStore store,
+    required LogsRepository logsRepository,
   })  : _store = store,
         _logsRepository = logsRepository;
 
@@ -22,7 +22,7 @@ class LogsFetcher {
     _store.dispatch(SetLogsLoading());
     _logsSubscription?.cancel();
     _logsSubscription =
-        _logsRepository.loadLogs(_store.state.authState.user.value).listen(
+        _logsRepository.loadLogs(_store.state!.authState.user.value).listen(
               (logs) => _store.dispatch(SetLogs(logList: logs)),
             );
     _store.dispatch(SetLogsLoaded());
@@ -36,7 +36,7 @@ class LogsFetcher {
     }
   }
 
-  Future<void> updateLog(Log log) async {
+  Future<void> updateLog(Log? log) async {
     try {
       _logsRepository.updateLog(log);
     } catch (e) {
@@ -44,7 +44,7 @@ class LogsFetcher {
     }
   }
 
-  Future<void> deleteLog({@required Log log}) async {
+  Future<void> deleteLog({required Log? log}) async {
     try {
       _logsRepository.deleteLog(log);
     } catch (e) {

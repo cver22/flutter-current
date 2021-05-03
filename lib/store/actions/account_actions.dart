@@ -4,7 +4,7 @@ import '../../login_register/login_register_model/login__reg_status.dart';
 import '../../utils/validators.dart';
 import 'app_actions.dart';
 
-AppState Function(AppState) _updateAccountState(AccountState update(accountState)) {
+AppState Function(AppState) _updateAccountState(AccountState? update(accountState)) {
   return (state) => state.copyWith(accountState: update(state.accountState));
 }
 
@@ -70,7 +70,7 @@ class AccountResetState implements AppAction {
 }
 
 class AccountValidateOldPassword implements AppAction {
-  final String password;
+  final String? password;
 
   AccountValidateOldPassword({this.password});
 
@@ -80,15 +80,15 @@ class AccountValidateOldPassword implements AppAction {
       appState,
       [
         _updateAccountState((accountState) => accountState.copyWith(
-            isOldPasswordValid: Validators.isValidPassword(password), loginStatus: LoginStatus.updated)),
+            isOldPasswordValid: Validators.isValidPassword(password!), loginStatus: LoginStatus.updated)),
       ],
     );
   }
 }
 
 class AccountValidateNewPassword implements AppAction {
-  final String newPassword;
-  final String verifyPassword;
+  final String? newPassword;
+  final String? verifyPassword;
 
   AccountValidateNewPassword({this.newPassword, this.verifyPassword});
 
@@ -104,7 +104,7 @@ class AccountValidateNewPassword implements AppAction {
       appState,
       [
         _updateAccountState((accountState) => accountState.copyWith(
-            isNewPasswordValid: Validators.isValidPassword(newPassword),
+            isNewPasswordValid: Validators.isValidPassword(newPassword!),
             newPasswordsMatch: passwordsMatch,
             loginStatus: LoginStatus.updated)),
       ],
@@ -113,7 +113,7 @@ class AccountValidateNewPassword implements AppAction {
 }
 
 class IsUserSignedInWithEmail implements AppAction {
-  final bool signedInWithEmail;
+  final bool? signedInWithEmail;
 
   IsUserSignedInWithEmail({this.signedInWithEmail});
 

@@ -20,7 +20,7 @@ import '../log_model/logs_state.dart';
 import 'log_name_form.dart';
 
 class AddEditLogScreen extends StatelessWidget {
-  const AddEditLogScreen({Key key}) : super(key: key);
+  const AddEditLogScreen({Key? key}) : super(key: key);
 
   void _submit() {
     print('submit pressed');
@@ -28,9 +28,9 @@ class AddEditLogScreen extends StatelessWidget {
     Get.back();
   }
 
-  Future<bool> _exitConfirmationDialog({@required bool canSave}) async {
+  Future<bool> _exitConfirmationDialog({required bool canSave}) async {
     bool onWillPop = false;
-    if (Env.store.state.logsState.userUpdated) {
+    if (Env.store.state!.logsState.userUpdated) {
       //user has made changes, confirm they wish to exit
       await Get.dialog(
         SimpleConfirmationDialog(
@@ -79,7 +79,7 @@ class AddEditLogScreen extends StatelessWidget {
           onTapConfirm: (delete) {
             deleteConfirmed = delete;
             if (deleteConfirmed) {
-              Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
+              Env.store.dispatch(DeleteLog(log: Env.store.state!.logsState.selectedLog.value));
               Get.back();
             }
           },
@@ -91,7 +91,7 @@ class AddEditLogScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Log log;
-    String currency;
+    String? currency;
     bool canSave = false;
     return ConnectState<LogsState>(
       where: notIdentical,
@@ -102,7 +102,7 @@ class AddEditLogScreen extends StatelessWidget {
         }
 
         log = logsState.selectedLog.value;
-        currency = log?.currency; //TODO change to home currency as default
+        currency = log.currency; //TODO change to home currency as default
         canSave = logsState.canSave;
 
         return WillPopScope(
@@ -139,7 +139,7 @@ class AddEditLogScreen extends StatelessWidget {
                     : Container(),
               ],
             ),
-            body: _buildContents(context: context, log: log, currency: currency, logs: logsState.logs),
+            body: _buildContents(context: context, log: log, currency: currency!, logs: logsState.logs),
           ),
         );
       },
@@ -147,7 +147,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   Widget _buildContents(
-      {@required BuildContext context, @required Log log, @required String currency, @required Map<String, Log> logs}) {
+      {required BuildContext context, required Log log, required String currency, required Map<String, Log> logs}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -158,10 +158,10 @@ class AddEditLogScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 LogNameForm(log: log),
-                log.uid == null ? SizedBox(height: 16.0) : Container(),
-                log.uid == null ? NewLogCategorySourceWidget(logs: logs, log: log) : Container(),
+                log.uid.length > 0 ? Container() : SizedBox(height: 16.0),
+                log.uid.length > 0 ? Container() : NewLogCategorySourceWidget(logs: logs, log: log),
                 SizedBox(height: 16.0),
-                log.uid == null ? Container() : _categoryButton(context: context, log: log),
+                log.uid.length > 0 ? _categoryButton(context: context, log: log) : Container(),
                 SizedBox(height: 16.0),
                 _buildLogMemberList(log: log),
                 SizedBox(height: 8.0),
@@ -187,31 +187,30 @@ class AddEditLogScreen extends StatelessWidget {
     }
   }
 
-  Widget _categoryButton({@required BuildContext context, @required Log log}) {
-    return log.categories == null
-        ? Container()
-        : CategoryButton(
+  Widget _categoryButton({required BuildContext context, required Log log}) {
+    return log.categories.length > 0
+        ? CategoryButton(
             label: 'Edit Log Categories',
             onPressed: () => {
               showDialog(
                 context: context,
                 builder: (_) => MasterCategoryListDialog(
-                  setLogFilter: SettingsLogFilter.log,
+                  setLogFilter: SettingsLogFilterEntry.log,
                 ),
               ),
             },
             category: null, // do not pass a category, maintains label
-          );
+          )
+        : Container();
   }
 
-  Widget _buildLogMemberList({@required Log log}) {
-    return log.uid == null ? Container() : LogMemberTotalList(log: log);
+  Widget _buildLogMemberList({required Log log}) {
+    return log.uid.length > 0 ? LogMemberTotalList(log: log) : Container();
   }
 
-  Widget _buildAddMemberButton({@required Log log}) {
-    return log.uid == null
-        ? Container()
-        : AppButton(
+  Widget _buildAddMemberButton({required Log log}) {
+    return log.uid.length > 0
+        ? AppButton(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
@@ -224,28 +223,30 @@ class AddEditLogScreen extends StatelessWidget {
             onPressed: () {
               Get.to(QRReader());
             },
-          );
+          )
+        : Container();
   }
 
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
 
-  Widget _buildCurrencyPicker({@required Log log, @required String currency}) {
-    Currency _currency = CurrencyService().findByCode(currency);
+  Widget _buildCurrencyPicker({required Log log, required String currency}) {
+    Currency? _currency = CurrencyService().findByCode(currency);
 
-    return log.uid == null
-        ? AppCurrencyPicker(
+    return log.id.length > 0
+        ? Text('${CurrencyUtils.countryCodeToEmoji(_currency!)} ${_currency.code}')
+        : AppCurrencyPicker(
             title: 'Log Currency',
+            logCurrency: log.currency,
             currency: currency,
-            returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))))
-        : Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}');
+            returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))));
   }
 }
 
 class NewLogCategorySourceWidget extends StatefulWidget {
   const NewLogCategorySourceWidget({
-    Key key,
-    @required this.logs,
-    @required this.log,
+    Key? key,
+    required this.logs,
+    required this.log,
   }) : super(key: key);
 
   final Map<String, Log> logs;
@@ -256,20 +257,23 @@ class NewLogCategorySourceWidget extends StatefulWidget {
 }
 
 class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget> {
-  Log defaultLog;
-  Log currentDropDownSelection;
-  List<Log> temporaryLogs = [];
+  Log? defaultLog;
+  Log? currentDropDownSelection;
+  List<Log?> temporaryLogs = [];
 
   @override
   void initState() {
     super.initState();
     //converts the settings to a temporary log for the purpose of creating a drop down list
     //from this list, the user can decide where they are getting the category list from
-    Settings settings = Env.store.state.settingsState.settings.value;
+    Settings settings = Env.store.state!.settingsState.settings.value;
+    String? uid = Env.store.state?.authState.user.value.id;
 
     defaultLog = Log(
         name: 'Default',
         id: 'default',
+        currency: 'CAD',
+        uid: uid!,
         categories: settings.defaultCategories,
         subcategories: settings.defaultSubcategories);
     temporaryLogs = widget.logs.entries.map((e) => e.value).toList();
@@ -294,15 +298,15 @@ class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget>
             //TODO order preference logs and set default to first log if not navigating from the log itself
             value: currentDropDownSelection,
             isExpanded: true,
-            onChanged: (Log log) {
+            onChanged: (Log? log) {
               Env.store.dispatch(LogSetCategories(log: log, userUpdated: true));
               currentDropDownSelection = log;
             },
-            items: temporaryLogs.map((Log log) {
+            items: temporaryLogs.map((Log? log) {
               return DropdownMenuItem<Log>(
                 value: log,
                 child: Text(
-                  log.name,
+                  log!.name,
                   overflow: TextOverflow.visible,
                   maxLines: 2,
                   style: TextStyle(color: Colors.black),

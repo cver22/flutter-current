@@ -8,7 +8,7 @@ import '../../utils/db_consts.dart';
 import '../categories_model/app_category/app_category.dart';
 import 'edit_category_dialog.dart';
 
-Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
+Future<dynamic> getLogAddEditCategoryDialog({required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) => {
@@ -32,8 +32,8 @@ Future<dynamic> getLogAddEditCategoryDialog({@required AppCategory category}) {
 }
 
 Future<dynamic> getLogAddEditSubcategoryDialog(
-    {@required AppCategory subcategory,
-    @required List<AppCategory> categories}) {
+    {required AppCategory subcategory,
+    required List<AppCategory?> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,
@@ -59,7 +59,7 @@ Future<dynamic> getLogAddEditSubcategoryDialog(
 }
 
 Future<dynamic> getSettingsAddEditCategoryDialog(
-    {@required AppCategory category}) {
+    {required AppCategory category}) {
   return Get.dialog(
     EditCategoryDialog(
       save: (name, emojiChar, unused) => {
@@ -80,8 +80,8 @@ Future<dynamic> getSettingsAddEditCategoryDialog(
 }
 
 Future<dynamic> getSettingsAddEditSubcategoryDialog(
-    {@required AppCategory subcategory,
-    @required List<AppCategory> categories}) {
+    {required AppCategory subcategory,
+    required List<AppCategory?> categories}) {
   return Get.dialog(
     EditCategoryDialog(
       categories: categories,

@@ -5,14 +5,14 @@ import '../../member/member_model/log_member_model/log_member.dart';
 
 @immutable
 class LogTotal extends Equatable {
-  final Map<String, LogMember>/*!*/ logMembers;
+  final Map<String?, LogMember> logMembers;
   final int thisMonthTotalPaid;
   final int lastMonthTotalPaid;
   final int sameMonthLastYearTotalPaid;
   final int averagePerDay;
 
   LogTotal({
-    this.logMembers,
+    required this.logMembers,
     this.thisMonthTotalPaid = 0,
     this.lastMonthTotalPaid = 0,
     this.sameMonthLastYearTotalPaid = 0,
@@ -32,11 +32,11 @@ class LogTotal extends Equatable {
       ];
 
   LogTotal copyWith({
-    Map<String, LogMember> logMembers,
-    int thisMonthTotalPaid,
-    int lastMonthTotalPaid,
-    int sameMonthLastYearTotalPaid,
-    int averagePerDay,
+    Map<String, LogMember>? logMembers,
+    int? thisMonthTotalPaid,
+    int? lastMonthTotalPaid,
+    int? sameMonthLastYearTotalPaid,
+    int? averagePerDay,
   }) {
     if ((logMembers == null || identical(logMembers, this.logMembers)) &&
         (thisMonthTotalPaid == null ||

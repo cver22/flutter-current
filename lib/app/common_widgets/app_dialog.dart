@@ -1,22 +1,22 @@
- import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../../utils/db_consts.dart';
 
 class AppDialogWithActions extends StatelessWidget {
   final Widget child;
-  final VoidCallback backChevron;
-  final Widget trailingTitleWidget;
+  final VoidCallback? backChevron;
+  final Widget? trailingTitleWidget;
   final String title;
-  final List<Widget> actions;
+  final List<Widget>? actions;
   final bool shrinkWrap;
   final bool padContent;
-  final Widget topWidget;
+  final Widget? topWidget;
 
   const AppDialogWithActions(
-      {Key key,
-      @required this.child,
-      @required this.title,
+      {Key? key,
+      required this.child,
+      required this.title,
       this.actions,
       this.backChevron,
       this.trailingTitleWidget,
@@ -54,7 +54,7 @@ class AppDialogWithActions extends StatelessWidget {
                         icon: Icon(Icons.add),
                         onPressed: null,
                       ))
-                  : trailingTitleWidget,
+                  : trailingTitleWidget!,
             ],
           ),
           topWidget ?? Container(),

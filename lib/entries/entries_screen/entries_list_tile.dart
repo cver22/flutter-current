@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart' show IterableExtension;
 import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,19 +17,19 @@ class EntriesListTile extends StatelessWidget {
   final AppEntry entry;
   final Map<String, Tag> tags;
 
-  const EntriesListTile({Key key, @required this.entry, @required this.tags}) : super(key: key);
+  const EntriesListTile({Key? key, required this.entry, required this.tags}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    /*late*/ Log log;
-    /*late*/ DateTime date = entry.dateTime;
+    late Log? log;
+    late DateTime date = entry.dateTime;
 
-    if (entry?.logId != null) {
-      log = Env.store.state.logsState.logs?.values
-          ?.firstWhere((element) => element?.id == entry?.logId, orElse: () => null);
+    if (entry.logId.length > 0) {
+      log = Env.store.state!.logsState.logs.values
+          .firstWhereOrNull((element) => element.id == entry.logId);
     }
     if (log != null) {
-      Currency logCurrency = CurrencyService().findByCode(log.currency);
+      Currency logCurrency = CurrencyService().findByCode(log.currency)!;
       return Column(
         children: [
           ListTile(
@@ -70,7 +71,7 @@ class EntriesListTile extends StatelessWidget {
     }
   }
 
-  Widget _buildTrailingContents({@required DateTime date, @required Currency logCurrency}) {
+  Widget _buildTrailingContents({required DateTime date, required Currency logCurrency}) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       crossAxisAlignment: CrossAxisAlignment.end,
@@ -83,7 +84,7 @@ class EntriesListTile extends StatelessWidget {
           Text(
             '${formattedAmount(value: entry.amountForeign,
                 showSeparators: true,
-                currency: CurrencyService().findByCode(entry.currency),
+                currency: CurrencyService().findByCode(entry.currency)!,
                 showSymbol: true,
                 showCurrency: true)}',
             style: TextStyle(fontSize: 14.0),
@@ -97,34 +98,33 @@ class EntriesListTile extends StatelessWidget {
     );
   }
 
-  String displayChar({@required Log log}) {
-    String emojiChar;
-    String subcategoryId = entry?.subcategoryId;
+  String? displayChar({required Log log}) {
+    String? emojiChar;
+    String subcategoryId = entry.subcategoryId;
 
-    if (subcategoryId != null && !subcategoryId.contains(OTHER)) {
+    if (!subcategoryId.contains(OTHER)) {
       emojiChar = log.subcategories
-          .firstWhere((element) => element.id == subcategoryId, orElse: () => null)
-          ?.emojiChar;
+          .firstWhere((element) => element.id == subcategoryId)
+          .emojiChar;
     }
 
-    if (entry?.categoryId != null && emojiChar == null) {
+    if (entry.categoryId != NO_CATEGORY && emojiChar == null) {
       emojiChar =
           log.categories
-              .firstWhere((element) => element.id == entry.categoryId, orElse: () => null)
-              ?.emojiChar ??
-              '\u{2757}';
+              .firstWhere((element) => element.id == entry.categoryId)
+              .emojiChar;
     }
 
     return emojiChar;
   }
 
-  Widget categoriesSubcategories({@required Log log}) {
-    AppCategory category = log?.categories?.firstWhere((element) => element.id == entry?.categoryId,
-        orElse: () => log?.categories?.firstWhere((element) => element.id == NO_CATEGORY));
+  Widget categoriesSubcategories({required Log log}) {
+    AppCategory category = log.categories.firstWhere((element) => element.id == entry.categoryId,
+        orElse: () => log.categories.firstWhere((element) => element.id == NO_CATEGORY));
     AppCategory subcategory =
-    log?.subcategories?.firstWhere((element) => element.id == entry?.subcategoryId, orElse: () => null);
+    log.subcategories.firstWhere((element) => element.id == entry.subcategoryId);
 
-    bool hasSubcategory = subcategory != null;
+    bool hasSubcategory = subcategory.id.length > 0;
 
     return Wrap(
       children: [
@@ -146,11 +146,11 @@ class EntriesListTile extends StatelessWidget {
     );
   }
 
-  Widget _buildTagWidget({@required String logId}) {
+  Widget _buildTagWidget({required String logId}) {
     String tagString = '';
 
     for (int i = 0; i < entry.tagIDs.length; i++) {
-      Tag tag = tags[entry.tagIDs[i]];
+      Tag? tag = tags[entry.tagIDs[i]!];
       if (tag != null && tagString.isNotEmpty) {
         tagString += ', ';
       }

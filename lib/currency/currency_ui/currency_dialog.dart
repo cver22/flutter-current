@@ -18,10 +18,10 @@ class CurrencyDialog extends StatefulWidget {
   final bool withConversionRates;
 
   const CurrencyDialog(
-      {Key key,
-      @required this.title,
-      @required this.referenceCurrency,
-      @required this.returnCurrency,
+      {Key? key,
+      required this.title,
+      required this.referenceCurrency,
+      required this.returnCurrency,
       this.withConversionRates = false})
       : super(key: key);
 
@@ -30,7 +30,7 @@ class CurrencyDialog extends StatefulWidget {
 }
 
 class _CurrencyDialogState extends State<CurrencyDialog> {
-  TextEditingController _controller;
+  TextEditingController? _controller;
 
   @override
   void initState() {
@@ -40,7 +40,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
 
   @override
   void dispose() {
-    _controller.dispose();
+    _controller!.dispose();
     super.dispose();
   }
 
@@ -51,7 +51,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         map: (state) => state.currencyState,
         builder: (currencyState) {
           return AppDialogWithActions(
-            topWidget: searchBox(lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency].lastUpdated),
+            topWidget: searchBox(lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]!.lastUpdated),
             child: _buildCurrencyList(
               referenceCurrencyCode: widget.referenceCurrency,
               returnCurrency: widget.returnCurrency,
@@ -64,7 +64,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         });
   }
 
-  Widget searchBox({@required DateTime lastUpdated}) {
+  Widget searchBox({required DateTime lastUpdated}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
       child: Column(
@@ -97,7 +97,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     );
   }
 
-  List<Widget> _actions({@required bool withConversionRates}) {
+  List<Widget> _actions({required bool withConversionRates}) {
     return [
       if (withConversionRates)
         TextButton(
@@ -115,12 +115,12 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
   }
 
   Widget _buildCurrencyList(
-      {@required String referenceCurrencyCode,
-      @required Function(String) returnCurrency,
-      @required bool withConversionRates,
-      @required CurrencyState currencyState}) {
+      {required String referenceCurrencyCode,
+      required Function(String) returnCurrency,
+      required bool withConversionRates,
+      required CurrencyState currencyState}) {
     List<Currency> currencies = <Currency>[];
-    Currency referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
+    Currency? referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
     if (currencyState.searchCurrencies.isNotEmpty) {
       currencies = currencyState.searchCurrencies;
@@ -136,7 +136,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         itemBuilder: (BuildContext context, int index) {
           final Currency _currency = currencies[index];
 
-          double conversionRate;
+          double? conversionRate;
 
           if (withConversionRates && currencyState?.conversionRateMap[referenceCurrencyCode] != null) {
             conversionRate = currencyState?.conversionRateMap[referenceCurrencyCode]?.rates[_currency.code];
@@ -145,7 +145,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
           return CurrencyListTile(
               currency: _currency,
               conversionRate: conversionRate ?? 0.0,
-              baseCurrency: referenceCurrency,
+              baseCurrency: referenceCurrency!,
               returnCurrency: returnCurrency,
               withConversionRates: withConversionRates);
         });

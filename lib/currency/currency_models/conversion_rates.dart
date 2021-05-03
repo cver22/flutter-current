@@ -3,12 +3,12 @@ import 'package:meta/meta.dart';
 
 @immutable
 class ConversionRates extends Equatable {
-  final Map<String, double/*!*/> rates; // Currency to convert from to log currency and rate
+  final Map<String, double> rates; // Currency to convert from to log currency and rate
   final DateTime lastUpdated;
 
   ConversionRates({
     this.rates = const <String, double>{},
-    @required this.lastUpdated,
+    required this.lastUpdated,
   });
 
   @override
@@ -18,8 +18,8 @@ class ConversionRates extends Equatable {
   bool get stringify => true;
 
   ConversionRates copyWith({
-    Map<String, double> conversionRates,
-    DateTime lastUpdated,
+    Map<String, double>? conversionRates,
+    DateTime? lastUpdated,
   }) {
     if ((conversionRates == null || identical(conversionRates, this.rates)) &&
         (lastUpdated == null || identical(lastUpdated, this.lastUpdated))) {

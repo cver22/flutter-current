@@ -5,12 +5,12 @@ import 'package:flutter/material.dart';
 class CurrencyListTile extends StatelessWidget {
   final Currency currency;
   final double conversionRate;
-  final Currency/*!*/ baseCurrency;
+  final Currency baseCurrency;
   final Function(String) returnCurrency;
   final bool withConversionRates;
 
   const CurrencyListTile(
-      {Key key, @required this.currency, this.conversionRate = 0.0, this.baseCurrency, @required this.returnCurrency, this.withConversionRates = false})
+      {Key? key, required this.currency, this.conversionRate = 0.0, required this.baseCurrency, required this.returnCurrency, this.withConversionRates = false})
       : super(key: key);
 
   @override

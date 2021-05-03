@@ -14,12 +14,12 @@ class UserFetcher {
   final FirebaseUserRepository _userRepository;
 
   UserFetcher({
-    @required AppStore store,
-    @required FirebaseUserRepository userRepository,
+    required AppStore store,
+    required FirebaseUserRepository userRepository,
   })  : _store = store,
         _userRepository = userRepository;
 
-  _getCurrentUser(LoginRegState loginRegState) async {
+  _getCurrentUser(LoginRegState? loginRegState) async {
     final isSignedIn = await _userRepository.isSignedIn();
     if (isSignedIn) {
       final AppUser user = await _userRepository.getUser();
@@ -32,19 +32,19 @@ class UserFetcher {
     }
   }
 
-  _setLoadingAndSubmitting(LoginRegState loginRegState) {
+  _setLoadingAndSubmitting(LoginRegState? loginRegState) {
     _store.dispatch(LoginRegSubmitting());
     _store.dispatch(AuthLoadingUser());
   }
 
-  _loginRegisterFail(LoginRegState loginRegState) {
+  _loginRegisterFail(LoginRegState? loginRegState) {
     _store.dispatch(AuthFailure());
     _store.dispatch(LoginRegFailure());
   }
 
   Future<void> startApp() async {
     _store.dispatch(AuthLoadingUser());
-    _getCurrentUser(_store.state.loginRegState);
+    _getCurrentUser(_store.state!.loginRegState);
   }
 
   Future<void> signOut() async {
@@ -52,7 +52,7 @@ class UserFetcher {
     await _userRepository.signOut();
   }
 
-  Future<void> signInWithGoogle(LoginRegState loginRegState) async {
+  Future<void> signInWithGoogle(LoginRegState? loginRegState) async {
     _setLoadingAndSubmitting(loginRegState);
     try {
       await _userRepository.signInWithGoogle();
@@ -64,7 +64,7 @@ class UserFetcher {
   }
 
   Future<void> signInOrRegisterWithCredentials(
-      {String/*!*/ email, String/*!*/ password, LoginRegState loginRegState}) async {
+      {required String email, required String password, required LoginRegState loginRegState}) async {
     _setLoadingAndSubmitting(loginRegState);
     try {
       if (loginRegState.loginOrRegister == LoginOrRegister.login) {
@@ -81,7 +81,7 @@ class UserFetcher {
     }
   }
 
-  Future<void> updateDisplayName({@required String displayName}) async {
+  Future<void> updateDisplayName({required String displayName}) async {
     AppUser user =
         await _userRepository.updateUserProfile(displayName: displayName);
     _store.dispatch(AuthSuccess(user: user));
@@ -96,7 +96,7 @@ class UserFetcher {
 
   //only available if user has signed in with email
   Future<void> updatePassword(
-      {@required String currentPassword, @required String newPassword}) async {
+      {required String currentPassword, required String newPassword}) async {
     _store.dispatch(AccountUpdateSubmitting());
     bool success = await _userRepository.updatePassword(
         currentPassword: currentPassword, newPassword: newPassword);

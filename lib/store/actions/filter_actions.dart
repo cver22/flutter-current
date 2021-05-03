@@ -9,16 +9,16 @@ import 'app_actions.dart';
 import '../../tags/tag_model/tag.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/maybe.dart';
-import 'package:meta/meta.dart';
+import 'package:collection/collection.dart' show IterableExtension;
 
-AppState Function(AppState) _updateFilterAndFlagUpdated(FilterState update(filterState)) {
+AppState Function(AppState) _updateFilterAndFlagUpdated(FilterState? update(filterState)) {
   return (state) => state.copyWith(filterState: update(state.filterState.copyWith(updated: true)));
 }
 
 class FilterExpandCollapseCategory implements AppAction {
   final int index;
 
-  FilterExpandCollapseCategory({@required this.index});
+  FilterExpandCollapseCategory({required this.index});
 
   AppState updateState(AppState appState) {
     List<bool> expandedCategories = List.from(appState.filterState.expandedCategories);
@@ -34,20 +34,20 @@ class FilterExpandCollapseCategory implements AppAction {
 }
 
 class FilterSetReset implements AppAction {
-  final EntriesCharts entriesChart;
-  final Log log;
+  final EntriesCharts? entriesChart;
+  final Log? log;
 
   FilterSetReset({this.entriesChart, this.log});
 
   AppState updateState(AppState appState) {
     Filter updatedFilter = Filter.initial();
-    List<Log> logs = [];
-    Map<String, AppCategory> allCategories = LinkedHashMap();
-    Map<String, AppCategory> allSubcategories = LinkedHashMap();
+    List<Log?> logs = [];
+    Map<String, AppCategory?> allCategories = LinkedHashMap();
+    Map<String, AppCategory?> allSubcategories = LinkedHashMap();
     Map<String, AppCategory> consolidatedCategories = LinkedHashMap();
-    Map<String, AppCategory> consolidatedSubcategories = LinkedHashMap();
+    Map<String, AppCategory?> consolidatedSubcategories = LinkedHashMap();
     List<bool> expandedCategories = [];
-    Map<String, String> members = LinkedHashMap();
+    Map<String?, String?> members = LinkedHashMap();
     List<Tag> allTags = [];
     List<String> selectedLogs = [];
     bool updated = false;
@@ -55,7 +55,7 @@ class FilterSetReset implements AppAction {
     if (log != null) {
       //action was triggered directly from a log and user wishes to filter for only that log
       logs.add(log);
-      selectedLogs.add(log.id);
+      selectedLogs.add(log!.id);
     } else {
       //action was triggered from generic location, include all logs
       logs = List.from(appState.logsState.logs.values.toList());
@@ -65,7 +65,7 @@ class FilterSetReset implements AppAction {
     if (logs.isNotEmpty) {
       logs.forEach((log) {
         //create map of allMembers
-        log.logMembers.forEach((key, member) {
+        log!.logMembers.forEach((key, member) {
           if (!members.containsKey(key)) {
             members.putIfAbsent(key, () => member.name);
           }
@@ -73,12 +73,12 @@ class FilterSetReset implements AppAction {
 
         //complete list of all categories
         log.categories.forEach((category) {
-          allCategories.putIfAbsent(category.id, () => category);
+          allCategories.putIfAbsent(category!.id, () => category);
         });
 
         //complete list of all categories
         log.subcategories.forEach((subcategory) {
-          allSubcategories.putIfAbsent(subcategory.id, () => subcategory);
+          allSubcategories.putIfAbsent(subcategory!.id, () => subcategory);
         });
       });
     }
@@ -86,19 +86,19 @@ class FilterSetReset implements AppAction {
     if (log == null) {
       //update all parentIds to parent name
       allSubcategories.updateAll((key, subcategory) {
-        return subcategory.copyWith(parentCategoryId: allCategories[subcategory.parentCategoryId].name);
+        return subcategory!.copyWith(parentCategoryId: allCategories[subcategory.parentCategoryId]!.name);
       });
 
       allSubcategories.forEach((key, subcategory) {
         bool insert = true;
         consolidatedSubcategories.forEach((key, cSub) {
           //check if the subcategory is a duplicate for its category
-          if (subcategory.name == cSub.name && subcategory.parentCategoryId == cSub.parentCategoryId && subcategory.id != NO_SUBCATEGORY) {
+          if (subcategory!.name == cSub!.name && subcategory.parentCategoryId == cSub.parentCategoryId && subcategory.id != NO_SUBCATEGORY) {
             insert = false;
           }
         });
         if (insert) {
-          consolidatedSubcategories.putIfAbsent(subcategory.id, () => subcategory);
+          consolidatedSubcategories.putIfAbsent(subcategory!.id, () => subcategory);
         }
       });
 
@@ -106,13 +106,13 @@ class FilterSetReset implements AppAction {
         bool insert = true;
         consolidatedCategories.forEach((key, cCat) {
           //check for name duplication
-          if (category.name == key) {
+          if (category!.name == key) {
             insert = false;
           }
         });
         if (insert) {
           //add category to consolidated list and update id from name
-          consolidatedCategories.putIfAbsent(category.name, () => category.copyWith(id: category.name));
+          consolidatedCategories.putIfAbsent(category!.name, () => category.copyWith(id: category.name));
         }
       });
     }
@@ -176,7 +176,7 @@ class FilterInitial implements AppAction {
 class FilterSelectDeselectCategory implements AppAction {
   final String id;
 
-  FilterSelectDeselectCategory({@required this.id});
+  FilterSelectDeselectCategory({required this.id});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
@@ -217,7 +217,7 @@ class FilterSelectDeselectCategory implements AppAction {
 class FilterSelectDeselectSubcategory implements AppAction {
   final String id;
 
-  FilterSelectDeselectSubcategory({@required this.id});
+  FilterSelectDeselectSubcategory({required this.id});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
@@ -283,18 +283,18 @@ class FilterClearCategorySelection implements AppAction {
 }
 
 class FilterSetStartDate implements AppAction {
-  final DateTime date;
+  final DateTime? date;
 
   FilterSetStartDate({this.date});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    Maybe<DateTime> previousDate = filter.startDate;
-    Maybe<DateTime> updatedDate = Maybe<DateTime>.none();
+    Maybe<DateTime?> previousDate = filter.startDate;
+    Maybe<DateTime?> updatedDate = Maybe<DateTime>.none();
 
-    if (filter.endDate.isNone || date.isBefore(filter.endDate.value)) {
+    if (filter.endDate.isNone || date!.isBefore(filter.endDate.value!)) {
       //either no end date is set or start date must be before end date
-      updatedDate = Maybe<DateTime>.some(date);
+      updatedDate = Maybe<DateTime?>.some(date);
     } else if (previousDate.isSome) {
       //if a previous date exists, revert to it, otherwise, no date has been set
       updatedDate = previousDate;
@@ -311,18 +311,18 @@ class FilterSetStartDate implements AppAction {
 }
 
 class FilterSetEndDate implements AppAction {
-  final DateTime date;
+  final DateTime? date;
 
   FilterSetEndDate({this.date});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    Maybe<DateTime> previousDate = filter.endDate;
-    Maybe<DateTime> updatedDate = Maybe<DateTime>.none();
+    Maybe<DateTime?> previousDate = filter.endDate;
+    Maybe<DateTime?> updatedDate = Maybe<DateTime>.none();
 
-    if (filter.startDate.isNone || date.isAfter(filter.startDate.value)) {
+    if (filter.startDate.isNone || date!.isAfter(filter.startDate.value!)) {
       //either no start date is set or end date must be after start date
-      updatedDate = Maybe<DateTime>.some(date);
+      updatedDate = Maybe<DateTime?>.some(date);
     } else if (previousDate.isSome) {
       //if a previous date exists, revert to it, otherwise, no date has been set
       updatedDate = previousDate;
@@ -339,19 +339,19 @@ class FilterSetEndDate implements AppAction {
 }
 
 class FilterUpdateMinAmount implements AppAction {
-  final int minAmount;
+  final int? minAmount;
 
   FilterUpdateMinAmount({this.minAmount});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    Maybe<int> min = filter.minAmount;
+    Maybe<int?> min = filter.minAmount;
 
     if (minAmount != null) {
       if (minAmount == 0) {
         min = Maybe<int>.none();
       } else {
-        min = Maybe<int>.some(minAmount);
+        min = Maybe<int?>.some(minAmount);
       }
     }
 
@@ -368,20 +368,20 @@ class FilterUpdateMinAmount implements AppAction {
 }
 
 class FilterUpdateMaxAmount implements AppAction {
-  final int maxAmount;
+  final int? maxAmount;
 
   FilterUpdateMaxAmount({this.maxAmount});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
     //Maybe<int> min = filter.minAmount;
-    Maybe<int> max = filter.maxAmount;
+    Maybe<int?> max = filter.maxAmount;
 
     if (maxAmount != null) {
       if (maxAmount == 0) {
         max = Maybe<int>.none();
       } else {
-        max = Maybe<int>.some(maxAmount);
+        max = Maybe<int?>.some(maxAmount);
       }
     }
 
@@ -400,7 +400,7 @@ class FilterUpdateMaxAmount implements AppAction {
 class FilterSelectPaid implements AppAction {
   final String id;
 
-  FilterSelectPaid({@required this.id});
+  FilterSelectPaid({required this.id});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
@@ -437,7 +437,7 @@ class FilterClearPaidSelection implements AppAction {
 class FilterSelectSpent implements AppAction {
   final String id;
 
-  FilterSelectSpent({@required this.id});
+  FilterSelectSpent({required this.id});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
@@ -474,7 +474,7 @@ class FilterClearSpentSelection implements AppAction {
 class FilterSelectLog implements AppAction {
   final String logId;
 
-  FilterSelectLog({@required this.logId});
+  FilterSelectLog({required this.logId});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
@@ -509,13 +509,13 @@ class FilterClearLogSelection implements AppAction {
 }
 
 class FilterSelectDeselectTag implements AppAction {
-  final String name;
+  final String? name;
 
-  FilterSelectDeselectTag({@required this.name});
+  FilterSelectDeselectTag({required this.name});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    List<String> selectedTags = List.from(filter.selectedTags);
+    List<String?> selectedTags = List.from(filter.selectedTags);
 
     //remove if tag present
     if (selectedTags.contains(name)) {
@@ -540,13 +540,13 @@ class FilterSelectDeselectTag implements AppAction {
 class FilterSetSearchedTags implements AppAction {
   final String search;
 
-  FilterSetSearchedTags({@required this.search});
+  FilterSetSearchedTags({required this.search});
 
   @override
   AppState updateState(AppState appState) {
     List<Tag> tags = List.from(appState.filterState.allTags);
     List<Tag> searchedTags = [];
-    Maybe<String> searchMaybe = search != null && search.length > 0 ? Maybe<String>.some(search) : Maybe<String>.none();
+    Maybe<String> searchMaybe = search.length > 0 ? Maybe<String>.some(search) : Maybe<String>.none();
     List<String> selectedTagIds = List.from(appState.filterState.filter.value.selectedTags);
 
     searchedTags = buildSearchedTagsList(tags: tags, tagIds: selectedTagIds, search: search);
@@ -594,10 +594,10 @@ class FilterClearTagSelection implements AppAction {
 List<Tag> _sortTags({
   SortMethod sortMethod = SortMethod.frequency,
   bool ascending = false,
-  List<String> selectedLogs,
-  Map<String, Tag> tags,
-  Maybe<Filter> filter,
-  Map<String, AppCategory> allCategories,
+  required List<String> selectedLogs,
+  required Map<String, Tag> tags,
+  Maybe<Filter>? filter,
+  Map<String, AppCategory?>? allCategories,
 }) {
   List<Tag> orderTags = [];
 
@@ -620,9 +620,9 @@ List<Tag> _sortTags({
     Map<String, int> categoryFrequency = {};
 
     tag.tagCategoryFrequency.forEach((categoryId, frequency) {
-      String categoryName = allCategories[categoryId]?.name; //TODO this shouldn't need fixing after handling subcategories differently
+      String? categoryName = allCategories![categoryId]?.name; //TODO this shouldn't need fixing after handling subcategories differently
       print(categoryName);
-      categoryFrequency.putIfAbsent(categoryName, () => frequency);
+      categoryFrequency.putIfAbsent(categoryName!, () => frequency);
     });
 
     return tag.copyWith(tagCategoryFrequency: categoryFrequency);
@@ -630,7 +630,7 @@ List<Tag> _sortTags({
 
   //create list of all tags so it can be sorted as desired by the user
   tags.forEach((key, tag) {
-    if ((orderTags.singleWhere((it) => it.name == tag.name, orElse: () => null)) != null) {
+    if ((orderTags.singleWhereOrNull((it) => it.name == tag.name)) != null) {
       //tag exists in the list, add to its frequency from another log
       Tag tagToUpdate = orderTags.firstWhere((element) => element.name == tag.name);
       orderTags[orderTags.indexOf(tagToUpdate)] =

@@ -6,14 +6,14 @@ import '../login_register_model/login_or_register.dart';
 import '../login_register_model/login_reg_state.dart';
 
 class CreateAccountButton extends StatelessWidget {
-  final LoginRegState loginState;
+  final LoginRegState? loginState;
 
-  const CreateAccountButton({Key key, this.loginState}) : super(key: key);
+  const CreateAccountButton({Key? key, this.loginState}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextButton(
-      child: loginState.loginOrRegister == LoginOrRegister.login
+      child: loginState!.loginOrRegister == LoginOrRegister.login
           ? Text('Create an Account')
           : Text('Go to Login'),
       onPressed: () {

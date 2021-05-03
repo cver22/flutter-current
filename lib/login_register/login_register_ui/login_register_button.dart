@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 
 class LoginRegisterButton extends StatelessWidget {
-  final VoidCallback _onPressed;
-  final String _name;
+  final VoidCallback? _onPressed;
+  final String? _name;
 
-  const LoginRegisterButton({Key key, VoidCallback onPressed, String name})
+  const LoginRegisterButton({Key? key, VoidCallback? onPressed, String? name})
       : _onPressed = onPressed,
         _name = name,
         super(key: key);
@@ -18,7 +18,7 @@ class LoginRegisterButton extends StatelessWidget {
         ),
       ),
       onPressed: _onPressed,
-      child: Text(_name),
+      child: Text(_name!),
     );
   }
 }

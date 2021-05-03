@@ -17,7 +17,7 @@ const String PARENT_CATEGORY_ID = 'parentCategoryId';
 const String NO_PARENT = 'no_parent';
 const String DEFAULT_CATEGORY = 'defaultCategory';
 enum CategoryOrSubcategory { category, subcategory }
-enum SettingsLogFilter { settings, log, filter }
+enum SettingsLogFilterEntry { settings, log, filter, entry }
 enum EntriesCharts { entries, charts }
 enum TagCollectionType { entry, category, log }
 enum SortMethod { alphabetical, frequency }

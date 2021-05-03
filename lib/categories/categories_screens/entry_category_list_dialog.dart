@@ -15,11 +15,11 @@ import 'category_list_tile.dart';
 import 'edit_category_dialog.dart';
 
 class EntryCategoryListDialog extends StatelessWidget {
-  final VoidCallback backChevron;
-  final CategoryOrSubcategory/*!*/ categoryOrSubcategory;
+  final VoidCallback? backChevron;
+  final CategoryOrSubcategory categoryOrSubcategory;
 
   const EntryCategoryListDialog(
-      {Key key, this.backChevron, this.categoryOrSubcategory})
+      {Key? key, this.backChevron, required this.categoryOrSubcategory})
       : super(key: key);
 
   @override
@@ -28,14 +28,14 @@ class EntryCategoryListDialog extends StatelessWidget {
     return ConnectState(
         where: notIdentical,
         map: (state) => state.singleEntryState,
-        builder: (singleEntryState) {
+        builder: (dynamic singleEntryState) {
           if (categoryOrSubcategory == CategoryOrSubcategory.category) {
             categories = List.from(singleEntryState.categories);
           } else {
             categories = List.from(singleEntryState.subcategories);
             categories.retainWhere((subcategory) =>
                 subcategory.parentCategoryId ==
-                Env.store.state.singleEntryState.selectedEntry.value
+                Env.store.state!.singleEntryState.selectedEntry.value
                     .categoryId);
           }
 
@@ -47,7 +47,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget buildDialog(
-      {singleEntryState, BuildContext context, List<AppCategory> categories}) {
+      {required singleEntryState, BuildContext? context, required List<AppCategory> categories}) {
     return AppDialogWithActions(
       padContent: false,
       title: categoryOrSubcategory == CategoryOrSubcategory.category
@@ -57,12 +57,12 @@ class EntryCategoryListDialog extends StatelessWidget {
       trailingTitleWidget: _displayAddButton(
           selectedEntry: singleEntryState.selectedEntry.value),
       child: categories.length > 0
-          ? _categoryListView(context: context, categories: categories)
+          ? _categoryListView(context: context!, categories: categories)
           : EmptyContent(),
     );
   }
 
-  Widget _displayAddButton({AppEntry selectedEntry}) {
+  Widget _displayAddButton({AppEntry? selectedEntry}) {
     AppCategory category = AppCategory();
     return IconButton(
       icon: Icon(Icons.add),
@@ -73,7 +73,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Widget _categoryListView(
-      {BuildContext context, List<AppCategory> categories}) {
+      {required BuildContext context, required List<AppCategory> categories}) {
     return ReorderableListView(
         scrollController:
             PrimaryScrollController.of(context) ?? ScrollController(),
@@ -93,12 +93,13 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   List<CategoryListTile> _categoryList(
-      {List<AppCategory> categories, BuildContext context}) {
+      {required List<AppCategory> categories, BuildContext? context}) {
     //determine if list is categories or subcategories
     bool isCategory = categoryOrSubcategory == CategoryOrSubcategory.category;
     return categories
         .map(
           (AppCategory category) => CategoryListTile(
+            setLogFilter: SettingsLogFilterEntry.entry,
             key: Key(category.id),
             category: category,
             onTapEdit: () => isCategory
@@ -112,7 +113,7 @@ class EntryCategoryListDialog extends StatelessWidget {
         .toList();
   }
 
-  Future<dynamic> _entryAddEditCategory({@required AppCategory category}) {
+  Future<dynamic> _entryAddEditCategory({required AppCategory category}) {
     return Get.dialog(
       EditCategoryDialog(
         save: (name, emojiChar, unused) {
@@ -134,7 +135,7 @@ class EntryCategoryListDialog extends StatelessWidget {
     );
   }
 
-  Future<dynamic> _entrySelectCategory({@required AppCategory category}) {
+  Future<dynamic>? _entrySelectCategory({required AppCategory category}) {
     Env.store.dispatch(EntrySelectCategory(newCategoryId: category.id));
     Get.back();
     if (_entryHasSubcategories(category: category)) {
@@ -159,10 +160,10 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Future<dynamic> _entryAddEditSubcategory(
-      {@required AppCategory subcategory}) {
+      {required AppCategory subcategory}) {
     return Get.dialog(
       EditCategoryDialog(
-        categories: Env.store.state.singleEntryState.categories,
+        categories: Env.store.state!.singleEntryState.categories,
         save: (name, emojiChar, parentCategoryId) => {
           Env.store.dispatch(EntryAddEditSubcategory(
               subcategory: subcategory.copyWith(
@@ -178,7 +179,7 @@ class EntryCategoryListDialog extends StatelessWidget {
           Get.back(),
         },
         initialParent:
-            Env.store.state.singleEntryState.selectedEntry.value.categoryId,
+            Env.store.state!.singleEntryState.selectedEntry.value.categoryId,
         category: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),
@@ -186,13 +187,13 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Future<void> _entrySelectSubcategory(
-      {@required AppCategory subcategory}) async {
+      {required AppCategory subcategory}) async {
     //onTap method for Entry Subcategories
     Env.store.dispatch(EntrySelectSubcategory(subcategory: subcategory.id));
     Get.back();
   }
 
-  bool _entryHasSubcategories({@required AppCategory category}) {
+  bool _entryHasSubcategories({required AppCategory category}) {
     if (category.id == NO_CATEGORY || category.id == TRANSFER_FUNDS) {
       return false;
     }

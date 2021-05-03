@@ -3,20 +3,20 @@ import 'package:flutter/foundation.dart';
 
 @immutable
 class AppUser extends Equatable {
-  final String/*!*/ id;
-  final String displayName;
-  final String email;
-  final String photoUrl;
+  final String id;
+  final String? displayName;
+  final String? email;
+  final String? photoUrl;
 
   AppUser({
-    this.id,
+    required this.id,
     this.displayName,
     this.email,
     this.photoUrl,
   });
 
   @override
-  List<Object> get props => [id, displayName, email, photoUrl];
+  List<Object?> get props => [id, displayName, email, photoUrl];
 
   @override
   String toString() {
@@ -24,9 +24,9 @@ class AppUser extends Equatable {
   }
 
   AppUser copyWith({
-    String displayName,
-    String email,
-    String photoUrl,
+    String? displayName,
+    String? email,
+    String? photoUrl,
   }) {
     if ((id == null || identical(id, this.id)) &&
         (displayName == null || identical(displayName, this.displayName)) &&

@@ -19,19 +19,19 @@ import '../entries_model/entries_state.dart';
 import 'entries_screen_build_list_view.dart';
 
 class EntriesScreen extends StatelessWidget {
-  EntriesScreen({Key key}) : super(key: key);
+  EntriesScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     List<AppEntry> entries = [];
-    bool activateFAB = Env.store.state.logsState.logs.isNotEmpty;
+    bool activateFAB = Env.store.state!.logsState.logs.isNotEmpty;
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: activateFAB ? null : Colors.grey,
         onPressed: activateFAB
             ? () {
-                Env.store.dispatch(EntrySetNew(memberId: Env.store.state.authState.user.value.id));
+                Env.store.dispatch(EntrySetNew(memberId: Env.store.state!.authState.user.value.id));
                 Get.toNamed(ExpenseRoutes.addEditEntries);
               }
             : null,
@@ -57,7 +57,7 @@ class EntriesScreen extends StatelessWidget {
             return EntriesScreenBuildListView(
                 entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter));
           } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
-            return Env.store.state.logsState.logs.isEmpty ? LogEmptyContent() : EntriesEmptyContent();
+            return Env.store.state!.logsState.logs.isEmpty ? LogEmptyContent() : EntriesEmptyContent();
           } else {
             //TODO pass meaningful error message
             return ErrorContent();
@@ -68,44 +68,44 @@ class EntriesScreen extends StatelessWidget {
   }
 }
 
-List<AppEntry> _buildFilteredEntries({
-  List<AppEntry> entries,
-  Maybe<Filter> entriesFilter,
+List<AppEntry>? _buildFilteredEntries({
+  List<AppEntry>? entries,
+  required Maybe<Filter> entriesFilter,
 }) {
   //only processes filters if a filter is present
   if (entriesFilter.isSome) {
     Filter filter = entriesFilter.value;
     //minimum entry date
     if (filter.startDate.isSome) {
-      entries.removeWhere((entry) => entry.dateTime.isBefore(filter.startDate.value));
+      entries!.removeWhere((entry) => entry.dateTime.isBefore(filter.startDate.value!));
     }
     //maximum entry date
     if (filter.endDate.isSome) {
-      entries.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value));
+      entries!.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value!));
     }
     //is the entry logId found in the list of logIds selected
     if (filter.selectedLogs.length > 0) {
-      entries.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
+      entries!.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
     }
     //TODO currency filter
 
     if (filter.minAmount.isSome) {
-      entries.removeWhere((entry) => entry.amount < filter.minAmount.value);
+      entries!.removeWhere((entry) => entry.amount! < filter.minAmount.value!);
     }
     //is the entry amount more than the max amount
     if (filter.maxAmount.isSome) {
-      entries.removeWhere((entry) => entry.amount > filter.maxAmount.value);
+      entries!.removeWhere((entry) => entry.amount! > filter.maxAmount.value!);
     }
 
     //is the entry subcategoryId found in the list of subcategories selected
     if (filter.selectedSubcategories.length > 0) {
-      Map<String, Log> logs = Env.store.state.logsState.logs;
+      Map<String, Log> logs = Env.store.state!.logsState.logs;
 
-      entries.removeWhere((entry) {
-        List<AppCategory> subcategories = logs[entry.logId].subcategories;
+      entries!.removeWhere((entry) {
+        List<AppCategory?> subcategories = logs[entry.logId!]!.subcategories;
 
-        AppCategory subcategory =
-            subcategories.firstWhere((subcategory) => subcategory.id == entry.subcategoryId, orElse: () => null);
+        AppCategory? subcategory =
+            subcategories.firstWhere((subcategory) => subcategory!.id == entry.subcategoryId, orElse: () => null);
 
         if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
           //filter contains subcategory, show entry
@@ -119,11 +119,11 @@ List<AppEntry> _buildFilteredEntries({
 
     //is the entry categoryID found in the list of categories selected
     if (filter.selectedCategories.length > 0) {
-      Map<String, Log> logs = Env.store.state.logsState.logs;
+      Map<String, Log> logs = Env.store.state!.logsState.logs;
 
-      entries.removeWhere((entry) {
-        List<AppCategory> categories = logs[entry.logId].categories;
-        String categoryName = categories.firstWhere((category) => category.id == entry.categoryId).name;
+      entries!.removeWhere((entry) {
+        List<AppCategory?> categories = logs[entry.logId!]!.categories;
+        String categoryName = categories.firstWhere((category) => category!.id == entry.categoryId)!.name;
 
         if (filter.selectedCategories.contains(categoryName)) {
           //filter contains category, show entry
@@ -137,11 +137,11 @@ List<AppEntry> _buildFilteredEntries({
 
     //filter entries by who spent
     if (filter.membersPaid.length > 0) {
-      entries.retainWhere((entry) {
-        List<String> uids = [];
+      entries!.retainWhere((entry) {
+        List<String?> uids = [];
         bool retain = false;
         entry.entryMembers.values.forEach((entryMember) {
-          if (entryMember.paying) {
+          if (entryMember!.paying!) {
             uids.add(entryMember.uid);
           }
         });
@@ -158,11 +158,11 @@ List<AppEntry> _buildFilteredEntries({
 
     //filter entries by who paid
     if (filter.membersSpent.length > 0) {
-      entries.retainWhere((entry) {
-        List<String> uids = [];
+      entries!.retainWhere((entry) {
+        List<String?> uids = [];
         bool retain = false;
         entry.entryMembers.values.forEach((entryMember) {
-          if (entryMember.spending) {
+          if (entryMember!.spending) {
             uids.add(entryMember.uid);
           }
         });
@@ -179,10 +179,10 @@ List<AppEntry> _buildFilteredEntries({
 
     //is the entry categoryID found in the list of categories selected
     if (filter.selectedTags.isNotEmpty) {
-      entries.retainWhere((entry) {
-        Map<String, Tag> allTags = Env.store.state.tagState.tags;
-        List<String> entryTagIds = entry.tagIDs;
-        List<String> entryTagNames = [];
+      entries!.retainWhere((entry) {
+        Map<String, Tag> allTags = Env.store.state!.tagState.tags;
+        List<String?> entryTagIds = entry.tagIDs!;
+        List<String?> entryTagNames = [];
         bool retain = false;
 
         if (entryTagIds.isNotEmpty) {
@@ -190,7 +190,7 @@ List<AppEntry> _buildFilteredEntries({
           entryTagIds.forEach((id) {
             //error checking for improperly deleted tags
             if (allTags.keys.contains(id)) {
-              entryTagNames.add(allTags[id].name);
+              entryTagNames.add(allTags[id!]!.name);
             }
           });
 

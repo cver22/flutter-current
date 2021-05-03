@@ -18,15 +18,15 @@ class TagPicker extends StatefulWidget {
 }
 
 class _TagPickerState extends State<TagPicker> {
-  List<Tag> logAllTags = [],
+  List<Tag?> logAllTags = [],
       selectedEntryTags = [],
       categoryRecentTags = [],
       subcategoryRecentTags = [],
       logRecentTags = [];
 
-  /*late*/ AppEntry entry;
-  Log log;
-  SingleEntryState currentSingleEntryState;
+  late AppEntry entry;
+  late Log log;
+  SingleEntryState? currentSingleEntryState;
 
   //TODO change this to function as a stateless widget driven by entryState, will need to dump the entry tags into the state tags at the beginning
   //TODO can likely handle editing of log tags by collecting them in a state of edited tags and doing a dump of them when navigating back from the entry editor
@@ -43,7 +43,7 @@ class _TagPickerState extends State<TagPicker> {
           //ensures the visible entry isn't reset while the entry is saving
           if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
             currentSingleEntryState = singleEntryState;
-            entry = currentSingleEntryState.selectedEntry.value;
+            entry = currentSingleEntryState!.selectedEntry.value;
           }
 
           tagListBuilders(maxTags: maxTags, entryState: currentSingleEntryState);
@@ -59,7 +59,7 @@ class _TagPickerState extends State<TagPicker> {
         });
   }
 
-  SingleChildScrollView _buildTagCollections({@required SingleEntryState singleEntryState}) {
+  SingleChildScrollView _buildTagCollections({required SingleEntryState singleEntryState}) {
     return SingleChildScrollView(
       child: Column(
         //currently selected tags
@@ -98,30 +98,30 @@ class _TagPickerState extends State<TagPicker> {
     );
   }
 
-  void tagListBuilders({@required SingleEntryState entryState, @required int maxTags}) {
+  void tagListBuilders({required SingleEntryState? entryState, required int maxTags}) {
     //Map<String, Tag> categoryTagMap = <String, Tag>{}; //all tags for the category
-    Map<String, int> categoryAllTags = <String, int>{};
+    Map<String?, int> categoryAllTags = <String?, int>{};
     //Map<String, Tag> subcategoryTagMap = <String, Tag>{};// tag frequency for the category
-    Map<String, int> subcategoryAllTags = <String, int>{}; // tag frequency for the category
+    Map<String?, int> subcategoryAllTags = <String?, int>{}; // tag frequency for the category
     //builds their respective preliminary tag lists if the entry has a log and a category
     if (entry?.logId != null) {
-      log = Env.store.state.logsState.logs.values.firstWhere((e) => e.id == entry.logId);
+      log = Env.store.state!.logsState.logs.values.firstWhere((e) => e.id == entry.logId);
 
-      logAllTags = entryState.tags.values.where((e) => e.logId == log.id).toList();
+      logAllTags = entryState!.tags.values.where((e) => e!.logId == log.id).toList();
 
       //get all tags associated with that category
       entryState.tags.forEach((key, value) {
-        if (value.tagCategoryFrequency.containsKey(entry.categoryId)) {
+        if (value!.tagCategoryFrequency!.containsKey(entry.categoryId)) {
           //categoryTagMap.putIfAbsent(key, () => value);
           categoryAllTags.putIfAbsent(key,
-              () => value.tagCategoryFrequency.entries.firstWhere((element) => element.key == entry.categoryId).value);
+              () => value.tagCategoryFrequency!.entries.firstWhere((element) => element.key == entry.categoryId).value);
         }
       });
 
       //get all tags associated with that subcategory if not NO_SUBCATEGORY
       if (entry.subcategoryId != NO_SUBCATEGORY) {
         entryState.tags.forEach((key, value) {
-          if (value.tagSubcategoryFrequency.containsKey(entry.subcategoryId)) {
+          if (value!.tagSubcategoryFrequency.containsKey(entry.subcategoryId)) {
             //subcategoryTagMap.putIfAbsent(key, () => value);
             subcategoryAllTags.putIfAbsent(
                 key,
@@ -134,7 +134,7 @@ class _TagPickerState extends State<TagPicker> {
     }
 
     _buildEntryTagList();
-    Map<String, Tag> selectedEntryMap = Map.fromIterable(selectedEntryTags, key: (e) => e.id, value: (e) => e);
+    Map<String?, Tag?> selectedEntryMap = Map.fromIterable(selectedEntryTags, key: (e) => e.id, value: (e) => e);
     subcategoryRecentTags = _buildAppCategoryRecentTagList(
         maxTags: maxTags, selectedEntryMap: selectedEntryMap, appCategoryAllTags: subcategoryAllTags);
     categoryRecentTags = _buildAppCategoryRecentTagList(
@@ -146,13 +146,13 @@ class _TagPickerState extends State<TagPicker> {
   }
 
   void _buildLogRecentTagList(
-      {@required int maxTags,
-      @required Map<String, Tag> selectedEntryMap,
-      @required Map<String, int> categoryAllTags}) {
+      {required int maxTags,
+      required Map<String?, Tag?> selectedEntryMap,
+      required Map<String?, int> categoryAllTags}) {
     if (logAllTags.isNotEmpty) {
       //adds logs tags to the tags list until max tags is reached
 
-      logAllTags.sort((a, b) => a.tagLogFrequency.compareTo(b.tagLogFrequency));
+      logAllTags.sort((a, b) => a!.tagLogFrequency!.compareTo(b!.tagLogFrequency!));
       logAllTags = logAllTags.reversed.toList();
       int tagCount = 0;
       int index = 0;
@@ -161,7 +161,7 @@ class _TagPickerState extends State<TagPicker> {
       while (tagCount < maxTags) {
         //if the tag isn't in the category top 10, add it to the recent log tag list
         //TODO this method currently prevents the listing of any category tag in the log tag section, even if its not one of the top 10, should that be the case?
-        if (!categoryAllTags.containsKey(logAllTags[index].id) && !selectedEntryMap.containsKey(logAllTags[index].id)) {
+        if (!categoryAllTags.containsKey(logAllTags[index]!.id) && !selectedEntryMap.containsKey(logAllTags[index]!.id)) {
           //add to log list
 
           logRecentTags.add(logAllTags[index]);
@@ -175,19 +175,19 @@ class _TagPickerState extends State<TagPicker> {
     }
   }
 
-  List<Tag> _buildAppCategoryRecentTagList(
-      {@required int maxTags,
-      @required Map<String, Tag> selectedEntryMap,
-      @required Map<String, int> appCategoryAllTags,
-      Map<String, Tag> subcategoryRecentTags = const {}}) {
-    List<Tag> appCategoryTags = <Tag>[];
+  List<Tag?> _buildAppCategoryRecentTagList(
+      {required int maxTags,
+      required Map<String?, Tag?> selectedEntryMap,
+      required Map<String?, int> appCategoryAllTags,
+      Map<String?, Tag?> subcategoryRecentTags = const {}}) {
+    List<Tag?> appCategoryTags = <Tag?>[];
 
     if (appCategoryAllTags.isNotEmpty) {
-      List<String> recentCategoryKeys = appCategoryAllTags.keys.toList();
+      List<String?> recentCategoryKeys = appCategoryAllTags.keys.toList();
       recentCategoryKeys.sort((k1, k2) {
         //compares frequency of one tag vs another from the category map
-        if (appCategoryAllTags[k1] > appCategoryAllTags[k2]) return -1;
-        if (appCategoryAllTags[k1] < appCategoryAllTags[k2]) return 1;
+        if (appCategoryAllTags[k1]! > appCategoryAllTags[k2]!) return -1;
+        if (appCategoryAllTags[k1]! < appCategoryAllTags[k2]!) return 1;
         return 0;
       });
       //reverses order of the key list
@@ -201,7 +201,7 @@ class _TagPickerState extends State<TagPicker> {
         if (!selectedEntryMap.containsKey(recentCategoryKeys[index]) && !subcategoryRecentTags.containsKey(recentCategoryKeys[index])) {
           //add to category list
 
-          appCategoryTags.add(logAllTags.firstWhere((e) => e.id == recentCategoryKeys[index]));
+          appCategoryTags.add(logAllTags.firstWhere((e) => e!.id == recentCategoryKeys[index]));
           tagCount++;
         }
         index++;
@@ -214,13 +214,13 @@ class _TagPickerState extends State<TagPicker> {
   }
 
   void _buildEntryTagList() {
-    List<String> entryTagIDs = entry?.tagIDs == null ? null : entry.tagIDs;
+    List<String?>? entryTagIDs = entry?.tagIDs == null ? null : entry.tagIDs;
     selectedEntryTags.clear();
     if (entryTagIDs != null && entryTagIDs.isNotEmpty) {
       for (int i = 0; i < entryTagIDs.length; i++) {
         //if the tag is lost somehow, do not try to display the tag
         //TODO should this also remove a lost tag?
-        Tag tag = logAllTags?.firstWhere((e) => e.id == entryTagIDs[i], orElse: () => null);
+        Tag? tag = logAllTags?.firstWhere((e) => e!.id == entryTagIDs[i], orElse: () => null);
         if (tag != null) {
           selectedEntryTags.add(tag);
         }
@@ -230,7 +230,7 @@ class _TagPickerState extends State<TagPicker> {
     }
   }
 
-  Widget _searchCollection({SingleEntryState singleEntryState}) {
+  Widget _searchCollection({required SingleEntryState singleEntryState}) {
     if (singleEntryState.searchedTags.isNotEmpty) {
       return TagCollection(
         search: singleEntryState.search,

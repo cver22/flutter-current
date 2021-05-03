@@ -6,7 +6,7 @@ import '../../auth_user/models/auth_state.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
 
-AppState Function(AppState) _updateAuthState(AuthState update(authState)) {
+AppState Function(AppState) _updateAuthState(AuthState? update(authState)) {
   return (state) => state.copyWith(authState: update(state.authState));
 }
 
@@ -25,7 +25,7 @@ class AuthFailure implements AppAction {
 class AuthSuccess implements AppAction {
   final AppUser user;
 
-  AuthSuccess({@required this.user});
+  AuthSuccess({required this.user});
 
   @override
   AppState updateState(AppState appState) {
@@ -60,7 +60,7 @@ class AuthLoadingUser implements AppAction {
 class AuthUpdateDisplayName implements AppAction {
   final String displayName;
 
-  AuthUpdateDisplayName({@required this.displayName});
+  AuthUpdateDisplayName({required this.displayName});
 
   @override
   AppState updateState(AppState appState) {
@@ -68,7 +68,7 @@ class AuthUpdateDisplayName implements AppAction {
       appState,
       [
         _updateAuthState((authState) =>
-            authState.copyWith(user: Maybe<AppUser>.some(authState.user.value.copyWith(displayName: displayName)))),
+            authState.copyWith(user: Maybe<AppUser?>.some(authState.user.value.copyWith(displayName: displayName)))),
       ],
     );
   }

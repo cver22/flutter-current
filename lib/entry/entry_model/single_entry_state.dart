@@ -26,20 +26,20 @@ class SingleEntryState extends Equatable {
   final int remainingSpending;
 
   const SingleEntryState({
-    @required this.selectedEntry,
-    @required this.selectedTag,
-    @required this.tags,
-    @required this.searchedTags,
-    @required this.categories,
-    @required this.subcategories,
-    @required this.processing,
-    @required this.userUpdated,
-    @required this.commentFocusNode,
-    @required this.tagFocusNode,
-    @required this.search,
-    @required this.canSave,
-    @required this.newEntry,
-    @required this.remainingSpending,
+    required this.selectedEntry,
+    required this.selectedTag,
+    required this.tags,
+    required this.searchedTags,
+    required this.categories,
+    required this.subcategories,
+    required this.processing,
+    required this.userUpdated,
+    required this.commentFocusNode,
+    required this.tagFocusNode,
+    required this.search,
+    required this.canSave,
+    required this.newEntry,
+    required this.remainingSpending,
   });
 
   factory SingleEntryState.initial() {
@@ -83,20 +83,20 @@ class SingleEntryState extends Equatable {
   bool get stringify => true;
 
   SingleEntryState copyWith({
-    Maybe<AppEntry> selectedEntry,
-    Maybe<Tag> selectedTag,
-    Map<String, Tag> tags,
-    List<Tag> searchedTags,
-    List<AppCategory> categories,
-    List<AppCategory> subcategories,
-    bool processing,
-    bool userUpdated,
-    Maybe<FocusNode> commentFocusNode,
-    Maybe<FocusNode> tagFocusNode,
-    Maybe<String> search,
-    bool canSave,
-    bool newEntry,
-    int remainingSpending,
+    Maybe<AppEntry>? selectedEntry,
+    Maybe<Tag>? selectedTag,
+    Map<String, Tag>? tags,
+    List<Tag>? searchedTags,
+    List<AppCategory>? categories,
+    List<AppCategory>? subcategories,
+    bool? processing,
+    bool? userUpdated,
+    Maybe<FocusNode>? commentFocusNode,
+    Maybe<FocusNode>? tagFocusNode,
+    Maybe<String>? search,
+    bool? canSave,
+    bool? newEntry,
+    int? remainingSpending,
   }) {
     if ((selectedEntry == null || identical(selectedEntry, this.selectedEntry)) &&
         (selectedTag == null || identical(selectedTag, this.selectedTag)) &&

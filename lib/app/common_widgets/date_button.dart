@@ -8,16 +8,16 @@ import 'app_button.dart';
 
 class DateButton extends StatelessWidget {
   const DateButton({
-    Key key,
+    Key? key,
     this.initialDateTime,
-    @required this.onSave,
+    required this.onSave,
     this.label,
-    @required this.datePickerType,
+    required this.datePickerType,
   }) : super(key: key);
 
-  final DateTime initialDateTime;
+  final DateTime? initialDateTime;
   final Function(DateTime) onSave;
-  final String label;
+  final String? label;
   final DatePickerType datePickerType;
 
   @override
@@ -29,7 +29,7 @@ class DateButton extends StatelessWidget {
         datePickerType == DatePickerType.end;
 
     String display = initialDateTime == null
-        ? label
+        ? label!
         : _getDateString(
             entryDate: dateTime,
             useShortDate: useShortDate,
@@ -37,18 +37,18 @@ class DateButton extends StatelessWidget {
 
     return AppButton(
       onPressed: () {
-        final Filter filter = Env.store.state.filterState.filter.value;
+        final Filter filter = Env.store.state!.filterState.filter.value;
 
         DateTime firstDate = DateTime(2001);
         DateTime lastDate = DateTime(2100);
 
         if (filter.startDate.isSome && datePickerType == DatePickerType.end) {
-          firstDate = filter.startDate.value.add(const Duration(days: 1));
+          firstDate = filter.startDate.value!.add(const Duration(days: 1));
           dateTime = firstDate;
         }
 
         if (filter.endDate.isSome && datePickerType == DatePickerType.start) {
-          lastDate = filter.endDate.value.subtract(const Duration(days: 1));
+          lastDate = filter.endDate.value!.subtract(const Duration(days: 1));
           dateTime = lastDate;
         }
 
@@ -90,13 +90,13 @@ class DateButton extends StatelessWidget {
 }
 
 String _getDateString(
-    {@required DateTime entryDate,
-    @required bool useShortDate,
-    @required bool pickTime}) {
+    {required DateTime entryDate,
+    required bool useShortDate,
+    required bool pickTime}) {
   String time = '';
   if (pickTime) {
     String amPm = 'AM';
-    int hour = entryDate?.hour?.toInt();
+    int hour = entryDate.hour.toInt();
     if (hour >= 12) {
       hour = hour - 12;
       amPm = 'PM';

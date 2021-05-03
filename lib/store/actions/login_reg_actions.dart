@@ -4,7 +4,7 @@ import '../../login_register/login_register_model/login_reg_state.dart';
 import '../../utils/validators.dart';
 import 'app_actions.dart';
 
-AppState Function(AppState) _updateLoginRegState(LoginRegState update(loginRegState)) {
+AppState Function(AppState) _updateLoginRegState(LoginRegState? update(loginRegState)) {
   return (state) => state.copyWith(loginRegState: update(state.loginRegState));
 }
 

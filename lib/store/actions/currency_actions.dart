@@ -1,6 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
 import '../../currency/currency_models/conversion_rates.dart';
-import 'package:meta/meta.dart';
 import '../../app/models/app_state.dart';
 import 'app_actions.dart';
 
@@ -19,7 +18,7 @@ class CurrencyInitializeCurrencies implements AppAction {
 class CurrencySearchCurrencies implements AppAction {
   final String search;
 
-  CurrencySearchCurrencies({@required this.search});
+  CurrencySearchCurrencies({required this.search});
 
   AppState updateState(AppState appState) {
     List<Currency> searchCurrencies = <Currency>[];
@@ -65,10 +64,10 @@ class CurrencySetLoaded implements AppAction {
 }
 
 class CurrencySetExchangeRatesFromRemote implements AppAction {
-  final Map<String, dynamic> json;
+  final Map<String, dynamic>? json;
   final String referenceCurrency;
 
-  CurrencySetExchangeRatesFromRemote({@required this.json, @required this.referenceCurrency});
+  CurrencySetExchangeRatesFromRemote({required this.json, required this.referenceCurrency});
 
   @override
   AppState updateState(AppState appState) {
@@ -78,7 +77,7 @@ class CurrencySetExchangeRatesFromRemote implements AppAction {
     List<Currency> allCurrencies = appState.currencyState.allCurrencies;
 
     allCurrencies.forEach((currency) {
-      var jsonConversionRate = json['conversion_rates'][currency.code];
+      var jsonConversionRate = json!['conversion_rates'][currency.code];
 
       //error checking to prevent attempting to convert null return from json for a particular currency
       if (jsonConversionRate != null) {
@@ -89,7 +88,7 @@ class CurrencySetExchangeRatesFromRemote implements AppAction {
     });
 
     ConversionRates conversionRates = ConversionRates(
-        lastUpdated: DateTime.fromMillisecondsSinceEpoch(json['time_last_update_unix'].toInt() * 1000), rates: rates);
+        lastUpdated: DateTime.fromMillisecondsSinceEpoch(json!['time_last_update_unix'].toInt() * 1000), rates: rates);
 
     print('rates: $conversionRates');
 

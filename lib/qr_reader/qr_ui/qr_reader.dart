@@ -23,10 +23,10 @@ class QRReader extends StatefulWidget {
 }
 
 class _QRReaderState extends State<QRReader> {
-  Barcode result;
+  Barcode? result;
   var flashState = flashOn;
   var cameraState = frontCamera;
-  /*late*/ QRViewController controller;
+  late QRViewController controller;
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -70,7 +70,7 @@ class _QRReaderState extends State<QRReader> {
                       padding: EdgeInsets.symmetric(horizontal: 32.0),
                       child: Text(
                         result != null
-                            ? 'Barcode Type: ${describeEnum(result.format)}   Data: ${result.code}'
+                            ? 'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}'
                             : 'QR code can be found on the other person\'s account screen.',
                         overflow: TextOverflow.ellipsis,
                         maxLines: 2,
@@ -137,18 +137,19 @@ class _QRReaderState extends State<QRReader> {
     controller.scannedDataStream.listen((scanData) {
       setState(() {
         result = scanData;
-        String resultCode = result.code;
+        String resultCode = result!.code;
         print('Result code: $resultCode');
         if (resultCode != null &&
             resultCode.length > 1 &&
             resultCode.contains(APP) &&
             resultCode.contains(EXPENSE_APP)) {
           int initialMemberCount =
-              Env.store.state.logsState.selectedLog.value.logMembers.length;
+              Env.store.state!.logsState.selectedLog.value.logMembers.length;
           QRModel qrModel = QRModel.fromJson(jsonDecode(resultCode));
+
           Env.store.dispatch(
-              LogAddMemberToSelectedLog(uid: qrModel.uid, name: qrModel.name));
-          if (Env.store.state.logsState.selectedLog.value.logMembers.length >
+              LogAddMemberToSelectedLog(uid: qrModel.uid!, name: qrModel.name!));
+          if (Env.store.state!.logsState.selectedLog.value.logMembers.length >
               initialMemberCount) {
             print('New member added: ${qrModel.name}');
             Get.back();

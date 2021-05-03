@@ -5,30 +5,30 @@ import 'package:equatable/equatable.dart';
 import '../../utils/maybe.dart';
 
 class Filter extends Equatable {
-  final Maybe<DateTime>/*!*/ startDate;
-  final Maybe<DateTime>/*!*/ endDate;
-  final Map<String, String>/*!*/ currency; // code, name
-  final List<String>/*!*/ selectedCategories; //name
-  final List<String>/*!*/ selectedSubcategories; //id
-  final Maybe<int>/*!*/ minAmount;
-  final Maybe<int>/*!*/ maxAmount;
-  final List<String>/*!*/ membersPaid; //id
-  final List<String>/*!*/ membersSpent; //id
-  final List<String>/*!*/ selectedLogs;
-  final List<String>/*!*/ selectedTags;
+  final Maybe<DateTime?> startDate;
+  final Maybe<DateTime?> endDate;
+  final Map<String, String> currency; // code, name
+  final List<String> selectedCategories; //name
+  final List<String> selectedSubcategories; //id
+  final Maybe<int?> minAmount;
+  final Maybe<int?> maxAmount;
+  final List<String> membersPaid; //id
+  final List<String> membersSpent; //id
+  final List<String?> selectedLogs;
+  final List<String?> selectedTags;
 
   Filter({
-    this.startDate,
-    this.endDate,
-    this.currency,
-    this.selectedCategories,
-    this.selectedSubcategories,
-    this.minAmount,
-    this.maxAmount,
-    this.membersPaid,
-    this.membersSpent,
-    this.selectedLogs,
-    this.selectedTags,
+    required this.startDate,
+    required this.endDate,
+    required this.currency,
+    required this.selectedCategories,
+    required this.selectedSubcategories,
+    required this.minAmount,
+    required this.maxAmount,
+    required this.membersPaid,
+    required this.membersSpent,
+    required this.selectedLogs,
+    required this.selectedTags,
   });
 
   factory Filter.initial() {
@@ -66,17 +66,17 @@ class Filter extends Equatable {
   bool get stringify => true;
 
   Filter copyWith({
-    Maybe<DateTime> startDate,
-    Maybe<DateTime> endDate,
-    Map<String, String> currency,
-    List<String> selectedCategories,
-    List<String> selectedSubcategories,
-    Maybe<int> minAmount,
-    Maybe<int> maxAmount,
-    List<String> membersPaid,
-    List<String> membersSpent,
-    List<String> selectedLogs,
-    List<String> selectedTags,
+    Maybe<DateTime?>? startDate,
+    Maybe<DateTime?>? endDate,
+    Map<String, String>? currency,
+    List<String>? selectedCategories,
+    List<String>? selectedSubcategories,
+    Maybe<int?>? minAmount,
+    Maybe<int?>? maxAmount,
+    List<String>? membersPaid,
+    List<String>? membersSpent,
+    List<String?>? selectedLogs,
+    List<String?>? selectedTags,
   }) {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
