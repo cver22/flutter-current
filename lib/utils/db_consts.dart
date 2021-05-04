@@ -14,7 +14,6 @@ const String CATEGORIES = 'categories';
 const String SUBCATEGORIES = 'subcategories';
 const String NAME = 'name';
 const String PARENT_CATEGORY_ID = 'parentCategoryId';
-const String NO_PARENT = 'no_parent';
 const String DEFAULT_CATEGORY = 'defaultCategory';
 enum CategoryOrSubcategory { category, subcategory }
 enum SettingsLogFilterEntry { settings, log, filter, entry }

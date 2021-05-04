@@ -33,15 +33,15 @@ class LogsScreen extends StatelessWidget {
                 print('Rendering Logs Screen');
 
                 if (logsState.isLoading == true &&
-                    Env.store.state!.singleEntryState.selectedEntry.isNone) {
+                    Env.store.state.singleEntryState.selectedEntry.isNone) {
                   return ModalLoadingIndicator(
                       loadingMessage: 'Loading your logs...', activate: true);
                 } else if (logsState.isLoading == false &&
                     logsState.logs.isNotEmpty) {
                   //TODO create archive bool to show logs that have been archived and not visible
                   logs = logsState.logs.entries.map((e) => e.value).toList();
-                  logs.sort((a, b) =>
-                      a.order!.compareTo(b.order!)); //display based on order
+                  /*logs.sort((a, b) =>
+                      a.order.compareTo(b.order)); //display based on order*/
 
                   return _buildReorderableList(
                       logs: logs,
@@ -104,7 +104,7 @@ class LogsScreen extends StatelessWidget {
     Log log = logs[outerIndex];
     return DragAndDropList(
         header: LogListTile(
-          key: Key(log.id),
+          key: Key(log.id!),
           log: log,
           logTotal: logTotalsState.logTotals[log.id],
           tabController: tabController,

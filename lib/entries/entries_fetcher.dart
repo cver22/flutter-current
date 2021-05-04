@@ -10,7 +10,7 @@ import 'entries_repository.dart';
 class EntriesFetcher {
   final AppStore _store;
   final EntriesRepository _entriesRepository;
-  late StreamSubscription _entriesSubscription;
+  StreamSubscription? _entriesSubscription;
 
   EntriesFetcher({
     required AppStore store,
@@ -20,9 +20,9 @@ class EntriesFetcher {
 
   Future<void> loadEntries() async {
     _store.dispatch(EntriesSetLoading());
-    _entriesSubscription.cancel();
+    _entriesSubscription?.cancel();
     _entriesSubscription = _entriesRepository
-        .loadEntries(_store.state!.authState.user.value)
+        .loadEntries(_store.state.authState.user.value)
         .listen(
           (entries) => _store.dispatch(EntriesSetEntries(entryList: entries)),
         );
@@ -95,6 +95,6 @@ class EntriesFetcher {
 
   //TODO where to close the subscription when exiting the app?
   Future<void> close() async {
-    _entriesSubscription.cancel();
+    _entriesSubscription?.cancel();
   }
 }

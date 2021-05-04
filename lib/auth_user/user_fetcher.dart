@@ -44,7 +44,7 @@ class UserFetcher {
 
   Future<void> startApp() async {
     _store.dispatch(AuthLoadingUser());
-    _getCurrentUser(_store.state!.loginRegState);
+    _getCurrentUser(_store.state.loginRegState);
   }
 
   Future<void> signOut() async {

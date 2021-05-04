@@ -15,7 +15,7 @@ class LogMemberTotalListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Currency currency = CurrencyService().findByCode(log.currency!)!;
+    Currency currency = CurrencyService().findByCode(log.currency)!;
     return Column(
       children: [
         ListTile(
@@ -26,7 +26,7 @@ class LogMemberTotalListTile extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(member.name ?? 'Please enter a name'),
-              _totals(member: member, logId: log.id, currency: currency),
+              _totals(member: member, logId: log.id!, currency: currency),
             ],
           ),
         ),
@@ -41,7 +41,7 @@ Widget _totals({required LogMember member, required String logId, required Curre
   int spent = 0;
   int owed = 0;
 
-  Env.store.state!.entriesState.entries.values
+  Env.store.state.entriesState.entries.values
       .where((entry) => entry.logId == logId)
       .forEach((element) {
     paid += element.entryMembers[member.uid]?.paid ?? 0;

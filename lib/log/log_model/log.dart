@@ -15,7 +15,7 @@ class Log extends Equatable {
 
   Log({
     required this.uid,
-    this.id ='',
+    this.id,
     this.name ='',
     required this.currency,
     this.categories = const [],
@@ -23,11 +23,10 @@ class Log extends Equatable {
     this.archive = false,
     this.defaultCategory = NO_CATEGORY,
     this.logMembers = const {},
-    this.order = 0,
   });
 
   final String uid;
-  final String id;
+  final String? id;
   final String name;
   final String currency;
   final bool archive;
@@ -35,7 +34,6 @@ class Log extends Equatable {
   final List<AppCategory> categories;
   final List<AppCategory> subcategories;
   final Map<String, LogMember> logMembers;
-  final int order;
 
   @override
   List<Object?> get props => [
@@ -48,13 +46,12 @@ class Log extends Equatable {
         archive,
         defaultCategory,
         logMembers,
-        order
       ];
 
   @override
   String toString() {
     return 'Log {$UID: $uid, $ID: $id, $LOG_NAME: $name, currency: $currency, $CATEGORIES: $categories,  '
-        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers, order: $order}';
+        '$SUBCATEGORIES: $subcategories, $ARCHIVE: $archive, $DEFAULT_CATEGORY: $defaultCategory, members: $logMembers}';
   }
 
   LogEntity toEntity() {
@@ -71,7 +68,6 @@ class Log extends Equatable {
       defaultCategory: defaultCategory,
       logMembers: logMembers,
       memberList: logMembers.keys.toList(),
-      order: order,
     );
   }
 
@@ -111,13 +107,12 @@ class Log extends Equatable {
       uid: entity.uid,
       id: entity.id,
       name: entity.name,
-      currency: entity.currency,
+      currency: entity.currency ?? 'CAD',
       categories: categories,
       subcategories: subcategories,
       archive: entity.archive,
       defaultCategory: entity.defaultCategory,
       logMembers: logMemberHashMap,
-      order: entity.order,
     );
   }
 
@@ -131,7 +126,6 @@ class Log extends Equatable {
     List<AppCategory>? categories,
     List<AppCategory>? subcategories,
     Map<String, LogMember>? logMembers,
-    int? order,
   }) {
     if ((uid == null || identical(uid, this.uid)) &&
         (id == null || identical(id, this.id)) &&
@@ -143,8 +137,7 @@ class Log extends Equatable {
         (categories == null || identical(categories, this.categories)) &&
         (subcategories == null ||
             identical(subcategories, this.subcategories)) &&
-        (logMembers == null || identical(logMembers, this.logMembers)) &&
-        (order == null || identical(order, this.order))) {
+        (logMembers == null || identical(logMembers, this.logMembers))) {
       return this;
     }
 
@@ -158,7 +151,6 @@ class Log extends Equatable {
       categories: categories ?? this.categories,
       subcategories: subcategories ?? this.subcategories,
       logMembers: logMembers ?? this.logMembers,
-      order: order ?? this.order,
     );
   }
 }

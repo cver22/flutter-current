@@ -22,7 +22,7 @@ class TagFetcher {
     _store.dispatch(TagsSetLoading());
     _tagSubscription?.cancel();
     _tagSubscription =
-        _tagRepository.loadTags(_store.state!.authState.user.value).listen(
+        _tagRepository.loadTags(_store.state.authState.user.value).listen(
               (tags) => _store.dispatch(TagsSetTags(tagList: tags)),
             );
     _store.dispatch(TagsSetLoaded());

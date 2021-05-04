@@ -34,7 +34,7 @@ class _AccountScreenState extends State<AccountScreen> {
 
   @override
   void initState() {
-    user = Env.store.state!.authState.user.value;
+    user = Env.store.state.authState.user.value;
     _displayNameController.value = TextEditingValue(text: user.displayName ?? '');
     super.initState();
   }
@@ -141,7 +141,7 @@ class _AccountScreenState extends State<AccountScreen> {
                 Env.userFetcher.updateDisplayName(displayName: displayName);
                 Env.store.dispatch(AuthUpdateDisplayName(displayName: displayName));
                 Env.store.dispatch(LogUpdateLogMember());
-                user = Env.store.state!.authState.user.value;
+                user = Env.store.state.authState.user.value;
               }
               setState(() {
                 editDisplayName = false;

@@ -16,7 +16,7 @@ class EntriesScreenBuildListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Map<String, Tag> tags = Env.store.state!.tagState.tags;
+    Map<String, Tag> tags = Env.store.state.tagState.tags;
 
     return ListView.builder(
         scrollDirection: Axis.vertical,

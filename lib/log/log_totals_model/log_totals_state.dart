@@ -26,9 +26,6 @@ class LogTotalsState extends Equatable {
   LogTotalsState copyWith({
     Map<String, LogTotal>? logTotals,
   }) {
-    if ((logTotals == null || identical(logTotals, this.logTotals))) {
-      return this;
-    }
 
     return new LogTotalsState(
       logTotals: logTotals ?? this.logTotals,

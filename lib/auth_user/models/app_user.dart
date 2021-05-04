@@ -28,15 +28,14 @@ class AppUser extends Equatable {
     String? email,
     String? photoUrl,
   }) {
-    if ((id == null || identical(id, this.id)) &&
-        (displayName == null || identical(displayName, this.displayName)) &&
+    if ((displayName == null || identical(displayName, this.displayName)) &&
         (email == null || identical(email, this.email)) &&
         (photoUrl == null || identical(photoUrl, this.photoUrl))) {
       return this;
     }
 
     return new AppUser(
-      id: id ?? this.id,
+      id: this.id,
       displayName: displayName ?? this.displayName,
       email: email ?? this.email,
       photoUrl: photoUrl ?? this.photoUrl,

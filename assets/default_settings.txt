@@ -5,110 +5,92 @@
          "id":"grocery",
          "name":"Grocery",
          "emojiChar":"🛒"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"food",
          "name":"Food",
          "emojiChar":"🍽️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"family",
          "name":"Family",
          "emojiChar":"👨‍👩‍👧"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"shopping",
          "name":"Shopping",
          "emojiChar":"🕶️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"homeShopping",
          "name":"Home Shopping",
          "emojiChar":"🛋️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"health",
          "name":"Health",
          "emojiChar":"💊"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"personalCare",
          "name":"Personal Care",
          "emojiChar":"🪒"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"activities",
          "name":"Activities",
          "emojiChar":"🎢"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"services",
          "name":"Services",
          "emojiChar":"💡"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"housing",
          "name":"Housing",
          "emojiChar":"🏠"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"transportation",
          "name":"Transportation",
          "emojiChar":"🚀"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"travel",
          "name":"Travel",
          "emojiChar":"⛱"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"discountsAndSavings",
          "name":"Discounts and Savings",
          "emojiChar":"🏷️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"educationTraining",
          "name":"Education and Training",
          "emojiChar":"🎓️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"transferFunds",
          "name":"Transfer Funds",
          "emojiChar":"💵️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"pet",
          "name":"Pet",
          "emojiChar":"🐶️"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"parent",
          "name":"Other",
          "emojiChar":"🤷‍♂"
-         "parentCategoryId":"no_parent"
       },
       {
          "id":"noCategory",
          "name":" No Category",
          "emojiChar":"🔴",
          "isDefault":true
-         "parentCategoryId":"no_parent"
       }
    ],
    "defaultSubcategoryEntities":[

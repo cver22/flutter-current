@@ -24,8 +24,8 @@ class _EditTagDialogState extends State<EditTagDialog> {
 
   void initState() {
     _controller = TextEditingController();
-    _controller.value = TextEditingValue(text: widget.tag.name!);
-    canSave = _controller.text != null && _controller.text.length > 0;
+    _controller.value = TextEditingValue(text: widget.tag.name);
+    canSave = _controller.text.length > 0;
     super.initState();
   }
 

@@ -89,8 +89,7 @@ class EntriesEmptyContent extends StatelessWidget {
           ),
         ),
         onPressed: () {
-          String? uid = Env.store.state?.authState.user.value.id;
-          Env.store.dispatch(EntrySetNew(memberId: uid!));
+          Env.store.dispatch(EntrySetNew(memberId: Env.store.state.authState.user.value.id));
           Get.toNamed(ExpenseRoutes.addEditEntries);
         },
       ),

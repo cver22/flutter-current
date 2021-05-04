@@ -138,8 +138,8 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
 
           double? conversionRate;
 
-          if (withConversionRates && currencyState?.conversionRateMap[referenceCurrencyCode] != null) {
-            conversionRate = currencyState?.conversionRateMap[referenceCurrencyCode]?.rates[_currency.code];
+          if (withConversionRates && currencyState.conversionRateMap[referenceCurrencyCode] != null) {
+            conversionRate = currencyState.conversionRateMap[referenceCurrencyCode]?.rates[_currency.code];
           }
 
           return CurrencyListTile(

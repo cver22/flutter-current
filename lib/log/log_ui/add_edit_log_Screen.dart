@@ -30,7 +30,7 @@ class AddEditLogScreen extends StatelessWidget {
 
   Future<bool> _exitConfirmationDialog({required bool canSave}) async {
     bool onWillPop = false;
-    if (Env.store.state!.logsState.userUpdated) {
+    if (Env.store.state.logsState.userUpdated) {
       //user has made changes, confirm they wish to exit
       await Get.dialog(
         SimpleConfirmationDialog(
@@ -79,7 +79,7 @@ class AddEditLogScreen extends StatelessWidget {
           onTapConfirm: (delete) {
             deleteConfirmed = delete;
             if (deleteConfirmed) {
-              Env.store.dispatch(DeleteLog(log: Env.store.state!.logsState.selectedLog.value));
+              Env.store.dispatch(DeleteLog(log: Env.store.state.logsState.selectedLog.value));
               Get.back();
             }
           },
@@ -124,7 +124,7 @@ class AddEditLogScreen extends StatelessWidget {
                   ),
                   onPressed: canSave ? () => _submit() : null,
                 ),
-                log.id.length > 0
+                log.id != null
                     ? PopupMenuButton<String>(
                         onSelected: handleClick,
                         itemBuilder: (BuildContext context) {
@@ -232,7 +232,7 @@ class AddEditLogScreen extends StatelessWidget {
   Widget _buildCurrencyPicker({required Log log, required String currency}) {
     Currency? _currency = CurrencyService().findByCode(currency);
 
-    return log.id.length > 0
+    return log.id != null
         ? Text('${CurrencyUtils.countryCodeToEmoji(_currency!)} ${_currency.code}')
         : AppCurrencyPicker(
             title: 'Log Currency',
@@ -266,14 +266,13 @@ class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget>
     super.initState();
     //converts the settings to a temporary log for the purpose of creating a drop down list
     //from this list, the user can decide where they are getting the category list from
-    Settings settings = Env.store.state!.settingsState.settings.value;
-    String? uid = Env.store.state?.authState.user.value.id;
+    Settings settings = Env.store.state.settingsState.settings.value;
 
     defaultLog = Log(
         name: 'Default',
         id: 'default',
         currency: 'CAD',
-        uid: uid!,
+        uid: Env.store.state.authState.user.value.id,
         categories: settings.defaultCategories,
         subcategories: settings.defaultSubcategories);
     temporaryLogs = widget.logs.entries.map((e) => e.value).toList();

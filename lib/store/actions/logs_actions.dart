@@ -180,7 +180,7 @@ class SetLogs implements AppAction {
     return _updateLogs(appState, (logs) {
       logs.addEntries(
         logList!.map(
-          (log) => MapEntry(log.id, log),
+          (log) => MapEntry(log.id!, log),
         ),
       );
     });
@@ -202,9 +202,10 @@ class LogReorder implements AppAction {
     Log movedLog = organizedLogs.removeAt(oldIndex!);
     organizedLogs.insert(newIndex!, movedLog);
 
-    organizedLogs.forEach((log) {
+    /*organizedLogs.forEach((log) {
       logsMap[log.id] = log.copyWith(order: organizedLogs.indexOf(log));
-    });
+    });*/
+    //TODO reorder should affect settings not the log
 
     return updateSubstates(
       appState,
@@ -222,7 +223,7 @@ class LogAddUpdate implements AppAction {
     // Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
 
     //check is the log currently exists
-    if (addedUpdatedLog.id.length > 0 && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
+    if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
       //update an existing log
       Env.logsFetcher.updateLog(addedUpdatedLog);
 
@@ -234,7 +235,7 @@ class LogAddUpdate implements AppAction {
       }
 
       logs.update(
-        addedUpdatedLog.id,
+        addedUpdatedLog.id!,
         (value) => addedUpdatedLog,
         ifAbsent: () => addedUpdatedLog,
       );
@@ -242,16 +243,16 @@ class LogAddUpdate implements AppAction {
       //create a new log, does not save locally to state as there is no id yet
       Map<String, LogMember> members = {};
       String uid = appState.authState.user.value.id;
-      int order = 0;
+      /*int order = 0;*/
 
-      if (logs.length > 0) {
+      /*if (logs.length > 0) {
         logs.forEach((key, log) {
           if (log.order > order) {
             order = log.order;
           }
         });
         order++;
-      }
+      }*/
 
       members.putIfAbsent(
           uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0));
@@ -259,7 +260,6 @@ class LogAddUpdate implements AppAction {
       addedUpdatedLog = addedUpdatedLog.copyWith(
         uid: uid,
         logMembers: members,
-        order: order,
       );
 
       Env.logsFetcher.addLog(addedUpdatedLog);

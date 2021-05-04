@@ -75,7 +75,7 @@ Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
     log = log.copyWith(
         categories: appState.singleEntryState.categories,
         subcategories: appState.singleEntryState.subcategories);
-    logs.update(log.id, (value) => log);
+    logs.update(log.id!, (value) => log);
     //send updated log to database
     Env.logsFetcher.updateLog(log);
   }
@@ -110,26 +110,26 @@ LogTotal updateLogMemberTotals(
 
     if (entryYear == currentYear && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
-        int paid = member.paid ?? 0;
-        int spent = member.spent ?? 0;
+        int paid = member.paid;
+        int spent = member.spent;
         thisMonthTotalPaid += paid;
 
         logMembers.update(
             key,
             (value) => value.copyWith(
-                paid: value.paid! + paid, spent: value.spent! + spent));
+                paid: value.paid + paid, spent: value.spent + spent));
       });
     } else if (entryYear == lastMonthYear && entryMonth == lastMonth) {
       entry.entryMembers.forEach((key, member) {
-        if (member.paid != null) {
-          lastMonthTotalPaid += member.paid!;
-        }
+
+          lastMonthTotalPaid += member.paid;
+
       });
     } else if (entryYear == currentYear - 1 && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
-        if (member.paid != null) {
-          sameMonthLastYearTotalPaid += member.paid!;
-        }
+
+          sameMonthLastYearTotalPaid += member.paid;
+
       });
     }
   });

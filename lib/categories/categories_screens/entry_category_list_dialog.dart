@@ -35,7 +35,7 @@ class EntryCategoryListDialog extends StatelessWidget {
             categories = List.from(singleEntryState.subcategories);
             categories.retainWhere((subcategory) =>
                 subcategory.parentCategoryId ==
-                Env.store.state!.singleEntryState.selectedEntry.value
+                Env.store.state.singleEntryState.selectedEntry.value
                     .categoryId);
           }
 
@@ -163,7 +163,7 @@ class EntryCategoryListDialog extends StatelessWidget {
       {required AppCategory subcategory}) {
     return Get.dialog(
       EditCategoryDialog(
-        categories: Env.store.state!.singleEntryState.categories,
+        categories: Env.store.state.singleEntryState.categories,
         save: (name, emojiChar, parentCategoryId) => {
           Env.store.dispatch(EntryAddEditSubcategory(
               subcategory: subcategory.copyWith(
@@ -179,7 +179,7 @@ class EntryCategoryListDialog extends StatelessWidget {
           Get.back(),
         },
         initialParent:
-            Env.store.state!.singleEntryState.selectedEntry.value.categoryId,
+            Env.store.state.singleEntryState.selectedEntry.value.categoryId,
         category: subcategory,
         categoryOrSubcategory: CategoryOrSubcategory.subcategory,
       ),

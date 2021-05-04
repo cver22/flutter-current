@@ -55,7 +55,7 @@ class EntrySetNew implements AppAction {
     Map<String, EntryMember> members = _setMembersList(log: log!, memberId: memberId);
 
     AppEntry entry = AppEntry(
-        logId: log.id,
+        logId: log.id!,
         currency: log.currency,
         dateTime: DateTime.now(),
         tagIDs: [],
@@ -552,7 +552,7 @@ class EntryAddEditSubcategory implements AppAction {
           tag = _decrementAppCategoryFrequency(
               categoryId: previousParentId, updatedTag: tag, categoryOrSubcategory: CategoryOrSubcategory.category);
           tag = _incrementAppCategoryFrequency(
-              appCategoryId: subcategory.parentCategoryId,
+              appCategoryId: subcategory.parentCategoryId!,
               updatedTag: tag,
               categoryOrSubcategory: CategoryOrSubcategory.category);
 
@@ -917,7 +917,7 @@ class EntryAddUpdateTag implements AppAction {
       }
     }
 
-    for (Tag? value in appState.singleEntryState.tags.values.toList()) {
+    for (Tag value in appState.singleEntryState.tags.values.toList()) {
       if (value.name.toLowerCase() == tag.name.toLowerCase()) {
         //user attempting to add duplicate new tags
         duplicateNewTag = true;
@@ -977,9 +977,9 @@ class EntrySelectDeselectTag implements AppAction {
   @override
   AppState updateState(AppState appState) {
     Tag selectedDeselectedTag = tag;
-    Map<String?, Tag> tags = Map.from(appState.singleEntryState.tags);
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    List<String?> entryTagIds = List.from(entry.tagIDs);
+    List<String> entryTagIds = List.from(entry.tagIDs);
     bool entryHasTag = false;
 
     //determines if the tag is in the entry or in another list

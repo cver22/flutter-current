@@ -52,16 +52,16 @@ class _FilterDialogState extends State<FilterDialog> {
     });
 
     //TODO change both of these to search based on settings default
-    if (Env.store.state!.filterState.filter.value.minAmount.isSome) {
+    if (Env.store.state.filterState.filter.value.minAmount.isSome) {
       _minAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state!.filterState.filter.value.minAmount.value, currency: CurrencyService().findByCode('CAD')!));
+              value: Env.store.state.filterState.filter.value.minAmount.value, currency: CurrencyService().findByCode('CAD')!));
     }
 
-    if (Env.store.state!.filterState.filter.value.maxAmount.isSome) {
+    if (Env.store.state.filterState.filter.value.maxAmount.isSome) {
       _maxAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state!.filterState.filter.value.maxAmount.value, currency: CurrencyService().findByCode('CAD')!));
+              value: Env.store.state.filterState.filter.value.maxAmount.value, currency: CurrencyService().findByCode('CAD')!));
     }
 
     super.initState();
@@ -353,9 +353,9 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   Widget _logFilter({required FilterState filterState}) {
-    if (Env.store.state!.logsState.logs.length > 0) {
+    if (Env.store.state.logsState.logs.length > 0) {
       String selectedLogString = '';
-      Map<String, Log> logs = Env.store.state!.logsState.logs;
+      Map<String, Log> logs = Env.store.state.logsState.logs;
 
       filterState.filter.value.selectedLogs.forEach((logId) {
         if (selectedLogString.length > 0) {

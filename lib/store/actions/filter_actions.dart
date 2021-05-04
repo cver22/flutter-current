@@ -55,7 +55,7 @@ class FilterSetReset implements AppAction {
     if (log != null) {
       //action was triggered directly from a log and user wishes to filter for only that log
       logs.add(log);
-      selectedLogs.add(log!.id);
+      selectedLogs.add(log!.id!);
     } else {
       //action was triggered from generic location, include all logs
       logs = List.from(appState.logsState.logs.values.toList());
@@ -73,12 +73,12 @@ class FilterSetReset implements AppAction {
 
         //complete list of all categories
         log.categories.forEach((category) {
-          allCategories.putIfAbsent(category!.id, () => category);
+          allCategories.putIfAbsent(category.id, () => category);
         });
 
         //complete list of all categories
         log.subcategories.forEach((subcategory) {
-          allSubcategories.putIfAbsent(subcategory!.id, () => subcategory);
+          allSubcategories.putIfAbsent(subcategory.id, () => subcategory);
         });
       });
     }

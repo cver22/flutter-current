@@ -1,26 +1,23 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/utils/db_consts.dart';
 import 'package:flutter/material.dart';
-import 'package:functional_data/functional_data.dart';
 
 import 'app_category_entity.dart';
 
 @immutable
-@FunctionalData()
 class AppCategory extends Equatable {
   final String id;
   final String name;
   final String emojiChar;
-  final String parentCategoryId; //only used for subcategories
+  final String? parentCategoryId; //only used for subcategories
 
   AppCategory(
       {this.id = '',
       this.name = '',
       this.emojiChar = '\u{1F4B2}',
-      this.parentCategoryId = NO_PARENT});
+      this.parentCategoryId});
 
   @override
-  List<Object> get props => [id, name, emojiChar, parentCategoryId];
+  List<Object> get props => [id, name, emojiChar, parentCategoryId!];
 
   @override
   String toString() {

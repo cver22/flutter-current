@@ -35,7 +35,7 @@ class AppEntryEntity extends Equatable {
   final DateTime dateTime;
   final Map<String, String> tagIDs;
   final Map<String, EntryMember> entryMembers;
-  final List<String?> memberList;
+  final List<String> memberList;
 
   @override
   List<Object?> get props => [
@@ -70,13 +70,13 @@ class AppEntryEntity extends Equatable {
       category: snap.data()![CATEGORY],
       subcategory: snap.data()![SUBCATEGORY],
       amount: snap.data()![AMOUNT],
-      amountForeign: snap.data()![AMOUNT_FOREIGN],
-      exchangeRate: snap.data()![EXCHANGE_RATE],
-      comment: snap.data()![COMMENT],
+      amountForeign: snap.data()![AMOUNT_FOREIGN] = 0,
+      exchangeRate: snap.data()![EXCHANGE_RATE] = 1.0,
+      comment: snap.data()![COMMENT] = '',
       dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()![DATE_TIME]),
       tagIDs: (snap.data()![TAGS] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
-      /*entryMembers: (snap.data()[MEMBERS] as Map<String, dynamic>)
-          ?.map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),*/
+      entryMembers: (snap.data()![MEMBERS] as Map<String, dynamic>)
+          .map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }
 
@@ -92,7 +92,7 @@ class AppEntryEntity extends Equatable {
       COMMENT: comment,
       DATE_TIME: dateTime.millisecondsSinceEpoch,
       TAGS: tagIDs.map((key, value) => MapEntry(key, value)),
-      /*MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),*/
+      MEMBERS: entryMembers.map((key, value) => MapEntry(key, value.toEntity().toJson())),
       MEMBER_LIST: memberList
     };
   }

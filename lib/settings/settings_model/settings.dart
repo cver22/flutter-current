@@ -61,13 +61,13 @@ class Settings extends Equatable {
   static Settings fromEntity(SettingsEntity entity) {
     //converts entity back to model
     List<AppCategory> returnedDefaultCategories = [];
-    entity.defaultCategoryEntities!.every((e) {
+    entity.defaultCategoryEntities.every((e) {
       returnedDefaultCategories.add(AppCategory.fromEntity(e));
       return true;
     });
 
     List<AppCategory> returnedDefaultSubcategories = [];
-    entity.defaultSubcategoryEntities!.every((e) {
+    entity.defaultSubcategoryEntities.every((e) {
       returnedDefaultSubcategories.add(AppCategory.fromEntity(e));
       return true;
     });

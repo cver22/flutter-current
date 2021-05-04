@@ -10,9 +10,9 @@ AppState Function(AppState) _updateTagState(TagState? update(tagState)) {
 
 AppState _updateTags(
   AppState appState,
-  void updateInPlace(Map<String?, Tag> tags),
+  void updateInPlace(Map<String, Tag> tags),
 ) {
-  Map<String?, Tag> cloneMap = Map.from(appState.tagState.tags);
+  Map<String, Tag> cloneMap = Map.from(appState.tagState.tags);
   updateInPlace(cloneMap);
 
   return updateSubstates(

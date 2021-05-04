@@ -23,7 +23,7 @@ class EntryMemberEntity extends MemberEntity {
     this.spending = true,
     this.paidForeign = 0,
     this.spentForeign = 0,
-  }) : super(uid: uid, paid: paid, spent: spent, order: order);
+  }) : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
 
   @override
   List<Object?> get props => [uid, paid, spent, paying, spending, order, paidForeign, spentForeign];

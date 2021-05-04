@@ -87,7 +87,7 @@ class _QRReaderState extends State<QRReader> {
                         margin: EdgeInsets.all(8),
                         child: AppButton(
                           onPressed: () {
-                            controller?.pauseCamera();
+                            controller.pauseCamera();
                           },
                           child: Text('pause', style: TextStyle(fontSize: 20)),
                         ),
@@ -96,7 +96,7 @@ class _QRReaderState extends State<QRReader> {
                         margin: EdgeInsets.all(8),
                         child: AppButton(
                           onPressed: () {
-                            controller?.resumeCamera();
+                            controller.resumeCamera();
                           },
                           child: Text('resume', style: TextStyle(fontSize: 20)),
                         ),
@@ -114,21 +114,15 @@ class _QRReaderState extends State<QRReader> {
 
   Widget _buildQrView(BuildContext context) {
     // For this example we check how width or tall the device is and change the scanArea and overlay accordingly.
-    var scanArea = (MediaQuery.of(context).size.width < 400 ||
-            MediaQuery.of(context).size.height < 400)
-        ? 150.0
-        : 300.0;
+    var scanArea =
+        (MediaQuery.of(context).size.width < 400 || MediaQuery.of(context).size.height < 400) ? 150.0 : 300.0;
     // To ensure the Scanner view is properly sizes after rotation
     // we need to listen for Flutter SizeChanged notification and update controller
     return QRView(
       key: qrKey,
       onQRViewCreated: _onQRViewCreated,
       overlay: QrScannerOverlayShape(
-          borderColor: Colors.red,
-          borderRadius: 10,
-          borderLength: 30,
-          borderWidth: 10,
-          cutOutSize: scanArea),
+          borderColor: Colors.red, borderRadius: 10, borderLength: 30, borderWidth: 10, cutOutSize: scanArea),
     );
   }
 
@@ -139,18 +133,12 @@ class _QRReaderState extends State<QRReader> {
         result = scanData;
         String resultCode = result!.code;
         print('Result code: $resultCode');
-        if (resultCode != null &&
-            resultCode.length > 1 &&
-            resultCode.contains(APP) &&
-            resultCode.contains(EXPENSE_APP)) {
-          int initialMemberCount =
-              Env.store.state!.logsState.selectedLog.value.logMembers.length;
+        if (resultCode.length > 1 && resultCode.contains(APP) && resultCode.contains(EXPENSE_APP)) {
+          int initialMemberCount = Env.store.state.logsState.selectedLog.value.logMembers.length;
           QRModel qrModel = QRModel.fromJson(jsonDecode(resultCode));
 
-          Env.store.dispatch(
-              LogAddMemberToSelectedLog(uid: qrModel.uid!, name: qrModel.name!));
-          if (Env.store.state!.logsState.selectedLog.value.logMembers.length >
-              initialMemberCount) {
+          Env.store.dispatch(LogAddMemberToSelectedLog(uid: qrModel.uid!, name: qrModel.name!));
+          if (Env.store.state.logsState.selectedLog.value.logMembers.length > initialMemberCount) {
             print('New member added: ${qrModel.name}');
             Get.back();
           } else {

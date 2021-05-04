@@ -58,12 +58,12 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     showEmojiGrid = false;
     categories = widget.categories;
     categoryOrSubcategory = widget.categoryOrSubcategory;
-    String exclamationMark = '\u{2757}'; // exclamation_mark
+    /*String exclamationMark = '\u{2757}'; // exclamation_mark*/
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
     category = widget.category;
     if (category!.id.length > 0) {
       newCategory = false;
-      emojiChar = category!.emojiChar ?? exclamationMark;
+      emojiChar = category!.emojiChar /*?? exclamationMark*/;
       name = category!.name;
       id = category!.id;
     } else {
@@ -77,7 +77,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
       if (newCategory!) {
         parentCategoryId = widget.initialParent ?? NO_CATEGORY;
       } else {
-        parentCategoryId = category!.parentCategoryId ?? NO_CATEGORY;
+        parentCategoryId = category!.parentCategoryId /*?? NO_CATEGORY*/;
       }
 
       selectedCategory =
@@ -85,7 +85,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     }
 
     controller = TextEditingController(text: name);
-    canSave = controller!.text != null && controller!.value.text.length > 0 && controller!.text != NO_CATEGORY && controller!.text != NO_PARENT;
+    canSave = controller!.value.text.length > 0 && controller!.text != NO_CATEGORY;
 
     modifiable = _modifiable(categoryId: id);
   }
@@ -161,7 +161,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               ? () => {
                     //TODO more conditions based on category or subcategory && _category.parentCategoryId != null, _controller.text != _category.name
 
-                    widget?.save(controller!.text, emojiChar, parentCategoryId),
+                    widget.save(controller!.text, emojiChar, parentCategoryId),
                     Get.back(),
                   }
               : null,
@@ -179,7 +179,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
         decoration: InputDecoration(border: OutlineInputBorder()),
         onChanged: (value) {
           setState(() {
-            canSave = value != null && value.length > 0;
+            canSave = value.length > 0;
           });
         },
       )

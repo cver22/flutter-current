@@ -111,8 +111,8 @@ class SettingsScreen extends StatelessWidget {
 
   Widget _logNameDropDown({SettingsState? settingsState}) {
     AppStore _store = Env.store;
-    if (_store.state!.logsState.logs.isNotEmpty) {
-      Map<String, Log> _logsMap = _store.state!.logsState.logs;
+    if (_store.state.logsState.logs.isNotEmpty) {
+      Map<String, Log> _logsMap = _store.state.logsState.logs;
       List<Log> _logs = _logsMap.entries.map((e) => e.value).toList();
 
       String? _defaultLogId = settingsState!.settings.value.defaultLogId;
@@ -124,7 +124,7 @@ class SettingsScreen extends StatelessWidget {
       }
 
       return DropdownButton<Log>(
-        value: _logs?.firstWhere((e) => e.id == _defaultLogId),
+        value: _logs.firstWhere((e) => e.id == _defaultLogId),
         onChanged: (Log? log) {
           _defaultLogId = log!.id;
           _store.dispatch(SettingsChangeDefaultLog(log: log));
@@ -133,7 +133,7 @@ class SettingsScreen extends StatelessWidget {
           return DropdownMenuItem<Log>(
             value: log,
             child: Text(
-              log.name!,
+              log.name,
               style: TextStyle(color: Colors.black),
             ),
           );

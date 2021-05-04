@@ -7,7 +7,7 @@ RichText? tagRichTextSpans({required Tag tag, required Maybe<String> search}) {
   String? name = tag.name;
   if (search.isSome &&
       search.value.length > 0 &&
-      name!.toLowerCase().contains(search.value.toLowerCase())) {
+      name.toLowerCase().contains(search.value.toLowerCase())) {
     List<TextSpan> textSpans = [];
     textSpans.add(TextSpan(text: '#', style: TextStyle(color: Colors.black)));
     while (name!.length > 0) {

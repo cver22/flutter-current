@@ -13,30 +13,28 @@ import '../../utils/db_consts.dart';
 @immutable
 class LogEntity extends Equatable {
   final String uid;
-  final String id;
+  final String? id;
   final String name;
-  final String currency;
+  final String? currency;
   final bool archive;
   final String defaultCategory;
   final Map<String, AppCategory> categories;
   final Map<String, AppCategory> subcategories;
   final Map<String, LogMember> logMembers;
   final List<String> memberList;
-  final int order;
 
 
   const LogEntity({
-    this.uid ='',
-    this.id ='',
+    required this.uid,
+    this.id,
     this.name ='',
-    this.currency = 'CAD',
+    required this.currency,
     this.categories = const {},
     this.subcategories = const {},
     this.archive = false,
     this.defaultCategory = NO_CATEGORY,
     this.logMembers = const {},
     this.memberList = const [],
-    this.order = 0,
   });
 
 
@@ -52,14 +50,13 @@ class LogEntity extends Equatable {
         defaultCategory,
         logMembers,
         memberList,
-        order
       ];
 
   @override
   String toString() {
     return 'Log {uid: $uid, id: $id, logName: $name, currency: $currency, categories: $categories, '
         '$SUBCATEGORIES: $subcategories, archive: $archive, defaultCategory: $defaultCategory, members: $logMembers, '
-        'memberList: $memberList, order: $order}';
+        'memberList: $memberList}';
   }
 
   static LogEntity fromSnapshot(DocumentSnapshot snap) {
@@ -76,11 +73,10 @@ class LogEntity extends Equatable {
           .map((key, value) => MapEntry(
               key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
       archive: snap.data()![ARCHIVE],
-      defaultCategory: snap.data()![DEFAULT_CATEGORY],
+      defaultCategory: snap.data()![DEFAULT_CATEGORY] ?? NO_CATEGORY,
       logMembers: (snap.data()![MEMBERS] as Map<String, dynamic>).map((key,
               value) =>
           MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
-      order: snap.data()![ORDER],
     );
   }
 
@@ -98,7 +94,6 @@ class LogEntity extends Equatable {
       MEMBERS: logMembers
           .map((key, value) => MapEntry(key, value.toEntity().toJson())),
       MEMBER_LIST: memberList,
-      ORDER: order
     };
   }
 }

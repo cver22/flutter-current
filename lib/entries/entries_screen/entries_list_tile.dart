@@ -25,7 +25,7 @@ class EntriesListTile extends StatelessWidget {
     late DateTime date = entry.dateTime;
 
     if (entry.logId.length > 0) {
-      log = Env.store.state!.logsState.logs.values
+      log = Env.store.state.logsState.logs.values
           .firstWhereOrNull((element) => element.id == entry.logId);
     }
     if (log != null) {
@@ -48,7 +48,7 @@ class EntriesListTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  if (entry.tagIDs.length > 0) _buildTagWidget(logId: log.id),
+                  if (entry.tagIDs.length > 0) _buildTagWidget(logId: log.id!),
                   if (entry.comment.length > 0) Text(entry.comment),
                 ],
               ),
@@ -150,7 +150,7 @@ class EntriesListTile extends StatelessWidget {
     String tagString = '';
 
     for (int i = 0; i < entry.tagIDs.length; i++) {
-      Tag? tag = tags[entry.tagIDs[i]!];
+      Tag? tag = tags[entry.tagIDs[i]];
       if (tag != null && tagString.isNotEmpty) {
         tagString += ', ';
       }

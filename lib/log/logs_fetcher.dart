@@ -22,7 +22,7 @@ class LogsFetcher {
     _store.dispatch(SetLogsLoading());
     _logsSubscription?.cancel();
     _logsSubscription =
-        _logsRepository.loadLogs(_store.state!.authState.user.value).listen(
+        _logsRepository.loadLogs(_store.state.authState.user.value).listen(
               (logs) => _store.dispatch(SetLogs(logList: logs)),
             );
     _store.dispatch(SetLogsLoaded());

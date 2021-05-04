@@ -18,7 +18,7 @@ class FilterLogDialog extends StatelessWidget {
         map: (state) => state.filterState,
         builder: (state) {
           List<String?> selectedLogs = state.filter.value.selectedLogs;
-          List<Log> allLogs = Env.store.state!.logsState.logs.values.toList();
+          List<Log> allLogs = Env.store.state.logsState.logs.values.toList();
 
           return AppDialogWithActions(
               title: 'Logs',
@@ -29,7 +29,7 @@ class FilterLogDialog extends StatelessWidget {
                   shrinkWrap: true,
                   itemCount: allLogs.length,
                   itemBuilder: (BuildContext context, int index) {
-                    final String id = allLogs[index].id;
+                    final String id = allLogs[index].id!;
                     return FilterListTile(
                       selected: selectedLogs.contains(id),
                       onSelect: () {

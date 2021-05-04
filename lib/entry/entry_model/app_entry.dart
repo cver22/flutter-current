@@ -34,7 +34,7 @@ class AppEntry extends Equatable with ChangeNotifier {
   final double exchangeRate;
   final String comment;
   final DateTime dateTime;
-  final List<String?> tagIDs;
+  final List<String> tagIDs;
   final Map<String, EntryMember> entryMembers;
 
 
@@ -108,7 +108,7 @@ class AppEntry extends Equatable with ChangeNotifier {
     double? exchangeRate,
     String? comment,
     DateTime? dateTime,
-    List<String?>? tagIDs,
+    List<String>? tagIDs,
     Map<String, EntryMember>? entryMembers,
   }) {
     if ((id == null || identical(id, this.id)) &&

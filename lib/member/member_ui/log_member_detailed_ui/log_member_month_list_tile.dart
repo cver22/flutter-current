@@ -23,7 +23,7 @@ class LogMemberMonthListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Currency currency = CurrencyService().findByCode(log.currency!)!;
+    Currency currency = CurrencyService().findByCode(log.currency)!;
 
     return Column(
       children: [

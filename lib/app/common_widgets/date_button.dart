@@ -37,7 +37,7 @@ class DateButton extends StatelessWidget {
 
     return AppButton(
       onPressed: () {
-        final Filter filter = Env.store.state!.filterState.filter.value;
+        final Filter filter = Env.store.state.filterState.filter.value;
 
         DateTime firstDate = DateTime(2001);
         DateTime lastDate = DateTime(2100);

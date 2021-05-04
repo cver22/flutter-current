@@ -137,7 +137,7 @@ class FilterTagDialog extends StatelessWidget {
     if (selectedCategories.isNotEmpty) {
       collectionTags.removeWhere((tag) {
         bool remove = true;
-        tag.tagCategoryFrequency!.forEach((categoryName, value) {
+        tag.tagCategoryFrequency.forEach((categoryName, value) {
           if (selectedCategories.contains(categoryName)) {
             remove = false;
           }

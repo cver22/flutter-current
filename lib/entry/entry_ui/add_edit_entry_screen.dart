@@ -76,7 +76,7 @@ class AddEditEntryScreen extends StatelessWidget {
             if (!singleEntryState.processing && singleEntryState.selectedEntry.isSome) {
               entry = singleEntryState.selectedEntry.value;
             }
-            Log log = Env.store.state!.logsState.logs[entry!.logId]!;
+            Log log = Env.store.state.logsState.logs[entry!.logId]!;
 
             return WillPopScope(
               onWillPop: () async {
@@ -152,7 +152,7 @@ class AddEditEntryScreen extends StatelessWidget {
       required AppEntry entry}) {
     bool canSave = entryState.canSave;
     bool foreignTransaction = entry.currency != log.currency;
-    Currency logCurrency = CurrencyService().findByCode(log.currency!)!;
+    Currency logCurrency = CurrencyService().findByCode(log.currency)!;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,

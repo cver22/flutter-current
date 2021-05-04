@@ -29,7 +29,7 @@ class CategoryListTileLeading extends StatelessWidget {
         Icon(Icons.unfold_more_outlined),
         SizedBox(width: 5),
         Text(
-          category?.emojiChar ?? '\u{2757}',
+          category.emojiChar /*?? '\u{2757}'*/,
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: EMOJI_SIZE),
         ),

@@ -63,7 +63,7 @@ class SettingsFetcher {
 
     try {
       if (settingsInitialized &&
-          Env.store.state!.settingsState.settings.isSome) {
+          Env.store.state.settingsState.settings.isSome) {
         //if the settings are already loaded, do nothing
         return;
       } else if (!settingsInitialized) {

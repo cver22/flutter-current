@@ -117,13 +117,13 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   List<bool> setExpandedCategories(List<bool> expandedCategories) {
     if (setLogFilter == SettingsLogFilterEntry.log) {
       expandedCategories =
-          List.from(Env.store.state!.logsState.expandedCategories);
+          List.from(Env.store.state.logsState.expandedCategories);
     } else if (setLogFilter == SettingsLogFilterEntry.settings) {
       expandedCategories =
-          List.from(Env.store.state!.settingsState.expandedCategories);
+          List.from(Env.store.state.settingsState.expandedCategories);
     } else if (setLogFilter == SettingsLogFilterEntry.filter) {
       expandedCategories =
-          List.from(Env.store.state!.filterState.expandedCategories);
+          List.from(Env.store.state.filterState.expandedCategories);
     }
     return expandedCategories;
   }
