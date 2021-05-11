@@ -123,7 +123,7 @@ List<AppEntry>? _buildFilteredEntries({
 
       entries!.removeWhere((entry) {
         List<AppCategory?> categories = logs[entry.logId]!.categories;
-        String categoryName = categories.firstWhere((category) => category!.id == entry.categoryId)!.name;
+        String categoryName = categories.firstWhere((category) => category!.id! == entry.categoryId)!.name!;
 
         if (filter.selectedCategories.contains(categoryName)) {
           //filter contains category, show entry

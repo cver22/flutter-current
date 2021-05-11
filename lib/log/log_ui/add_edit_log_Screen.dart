@@ -139,7 +139,7 @@ class AddEditLogScreen extends StatelessWidget {
                     : Container(),
               ],
             ),
-            body: _buildContents(context: context, log: log, currency: currency!, logs: logsState.logs),
+            body: _buildContents(context: context, log: log, currency: currency, logs: logsState.logs),
           ),
         );
       },
@@ -147,7 +147,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   Widget _buildContents(
-      {required BuildContext context, required Log log, required String currency, required Map<String, Log> logs}) {
+      {required BuildContext context, required Log log, required String? currency, required Map<String, Log> logs}) {
     return SingleChildScrollView(
       child: Padding(
         padding: EdgeInsets.all(16.0),
@@ -229,11 +229,18 @@ class AddEditLogScreen extends StatelessWidget {
 
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
 
-  Widget _buildCurrencyPicker({required Log log, required String currency}) {
-    Currency? _currency = CurrencyService().findByCode(currency);
+  Widget _buildCurrencyPicker({required Log log, required String? currency}) {
+
+    Currency? _currency;
+    if(currency == null) {
+      _currency = CurrencyService().findByCode(currency!);
+    } else {
+      _currency = CurrencyService().findByCode(Env.store.state.settingsState.settings.value.homeCurrency);
+    }
+
 
     return log.id != null
-        ? Text('${CurrencyUtils.countryCodeToEmoji(_currency!)} ${_currency.code}')
+        ? Text('${CurrencyUtils.currencyToEmoji(_currency!)} ${_currency.code}')
         : AppCurrencyPicker(
             title: 'Log Currency',
             logCurrency: log.currency,

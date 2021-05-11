@@ -28,7 +28,7 @@ class LogListTile extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime now = DateTime.now();
     int currentMonth = now.month;
-    Currency currency = CurrencyService().findByCode(log.currency)!;
+    Currency currency = CurrencyService().findByCode(log.currency!)!;
 
     return Card(
       elevation: 10.0,

@@ -61,7 +61,7 @@ class SetNewLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(Log(currency: 'CAD', uid: appState.authState.user.value.id)))),
+        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(Log(uid: appState.authState.user.value.id)))),
       ],
     );
   }
@@ -336,7 +336,7 @@ class LogAddEditCategory implements AppAction {
     List<bool> expandedCategories = List.from(appState.logsState.expandedCategories);
     AppCategory updatedCategory = category;
 
-    if (updatedCategory.id.length > 0 ) {
+    if (updatedCategory.id == null) {
       //category does not exists, create category
       updatedCategory = updatedCategory.copyWith(id: Uuid().v4());
       categories.add(updatedCategory);
@@ -407,7 +407,7 @@ class LogAddEditSubcategory implements AppAction {
     Log log = appState.logsState.selectedLog.value;
     List<AppCategory> subcategories = List.from(log.subcategories);
 
-    if (subcategory.id.length > 0) {
+    if (subcategory.id == null) {
       //category does not exists, create category
       subcategories.add(subcategory.copyWith(id: Uuid().v4()));
     } else {
@@ -513,8 +513,8 @@ class LogReorderSubcategory implements AppAction {
 
   AppState updateState(AppState appState) {
     Log log = appState.logsState.selectedLog.value;
-    String oldParentId = log.categories[oldCategoryIndex].id;
-    String newParentId = log.categories[newCategoryIndex].id;
+    String oldParentId = log.categories[oldCategoryIndex].id!;
+    String newParentId = log.categories[newCategoryIndex].id!;
     List<AppCategory> subcategories = List.from(log.subcategories);
     List<AppCategory> subsetOfSubcategories = List.from(subcategories);
     subsetOfSubcategories

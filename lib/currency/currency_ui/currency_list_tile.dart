@@ -36,7 +36,7 @@ class CurrencyListTile extends StatelessWidget {
                       children: [
                         const SizedBox(width: 15),
                         Text(
-                          CurrencyUtils.countryCodeToEmoji(currency),
+                          CurrencyUtils.currencyToEmoji(currency),
                           style: const TextStyle(fontSize: 25),
                         ),
                         const SizedBox(width: 15),
@@ -57,7 +57,7 @@ class CurrencyListTile extends StatelessWidget {
                               ),
                               if (withConversionRates && currency.code != baseCurrency.code)
                                 Text(
-                                  '1 ${CurrencyUtils.countryCodeToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.countryCodeToEmoji(baseCurrency)}',
+                                  '1 ${CurrencyUtils.currencyToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.currencyToEmoji(baseCurrency)}',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Theme.of(context).hintColor,

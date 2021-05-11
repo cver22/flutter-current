@@ -100,7 +100,7 @@ class EntryCategoryListDialog extends StatelessWidget {
         .map(
           (AppCategory category) => CategoryListTile(
             setLogFilter: SettingsLogFilterEntry.entry,
-            key: Key(category.id),
+            key: Key(category.id!),
             category: category,
             onTapEdit: () => isCategory
                 ? _entryAddEditCategory(category: category)
@@ -136,7 +136,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   }
 
   Future<dynamic>? _entrySelectCategory({required AppCategory category}) {
-    Env.store.dispatch(EntrySelectCategory(newCategoryId: category.id));
+    Env.store.dispatch(EntrySelectCategory(newCategoryId: category.id!));
     Get.back();
     if (_entryHasSubcategories(category: category)) {
       return Get.dialog(
@@ -189,7 +189,7 @@ class EntryCategoryListDialog extends StatelessWidget {
   Future<void> _entrySelectSubcategory(
       {required AppCategory subcategory}) async {
     //onTap method for Entry Subcategories
-    Env.store.dispatch(EntrySelectSubcategory(subcategory: subcategory.id));
+    Env.store.dispatch(EntrySelectSubcategory(subcategory: subcategory.id!));
     Get.back();
   }
 

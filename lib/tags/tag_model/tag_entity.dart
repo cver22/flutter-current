@@ -9,8 +9,8 @@ part 'tag_entity.g.dart';
 @immutable
 @JsonSerializable()
 class TagEntity extends Equatable {
-  final String logId;
-  final String id;
+  final String? logId;
+  final String? id;
   final String name;
   final int tagLogFrequency; //how often the tag is used in its parent log
   final Map<String, int> tagCategoryFrequency; //how often the tag is used for each category
@@ -19,8 +19,8 @@ class TagEntity extends Equatable {
 
 
   const TagEntity(
-      {this.logId = '',
-        this.id = '',
+      {this.logId,
+        this.id,
         this.name = '',
         this.tagLogFrequency = 0,
         this.tagCategoryFrequency = const {},
@@ -43,15 +43,15 @@ class TagEntity extends Equatable {
 
   static TagEntity fromSnapshot(DocumentSnapshot snap) {
     return TagEntity(
-      logId: snap.data()![LOG_ID],
+      logId: snap[LOG_ID],
       id: snap.id,
-      name: snap.data()![NAME],
-      tagLogFrequency: snap.data()![TAG_LOG_FREQUENCY],
+      name: snap[NAME],
+      tagLogFrequency: snap[TAG_LOG_FREQUENCY],
       tagCategoryFrequency:
-          (snap.data()![TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+          (snap[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
       tagSubcategoryFrequency:
-      (snap.data()![TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
-      memberList: List<String>.from(snap.data()![MEMBER_LIST] as List<dynamic>),
+      (snap[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+      memberList: List<String>.from(snap[MEMBER_LIST] as List<dynamic>),
     );
   }
 }

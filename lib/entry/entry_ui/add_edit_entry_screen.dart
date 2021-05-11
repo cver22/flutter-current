@@ -152,7 +152,7 @@ class AddEditEntryScreen extends StatelessWidget {
       required AppEntry entry}) {
     bool canSave = entryState.canSave;
     bool foreignTransaction = entry.currency != log.currency;
-    Currency logCurrency = CurrencyService().findByCode(log.currency)!;
+    Currency logCurrency = CurrencyService().findByCode(log.currency!)!;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,

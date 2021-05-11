@@ -1,4 +1,3 @@
-import 'package:meta/meta.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app/models/app_state.dart';
@@ -237,8 +236,8 @@ class SettingsReorderSubcategory implements AppAction {
 
   AppState updateState(AppState appState) {
     Settings settings = appState.settingsState.settings.value;
-    String oldParentId = settings.defaultCategories[oldCategoryIndex].id;
-    String newParentId = settings.defaultCategories[newCategoryIndex].id;
+    String oldParentId = settings.defaultCategories[oldCategoryIndex].id!;
+    String newParentId = settings.defaultCategories[newCategoryIndex].id!;
     List<AppCategory> subcategories = List.from(settings.defaultSubcategories);
     List<AppCategory> subsetOfSubcategories = List.from(settings.defaultSubcategories);
     subsetOfSubcategories

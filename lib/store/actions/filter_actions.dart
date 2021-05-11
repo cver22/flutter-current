@@ -73,12 +73,12 @@ class FilterSetReset implements AppAction {
 
         //complete list of all categories
         log.categories.forEach((category) {
-          allCategories.putIfAbsent(category.id, () => category);
+          allCategories.putIfAbsent(category.id!, () => category);
         });
 
         //complete list of all categories
         log.subcategories.forEach((subcategory) {
-          allSubcategories.putIfAbsent(subcategory.id, () => subcategory);
+          allSubcategories.putIfAbsent(subcategory.id!, () => subcategory);
         });
       });
     }
@@ -98,7 +98,7 @@ class FilterSetReset implements AppAction {
           }
         });
         if (insert) {
-          consolidatedSubcategories.putIfAbsent(subcategory!.id, () => subcategory);
+          consolidatedSubcategories.putIfAbsent(subcategory!.id!, () => subcategory);
         }
       });
 
@@ -112,7 +112,7 @@ class FilterSetReset implements AppAction {
         });
         if (insert) {
           //add category to consolidated list and update id from name
-          consolidatedCategories.putIfAbsent(category!.name, () => category.copyWith(id: category.name));
+          consolidatedCategories.putIfAbsent(category!.name!, () => category.copyWith(id: category.name));
         }
       });
     }
@@ -196,7 +196,7 @@ class FilterSelectDeselectCategory implements AppAction {
       selectedCategories.add(id);
       appState.filterState.consolidatedSubcategories.forEach((subcategory) {
         if (subcategory.parentCategoryId == id) {
-          selectedSubcategories.add(subcategory.id);
+          selectedSubcategories.add(subcategory.id!);
         }
       });
     }
@@ -250,7 +250,7 @@ class FilterSelectDeselectSubcategory implements AppAction {
       //select subcategory and its parent category if not already selected
       selectedSubcategories.add(id);
       if (!selectedCategories.contains(category.id)) {
-        selectedCategories.add(category.id);
+        selectedCategories.add(category.id!);
       }
     }
 

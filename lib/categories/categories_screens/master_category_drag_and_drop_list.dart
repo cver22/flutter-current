@@ -69,7 +69,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
         _onExpansionChanged(outerIndex);
       },
       contentsWhenEmpty: _emptyContents(category: category),
-      title: Text(category.name),
+      title: Text(category.name!),
       leading: CategoryListTileLeading(category: category),
       trailing: _setTrailingIcon(
           category: category,
@@ -92,7 +92,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     if (setLogFilter == SettingsLogFilterEntry.filter) {
       return FilterListTileTrailing(
           onSelect: () =>
-              Env.store.dispatch(FilterSelectDeselectCategory(id: category.id)),
+              Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
           selected: selectedCategories.contains(category.id));
     } else {
       return MasterCategoryListTileTrailing(
@@ -153,7 +153,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       getSettingsAddEditSubcategoryDialog(
           subcategory: subcategory, categories: categories);
     } else if (setLogFilter == SettingsLogFilterEntry.filter) {
-      Env.store.dispatch(FilterSelectDeselectSubcategory(id: subcategory.id));
+      Env.store.dispatch(FilterSelectDeselectSubcategory(id: subcategory.id!));
     }
   }
 

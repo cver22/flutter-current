@@ -5,19 +5,19 @@ import 'app_category_entity.dart';
 
 @immutable
 class AppCategory extends Equatable {
-  final String id;
-  final String name;
+  final String? id;
+  final String? name;
   final String emojiChar;
   final String? parentCategoryId; //only used for subcategories
 
   AppCategory(
-      {this.id = '',
-      this.name = '',
+      {this.id,
+      this.name,
       this.emojiChar = '\u{1F4B2}',
       this.parentCategoryId});
 
   @override
-  List<Object> get props => [id, name, emojiChar, parentCategoryId!];
+  List<Object> get props => [id!, name!, emojiChar, parentCategoryId!];
 
   @override
   String toString() {
@@ -26,8 +26,8 @@ class AppCategory extends Equatable {
 
   AppCategoryEntity toEntity() {
     return AppCategoryEntity(
-      id: id,
-      name: name,
+      id: id!,
+      name: name!,
       emojiChar: emojiChar,
       parentCategoryId: parentCategoryId,
     );

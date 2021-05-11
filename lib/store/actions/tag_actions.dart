@@ -51,7 +51,7 @@ class TagsSetTags implements AppAction {
     return _updateTags(appState, (tag) {
       tag.addEntries(
         tagList!.map(
-          (tag) => MapEntry(tag.id, tag),
+          (tag) => MapEntry(tag.id!, tag),
         ),
       );
     });

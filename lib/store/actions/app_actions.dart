@@ -142,15 +142,15 @@ LogTotal updateLogMemberTotals(
       averagePerDay: (thisMonthTotalPaid / daysSoFar).round());
 }
 
-bool canDeleteCategory({required String id}) {
-  if (id == NO_CATEGORY || id == TRANSFER_FUNDS) {
+bool canDeleteCategory({required String? id}) {
+  if (id != null && id == NO_CATEGORY || id == TRANSFER_FUNDS) {
     return false;
   }
   return true;
 }
 
 bool canDeleteSubcategory({required AppCategory subcategory}) {
-  if (subcategory.id.contains(OTHER)) {
+  if (subcategory.id != null && subcategory.id!.contains(OTHER)) {
     return false;
   }
   return true;
@@ -197,7 +197,7 @@ List<AppCategory> reorderSubcategoriesLogSetting(
 bool _canReorderSubcategory(
     {required AppCategory subcategory, required String newParentId}) {
   if (newParentId == NO_CATEGORY ||
-      subcategory.id.contains(OTHER) ||
+      (subcategory.id != null && subcategory.id!.contains(OTHER)) ||
       newParentId == TRANSFER_FUNDS) {
     return false;
   }

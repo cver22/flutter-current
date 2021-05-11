@@ -29,7 +29,7 @@ class EntriesListTile extends StatelessWidget {
           .firstWhereOrNull((element) => element.id == entry.logId);
     }
     if (log != null) {
-      Currency logCurrency = CurrencyService().findByCode(log.currency)!;
+      Currency logCurrency = CurrencyService().findByCode(log.currency!)!;
       return Column(
         children: [
           ListTile(
@@ -49,7 +49,7 @@ class EntriesListTile extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (entry.tagIDs.length > 0) _buildTagWidget(logId: log.id!),
-                  if (entry.comment.length > 0) Text(entry.comment),
+                  if (entry.comment != null) Text(entry.comment!),
                 ],
               ),
             ),
@@ -124,7 +124,7 @@ class EntriesListTile extends StatelessWidget {
     AppCategory subcategory =
     log.subcategories.firstWhere((element) => element.id == entry.subcategoryId);
 
-    bool hasSubcategory = subcategory.id.length > 0;
+    bool hasSubcategory = subcategory.id != null;
 
     return Wrap(
       children: [

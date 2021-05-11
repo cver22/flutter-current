@@ -56,7 +56,7 @@ class EntrySetNew implements AppAction {
 
     AppEntry entry = AppEntry(
         logId: log.id!,
-        currency: log.currency,
+        currency: log.currency!,
         dateTime: DateTime.now(),
         tagIDs: [],
         entryMembers: members,
@@ -341,8 +341,8 @@ class EntrySelectCategory implements AppAction {
     //set subcategory to OTHER if category has been selected
     if (newCategoryId != NO_CATEGORY && newCategoryId != TRANSFER_FUNDS) {
       newSubcategoryId = appState.singleEntryState.subcategories
-          .firstWhere((element) => element.parentCategoryId == newCategoryId && element.id.contains(OTHER))
-          .id;
+          .firstWhere((element) => element.parentCategoryId == newCategoryId && element.id!.contains(OTHER))
+          .id!;
     }
 
     tags = categoryOrSubcategoryUpdateAllTagFrequencies(
@@ -470,9 +470,11 @@ class EntryAddEditCategory implements AppAction {
   AppState updateState(AppState appState) {
     List<AppCategory> categories = List.from(appState.singleEntryState.categories);
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
-    if (category.id.length > 0) {
+    if (category.id != null) {
+      //edit existing category
       categories[categories.indexWhere((entry) => entry.id == category.id)] = category;
     } else {
+      //add new category
       AppCategory newCategory = category.copyWith(id: Uuid().v4());
       categories.add(newCategory);
       subcategories.add(
@@ -540,7 +542,7 @@ class EntryAddEditSubcategory implements AppAction {
     Map<String?, Tag?> tags = Map.from(appState.singleEntryState.tags);
     String? previousParentId = entry.categoryId;
 
-    if (subcategory.id.length > 0) {
+    if (subcategory.id != null) {
       //edit subcategory
       subcategories[subcategories.indexWhere((entry) => entry.id == subcategory.id)] = subcategory;
 
@@ -615,7 +617,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
   AppState updateState(AppState appState) {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    String logCurrency = log.currency;
+    String logCurrency = log.currency!;
     double? exchangeRate = entry.exchangeRate;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember entryMember = this.member;
@@ -633,7 +635,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
           amount = amount + value.paid;
         }
       });
-    } else {
+    } else if (exchangeRate != null){
       //update amount paidForeign by individual member
       entryMember = entryMember.copyWith(paidForeign: paidValue, paid: (paidValue / exchangeRate).round());
       members.update(entryMember.uid, (value) => entryMember);
@@ -647,6 +649,8 @@ class EntryUpdateMemberPaidAmount implements AppAction {
           amount = amount + value.paid;
         }
       });
+    } else {
+      print('exchange rate error');
     }
 
     entry = entry.copyWith(amount: amount, amountForeign: amountForeign);
@@ -696,7 +700,7 @@ class EntryUpdateMemberSpentAmount implements AppAction {
     members = _divideSpending(
       entry: entry,
       members: members,
-      logCurrency: CurrencyService().findByCode(log.currency)!,
+      logCurrency: CurrencyService().findByCode(log.currency!)!,
       distributeEvenly: false,
     );
     entry = entry.copyWith(entryMembers: members);
@@ -721,7 +725,7 @@ class EntryDivideRemainingSpending implements AppAction {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    String logCurrency = log.currency;
+    String logCurrency = log.currency!;
 
     members = _divideSpending(
       entry: entry,
@@ -755,7 +759,7 @@ class EntryResetMemberSpendingToAll implements AppAction {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    String logCurrency = log.currency;
+    String logCurrency = log.currency!;
 
     members = _divideSpending(
       entry: entry,
@@ -787,7 +791,7 @@ class EntryToggleMemberPaying implements AppAction {
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    String logCurrency = log.currency;
+    String logCurrency = log.currency!;
     EntryMember member = this.member;
     int amount = 0;
 
@@ -856,7 +860,7 @@ class EntryToggleMemberSpending implements AppAction {
     Map<String, EntryMember> members = Map.from(entry.entryMembers);
     EntryMember member = this.member;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
-    String logCurrency = log.currency;
+    String logCurrency = log.currency!;
 
     //toggles member spending or not
     int membersSpending = 0;
@@ -925,7 +929,8 @@ class EntryAddUpdateTag implements AppAction {
       }
     }
     if (!duplicateNewTag) {
-      if (addedUpdatedTag.id.isEmpty) {
+      if (addedUpdatedTag.id == null) {
+        //new tag
         if (existingTag == null) {
           //save new tag using the user id to help minimize chance of duplication of entry ids in the database
           addedUpdatedTag = addedUpdatedTag.copyWith(
@@ -941,14 +946,14 @@ class EntryAddUpdateTag implements AppAction {
           addedUpdatedTag = existingTag.incrementTagLogFrequency();
         }
 
-        entry.tagIDs.add(addedUpdatedTag.id);
+        entry.tagIDs.add(addedUpdatedTag.id!);
 
         addedUpdatedTag = _incrementCategorySubcategoryFrequency(
             updatedTag: addedUpdatedTag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
       }
 
       //updates existing tag or add it
-      tags.update(addedUpdatedTag.id, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
+      tags.update(addedUpdatedTag.id!, (value) => addedUpdatedTag, ifAbsent: () => addedUpdatedTag);
     }
 
     return updateSubstates(
@@ -1005,10 +1010,10 @@ class EntrySelectDeselectTag implements AppAction {
           updatedTag: selectedDeselectedTag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
 
       //remove the tag from the entry tag list
-      entryTagIds.add(tag.id);
+      entryTagIds.add(tag.id!);
     }
 
-    tags.update(selectedDeselectedTag.id, (value) => selectedDeselectedTag, ifAbsent: () => selectedDeselectedTag);
+    tags.update(selectedDeselectedTag.id!, (value) => selectedDeselectedTag, ifAbsent: () => selectedDeselectedTag);
 
     return updateSubstates(
       appState,
@@ -1333,7 +1338,7 @@ Map<String, Tag> categoryOrSubcategoryUpdateAllTagFrequencies(
       tag = _incrementAppCategoryFrequency(
           appCategoryId: newAppCategory, updatedTag: tag, categoryOrSubcategory: categoryOrSubcategory);
 
-      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+      tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
     });
   }
 
@@ -1360,13 +1365,13 @@ Map<String, EntryMember> _divideSpending({
 
   //TODO, randomly assign the remainder
 
-  if (logCurrency.code != entryCurrency.code) {
-    if (members.length > 1) {
+  if (logCurrency.code != entryCurrency.code && entry.amountForeign != null && exchangeRate != null) {
+    if (members.length > 1 ) {
       //multiple members
 
       entryMembers = _distributeDivisibleAmountForeign(
         entryMembers: entryMembers,
-        divisibleAmount: entry.amountForeign,
+        divisibleAmount: entry.amountForeign!,
         entryCurrency: entryCurrency,
         exchangeRate: exchangeRate,
         divideRemaining: divideRemaining,
@@ -1374,10 +1379,10 @@ Map<String, EntryMember> _divideSpending({
     } else {
       //single member
       entryMembers.updateAll((key, member) {
-        return member.copyWith(spentForeign: entry.amountForeign, spent: (entry.amountForeign / exchangeRate).round());
+        return member.copyWith(spentForeign: entry.amountForeign, spent: (entry.amountForeign! / exchangeRate).round());
       });
     }
-  } else {
+  } else if (logCurrency.code == entryCurrency.code){
     if (members.length > 1) {
       //multiple members
 
@@ -1393,6 +1398,8 @@ Map<String, EntryMember> _divideSpending({
         return member.copyWith(spent: entry.amount);
       });
     }
+  } else {
+    print('_divideSpending currency error');
   }
 
   return entryMembers;

@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -9,15 +9,15 @@ import '../../utils/db_consts.dart';
 @immutable
 class AppEntryEntity extends Equatable {
   const AppEntryEntity(
-      {this.id = '',
-      this.logId = '',
-      this.currency = '',
+      {required this.id,
+        required this.logId,
+        required this.currency,
       this.category = NO_CATEGORY,
       this.subcategory = NO_SUBCATEGORY,
       this.amount = 0,
-      this.amountForeign = 0,
-      this.exchangeRate = 1.0,
-      this.comment ='',
+      this.amountForeign,
+      this.exchangeRate,
+      this.comment,
       required this.dateTime,
       this.tagIDs = const {},
       this.entryMembers = const {},
@@ -29,9 +29,9 @@ class AppEntryEntity extends Equatable {
   final String category;
   final String subcategory;
   final int amount;
-  final int amountForeign;
-  final double exchangeRate;
-  final String comment;
+  final int? amountForeign;
+  final double? exchangeRate;
+  final String? comment;
   final DateTime dateTime;
   final Map<String, String> tagIDs;
   final Map<String, EntryMember> entryMembers;
@@ -62,25 +62,24 @@ class AppEntryEntity extends Equatable {
         '$COMMENT: $comment, $DATE_TIME: $dateTime, tagIDs: $tagIDs, members: $entryMembers, memberList: $memberList)}';
   }
 
-  static AppEntryEntity fromSnapshot(DocumentSnapshot snap) {
+  static AppEntryEntity fromJson(Map<String, Object?> json, String id) {
     return AppEntryEntity(
-      id: snap.id,
-      logId: snap.data()![LOG_ID],
-      currency: snap.data()![CURRENCY_NAME],
-      category: snap.data()![CATEGORY],
-      subcategory: snap.data()![SUBCATEGORY],
-      amount: snap.data()![AMOUNT],
-      amountForeign: snap.data()![AMOUNT_FOREIGN] = 0,
-      exchangeRate: snap.data()![EXCHANGE_RATE] = 1.0,
-      comment: snap.data()![COMMENT] = '',
-      dateTime: DateTime.fromMillisecondsSinceEpoch(snap.data()![DATE_TIME]),
-      tagIDs: (snap.data()![TAGS] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
-      entryMembers: (snap.data()![MEMBERS] as Map<String, dynamic>)
-          .map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
+      id: id,
+      logId: json[LOG_ID]! as String,
+      currency: json[CURRENCY_NAME]! as String,
+      category: json[CATEGORY]! as String,
+      subcategory: json[SUBCATEGORY]! as String,
+      amount: json[AMOUNT]! as int,
+      amountForeign:  json[AMOUNT_FOREIGN] as int?,
+      exchangeRate: json[EXCHANGE_RATE] as double?,
+      comment: json[COMMENT] as String?,
+      dateTime: DateTime.fromMillisecondsSinceEpoch(json[DATE_TIME] as int),
+      tagIDs: (json[TAGS] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+      entryMembers: (json[MEMBERS] as Map<String, dynamic>).map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
     );
   }
 
-  Map<String, Object?> toDocument() {
+  Map<String, Object?> toJson() {
     return {
       LOG_ID: logId,
       CURRENCY_NAME: currency,

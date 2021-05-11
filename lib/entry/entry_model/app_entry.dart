@@ -16,9 +16,9 @@ class AppEntry extends Equatable with ChangeNotifier {
     this.categoryId = NO_CATEGORY,
     this.subcategoryId = NO_SUBCATEGORY,
     this.amount = 0,
-    this.amountForeign = 0,
-    this.exchangeRate = 1.0,
-    this.comment = '',
+    this.amountForeign,
+    this.exchangeRate,
+    this.comment,
     required this.dateTime,
     this.tagIDs = const [],
     this.entryMembers = const {},
@@ -30,9 +30,9 @@ class AppEntry extends Equatable with ChangeNotifier {
   final String categoryId;
   final String subcategoryId;
   final int amount;
-  final int amountForeign;
-  final double exchangeRate;
-  final String comment;
+  final int? amountForeign;
+  final double? exchangeRate;
+  final String? comment;
   final DateTime dateTime;
   final List<String> tagIDs;
   final Map<String, EntryMember> entryMembers;

@@ -38,7 +38,7 @@ class AppCurrencyPicker extends StatelessWidget {
           returnCurrency: returnCurrency,
         ));
       },
-      child: Text('${CurrencyUtils.countryCodeToEmoji(_currency)} ${_currency.code}'),
+      child: Text('${CurrencyUtils.currencyToEmoji(_currency)} ${_currency.code}'),
     );
   }
 }

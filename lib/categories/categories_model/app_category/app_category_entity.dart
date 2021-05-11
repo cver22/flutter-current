@@ -7,19 +7,19 @@ part 'app_category_entity.g.dart';
 @immutable
 @JsonSerializable(explicitToJson: true)
 class AppCategoryEntity extends Equatable {
-  final String id;
-  final String name;
+  final String? id;
+  final String? name;
   final String emojiChar;
   final String? parentCategoryId;
 
   const AppCategoryEntity(
-      {this.id = '',
-        this.name = '',
+      {this.id,
+        this.name,
         this.emojiChar = '\u{1F4B2}',
         this.parentCategoryId});
 
   @override
-  List<Object> get props => [id, name, emojiChar, parentCategoryId!];
+  List<Object> get props => [id!, name!, emojiChar, parentCategoryId!];
 
   @override
   String toString() {

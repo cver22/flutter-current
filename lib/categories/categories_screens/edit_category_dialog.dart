@@ -61,7 +61,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     /*String exclamationMark = '\u{2757}'; // exclamation_mark*/
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
     category = widget.category;
-    if (category!.id.length > 0) {
+    if (category!.id!.length > 0) {
       newCategory = false;
       emojiChar = category!.emojiChar /*?? exclamationMark*/;
       name = category!.name;
@@ -228,7 +228,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
                 return DropdownMenuItem<AppCategory>(
                   value: category,
                   child: Text(
-                    category.name,
+                    category.name!,
                     overflow: TextOverflow.visible,
                     maxLines: 2,
                     style: TextStyle(color: Colors.black),
@@ -237,7 +237,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
               }).toList(),
               onChanged: _onParentCategoryChanged),
         )
-            : Text(initialCategory!.name),
+            : Text(initialCategory!.name!),
       ],
     );
   }

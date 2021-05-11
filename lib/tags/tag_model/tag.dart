@@ -6,8 +6,8 @@ import 'tag_entity.dart';
 
 @immutable
 class Tag extends Equatable {
-  final String logId;
-  final String id;
+  final String? logId;
+  final String? id;
   final String name;
   final int tagLogFrequency;
   final Map<String, int> tagCategoryFrequency;
@@ -15,8 +15,8 @@ class Tag extends Equatable {
   final List<String> memberList;
 
   Tag(
-      {this.logId = '',
-      this.id = '',
+      {this.logId,
+      this.id,
       this.name = '',
       this.tagLogFrequency = 0,
       this.tagCategoryFrequency = const {},

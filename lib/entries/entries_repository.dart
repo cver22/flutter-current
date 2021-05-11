@@ -22,42 +22,40 @@ abstract class EntriesRepository {
 class FirebaseEntriesRepository implements EntriesRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
   final entriesCollection =
-      FirebaseFirestore.instance.collection(ENTRY_COLLECTION);
+      FirebaseFirestore.instance.collection(ENTRY_COLLECTION).withConverter(fromFirestore: (snapshot, _) => AppEntryEntity.fromJson(snapshot.data()!, snapshot.id),
+        toFirestore: (appEntryEntity, _) => appEntryEntity.toJson(),);
 
   @override
   Future<void> addNewEntry(AppEntry entry) {
-    return db
-        .collection(ENTRY_COLLECTION)
+    return entriesCollection
         .doc(entry.id)
-        .set(entry.toEntity().toDocument());
+        .set(entry.toEntity());
   }
 
   //TODO need to filter by contains UID
   @override
   Stream<List<AppEntry>> loadEntries(AppUser user) {
-    return db
-        .collection(ENTRY_COLLECTION)
+    return entriesCollection
         .where(MEMBER_LIST, arrayContains: user.id)
         .snapshots()
         .map((snapshot) {
       // FirebaseStorageCalculator(documents: snapshot.documents).getDocumentSize(); used to estimate file sizes
       return snapshot.docs
-          .map((doc) => AppEntry.fromEntity(AppEntryEntity.fromSnapshot(doc)))
+          .map((doc) => AppEntry.fromEntity(doc.data()))
           .toList();
     });
   }
 
   @override
   Future<void> updateEntry(AppEntry update) {
-    return db
-        .collection(ENTRY_COLLECTION)
+    return entriesCollection
         .doc(update.id)
-        .update(update.toEntity().toDocument());
+        .update(update.toEntity().toJson());
   }
 
   @override
   Future<void> deleteEntry(AppEntry entry) {
-    return db.collection(ENTRY_COLLECTION).doc(entry.id).delete();
+    return entriesCollection.doc(entry.id).delete();
   }
 
   @override
@@ -77,8 +75,8 @@ class FirebaseEntriesRepository implements EntriesRepository {
     WriteBatch batch = db.batch();
 
     updatedEntries.forEach((entry) {
-      batch.update(db.collection(TAG_COLLECTION).doc(entry.id),
-          {entry.id: entry.toEntity().toDocument()});
+      batch.update(entriesCollection.doc(entry.id),
+          {entry.id: entry.toEntity().toJson()});
     });
 
 //TODO maybe add a whenComplete to this?

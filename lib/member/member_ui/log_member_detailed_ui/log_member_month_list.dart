@@ -15,7 +15,7 @@ class LogMemberMonthList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<LogMember> logMembers = logTotal?.logMembers?.values?.toList() ??
+    List<LogMember> logMembers = logTotal?.logMembers.values.toList() ??
         log.logMembers.values.toList();
 
     return ListView.builder(

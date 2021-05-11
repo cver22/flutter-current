@@ -1,7 +1,4 @@
 import 'dart:collection';
-
-import 'package:meta/meta.dart';
-
 import '../../entry/entry_model/single_entry_state.dart';
 import '../../app/models/app_state.dart';
 import '../../entries/entries_model/entries_state.dart';
@@ -97,7 +94,7 @@ class EntriesDeleteSelectedEntry implements AppAction {
       //decrement use of tag for this category and log
       tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
 
-      tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+      tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
     });
 
     Env.entriesFetcher.deleteEntry(entry);
