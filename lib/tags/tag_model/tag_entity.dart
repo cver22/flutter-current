@@ -1,10 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import '../../utils/db_consts.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:meta/meta.dart';
 
-part 'tag_entity.g.dart';
 
 @immutable
 @JsonSerializable()
@@ -37,21 +35,29 @@ class TagEntity extends Equatable {
         '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $TAG_SUBCATEGORY_FREQUENCY: $tagSubcategoryFrequency, $MEMBER_LIST: $memberList}';
   }
 
-  factory TagEntity.fromJson(Map<String, dynamic> json) => _$TagEntityFromJson(json);
-
-  Map<String, dynamic> toJson() => _$TagEntityToJson(this);
-
-  static TagEntity fromSnapshot(DocumentSnapshot snap) {
+  static TagEntity fromJson(Map<String, Object?> json, String id) {
     return TagEntity(
-      logId: snap[LOG_ID],
-      id: snap.id,
-      name: snap[NAME],
-      tagLogFrequency: snap[TAG_LOG_FREQUENCY],
+      logId: json[LOG_ID] as String,
+      id: id,
+      name: json[NAME] as String,
+      tagLogFrequency: json[TAG_LOG_FREQUENCY] as int,
       tagCategoryFrequency:
-          (snap[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+          (json[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
       tagSubcategoryFrequency:
-      (snap[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
-      memberList: List<String>.from(snap[MEMBER_LIST] as List<dynamic>),
+      (json[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+      memberList: List<String>.from(json[MEMBER_LIST] as List<dynamic>),
     );
+  }
+
+  Map<String, Object?> toJson() {
+    return {
+      LOG_ID: logId,
+      ID: id,
+      NAME: name,
+      TAG_LOG_FREQUENCY: tagLogFrequency,
+      TAG_CATEGORY_FREQUENCY: tagCategoryFrequency.map((key, value) => MapEntry(key, value)),
+      TAG_SUBCATEGORY_FREQUENCY: tagSubcategoryFrequency.map((key, value) => MapEntry(key, value)),
+      MEMBER_LIST: memberList.map((e) => e).toList(),
+    };
   }
 }

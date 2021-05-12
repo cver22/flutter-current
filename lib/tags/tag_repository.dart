@@ -23,22 +23,24 @@ abstract class TagRepository {
 
 class FirebaseTagRepository implements TagRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
+  late final logsCollection =  db.collection(TAG_COLLECTION).withConverter(fromFirestore: (snapshot, _)
+  => TagEntity.fromJson(snapshot.data()!, snapshot.id),
+    toFirestore: (logEntity, _) => logEntity.toJson(),);
 
   @override
   Future<void> addNewTag(Tag tag) {
-    return db.collection(TAG_COLLECTION).add(tag.toEntity().toJson());
+    return logsCollection.add(tag.toEntity());
   }
 
   //TODO need to filter by UID for groups
   @override
   Stream<List<Tag>> loadTags(AppUser user) {
-    return db
-        .collection(TAG_COLLECTION)
+    return logsCollection
         .where(MEMBER_LIST, arrayContains: user.id)
         .snapshots()
         .map((snapshot) {
       var snapshots = snapshot.docs
-          .map((doc) => Tag.fromEntity(TagEntity.fromSnapshot(doc)))
+          .map((doc) => Tag.fromEntity(doc.data()))
           .toList();
 
       return snapshots;
@@ -55,7 +57,7 @@ class FirebaseTagRepository implements TagRepository {
 
   @override
   Future<void> deleteTag(Tag tag) {
-    return db.collection(TAG_COLLECTION).doc(tag.id).delete();
+    return logsCollection.doc(tag.id).delete();
   }
 
   @override
@@ -64,7 +66,7 @@ class FirebaseTagRepository implements TagRepository {
 
     addedTags.forEach((tag) {
       batch.set(
-          db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
+          db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity());
     });
 
 //TODO maybe add a whenComplete to this?

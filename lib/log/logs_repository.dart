@@ -18,11 +18,13 @@ abstract class LogsRepository {
 }
 
 class FirebaseLogsRepository implements LogsRepository {
-  final logsCollection = FirebaseFirestore.instance.collection(LOG_COLLECTION);
+  final logsCollection = FirebaseFirestore.instance.collection(LOG_COLLECTION).withConverter(fromFirestore: (snapshot, _)
+  => LogEntity.fromJson(snapshot.data()!, snapshot.id),
+    toFirestore: (logEntity, _) => logEntity.toJson(),);
 
   @override
   Future<void> addNewLog(Log log) {
-    return logsCollection.doc(log.id).set(log.toEntity().toDocument());
+    return logsCollection.doc(log.id).set(log.toEntity());
   }
 
   @override
@@ -32,7 +34,7 @@ class FirebaseLogsRepository implements LogsRepository {
         .snapshots()
         .map((snapshot) {
       var snapshots = snapshot.docs
-          .map((doc) => Log.fromEntity(LogEntity.fromSnapshot(doc)))
+          .map((doc) => Log.fromEntity(doc.data()))
           .toList();
 
       return snapshots;
@@ -41,7 +43,7 @@ class FirebaseLogsRepository implements LogsRepository {
 
   @override
   Future<void> updateLog(Log? update) {
-    return logsCollection.doc(update!.id).update(update.toEntity().toDocument());
+    return logsCollection.doc(update!.id).update(update.toEntity().toJson());
   }
 
   @override

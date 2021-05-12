@@ -1,6 +1,5 @@
 import 'dart:collection';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -59,28 +58,28 @@ class LogEntity extends Equatable {
         'memberList: $memberList}';
   }
 
-  static LogEntity fromSnapshot(DocumentSnapshot snap) {
+  static LogEntity fromJson(Map<String, Object?> json, String id) {
     return LogEntity(
-      uid: snap[UID],
-      id: snap.id,
-      name: snap[LOG_NAME],
-      currency: snap[CURRENCY_NAME],
-      categories: (snap[CATEGORIES] as LinkedHashMap<String, dynamic>)
+      uid: json[UID]! as String,
+      id: id,
+      name: json[LOG_NAME]! as String,
+      currency: json[CURRENCY_NAME]! as String,
+      categories: (json[CATEGORIES]! as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(
               key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
-      subcategories: (snap[SUBCATEGORIES]
+      subcategories: (json[SUBCATEGORIES]!
               as LinkedHashMap<String, dynamic>)
           .map((key, value) => MapEntry(
               key, AppCategory.fromEntity(AppCategoryEntity.fromJson(value)))),
-      archive: snap[ARCHIVE],
-      defaultCategory: snap[DEFAULT_CATEGORY] ?? NO_CATEGORY,
-      logMembers: (snap[MEMBERS] as Map<String, dynamic>).map((key,
+      archive: json[ARCHIVE] as bool,
+      defaultCategory: json[DEFAULT_CATEGORY] as String? ?? NO_CATEGORY,
+      logMembers: (json[MEMBERS] as Map<String, dynamic>).map((key,
               value) =>
           MapEntry(key, LogMember.fromEntity(LogMemberEntity.fromJson(value)))),
     );
   }
 
-  Map<String, Object?> toDocument() {
+  Map<String, Object?> toJson() {
     return {
       UID: uid,
       LOG_NAME: name,

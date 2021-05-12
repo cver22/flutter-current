@@ -21,8 +21,9 @@ abstract class EntriesRepository {
 
 class FirebaseEntriesRepository implements EntriesRepository {
   FirebaseFirestore db = FirebaseFirestore.instance;
-  final entriesCollection =
-      FirebaseFirestore.instance.collection(ENTRY_COLLECTION).withConverter(fromFirestore: (snapshot, _) => AppEntryEntity.fromJson(snapshot.data()!, snapshot.id),
+  late final entriesCollection =
+      db.collection(ENTRY_COLLECTION).withConverter(fromFirestore: (snapshot, _)
+      => AppEntryEntity.fromJson(snapshot.data()!, snapshot.id),
         toFirestore: (appEntryEntity, _) => appEntryEntity.toJson(),);
 
   @override
