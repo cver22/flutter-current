@@ -22,8 +22,8 @@ class SettingsEntity implements Equatable {
   final List<AppCategoryEntity> defaultCategoryEntities;
   final List<AppCategoryEntity> defaultSubcategoryEntities;
   final String? defaultLogId;
-  final bool autoInsertDecimalPoint;
-  final List<String> logOrder;
+  final bool? autoInsertDecimalPoint;
+  final List<String>? logOrder;
 
   @override
   List<Object?> get props => [

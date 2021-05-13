@@ -2,8 +2,8 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
-import 'package:meta/meta.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -45,7 +45,7 @@ class SettingsFetcher {
     final file = await _localFile;
     try {
       // Write settings to file from store as a json.
-      /*file.writeAsString(json.encode(settings.toEntity().toJson()));*/
+      file.writeAsString(json.encode(settings.toEntity().toJson()));
     } catch (e) {
       print('Error writing settings: ${e.toString()}');
     }
@@ -56,6 +56,7 @@ class SettingsFetcher {
     final SharedPreferences prefs = await _prefs;
     //determines if this is the first instance the user has logged in and sets the default settings
     bool settingsInitialized = (prefs.getBool('settings_initialized') ?? false);
+
 
     if (resetSettings) {
       settingsInitialized = false;
@@ -72,24 +73,27 @@ class SettingsFetcher {
         String jsonString =
             await rootBundle.loadString('assets/default_settings.txt');
 
-       /* _store.dispatch(SettingsUpdate(
+        _store.dispatch(SettingsUpdate(
           settings: Maybe.some(Settings.fromEntity(
               SettingsEntity.fromJson(json.decode(jsonString)))),
-        ));*/
+        ));
 
         //marks that default settings have previously been read from assets
         prefs.setBool('settings_initialized', true);
       } else {
         //reads the settings from the saved file to reload them if they are not yet loaded
+        print('this does something');
+
         final file = await _localFile;
 
-        Map<String, dynamic>? jsonData = LinkedHashMap();
+        Map<String, dynamic> jsonData = LinkedHashMap();
         jsonData = json.decode(await file.readAsString());
+        //jsonData.forEach((key, value) {print('$key: $value');});
 
-        /*_store.dispatch(SettingsUpdate(
+        _store.dispatch(SettingsUpdate(
           settings: Maybe.some(
               Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
-        ));*/
+        ));
       }
     } catch (e) {
       // If encountering an error

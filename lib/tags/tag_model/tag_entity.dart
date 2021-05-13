@@ -1,11 +1,9 @@
 import 'package:equatable/equatable.dart';
 import '../../utils/db_consts.dart';
-import 'package:json_annotation/json_annotation.dart';
+
 import 'package:meta/meta.dart';
 
-
 @immutable
-@JsonSerializable()
 class TagEntity extends Equatable {
   final String? logId;
   final String? id;
@@ -15,19 +13,18 @@ class TagEntity extends Equatable {
   final Map<String, int> tagSubcategoryFrequency; //how often the tag is used for each subcategory
   final List<String> memberList; //used for retrieval from database
 
-
   const TagEntity(
       {this.logId,
-        this.id,
-        this.name = '',
-        this.tagLogFrequency = 0,
-        this.tagCategoryFrequency = const {},
-        this.tagSubcategoryFrequency = const {},
-        this.memberList = const []});
-
+      this.id,
+      this.name = '',
+      this.tagLogFrequency = 0,
+      this.tagCategoryFrequency = const {},
+      this.tagSubcategoryFrequency = const {},
+      this.memberList = const []});
 
   @override
-  List<Object?> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, tagSubcategoryFrequency, memberList];
+  List<Object?> get props =>
+      [logId, id, name, tagLogFrequency, tagCategoryFrequency, tagSubcategoryFrequency, memberList];
 
   @override
   String toString() {
@@ -44,7 +41,7 @@ class TagEntity extends Equatable {
       tagCategoryFrequency:
           (json[TAG_CATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
       tagSubcategoryFrequency:
-      (json[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+          (json[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
       memberList: List<String>.from(json[MEMBER_LIST] as List<dynamic>),
     );
   }

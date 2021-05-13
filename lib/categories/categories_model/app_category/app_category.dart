@@ -17,7 +17,7 @@ class AppCategory extends Equatable {
       this.parentCategoryId});
 
   @override
-  List<Object> get props => [id!, name!, emojiChar, parentCategoryId!];
+  List<Object> get props => [id!, name!, emojiChar];
 
   @override
   String toString() {

@@ -1,9 +1,8 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:currency_picker/src/currency.dart';
-import 'package:meta/meta.dart';
+
 
 String formattedAmount(
-    {int? value = 0,
+    {int value = 0,
     bool showSeparators = false,
     bool showTrailingZeros = false,
     required Currency currency,
@@ -12,7 +11,7 @@ String formattedAmount(
   String returnString = '';
 
   if (value != 0) {
-    bool isNegative = value! < 0;
+    bool isNegative = value < 0;
     int absValue = value.abs();
     int smallUnits = 0;
     int bigUnits = 0;

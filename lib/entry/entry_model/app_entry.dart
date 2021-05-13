@@ -13,8 +13,8 @@ class AppEntry extends Equatable with ChangeNotifier {
     required this.id,
     required this.logId,
     required this.currency,
-    this.categoryId = NO_CATEGORY,
-    this.subcategoryId = NO_SUBCATEGORY,
+    this.categoryId,
+    this.subcategoryId,
     this.amount = 0,
     this.amountForeign,
     this.exchangeRate,
@@ -27,8 +27,8 @@ class AppEntry extends Equatable with ChangeNotifier {
   final String id;
   final String logId;
   final String currency;
-  final String categoryId;
-  final String subcategoryId;
+  final String? categoryId;
+  final String? subcategoryId;
   final int amount;
   final int? amountForeign;
   final double? exchangeRate;

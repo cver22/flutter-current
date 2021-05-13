@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
 
 import '../../utils/maybe.dart';
 import 'settings.dart';

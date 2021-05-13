@@ -7,11 +7,11 @@ import 'member_entity.dart';
 @immutable
 class Member extends Equatable {
   final String uid;
-  final int paid;
-  final int spent;
-  final int order;
+  final int? paid;
+  final int? spent;
+  final int? order;
 
-  Member({required this.uid, this.paid = 0, this.spent = 0, this.order = 0});
+  Member({required this.uid, this.paid, this.spent, this.order});
 
   @override
   List<Object?> get props => [uid, paid, spent, order];

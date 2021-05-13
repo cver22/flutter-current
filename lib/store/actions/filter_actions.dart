@@ -42,12 +42,12 @@ class FilterSetReset implements AppAction {
   AppState updateState(AppState appState) {
     Filter updatedFilter = Filter.initial();
     List<Log?> logs = [];
-    Map<String, AppCategory?> allCategories = LinkedHashMap();
-    Map<String, AppCategory?> allSubcategories = LinkedHashMap();
+    Map<String, AppCategory> allCategories = LinkedHashMap();
+    Map<String, AppCategory> allSubcategories = LinkedHashMap();
     Map<String, AppCategory> consolidatedCategories = LinkedHashMap();
-    Map<String, AppCategory?> consolidatedSubcategories = LinkedHashMap();
+    Map<String, AppCategory> consolidatedSubcategories = LinkedHashMap();
     List<bool> expandedCategories = [];
-    Map<String?, String?> members = LinkedHashMap();
+    Map<String, String> members = LinkedHashMap();
     List<Tag> allTags = [];
     List<String> selectedLogs = [];
     bool updated = false;
@@ -66,8 +66,8 @@ class FilterSetReset implements AppAction {
       logs.forEach((log) {
         //create map of allMembers
         log!.logMembers.forEach((key, member) {
-          if (!members.containsKey(key)) {
-            members.putIfAbsent(key, () => member.name);
+          if (!members.containsKey(key) && member.name != null) {
+            members.putIfAbsent(key, () => member.name!);
           }
         });
 
@@ -86,19 +86,19 @@ class FilterSetReset implements AppAction {
     if (log == null) {
       //update all parentIds to parent name
       allSubcategories.updateAll((key, subcategory) {
-        return subcategory!.copyWith(parentCategoryId: allCategories[subcategory.parentCategoryId]!.name);
+        return subcategory.copyWith(parentCategoryId: allCategories[subcategory.parentCategoryId]!.name);
       });
 
       allSubcategories.forEach((key, subcategory) {
         bool insert = true;
         consolidatedSubcategories.forEach((key, cSub) {
           //check if the subcategory is a duplicate for its category
-          if (subcategory!.name == cSub!.name && subcategory.parentCategoryId == cSub.parentCategoryId && subcategory.id != NO_SUBCATEGORY) {
+          if (subcategory.name == cSub.name && subcategory.parentCategoryId == cSub.parentCategoryId && subcategory.id != NO_SUBCATEGORY) {
             insert = false;
           }
         });
         if (insert) {
-          consolidatedSubcategories.putIfAbsent(subcategory!.id!, () => subcategory);
+          consolidatedSubcategories.putIfAbsent(subcategory.id!, () => subcategory);
         }
       });
 
@@ -106,13 +106,13 @@ class FilterSetReset implements AppAction {
         bool insert = true;
         consolidatedCategories.forEach((key, cCat) {
           //check for name duplication
-          if (category!.name == key) {
+          if (category.name == key) {
             insert = false;
           }
         });
         if (insert) {
           //add category to consolidated list and update id from name
-          consolidatedCategories.putIfAbsent(category!.name!, () => category.copyWith(id: category.name));
+          consolidatedCategories.putIfAbsent(category.name!, () => category.copyWith(id: category.name));
         }
       });
     }

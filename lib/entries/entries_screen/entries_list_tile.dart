@@ -82,7 +82,7 @@ class EntriesListTile extends StatelessWidget {
         ),
         if(entry.currency != logCurrency.code)
           Text(
-            '${formattedAmount(value: entry.amountForeign,
+            '${formattedAmount(value: entry.amountForeign ?? 0,
                 showSeparators: true,
                 currency: CurrencyService().findByCode(entry.currency)!,
                 showSymbol: true,
@@ -100,20 +100,19 @@ class EntriesListTile extends StatelessWidget {
 
   String? displayChar({required Log log}) {
     String? emojiChar;
-    String subcategoryId = entry.subcategoryId;
+    String? subcategoryId = entry.subcategoryId;
 
-    if (!subcategoryId.contains(OTHER)) {
+    if (subcategoryId != null && !subcategoryId.contains(OTHER) && subcategoryId != NO_SUBCATEGORY) {
       emojiChar = log.subcategories
           .firstWhere((element) => element.id == subcategoryId)
           .emojiChar;
-    }
-
-    if (entry.categoryId != NO_CATEGORY && emojiChar == null) {
+    }else if (entry.categoryId != null){
       emojiChar =
           log.categories
               .firstWhere((element) => element.id == entry.categoryId)
               .emojiChar;
     }
+
 
     return emojiChar;
   }
@@ -121,16 +120,24 @@ class EntriesListTile extends StatelessWidget {
   Widget categoriesSubcategories({required Log log}) {
     AppCategory category = log.categories.firstWhere((element) => element.id == entry.categoryId,
         orElse: () => log.categories.firstWhere((element) => element.id == NO_CATEGORY));
-    AppCategory subcategory =
-    log.subcategories.firstWhere((element) => element.id == entry.subcategoryId);
+    AppCategory? subcategory;
+    bool hasSubcategory = false;
+    if(entry.subcategoryId != null && entry.subcategoryId != NO_SUBCATEGORY){
+      subcategory =
+      log.subcategories.firstWhere((element) => element.id == entry.subcategoryId);
+      hasSubcategory = true;
+    }
 
-    bool hasSubcategory = subcategory.id != null;
+
+
+
+
 
     return Wrap(
       children: [
         hasSubcategory
             ? Text(
-          '${subcategory.name}',
+          '${subcategory!.name}',
           style: TextStyle(fontWeight: FontWeight.bold),
         )
             : Container(),

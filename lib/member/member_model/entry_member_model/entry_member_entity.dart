@@ -11,8 +11,8 @@ part 'entry_member_entity.g.dart';
 class EntryMemberEntity extends MemberEntity {
   final bool? paying;
   final bool spending;
-  final int paidForeign;
-  final int spentForeign;
+  final int? paidForeign;
+  final int? spentForeign;
 
   EntryMemberEntity({
     uid,
@@ -21,9 +21,9 @@ class EntryMemberEntity extends MemberEntity {
     order,
     this.paying,
     this.spending = true,
-    this.paidForeign = 0,
-    this.spentForeign = 0,
-  }) : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
+    this.paidForeign,
+    this.spentForeign,
+  }) : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
   List<Object?> get props => [uid, paid, spent, paying, spending, order, paidForeign, spentForeign];

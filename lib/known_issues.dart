@@ -37,6 +37,8 @@
 //TODO need to trigger log totals calculator when getting added to a log
 //TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? should the adding of someone go through an update all the entries?
 //TODO change formatters to a class, should make them easier to use and implement
+//TODO add currency search value to state to be able to handle case where no currencies can be found that match the search
+//TODO entries loaded from null should be given NO_CATEGORY AND NO_SUBCATEGORY defaults if the value is null
 
 
 //TODO VISUAL
@@ -62,7 +64,7 @@
 //build build local repository for currency fetcher
 //fix filter to handle multiple currencies
 //ask Ana, how should entry list look
-//continue null safety at Logs
+
 
 
 

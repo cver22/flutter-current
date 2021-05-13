@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -60,6 +61,7 @@ class _AppScreenState extends State<AppScreen>
       length: 3,
       child: Builder(
         builder: (BuildContext context) {
+          List<Currency> currencies = CurrencyService().getAll();
           return WillPopScope(
             onWillPop: () async {
               if (_controller.index == 0) {

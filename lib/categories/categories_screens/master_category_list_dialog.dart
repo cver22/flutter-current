@@ -24,8 +24,8 @@ class MasterCategoryListDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    List<AppCategory>? categories = [];
-    List<AppCategory>? subcategories = [];
+    List<AppCategory> categories = [];
+    List<AppCategory> subcategories = [];
 
     if (setLogFilter == SettingsLogFilterEntry.log) {
       return ConnectState(
@@ -48,8 +48,9 @@ class MasterCategoryListDialog extends StatelessWidget {
           categories = settings.defaultCategories;
           subcategories = settings.defaultSubcategories;
 
+
           return _buildDialog(
-              categories: categories!, subcategories: subcategories);
+              categories: categories, subcategories: subcategories);
         },
       );
     } else if (setLogFilter == SettingsLogFilterEntry.filter) {
@@ -63,7 +64,7 @@ class MasterCategoryListDialog extends StatelessWidget {
           subcategories = filterState.consolidatedSubcategories;
 
           return _buildDialog(
-            categories: categories!,
+            categories: categories,
             subcategories: subcategories,
             selectedSubcategories: filter.selectedSubcategories,
             selectedCategories: filter.selectedCategories,
@@ -76,8 +77,8 @@ class MasterCategoryListDialog extends StatelessWidget {
   }
 
   Widget _buildDialog(
-      {required List<AppCategory?> categories,
-      required List<AppCategory?>? subcategories,
+      {required List<AppCategory> categories,
+      required List<AppCategory> subcategories,
       List<String>? selectedCategories,
       List<String>? selectedSubcategories}) {
     return AppDialogWithActions(
@@ -85,15 +86,13 @@ class MasterCategoryListDialog extends StatelessWidget {
           setLogFilter == SettingsLogFilterEntry.filter ? null : _displayAddButton(),
       title: CATEGORY,
       actions: setLogFilter == SettingsLogFilterEntry.filter ? _actions() : null,
-      child: categories.length > 0
-          ? MasterCategoryDragAndDropList(
-              selectedCategories: selectedCategories!,
-              selectedSubcategories: selectedSubcategories!,
+      child: MasterCategoryDragAndDropList(
+              selectedCategories: selectedCategories,
+              selectedSubcategories: selectedSubcategories,
               categories: categories,
-              subcategories: subcategories!,
+              subcategories: subcategories,
               setLogFilter: setLogFilter,
-            )
-          : EmptyContent(),
+      ),
     );
   }
 

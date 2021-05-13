@@ -50,8 +50,9 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         where: notIdentical,
         map: (state) => state.currencyState,
         builder: (currencyState) {
+
           return AppDialogWithActions(
-            topWidget: searchBox(lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]!.lastUpdated),
+            topWidget: searchBox(lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]?.lastUpdated),
             child: _buildCurrencyList(
               referenceCurrencyCode: widget.referenceCurrency,
               returnCurrency: widget.returnCurrency,
@@ -64,12 +65,12 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         });
   }
 
-  Widget searchBox({required DateTime lastUpdated}) {
+  Widget searchBox({required DateTime? lastUpdated}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
       child: Column(
         children: [
-          Text('Updated: ${lastUpdated.year}/${lastUpdated.month}/${lastUpdated.day}', style: TextStyle(fontSize: 10.0, fontStyle: FontStyle.italic)),
+          if (lastUpdated != null) Text('Updated: ${lastUpdated.year}/${lastUpdated.month}/${lastUpdated.day}', style: TextStyle(fontSize: 10.0, fontStyle: FontStyle.italic)),
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [

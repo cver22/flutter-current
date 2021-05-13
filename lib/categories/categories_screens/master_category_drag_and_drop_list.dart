@@ -12,8 +12,8 @@ import 'category_list_tile.dart';
 import 'category_list_tools.dart';
 
 class MasterCategoryDragAndDropList extends StatelessWidget {
-  final List<String> selectedCategories;
-  final List<String> selectedSubcategories;
+  final List<String>? selectedCategories;
+  final List<String>? selectedSubcategories;
   final List<AppCategory?> categories;
   final List<AppCategory?> subcategories;
   final SettingsLogFilterEntry setLogFilter;
@@ -31,8 +31,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
   Widget build(BuildContext context) {
     print('build drag and drop');
     return DragAndDropLists(
-      children: List.generate(
-          categories.length, (index) => _buildList(outerIndex: index)),
+      children: List.generate(categories.length, (index) => _buildList(outerIndex: index)),
       onItemReorder: _onItemReorder,
       onListReorder: _onListReorder,
       // listGhost is mandatory when using expansion tiles to prevent multiple widgets using the same globalkey
@@ -59,8 +58,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
     AppCategory category = categories[outerIndex]!;
     List<AppCategory> subs = List.from(subcategories);
     //retain subcategory list based on parent category list
-    subs.retainWhere(
-        (subcategory) => subcategory.parentCategoryId == category.id);
+    subs.retainWhere((subcategory) => subcategory.parentCategoryId == category.id);
 
     return DragAndDropListExpansion(
       canDrag: setLogFilter != SettingsLogFilterEntry.filter,
@@ -71,29 +69,23 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       contentsWhenEmpty: _emptyContents(category: category),
       title: Text(category.name!),
       leading: CategoryListTileLeading(category: category),
-      trailing: _setTrailingIcon(
-          category: category,
-          expandedCategories: expandedCategories,
-          outerIndex: outerIndex),
+      trailing: _setTrailingIcon(category: category, expandedCategories: expandedCategories, outerIndex: outerIndex),
       children: List.generate(
           subs.length,
           (index) => _buildItem(
               subcategory: subs[index],
               categories: categories,
-              selected:                       selectedSubcategories.isNotEmpty
-                  ? selectedSubcategories.contains(subs[index].id)
-                  : false)),
+              selected: selectedSubcategories != null ? selectedSubcategories!.contains(subs[index].id) : false)),
       listKey: ObjectKey(subs),
     );
   }
 
   Widget _setTrailingIcon(
       {required AppCategory category, required List<bool> expandedCategories, required int outerIndex}) {
-    if (setLogFilter == SettingsLogFilterEntry.filter) {
+    if (setLogFilter == SettingsLogFilterEntry.filter && selectedCategories != null) {
       return FilterListTileTrailing(
-          onSelect: () =>
-              Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
-          selected: selectedCategories.contains(category.id));
+          onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
+          selected: selectedCategories!.contains(category.id));
     } else {
       return MasterCategoryListTileTrailing(
         categories: categories,
@@ -116,22 +108,16 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   List<bool> setExpandedCategories(List<bool> expandedCategories) {
     if (setLogFilter == SettingsLogFilterEntry.log) {
-      expandedCategories =
-          List.from(Env.store.state.logsState.expandedCategories);
+      expandedCategories = List.from(Env.store.state.logsState.expandedCategories);
     } else if (setLogFilter == SettingsLogFilterEntry.settings) {
-      expandedCategories =
-          List.from(Env.store.state.settingsState.expandedCategories);
+      expandedCategories = List.from(Env.store.state.settingsState.expandedCategories);
     } else if (setLogFilter == SettingsLogFilterEntry.filter) {
-      expandedCategories =
-          List.from(Env.store.state.filterState.expandedCategories);
+      expandedCategories = List.from(Env.store.state.filterState.expandedCategories);
     }
     return expandedCategories;
   }
 
-  _buildItem(
-      {required AppCategory subcategory,
-      required List<AppCategory?> categories,
-      bool selected = false}) {
+  _buildItem({required AppCategory subcategory, required List<AppCategory?> categories, bool selected = false}) {
     return DragAndDropItem(
         canDrag: setLogFilter != SettingsLogFilterEntry.filter,
         child: CategoryListTile(
@@ -147,18 +133,15 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   void _onTapEdit(AppCategory subcategory, List<AppCategory?> categories) {
     if (setLogFilter == SettingsLogFilterEntry.log) {
-      getLogAddEditSubcategoryDialog(
-          subcategory: subcategory, categories: categories);
+      getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     } else if (setLogFilter == SettingsLogFilterEntry.settings) {
-      getSettingsAddEditSubcategoryDialog(
-          subcategory: subcategory, categories: categories);
+      getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     } else if (setLogFilter == SettingsLogFilterEntry.filter) {
       Env.store.dispatch(FilterSelectDeselectSubcategory(id: subcategory.id!));
     }
   }
 
-  void _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex,
-      int newSubcategoryIndex, int newCategoryIndex) {
+  void _onItemReorder(int oldSubcategoryIndex, int oldCategoryIndex, int newSubcategoryIndex, int newCategoryIndex) {
     if (setLogFilter == SettingsLogFilterEntry.log) {
       Env.store.dispatch(LogReorderSubcategory(
           oldCategoryIndex: oldCategoryIndex,
@@ -176,13 +159,10 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   void _onListReorder(int oldCategoryIndex, int newCategoryIndex) {
     if (setLogFilter == SettingsLogFilterEntry.log) {
-      Env.store.dispatch(LogReorderCategory(
-          oldCategoryIndex: oldCategoryIndex,
-          newCategoryIndex: newCategoryIndex));
+      Env.store.dispatch(LogReorderCategory(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     } else if (setLogFilter == SettingsLogFilterEntry.settings) {
-      Env.store.dispatch(SettingsReorderCategory(
-          oldCategoryIndex: oldCategoryIndex,
-          newCategoryIndex: newCategoryIndex));
+      Env.store
+          .dispatch(SettingsReorderCategory(oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex));
     }
   }
 

@@ -1,3 +1,5 @@
+import 'package:expenses/store/actions/currency_actions.dart';
+
 import 'splash_screen.dart';
 import '../auth_user/models/auth_state.dart';
 import '../env.dart';
@@ -33,6 +35,8 @@ class HomeScreen extends StatelessWidget {
           Env.tagFetcher.loadTags();
           Env.entriesFetcher.loadEntries();
           Env.userFetcher.isUserSignedInWithEmail();
+
+
 
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);

@@ -84,7 +84,7 @@ Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
 
 LogTotal updateLogMemberTotals(
     {required List<AppEntry> entries, required Log log}) {
-  Map<String?, LogMember> logMembers = Map.from(log.logMembers);
+  Map<String, LogMember> logMembers = Map.from(log.logMembers);
   DateTime now = DateTime.now();
 
   int currentMonth = now.month;
@@ -110,25 +110,32 @@ LogTotal updateLogMemberTotals(
 
     if (entryYear == currentYear && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
-        int paid = member.paid;
-        int spent = member.spent;
+        int paid = 0;
+        int spent = 0;
+        if(member.paid != null){
+           paid = member.paid!;
+        }
+        if(member.spent != null){
+          spent = member.spent!;
+        }
+
         thisMonthTotalPaid += paid;
 
         logMembers.update(
             key,
             (value) => value.copyWith(
-                paid: value.paid + paid, spent: value.spent + spent));
+                paid: value.paid! + paid, spent: value.spent! + spent));
       });
     } else if (entryYear == lastMonthYear && entryMonth == lastMonth) {
       entry.entryMembers.forEach((key, member) {
 
-          lastMonthTotalPaid += member.paid;
+          lastMonthTotalPaid += member.paid!;
 
       });
     } else if (entryYear == currentYear - 1 && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
 
-          sameMonthLastYearTotalPaid += member.paid;
+          sameMonthLastYearTotalPaid += member.paid! ;
 
       });
     }

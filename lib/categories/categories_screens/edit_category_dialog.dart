@@ -61,7 +61,7 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
     /*String exclamationMark = '\u{2757}'; // exclamation_mark*/
     String heavyDollarSign = '\u{1F4B2}'; // heavy_dollar_sign
     category = widget.category;
-    if (category!.id!.length > 0) {
+    if (category?.id != null) {
       newCategory = false;
       emojiChar = category!.emojiChar /*?? exclamationMark*/;
       name = category!.name;
@@ -262,9 +262,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   }
 
   bool _canDelete({String? categoryId}) {
-    if (categoryId == '' ||
+    if (categoryId == null ||
         categoryId == NO_CATEGORY ||
-        categoryId!.contains(OTHER) ||
+        categoryId.contains(OTHER) ||
         categoryId == TRANSFER_FUNDS) {
       return false;
     }
@@ -274,9 +274,9 @@ class _EditCategoryDialogState extends State<EditCategoryDialog> {
   bool _modifiable({String? categoryId}) {
 
     //special categories and subcategories can not be renamed
-    if (categoryId == NO_CATEGORY ||
-        categoryId!.contains(OTHER) ||
-        categoryId == TRANSFER_FUNDS) {
+    if (categoryId != null && (categoryId == NO_CATEGORY ||
+        categoryId.contains(OTHER) ||
+        categoryId == TRANSFER_FUNDS)) {
       return false;
     }
 

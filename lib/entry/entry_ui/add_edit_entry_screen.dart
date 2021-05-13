@@ -256,7 +256,7 @@ class AddEditEntryScreen extends StatelessWidget {
   }) {
     return Text(
       '${formattedAmount(
-        value: entry.amountForeign,
+        value: entry.amountForeign ?? 0,
         showSeparators: true,
         currency: currency,
         showSymbol: true,
@@ -267,7 +267,7 @@ class AddEditEntryScreen extends StatelessWidget {
     );
   }
 
-  Widget _categoryButton({required AppEntry entry, required List<AppCategory?> categories, required bool newEntry}) {
+  Widget _categoryButton({required AppEntry entry, required List<AppCategory> categories, required bool newEntry}) {
     return CategoryButton(
       entry: true,
       newEntry: newEntry,
@@ -281,8 +281,8 @@ class AddEditEntryScreen extends StatelessWidget {
           ),
         ),
       },
-      category: categories.firstWhere((element) => element!.id == entry.categoryId,
-          orElse: () => categories.firstWhere((element) => element!.id == NO_CATEGORY, orElse: () => null))!,
+      category: categories.firstWhere((element) => element.id == entry.categoryId,
+          orElse: () => categories.firstWhere((element) => element.id == NO_CATEGORY)),
     );
   }
 
@@ -299,7 +299,7 @@ class AddEditEntryScreen extends StatelessWidget {
           ),
         ),
       },
-      category: entry.subcategoryId.length > 0
+      category: entry.subcategoryId == null
           ? null
           : subcategories.firstWhereOrNull((element) => element.id == entry.subcategoryId)!,
     );

@@ -55,13 +55,13 @@ class _FilterDialogState extends State<FilterDialog> {
     if (Env.store.state.filterState.filter.value.minAmount.isSome) {
       _minAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state.filterState.filter.value.minAmount.value, currency: CurrencyService().findByCode('CAD')!));
+              value: Env.store.state.filterState.filter.value.minAmount.value ?? 0, currency: CurrencyService().findByCode('CAD')!));
     }
 
     if (Env.store.state.filterState.filter.value.maxAmount.isSome) {
       _maxAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state.filterState.filter.value.maxAmount.value, currency: CurrencyService().findByCode('CAD')!));
+              value: Env.store.state.filterState.filter.value.maxAmount.value ?? 0, currency: CurrencyService().findByCode('CAD')!));
     }
 
     super.initState();

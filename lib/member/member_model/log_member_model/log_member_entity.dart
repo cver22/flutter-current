@@ -13,7 +13,7 @@ class LogMemberEntity extends MemberEntity {
   final String role;
 
   LogMemberEntity({uid, paid, spent, order, this.name, this.role = WRITER})
-      : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
+      : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
   List<Object?> get props => [uid, name, paid, spent, role, order];

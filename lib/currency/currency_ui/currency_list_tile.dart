@@ -55,7 +55,7 @@ class CurrencyListTile extends StatelessWidget {
                                   color: Theme.of(context).hintColor,
                                 ),
                               ),
-                              if (withConversionRates && currency.code != baseCurrency.code)
+                              if (withConversionRates && currency.code != baseCurrency.code && conversionRate != 0)
                                 Text(
                                   '1 ${CurrencyUtils.currencyToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.currencyToEmoji(baseCurrency)}',
                                   style: TextStyle(

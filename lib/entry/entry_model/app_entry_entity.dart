@@ -12,8 +12,8 @@ class AppEntryEntity extends Equatable {
       {required this.id,
         required this.logId,
         required this.currency,
-      this.category = NO_CATEGORY,
-      this.subcategory = NO_SUBCATEGORY,
+      this.category,
+      this.subcategory,
       this.amount = 0,
       this.amountForeign,
       this.exchangeRate,
@@ -26,8 +26,8 @@ class AppEntryEntity extends Equatable {
   final String id;
   final String logId;
   final String currency;
-  final String category;
-  final String subcategory;
+  final String? category;
+  final String? subcategory;
   final int amount;
   final int? amountForeign;
   final double? exchangeRate;
@@ -65,11 +65,11 @@ class AppEntryEntity extends Equatable {
   static AppEntryEntity fromJson(Map<String, Object?> json, String id) {
     return AppEntryEntity(
       id: id,
-      logId: json[LOG_ID]! as String,
-      currency: json[CURRENCY_NAME]! as String,
-      category: json[CATEGORY]! as String,
-      subcategory: json[SUBCATEGORY]! as String,
-      amount: json[AMOUNT]! as int,
+      logId: json[LOG_ID] as String,
+      currency: json[CURRENCY_NAME] as String,
+      category: json[CATEGORY] as String?,
+      subcategory: json[SUBCATEGORY] as String?,
+      amount: json[AMOUNT] as int,
       amountForeign:  json[AMOUNT_FOREIGN] as int?,
       exchangeRate: json[EXCHANGE_RATE] as double?,
       comment: json[COMMENT] as String?,

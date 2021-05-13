@@ -11,8 +11,8 @@ class Settings extends Equatable {
   final List<AppCategory> defaultCategories;
   final List<AppCategory> defaultSubcategories;
   final String? defaultLogId;
-  final bool autoInsertDecimalPoint;
-  final List<String> logOrder;
+  final bool? autoInsertDecimalPoint;
+  final List<String>? logOrder;
 
   Settings(
       {required this.homeCurrency,

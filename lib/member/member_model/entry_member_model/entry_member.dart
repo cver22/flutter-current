@@ -14,8 +14,8 @@ class EntryMember extends Member {
   final FocusNode? payingFocusNode;
   final FocusNode? spendingFocusNode;
   final bool userEditedSpent;
-  final int paidForeign;
-  final int spentForeign;
+  final int? paidForeign;
+  final int? spentForeign;
 
   EntryMember({
     required uid,
@@ -29,9 +29,9 @@ class EntryMember extends Member {
     this.payingFocusNode,
     this.spendingFocusNode,
     this.userEditedSpent = false,
-    this.paidForeign = 0,
-    this.spentForeign = 0,
-  }) : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
+    this.paidForeign,
+    this.spentForeign,
+  }) : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
   List<Object?> get props => [

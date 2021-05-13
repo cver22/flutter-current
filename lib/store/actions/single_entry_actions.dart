@@ -99,8 +99,8 @@ class EntrySelectEntry implements AppAction {
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
     entryMembers.updateAll((key, value) => value.copyWith(
-          payingController: TextEditingController(text: formattedAmount(value: value.paid, currency: currency!)),
-          spendingController: TextEditingController(text: formattedAmount(value: value.spent, currency: currency)),
+          payingController: TextEditingController(text: formattedAmount(value: value.paid ?? 0, currency: currency!)),
+          spendingController: TextEditingController(text: formattedAmount(value: value.spent ?? 0, currency: currency)),
           payingFocusNode: FocusNode(),
           spendingFocusNode: FocusNode(),
         ));
@@ -156,6 +156,14 @@ class EntryAddUpdateEntryAndTags implements AppAction {
       Env.entriesFetcher.updateEntry(entry!);
     } else if (newEntry) {
       //save new entry
+      if(updatedEntry.categoryId == null) {
+        updatedEntry = updatedEntry.copyWith(categoryId: NO_CATEGORY);
+      }
+
+      if(updatedEntry.subcategoryId == null) {
+        updatedEntry = updatedEntry.copyWith(subcategoryId: NO_SUBCATEGORY);
+      }
+
       Env.entriesFetcher.addEntry(updatedEntry);
     }
 
@@ -396,7 +404,7 @@ class EntrySelectSubcategory implements AppAction {
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry:
-                  Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
+                  Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(subcategoryId: subcategory)),
               tags: tags,
             )),
       ],
@@ -539,7 +547,7 @@ class EntryAddEditSubcategory implements AppAction {
   AppState updateState(AppState appState) {
     List<AppCategory> subcategories = List.from(appState.singleEntryState.subcategories);
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    Map<String?, Tag?> tags = Map.from(appState.singleEntryState.tags);
+    Map<String, Tag> tags = Map.from(appState.singleEntryState.tags);
     String? previousParentId = entry.categoryId;
 
     if (subcategory.id != null) {
@@ -558,7 +566,7 @@ class EntryAddEditSubcategory implements AppAction {
               updatedTag: tag,
               categoryOrSubcategory: CategoryOrSubcategory.category);
 
-          tags.update(tag.id, (value) => tag, ifAbsent: () => tag);
+          tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
         });
         entry = entry.copyWith(categoryId: subcategory.parentCategoryId);
       }
@@ -632,10 +640,10 @@ class EntryUpdateMemberPaidAmount implements AppAction {
       //update total amount paid by all members
       members.forEach((key, value) {
         if (value.paying!) {
-          amount = amount + value.paid;
+          amount = amount + value.paid!;
         }
       });
-    } else if (exchangeRate != null){
+    } else if (exchangeRate != null) {
       //update amount paidForeign by individual member
       entryMember = entryMember.copyWith(paidForeign: paidValue, paid: (paidValue / exchangeRate).round());
       members.update(entryMember.uid, (value) => entryMember);
@@ -643,10 +651,10 @@ class EntryUpdateMemberPaidAmount implements AppAction {
       //update total amountForeign paid by all members
       members.forEach((key, value) {
         if (value.paying!) {
-          amountForeign = amountForeign + value.paidForeign;
+          amountForeign = amountForeign + value.paidForeign!;
         }
         if (value.paying!) {
-          amount = amount + value.paid;
+          amount = amount + value.paid!;
         }
       });
     } else {
@@ -822,8 +830,8 @@ class EntryToggleMemberPaying implements AppAction {
     }
 
     members.forEach((key, value) {
-      if (value.paying!) {
-        amount = amount + value.paid;
+      if (value.paying! && value.paid != null) {
+        amount = amount + value.paid!;
       }
     });
 
@@ -1228,7 +1236,7 @@ class EntryClearAllFocus implements AppAction {
 ///*METHODS*/
 
 Tag _incrementCategoryAndLogFrequency(
-    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
+    {required Tag updatedTag, required String? categoryId, required String? subcategoryId}) {
   updatedTag = _incrementCategorySubcategoryFrequency(
       updatedTag: updatedTag, categoryId: categoryId, subcategoryId: subcategoryId);
 
@@ -1239,7 +1247,7 @@ Tag _incrementCategoryAndLogFrequency(
 }
 
 Tag _incrementCategorySubcategoryFrequency(
-    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
+    {required Tag updatedTag, required String? categoryId, required String? subcategoryId}) {
   //increment use of tag for this category if present
   updatedTag = _incrementAppCategoryFrequency(
       appCategoryId: categoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.category);
@@ -1252,7 +1260,7 @@ Tag _incrementCategorySubcategoryFrequency(
 }
 
 Tag _incrementAppCategoryFrequency(
-    {required String appCategoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
+    {required String? appCategoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
   print('increment tag: $updatedTag');
 
   Map<String, int> tagCategoryFrequency = const {};
@@ -1263,7 +1271,9 @@ Tag _incrementAppCategoryFrequency(
   }
 
   //adds frequency to tag for the category if present, adds it otherwise
-  tagCategoryFrequency.update(appCategoryId, (value) => value + 1, ifAbsent: () => 1);
+  if (appCategoryId != null) {
+    tagCategoryFrequency.update(appCategoryId, (value) => value + 1, ifAbsent: () => 1);
+  }
 
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
     updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
@@ -1276,7 +1286,7 @@ Tag _incrementAppCategoryFrequency(
 }
 
 Tag decrementCategorySubcategoryLogFrequency(
-    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
+    {required Tag updatedTag, required String? categoryId, required String? subcategoryId}) {
   updatedTag =
       _decrementCategorySubcategory(updatedTag: updatedTag, categoryId: categoryId, subcategoryId: subcategoryId);
 
@@ -1287,7 +1297,7 @@ Tag decrementCategorySubcategoryLogFrequency(
 }
 
 Tag _decrementCategorySubcategory(
-    {required Tag updatedTag, required String categoryId, required String subcategoryId}) {
+    {required Tag updatedTag, required String? categoryId, required String? subcategoryId}) {
   //decrement use of tag for this category if present
   updatedTag = _decrementAppCategoryFrequency(
       categoryId: categoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.category);
@@ -1298,7 +1308,7 @@ Tag _decrementCategorySubcategory(
 }
 
 Tag _decrementAppCategoryFrequency(
-    {required String categoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
+    {required String? categoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
   Map<String, int> tagCategoryFrequency = <String, int>{};
 
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
@@ -1308,7 +1318,10 @@ Tag _decrementAppCategoryFrequency(
   }
 
   //subtracts frequency to tag for the category if present, adds it otherwise
-  tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
+  if (categoryId != null) {
+    tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
+  }
+
   tagCategoryFrequency.removeWhere(
       (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
@@ -1366,7 +1379,7 @@ Map<String, EntryMember> _divideSpending({
   //TODO, randomly assign the remainder
 
   if (logCurrency.code != entryCurrency.code && entry.amountForeign != null && exchangeRate != null) {
-    if (members.length > 1 ) {
+    if (members.length > 1) {
       //multiple members
 
       entryMembers = _distributeDivisibleAmountForeign(
@@ -1382,7 +1395,7 @@ Map<String, EntryMember> _divideSpending({
         return member.copyWith(spentForeign: entry.amountForeign, spent: (entry.amountForeign! / exchangeRate).round());
       });
     }
-  } else if (logCurrency.code == entryCurrency.code){
+  } else if (logCurrency.code == entryCurrency.code) {
     if (members.length > 1) {
       //multiple members
 
@@ -1422,7 +1435,7 @@ Map<String, EntryMember> _distributeDivisibleAmount({
 
       if (member.userEditedSpent) {
         //if member spent is user set, deduct it from the divisibleAmount
-        divisibleAmount -= member.spent;
+        divisibleAmount -= member.spent!;
       }
     }
   });
@@ -1438,7 +1451,7 @@ Map<String, EntryMember> _distributeDivisibleAmount({
       return member;
     } else {
       if (divideRemaining) {
-        memberSpentAmount = member.spent + (divisibleAmount / membersSpending).truncate();
+        memberSpentAmount = member.spent! + (divisibleAmount / membersSpending).truncate();
       } else {
         memberSpentAmount = (divisibleAmount / membersSpending).truncate();
       }
@@ -1475,7 +1488,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
 
       if (member.userEditedSpent) {
         //if member spent is user set, deduct it from the divisibleAmount
-        divisibleAmount -= member.spentForeign;
+        divisibleAmount -= member.spentForeign!;
       }
     }
   });
@@ -1491,7 +1504,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
       return member;
     } else {
       if (divideRemaining) {
-        memberSpentAmount = member.spentForeign + (divisibleAmount / membersSpending).truncate();
+        memberSpentAmount = member.spentForeign! + (divisibleAmount / membersSpending).truncate();
       } else {
         memberSpentAmount = (divisibleAmount / membersSpending).truncate();
       }
@@ -1515,13 +1528,17 @@ Map<String, EntryMember> _setMembersList({required Log log, required String memb
 
   Map<String, EntryMember> members = {};
 
-  log.logMembers.forEach((key, value) {
+  log.logMembers.forEach((key, user) {
     members.putIfAbsent(
         key,
         () => EntryMember(
-              uid: value.uid,
-              order: value.order,
-              paying: memberId == value.uid ? true : false,
+              uid: user.uid,
+              paid: 0,
+              spent: 0,
+              paidForeign: 0,
+              spentForeign: 0,
+              order: user.order,
+              paying: memberId == user.uid ? true : false,
               payingController: TextEditingController(),
               spendingController: TextEditingController(),
               payingFocusNode: FocusNode(),
@@ -1539,7 +1556,7 @@ bool _canSave({required AppEntry entry}) {
 
     entry.entryMembers.forEach((key, value) {
       if (value.spending) {
-        totalMemberSpend += value.spent;
+        totalMemberSpend += value.spent!;
       }
     });
     if (totalMemberSpend == entry.amount) {
@@ -1554,17 +1571,17 @@ int _remainingSpending({required Map<String, EntryMember> entryMembers, required
 
   entryMembers.forEach((key, member) {
     if (member.paying!) {
-      if (isForeign) {
-        remainingSpending += member.paidForeign;
-      } else {
-        remainingSpending += member.paid;
+      if (isForeign && member.paidForeign != null) {
+        remainingSpending += member.paidForeign!;
+      } else if (member.paid != null){
+        remainingSpending += member.paid!;
       }
     }
     if (member.spending) {
-      if (isForeign) {
-        remainingSpending -= member.spentForeign;
-      } else {
-        remainingSpending -= member.spent;
+      if (isForeign && member.spentForeign != null) {
+        remainingSpending -= member.spentForeign!;
+      } else if (member.spent != null){
+        remainingSpending -= member.spent!;
       }
     }
   });
