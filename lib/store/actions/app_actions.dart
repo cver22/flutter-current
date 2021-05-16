@@ -20,8 +20,7 @@ abstract class AppAction {
   AppState updateState(AppState appState);
 }
 
-AppState updateSubstates(
-    AppState state, List<AppState Function(AppState)> updates) {
+AppState updateSubstates(AppState state, List<AppState Function(AppState)> updates) {
   return updates.fold(state, (updatedState, update) => update(updatedState));
 }
 
@@ -29,36 +28,28 @@ AppState Function(AppState) updateLogsState(LogsState update(logsState)) {
   return (state) => state.copyWith(logsState: update(state.logsState));
 }
 
-AppState Function(AppState) updateEntriesState(
-    EntriesState update(entriesState)) {
+AppState Function(AppState) updateEntriesState(EntriesState update(entriesState)) {
   return (state) => state.copyWith(entriesState: update(state.entriesState));
 }
 
-AppState Function(AppState) updateSettingsState(
-    SettingsState update(settingsState)) {
+AppState Function(AppState) updateSettingsState(SettingsState update(settingsState)) {
   return (state) => state.copyWith(settingsState: update(state.settingsState));
 }
 
-AppState Function(AppState) updateSingleEntryState(
-    SingleEntryState update(singleEntryState)) {
-  return (state) =>
-      state.copyWith(singleEntryState: update(state.singleEntryState));
+AppState Function(AppState) updateSingleEntryState(SingleEntryState update(singleEntryState)) {
+  return (state) => state.copyWith(singleEntryState: update(state.singleEntryState));
 }
 
 AppState Function(AppState) updateTagState(TagState? update(tagState)) {
   return (state) => state.copyWith(tagState: update(state.tagState));
 }
 
-AppState Function(AppState) updateLogTotalsState(
-    LogTotalsState update(logTotalsState)) {
-  return (state) =>
-      state.copyWith(logTotalsState: update(state.logTotalsState));
+AppState Function(AppState) updateLogTotalsState(LogTotalsState update(logTotalsState)) {
+  return (state) => state.copyWith(logTotalsState: update(state.logTotalsState));
 }
 
-AppState Function(AppState) updateFilterState(
-    FilterState update(filterState)) {
-  return (state) =>
-      state.copyWith(filterState: update(state.filterState));
+AppState Function(AppState) updateFilterState(FilterState update(filterState)) {
+  return (state) => state.copyWith(filterState: update(state.filterState));
 }
 
 AppState Function(AppState) updateCurrencyState(CurrencyState update(currencyState)) {
@@ -66,15 +57,12 @@ AppState Function(AppState) updateCurrencyState(CurrencyState update(currencySta
 }
 
 Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
-    {required AppState appState,
-    required String? logId,
-    required Map<String, Log> logs}) {
+    {required AppState appState, required String? logId, required Map<String, Log> logs}) {
   Log log = logs[logId!]!;
   if (appState.singleEntryState.categories != log.categories ||
       appState.singleEntryState.subcategories != log.subcategories) {
     log = log.copyWith(
-        categories: appState.singleEntryState.categories,
-        subcategories: appState.singleEntryState.subcategories);
+        categories: appState.singleEntryState.categories, subcategories: appState.singleEntryState.subcategories);
     logs.update(log.id!, (value) => log);
     //send updated log to database
     Env.logsFetcher.updateLog(log);
@@ -82,8 +70,7 @@ Map<String, Log> updateLogCategoriesSubcategoriesFromEntry(
   return logs;
 }
 
-LogTotal updateLogMemberTotals(
-    {required List<AppEntry> entries, required Log log}) {
+LogTotal updateLogMemberTotals({required List<AppEntry> entries, required Log log}) {
   Map<String, LogMember> logMembers = Map.from(log.logMembers);
   DateTime now = DateTime.now();
 
@@ -98,8 +85,7 @@ LogTotal updateLogMemberTotals(
   int sameMonthLastYearTotalPaid = 0;
   int daysSoFar = now.day > 0 ? now.day : 1;
 
-  entries.removeWhere(
-      (entry) => entry.logId != log.id || entry.categoryId == TRANSFER_FUNDS);
+  entries.removeWhere((entry) => entry.logId != log.id || entry.categoryId == TRANSFER_FUNDS);
 
   logMembers.updateAll((key, value) => value.copyWith(paid: 0, spent: 0));
 
@@ -112,31 +98,31 @@ LogTotal updateLogMemberTotals(
       entry.entryMembers.forEach((key, member) {
         int paid = 0;
         int spent = 0;
-        if(member.paid != null){
-           paid = member.paid!;
+        if (member.paying && member.paid != null) {
+          paid = member.paid!;
         }
-        if(member.spent != null){
+        if (member.spending && member.spent != null) {
           spent = member.spent!;
         }
 
         thisMonthTotalPaid += paid;
 
         logMembers.update(
-            key,
-            (value) => value.copyWith(
-                paid: value.paid! + paid, spent: value.spent! + spent));
+            key, (value) => value.copyWith(paid: (value.paid ?? 0) + paid, spent: (value.spent ?? 0) + spent));
       });
+
+      print('logMembers: $logMembers');
     } else if (entryYear == lastMonthYear && entryMonth == lastMonth) {
       entry.entryMembers.forEach((key, member) {
-
+        if (member.paid != null) {
           lastMonthTotalPaid += member.paid!;
-
+        }
       });
     } else if (entryYear == currentYear - 1 && entryMonth == currentMonth) {
       entry.entryMembers.forEach((key, member) {
-
-          sameMonthLastYearTotalPaid += member.paid! ;
-
+        if (member.paid != null) {
+          sameMonthLastYearTotalPaid += member.paid!;
+        }
       });
     }
   });
@@ -172,20 +158,16 @@ List<AppCategory> reorderSubcategoriesLogSetting(
     required List<AppCategory> subcategories,
     required int newSubcategoryIndex}) {
   //NO_SUBCATEGORY cannot be altered and no subcategories may be moved to NO_CATEGORY
-  if (_canReorderSubcategory(
-      subcategory: subcategory, newParentId: newParentId)) {
+  if (_canReorderSubcategory(subcategory: subcategory, newParentId: newParentId)) {
     if (oldParentId == newParentId) {
       //subcategory has not moved parents
       subsetOfSubcategories.remove(subcategory);
       subsetOfSubcategories.insert(newSubcategoryIndex, subcategory);
     } else {
       //category has moved parents, organize in new list with revised parent
-      subsetOfSubcategories =
-          List.from(subcategories); //reinitialize subset list
-      subsetOfSubcategories.retainWhere(
-          (subcategory) => subcategory.parentCategoryId == newParentId);
-      subsetOfSubcategories.insert(newSubcategoryIndex,
-          subcategory.copyWith(parentCategoryId: newParentId));
+      subsetOfSubcategories = List.from(subcategories); //reinitialize subset list
+      subsetOfSubcategories.retainWhere((subcategory) => subcategory.parentCategoryId == newParentId);
+      subsetOfSubcategories.insert(newSubcategoryIndex, subcategory.copyWith(parentCategoryId: newParentId));
     }
 
     //remove from subcategory list
@@ -201,8 +183,7 @@ List<AppCategory> reorderSubcategoriesLogSetting(
 }
 
 //determine if the subcategory is special and cannot be reOrdered
-bool _canReorderSubcategory(
-    {required AppCategory subcategory, required String newParentId}) {
+bool _canReorderSubcategory({required AppCategory subcategory, required String newParentId}) {
   if (newParentId == NO_CATEGORY ||
       (subcategory.id != null && subcategory.id!.contains(OTHER)) ||
       newParentId == TRANSFER_FUNDS) {
@@ -212,10 +193,7 @@ bool _canReorderSubcategory(
 }
 
 List<Tag> buildSearchedTagsList(
-    {required List<Tag> tags,
-    required List<String> tagIds,
-    int maxTags = -1,
-    required String? search}) {
+    {required List<Tag> tags, required List<String> tagIds, int maxTags = -1, required String? search}) {
   int tagCount = 0;
   List<Tag> searchedTags = [];
 
@@ -224,8 +202,7 @@ List<Tag> buildSearchedTagsList(
       Tag tag = tags[i];
 
       //add tag to searched list if it is not already in the entry tag list
-      if (tag.name.toLowerCase().contains(search.toLowerCase()) &&
-          !tagIds.contains(tag.id)) {
+      if (tag.name.toLowerCase().contains(search.toLowerCase()) && !tagIds.contains(tag.id)) {
         searchedTags.add(tag);
         tagCount++;
       }
@@ -243,18 +220,14 @@ List<Tag> buildSearchedTagsList(
 }
 
 List<AppCategory> reorderLogSettingsCategories(
-    {required List<AppCategory> categories,
-    required int oldCategoryIndex,
-    required int newCategoryIndex}) {
+    {required List<AppCategory> categories, required int oldCategoryIndex, required int newCategoryIndex}) {
   AppCategory movedCategory = categories.removeAt(oldCategoryIndex);
   categories.insert(newCategoryIndex, movedCategory);
   return categories;
 }
 
 List<bool> reorderLogSettingsExpandedCategories(
-    {required List<bool> expandedCategories,
-    required int oldCategoryIndex,
-    required int newCategoryIndex}) {
+    {required List<bool> expandedCategories, required int oldCategoryIndex, required int newCategoryIndex}) {
   bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
   expandedCategories.insert(newCategoryIndex, movedExpansion);
   return expandedCategories;

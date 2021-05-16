@@ -16,7 +16,7 @@ class Log extends Equatable {
   Log({
     required this.uid,
     this.id,
-    this.name ='',
+    this.name,
     this.currency,
     this.categories = const [],
     this.subcategories = const [],
@@ -27,7 +27,7 @@ class Log extends Equatable {
 
   final String uid;
   final String? id;
-  final String name;
+  final String? name;
   final String? currency;
   final bool archive;
   final String defaultCategory;

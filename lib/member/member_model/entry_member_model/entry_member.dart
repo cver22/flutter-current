@@ -7,7 +7,7 @@ import 'entry_member_entity.dart';
 
 @immutable
 class EntryMember extends Member {
-  final bool? paying;
+  final bool paying;
   final bool spending;
   final TextEditingController? payingController;
   final TextEditingController? spendingController;

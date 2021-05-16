@@ -9,8 +9,8 @@ class LogMember extends Member {
   final String? name;
   final String role;
 
-  LogMember({uid, paid,spent, order, required this.name, this.role = WRITER})
-      : super(uid: uid, paid: paid = 0, spent: spent = 0, order: order);
+  LogMember({uid, paid, spent, order, required this.name, this.role = WRITER})
+      : super(uid: uid, paid: paid, spent: spent, order: order);
 
   @override
   List<Object?> get props => [uid, name, paid, spent, role, order];

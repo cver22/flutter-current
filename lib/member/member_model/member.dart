@@ -11,7 +11,12 @@ class Member extends Equatable {
   final int? spent;
   final int? order;
 
-  Member({required this.uid, this.paid, this.spent, this.order});
+  Member({
+    required this.uid,
+    required this.paid,
+    required this.spent,
+    this.order,
+  });
 
   @override
   List<Object?> get props => [uid, paid, spent, order];
@@ -33,8 +38,8 @@ class Member extends Equatable {
   static Member fromEntity(MemberEntity entity) {
     return Member(
       uid: entity.uid,
-      paid: entity.paid,
-      spent: entity.spent,
+      paid: entity.paid ?? 0,
+      spent: entity.spent ?? 0,
       order: entity.order,
     );
   }

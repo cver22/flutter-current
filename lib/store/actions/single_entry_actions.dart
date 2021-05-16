@@ -99,8 +99,8 @@ class EntrySelectEntry implements AppAction {
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
     entryMembers.updateAll((key, value) => value.copyWith(
-          payingController: TextEditingController(text: formattedAmount(value: value.paid ?? 0, currency: currency!)),
-          spendingController: TextEditingController(text: formattedAmount(value: value.spent ?? 0, currency: currency)),
+          payingController: TextEditingController(text: formattedAmount(value: value.paid!, currency: currency!)),
+          spendingController: TextEditingController(text: formattedAmount(value: value.spent!, currency: currency)),
           payingFocusNode: FocusNode(),
           spendingFocusNode: FocusNode(),
         ));
@@ -156,11 +156,11 @@ class EntryAddUpdateEntryAndTags implements AppAction {
       Env.entriesFetcher.updateEntry(entry!);
     } else if (newEntry) {
       //save new entry
-      if(updatedEntry.categoryId == null) {
+      if (updatedEntry.categoryId == null) {
         updatedEntry = updatedEntry.copyWith(categoryId: NO_CATEGORY);
       }
 
-      if(updatedEntry.subcategoryId == null) {
+      if (updatedEntry.subcategoryId == null) {
         updatedEntry = updatedEntry.copyWith(subcategoryId: NO_SUBCATEGORY);
       }
 
@@ -639,7 +639,7 @@ class EntryUpdateMemberPaidAmount implements AppAction {
 
       //update total amount paid by all members
       members.forEach((key, value) {
-        if (value.paying!) {
+        if (value.paying && value.paid != null) {
           amount = amount + value.paid!;
         }
       });
@@ -650,10 +650,10 @@ class EntryUpdateMemberPaidAmount implements AppAction {
 
       //update total amountForeign paid by all members
       members.forEach((key, value) {
-        if (value.paying!) {
+        if (value.paying && value.paidForeign != null) {
           amountForeign = amountForeign + value.paidForeign!;
         }
-        if (value.paying!) {
+        if (value.paying && value.paid != null) {
           amount = amount + value.paid!;
         }
       });
@@ -825,12 +825,12 @@ class EntryToggleMemberPaying implements AppAction {
 
       members.update(
         member.uid,
-        (value) => member.copyWith(paying: !member.paying!, payingFocusNode: payingFocusNode),
+        (value) => member.copyWith(paying: !member.paying, payingFocusNode: payingFocusNode),
       );
     }
 
     members.forEach((key, value) {
-      if (value.paying! && value.paid != null) {
+      if (value.paying && value.paid != null) {
         amount = amount + value.paid!;
       }
     });
@@ -1433,7 +1433,7 @@ Map<String, EntryMember> _distributeDivisibleAmount({
         membersSpending++;
       }
 
-      if (member.userEditedSpent) {
+      if (member.userEditedSpent && member.spent != null) {
         //if member spent is user set, deduct it from the divisibleAmount
         divisibleAmount -= member.spent!;
       }
@@ -1450,7 +1450,7 @@ Map<String, EntryMember> _distributeDivisibleAmount({
     if (member.userEditedSpent && !divideRemaining) {
       return member;
     } else {
-      if (divideRemaining) {
+      if (divideRemaining && member.spent != null) {
         memberSpentAmount = member.spent! + (divisibleAmount / membersSpending).truncate();
       } else {
         memberSpentAmount = (divisibleAmount / membersSpending).truncate();
@@ -1486,7 +1486,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
         membersSpending++;
       }
 
-      if (member.userEditedSpent) {
+      if (member.userEditedSpent && member.spentForeign != null) {
         //if member spent is user set, deduct it from the divisibleAmount
         divisibleAmount -= member.spentForeign!;
       }
@@ -1503,7 +1503,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
     if (member.userEditedSpent && !divideRemaining) {
       return member;
     } else {
-      if (divideRemaining) {
+      if (divideRemaining && member.spentForeign != null) {
         memberSpentAmount = member.spentForeign! + (divisibleAmount / membersSpending).truncate();
       } else {
         memberSpentAmount = (divisibleAmount / membersSpending).truncate();
@@ -1533,11 +1533,11 @@ Map<String, EntryMember> _setMembersList({required Log log, required String memb
         key,
         () => EntryMember(
               uid: user.uid,
-              paid: 0,
-              spent: 0,
-              paidForeign: 0,
-              spentForeign: 0,
               order: user.order,
+              paid: 0,
+              paidForeign: 0,
+              spent: 0,
+              spentForeign: 0,
               paying: memberId == user.uid ? true : false,
               payingController: TextEditingController(),
               spendingController: TextEditingController(),
@@ -1554,9 +1554,9 @@ bool _canSave({required AppEntry entry}) {
   if (entry.amount != 0) {
     int totalMemberSpend = 0;
 
-    entry.entryMembers.forEach((key, value) {
-      if (value.spending) {
-        totalMemberSpend += value.spent!;
+    entry.entryMembers.forEach((key, member) {
+      if (member.spending && member.spent != null) {
+        totalMemberSpend += member.spent!;
       }
     });
     if (totalMemberSpend == entry.amount) {
@@ -1570,17 +1570,17 @@ int _remainingSpending({required Map<String, EntryMember> entryMembers, required
   int remainingSpending = 0;
 
   entryMembers.forEach((key, member) {
-    if (member.paying!) {
+    if (member.paying) {
       if (isForeign && member.paidForeign != null) {
         remainingSpending += member.paidForeign!;
-      } else if (member.paid != null){
+      } else if (member.paid != null) {
         remainingSpending += member.paid!;
       }
     }
     if (member.spending) {
       if (isForeign && member.spentForeign != null) {
         remainingSpending -= member.spentForeign!;
-      } else if (member.spent != null){
+      } else if (member.spent != null) {
         remainingSpending -= member.spent!;
       }
     }

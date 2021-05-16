@@ -22,7 +22,7 @@ class _LogNameFormState extends State<LogNameForm> {
   Widget build(BuildContext context) {
     log = widget.log;
 
-    if (log.uid != null && !editName) {
+    if (log.id != null && !editName) {
       return AppButton(
           onPressed: () {
             setState(() {
@@ -33,7 +33,7 @@ class _LogNameFormState extends State<LogNameForm> {
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Text(log.name),
+              Text(log.name!),
               SizedBox(width: 16.0),
               Icon(Icons.edit_outlined),
             ],

@@ -10,7 +10,12 @@ class MemberEntity extends Equatable {
   final int? spent;
   final int? order;
 
-  MemberEntity({required this.uid, this.paid, this.spent, this.order});
+  MemberEntity({
+    required this.uid,
+    this.paid,
+    this.spent,
+    this.order,
+  });
 
   @override
   List<Object?> get props => [uid, paid, spent, order];

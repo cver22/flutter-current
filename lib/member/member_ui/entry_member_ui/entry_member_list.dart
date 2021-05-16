@@ -1,5 +1,4 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/entry/entry_model/single_entry_state.dart';
 import 'package:flutter/material.dart';
 
 import '../../../log/log_model/log.dart';

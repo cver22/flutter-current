@@ -51,6 +51,8 @@ class EntriesSetEntries implements AppAction {
       entryList!.map((entry) => MapEntry(entry.id, entry)),
     );
 
+    entries.forEach((key, value) {print('entryMembers: ${value.entryMembers}');});
+
     logTotals =
         entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entries);
 

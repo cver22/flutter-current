@@ -17,19 +17,17 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('Rendering Home Screen 1');
     return ConnectState<AuthState>(
       where: notIdentical,
       map: (state) => state.authState,
       builder: (authState) {
-        print('Rendering Home Screen 2');
+        print('Rendering Home Screen');
 
         //TODO add prints main, home, splash
         //move splashscreen to start of this, if no state?
 
         //Prevents calling in the current build cycle
         if (authState.user.isSome && authState.isLoading == false) {
-          print('auth from main ${authState.user}');
           Env.settingsFetcher.readResetAppSettings(resetSettings: false);
           Env.logsFetcher.loadLogs();
           Env.tagFetcher.loadTags();

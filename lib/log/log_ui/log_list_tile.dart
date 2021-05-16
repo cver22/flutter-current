@@ -42,7 +42,7 @@ class LogListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(log.name),
+                Text(log.name!),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [

@@ -221,7 +221,7 @@ class AddEditEntryScreen extends StatelessWidget {
         SizedBox(height: 10.0),
         _categoryButton(categories: entryState.categories, entry: entry, newEntry: entryState.newEntry),
         //Transfer funds and No_category do not have a sub categories
-        if (entry.categoryId != NO_CATEGORY && entry.categoryId != TRANSFER_FUNDS)
+        if (entry.categoryId != null && entry.categoryId != NO_CATEGORY && entry.categoryId != TRANSFER_FUNDS)
           _subcategoryButton(subcategories: entryState.subcategories, entry: entry),
         _commentFormField(entry: entry, commentFocusNode: entryState.commentFocusNode.value),
         TagPicker(),

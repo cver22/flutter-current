@@ -111,6 +111,8 @@ class EntriesListTile extends StatelessWidget {
           log.categories
               .firstWhere((element) => element.id == entry.categoryId)
               .emojiChar;
+    } else {
+      emojiChar = "🔴";
     }
 
 

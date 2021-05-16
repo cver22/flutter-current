@@ -209,7 +209,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   Widget _buildAddMemberButton({required Log log}) {
-    return log.uid.length > 0
+    return log.id != null
         ? AppButton(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -231,9 +231,9 @@ class AddEditLogScreen extends StatelessWidget {
 
   Widget _buildCurrencyPicker({required Log log, required String? currency}) {
 
-    Currency? _currency;
-    if(currency == null) {
-      _currency = CurrencyService().findByCode(currency!);
+    Currency? _currency; //TODO this might be broken
+    if(currency != null) {
+      _currency = CurrencyService().findByCode(currency);
     } else {
       _currency = CurrencyService().findByCode(Env.store.state.settingsState.settings.value.homeCurrency);
     }
@@ -312,7 +312,7 @@ class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget>
               return DropdownMenuItem<Log>(
                 value: log,
                 child: Text(
-                  log!.name,
+                  log!.name!,
                   overflow: TextOverflow.visible,
                   maxLines: 2,
                   style: TextStyle(color: Colors.black),

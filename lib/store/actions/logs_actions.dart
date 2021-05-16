@@ -150,7 +150,7 @@ class LogSelectLog implements AppAction {
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(
-            selectedLog: Maybe<Log?>.some(appState.logsState.logs[logId!]),
+            selectedLog: Maybe<Log>.some(appState.logsState.logs[logId!]!),
             expandedCategories: expandedCategories,
             canSave: true)),
       ],

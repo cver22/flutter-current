@@ -42,7 +42,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
     _spendingController = member.spendingController;
     _payingFocusNode = member.payingFocusNode;
     _spendingFocusNode = member.spendingFocusNode;
-    if (widget.autoFocus && member.paying!) {
+    if (widget.autoFocus && member.paying) {
       _payingFocusNode!.requestFocus();
     }
 
@@ -122,7 +122,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
       required Currency currency}) {
     bool inactive = true;
     if (paidOrSpent == PaidOrSpent.paid) {
-      inactive = !member.paying!;
+      inactive = !member.paying;
     } else {
       inactive = !member.spending;
     }
@@ -158,7 +158,7 @@ class _EntryMemberListTileState extends State<EntryMemberListTile> {
             onTap: () {
               //toggle member spending on if the the user taps in the textField
               if (paidOrSpent == PaidOrSpent.paid) {
-                if (member.paying!) {
+                if (member.paying) {
                   //user already paying, update state with focus
                   Env.store.dispatch(EntryMemberFocus(paidOrSpent: paidOrSpent, memberId: member.uid));
                 } else {

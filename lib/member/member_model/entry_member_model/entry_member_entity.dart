@@ -9,7 +9,7 @@ part 'entry_member_entity.g.dart';
 @immutable
 @JsonSerializable(explicitToJson: true)
 class EntryMemberEntity extends MemberEntity {
-  final bool? paying;
+  final bool paying;
   final bool spending;
   final int? paidForeign;
   final int? spentForeign;
@@ -19,7 +19,7 @@ class EntryMemberEntity extends MemberEntity {
     paid,
     spent,
     order,
-    this.paying,
+    this.paying = false,
     this.spending = true,
     this.paidForeign,
     this.spentForeign,

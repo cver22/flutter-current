@@ -133,7 +133,7 @@ class SettingsScreen extends StatelessWidget {
           return DropdownMenuItem<Log>(
             value: log,
             child: Text(
-              log.name,
+              log.name!,
               style: TextStyle(color: Colors.black),
             ),
           );

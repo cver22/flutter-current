@@ -141,7 +141,7 @@ List<AppEntry>? _buildFilteredEntries({
         List<String?> uids = [];
         bool retain = false;
         entry.entryMembers.values.forEach((entryMember) {
-          if (entryMember.paying!) {
+          if (entryMember.paying) {
             uids.add(entryMember.uid);
           }
         });
