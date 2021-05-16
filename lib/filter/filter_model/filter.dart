@@ -5,20 +5,20 @@ import '../../utils/maybe.dart';
 class Filter extends Equatable {
   final Maybe<DateTime?> startDate;
   final Maybe<DateTime?> endDate;
-  final List<String> currency; // code
+  final List<String> selectedCurrencies; // code
   final List<String> selectedCategories; //name
   final List<String> selectedSubcategories; //id
   final Maybe<int?> minAmount;
   final Maybe<int?> maxAmount;
   final List<String> membersPaid; //id
   final List<String> membersSpent; //id
-  final List<String?> selectedLogs;
-  final List<String?> selectedTags;
+  final List<String> selectedLogs;
+  final List<String> selectedTags;
 
   Filter({
     required this.startDate,
     required this.endDate,
-    required this.currency,
+    required this.selectedCurrencies,
     required this.selectedCategories,
     required this.selectedSubcategories,
     required this.minAmount,
@@ -33,7 +33,7 @@ class Filter extends Equatable {
     return Filter(
       startDate: Maybe<DateTime>.none(),
       endDate: Maybe<DateTime>.none(),
-      currency: const <String>[],
+      selectedCurrencies: const <String>[],
       selectedCategories: const <String>[],
       selectedSubcategories: const <String>[],
       minAmount: Maybe<int>.none(),
@@ -49,7 +49,7 @@ class Filter extends Equatable {
   List<Object> get props => [
         startDate,
         endDate,
-        currency,
+        selectedCurrencies,
         selectedCategories,
         selectedSubcategories,
         minAmount,
@@ -66,19 +66,19 @@ class Filter extends Equatable {
   Filter copyWith({
     Maybe<DateTime?>? startDate,
     Maybe<DateTime?>? endDate,
-    List<String>? currency,
+    List<String>? selectedCurrencies,
     List<String>? selectedCategories,
     List<String>? selectedSubcategories,
     Maybe<int?>? minAmount,
     Maybe<int?>? maxAmount,
     List<String>? membersPaid,
     List<String>? membersSpent,
-    List<String?>? selectedLogs,
-    List<String?>? selectedTags,
+    List<String>? selectedLogs,
+    List<String>? selectedTags,
   }) {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
-        (currency == null || identical(currency, this.currency)) &&
+        (selectedCurrencies == null || identical(selectedCurrencies, this.selectedCurrencies)) &&
         (selectedCategories == null ||
             identical(selectedCategories, this.selectedCategories)) &&
         (selectedSubcategories == null ||
@@ -95,7 +95,7 @@ class Filter extends Equatable {
     return new Filter(
       startDate: startDate ?? this.startDate,
       endDate: endDate ?? this.endDate,
-      currency: currency ?? this.currency,
+      selectedCurrencies: selectedCurrencies ?? this.selectedCurrencies,
       selectedCategories: selectedCategories ?? this.selectedCategories,
       selectedSubcategories:
           selectedSubcategories ?? this.selectedSubcategories,

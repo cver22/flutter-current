@@ -1,4 +1,8 @@
-import 'package:expenses/app/common_widgets/list_tile_components.dart';
+import 'package:expenses/filter/filter_ui/filter_actions.dart';
+
+import '../../app/common_widgets/list_tile_components.dart';
+import '../../filter/filter_model/filter_state.dart';
+import '../../store/actions/filter_actions.dart';
 
 import '../../currency/currency_models/currency_state.dart';
 import '../../app/common_widgets/app_dialog.dart';
@@ -57,23 +61,31 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         where: notIdentical,
         map: (state) => state.currencyState,
         builder: (currencyState) {
-          return AppDialogWithActions(
-            topWidget: searchBox(
-              lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]?.lastUpdated,
-              withConversionRates: widget.withConversionRates,
-              searchFunction: widget.searchFunction,
-            ),
-            child: _buildCurrencyList(
-              referenceCurrencyCode: widget.referenceCurrency,
-              returnCurrency: widget.returnCurrency,
-              withConversionRates: widget.withConversionRates,
-              currencyState: currencyState,
-              currencies: widget.currencies,
-              filterSelect: widget.filterSelect,
-            ),
-            title: widget.title,
-            actions: _actions(withConversionRates: widget.withConversionRates),
-          );
+          return ConnectState<FilterState>(
+              where: notIdentical,
+              map: (state) => state.filterState,
+              builder: (filterState) {
+                return AppDialogWithActions(
+                  topWidget: searchBox(
+                    lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]?.lastUpdated,
+                    withConversionRates: widget.withConversionRates,
+                    searchFunction: widget.searchFunction,
+                  ),
+                  child: _buildCurrencyList(
+                    referenceCurrencyCode: widget.referenceCurrency,
+                    returnCurrency: widget.returnCurrency,
+                    withConversionRates: widget.withConversionRates,
+                    currencyState: currencyState,
+                    currencies: widget.currencies,
+                    filterSelect: widget.filterSelect,
+                    selectedCurrencies: widget.filterSelect ? filterState.filter.value.selectedCurrencies : null,
+                  ),
+                  title: widget.title,
+                  actions: widget.filterSelect ? filterActions(onPressedClear: () {
+                    Env.store.dispatch(FilterClearCurrencySelection());
+                  },) : _actions(withConversionRates: widget.withConversionRates),
+                );
+              });
         });
   }
 
@@ -137,6 +149,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     required CurrencyState currencyState,
     List<Currency>? currencies,
     required bool filterSelect,
+    required List<String>? selectedCurrencies,
   }) {
     List<Currency> viewCurrencies = currencies ?? currencyState.allCurrencies;
     Currency? referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
@@ -166,10 +179,10 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
             returnCurrency: returnCurrency,
             withConversionRates: withConversionRates,
             exitOnSelect: !filterSelect,
-            //TODO make currency filter actions
-            /*trailingCheckBox: FilterListTileTrailing(
-                onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
-                selected: selectedCategories!.contains(category.id)),*/
+            trailingCheckBox: filterSelect ? FilterListTileTrailing(
+              onSelect: () => Env.store.dispatch(FilterSelectDeselectCurrency(currency: _currency.code)),
+              selected: selectedCurrencies!.contains(_currency.code),
+            ) : null,
           );
         });
   }

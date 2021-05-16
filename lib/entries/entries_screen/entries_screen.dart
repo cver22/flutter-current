@@ -84,10 +84,13 @@ List<AppEntry>? _buildFilteredEntries({
       entries!.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value!));
     }
     //is the entry logId found in the list of logIds selected
-    if (filter.selectedLogs.length > 0) {
+    if (filter.selectedLogs.isNotEmpty) {
       entries!.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
     }
-    //TODO currency filter
+
+    if (filter.selectedCurrencies.isNotEmpty) {
+      entries!.removeWhere((entry) => !filter.selectedCurrencies.contains(entry.currency));
+    }
 
     if (filter.minAmount.isSome) {
       entries!.removeWhere((entry) => entry.amount < filter.minAmount.value!);
@@ -98,7 +101,7 @@ List<AppEntry>? _buildFilteredEntries({
     }
 
     //is the entry subcategoryId found in the list of subcategories selected
-    if (filter.selectedSubcategories.length > 0) {
+    if (filter.selectedSubcategories.isNotEmpty) {
       Map<String, Log> logs = Env.store.state.logsState.logs;
 
       entries!.removeWhere((entry) {

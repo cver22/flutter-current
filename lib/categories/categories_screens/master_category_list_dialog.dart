@@ -80,7 +80,7 @@ class MasterCategoryListDialog extends StatelessWidget {
       title: CATEGORY,
       actions: setLogFilter == SettingsLogFilterEntry.filter
           ? filterActions(
-              onPressedClear: (_) {
+              onPressedClear: () {
                 Env.store.dispatch(FilterClearCategorySelection());
               },
             )

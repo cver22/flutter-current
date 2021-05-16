@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-List<Widget> filterActions({required dynamic Function(void) onPressedClear}) {
+List<Widget> filterActions({required Function() onPressedClear}) {
   return [
     TextButton(
       child: Text('Clear'),
-      onPressed: () => onPressedClear,
+      onPressed: onPressedClear,
     ),
     TextButton(
         child: Text('Done'),

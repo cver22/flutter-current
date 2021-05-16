@@ -132,8 +132,8 @@ class EntriesSetEntriesFilter implements AppAction {
       updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
     } else {
       //filter was set fro a logListTile and should only filter based on the log
-      List<String?> selectedLogs = [];
-      selectedLogs.add(logId);
+      List<String> selectedLogs = [];
+      selectedLogs.add(logId!);
       updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 

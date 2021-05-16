@@ -63,7 +63,7 @@
 //TODO START HERE
 //build build local repository for currency fetcher && migrate settings
 //make filter actions for currencies and show filter
-
+//how to pass a list of the currencies used so they can be filtered, may also have to sort
 
 
 

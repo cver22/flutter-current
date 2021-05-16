@@ -27,7 +27,7 @@ class FilterTagDialog extends StatelessWidget {
               tagFocusNode: FocusNode(),
               searchOnly: true,
             ),
-            actions: filterActions(onPressedClear: (_) {
+            actions: filterActions(onPressedClear: () {
               Env.store.dispatch(FilterClearTagSelection());
             },),
             child: SingleChildScrollView(

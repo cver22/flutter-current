@@ -93,7 +93,9 @@ class FilterSetReset implements AppAction {
         bool insert = true;
         consolidatedSubcategories.forEach((key, cSub) {
           //check if the subcategory is a duplicate for its category
-          if (subcategory.name == cSub.name && subcategory.parentCategoryId == cSub.parentCategoryId && subcategory.id != NO_SUBCATEGORY) {
+          if (subcategory.name == cSub.name &&
+              subcategory.parentCategoryId == cSub.parentCategoryId &&
+              subcategory.id != NO_SUBCATEGORY) {
             insert = false;
           }
         });
@@ -415,8 +417,8 @@ class FilterSelectPaid implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(membersPaid: membersPaid)))),
+        _updateFilterAndFlagUpdated((filterState) =>
+            filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(membersPaid: membersPaid)))),
       ],
     );
   }
@@ -452,8 +454,8 @@ class FilterSelectSpent implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(membersSpent: membersSpent)))),
+        _updateFilterAndFlagUpdated((filterState) =>
+            filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(membersSpent: membersSpent)))),
       ],
     );
   }
@@ -489,8 +491,8 @@ class FilterSelectLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(selectedLogs: selectedLogs)))),
+        _updateFilterAndFlagUpdated((filterState) =>
+            filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(selectedLogs: selectedLogs)))),
       ],
     );
   }
@@ -509,13 +511,13 @@ class FilterClearLogSelection implements AppAction {
 }
 
 class FilterSelectDeselectTag implements AppAction {
-  final String? name;
+  final String name;
 
   FilterSelectDeselectTag({required this.name});
 
   AppState updateState(AppState appState) {
     Filter filter = appState.filterState.filter.value;
-    List<String?> selectedTags = List.from(filter.selectedTags);
+    List<String> selectedTags = List.from(filter.selectedTags);
 
     //remove if tag present
     if (selectedTags.contains(name)) {
@@ -584,8 +586,46 @@ class FilterClearTagSelection implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateFilterState((filterState) =>
-            filterState.copyWith(filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(selectedTags: const [])))),
+        updateFilterState((filterState) => filterState.copyWith(
+            filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(selectedTags: const [])))),
+      ],
+    );
+  }
+}
+
+class FilterSelectDeselectCurrency implements AppAction {
+  final String currency;
+
+  FilterSelectDeselectCurrency({required this.currency});
+
+  AppState updateState(AppState appState) {
+    List<String> selectedCurrencies = List.from(appState.filterState.filter.value.selectedCurrencies);
+
+    if (selectedCurrencies.contains(currency)) {
+      selectedCurrencies.remove(currency);
+    } else {
+      selectedCurrencies.add(currency);
+    }
+    return updateSubstates(
+      appState,
+      [
+        _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
+                filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(
+              selectedCurrencies: selectedCurrencies,
+            )))),
+      ],
+    );
+  }
+}
+
+class FilterClearCurrencySelection implements AppAction {
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        updateFilterState((filterState) => filterState.copyWith(
+            filter:
+                Maybe<Filter>.some(appState.filterState.filter.value.copyWith(selectedCurrencies: const <String>[])))),
       ],
     );
   }
@@ -620,7 +660,8 @@ List<Tag> _sortTags({
     Map<String, int> categoryFrequency = {};
 
     tag.tagCategoryFrequency.forEach((categoryId, frequency) {
-      String? categoryName = allCategories![categoryId]?.name; //TODO this shouldn't need fixing after handling subcategories differently
+      String? categoryName =
+          allCategories![categoryId]?.name; //TODO this shouldn't need fixing after handling subcategories differently
       print(categoryName);
       categoryFrequency.putIfAbsent(categoryName!, () => frequency);
     });

@@ -24,7 +24,7 @@ class FilterLogDialog extends StatelessWidget {
           return AppDialogWithActions(
               title: 'Logs',
               shrinkWrap: true,
-              actions: filterActions(onPressedClear: (_) {
+              actions: filterActions(onPressedClear: () {
                 Env.store.dispatch(FilterClearLogSelection());
               },),
               child: ListView.builder(

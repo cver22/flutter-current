@@ -12,6 +12,7 @@ class AppCurrencyPicker extends StatelessWidget {
   final String? logCurrency;
   final bool withConversionRates;
   final String title;
+  final String? buttonLabel;
   final VoidCallback? clearCallingFocus;
   final List<Currency>? currencies;
   final bool filterSelect;
@@ -23,6 +24,7 @@ class AppCurrencyPicker extends StatelessWidget {
     this.logCurrency,
     this.withConversionRates = false,
     required this.title,
+    this.buttonLabel,
     this.clearCallingFocus,
     this.currencies,
     this.filterSelect = false,
@@ -49,7 +51,12 @@ class AppCurrencyPicker extends StatelessWidget {
           filterSelect: filterSelect,
         ));
       },
-      child: Text('${CurrencyUtils.currencyToEmoji(_currency)} ${_currency.code}'),
+      child: Text(buttonLabel ?? '${CurrencyUtils.currencyToEmoji(_currency)} ${_currency.code}'),
     );
   }
-}
+
+
+
+
+  }
+

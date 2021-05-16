@@ -257,7 +257,7 @@ class EntryUpdateCurrency implements AppAction {
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
             remainingSpending: 0,
             selectedEntry: Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(
-              currency: currency,
+              selectedCurrencies: currency,
               entryMembers: entryMembers,
               exchangeRate: exchangeRate,
               amount: 0,

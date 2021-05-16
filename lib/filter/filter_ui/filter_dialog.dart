@@ -1,5 +1,4 @@
 import 'package:currency_picker/currency_picker.dart';
-import '../../app/common_widgets/list_tile_components.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -347,15 +346,15 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   Widget _logFilter({required FilterState filterState}) {
-    if (Env.store.state.logsState.logs.length > 0) {
+    if (Env.store.state.logsState.logs.isNotEmpty) {
       String selectedLogString = '';
       Map<String, Log> logs = Env.store.state.logsState.logs;
 
       filterState.filter.value.selectedLogs.forEach((logId) {
         if (selectedLogString.length > 0) {
-          selectedLogString += '\, ${logs[logId!]!.name}';
+          selectedLogString += '\, ${logs[logId]!.name}';
         } else {
-          selectedLogString += 'Logs: ${logs[logId!]!.name}';
+          selectedLogString += 'Logs: ${logs[logId]!.name}';
         }
       });
 
@@ -409,15 +408,51 @@ class _FilterDialogState extends State<FilterDialog> {
   Widget _currency({required FilterState filterState}) {
     return AppCurrencyPicker(
       title: 'Filter Currencies',
-      withConversionRates: true,
+      withConversionRates: false,
       clearCallingFocus: () {
         _unfocus();
       },
       returnCurrency: (currency) {
-        //TODO make this optional
-        //Env.store.dispatch(EntryUpdateCurrency(currency: currency));
+        //nothing here
       },
+      currencies: _getCurrencyList(usedCurrencyCodes: filterState.usedCurrencies), //TODO start here
       filterSelect: true,
+      buttonLabel: _buildButtonLabel(),
     );
+  }
+
+  String? _buildButtonLabel() {
+    List<String> selectedCurrencies = Env.store.state.filterState.filter.value.selectedCurrencies;
+    String buttonLabel = '';
+
+    if (selectedCurrencies.isNotEmpty) {
+      selectedCurrencies.forEach((currencyCode) {
+        ;
+
+        if (buttonLabel.length > 0) {
+          buttonLabel +=
+              '\, ${CurrencyUtils.currencyToEmoji(CurrencyService().findByCode(currencyCode)!)} $currencyCode';
+        } else {
+          buttonLabel +=
+              'Currencies: ${CurrencyUtils.currencyToEmoji(CurrencyService().findByCode(currencyCode)!)} $currencyCode';
+        }
+      });
+    } else {
+      buttonLabel = 'Select Currencies';
+    }
+
+    return buttonLabel;
+  }
+
+  List<Currency> _getCurrencyList({required List<String> usedCurrencyCodes}) {
+    List<Currency> currencyList = <Currency>[];
+
+    usedCurrencyCodes.forEach((code) {
+      currencyList.add(CurrencyService().findByCode(code)!);
+    });
+
+    return currencyList;
+
+
   }
 }

@@ -28,7 +28,7 @@ class FilterMemberDialog extends StatelessWidget {
               title: paidOrSpent == PaidOrSpent.paid ? 'Who Paid' : 'Who Spent',
               shrinkWrap: true,
               actions: filterActions(
-                onPressedClear: (_) {
+                onPressedClear: () {
                   if (paidOrSpent == PaidOrSpent.paid) {
                     Env.store.dispatch(FilterClearPaidSelection());
                   } else {
