@@ -1,5 +1,8 @@
+import 'dart:collection';
+
 import 'package:uuid/uuid.dart';
 
+import '../../log/log_totals_model/log_total.dart';
 import '../../app/models/app_state.dart';
 import '../../auth_user/models/app_user.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
@@ -15,21 +18,6 @@ import '../../utils/db_consts.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
 
-
-AppState _updateLogs(
-  AppState appState,
-  void updateInPlace(Map<String, Log> logs),
-) {
-  Map<String, Log> cloneMap = Map.from(appState.logsState.logs);
-  updateInPlace(cloneMap);
-
-  return updateSubstates(
-    appState,
-    [
-      updateLogsState((logsState) => logsState.copyWith(logs: cloneMap)),
-    ],
-  );
-}
 
 class SetLogsLoading implements AppAction {
   @override
@@ -61,7 +49,8 @@ class SetNewLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(Log(uid: appState.authState.user.value.id)))),
+        updateLogsState((logsState) =>
+            logsState.copyWith(selectedLog: Maybe<Log>.some(Log(uid: appState.authState.user.value.id)))),
       ],
     );
   }
@@ -177,13 +166,27 @@ class SetLogs implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    return _updateLogs(appState, (logs) {
-      logs.addEntries(
-        logList!.map(
-          (log) => MapEntry(log.id!, log),
-        ),
-      );
+    Map<String, Log> logsMap = Map.from(appState.logsState.logs);
+    Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
+    Map<String, LogTotal> logTotals = Map.from(appState.logTotalsState.logTotals);
+
+    logsMap.addEntries(
+      logList!.map(
+        (log) => MapEntry(log.id!, log),
+      ),
+    );
+
+    logsMap.forEach((key, log) {
+      logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
     });
+
+    return updateSubstates(
+      appState,
+      [
+        updateLogsState((logsState) => logsState.copyWith(logs: logsMap)),
+        updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
+      ],
+    );
   }
 }
 
@@ -220,14 +223,13 @@ class LogAddUpdate implements AppAction {
   AppState updateState(AppState appState) {
     Log addedUpdatedLog = appState.logsState.selectedLog.value;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
-    // Map<String, MyEntry> entries = Map.from(appState.entriesState.entries);
 
     //check is the log currently exists
     if (addedUpdatedLog.id != null && appState.logsState.logs.containsKey(addedUpdatedLog.id)) {
       //update an existing log
       Env.logsFetcher.updateLog(addedUpdatedLog);
 
-      //if there are new log members, add them to all transaction
+      //if there are new log members, add them to all transactions
       if (logs[addedUpdatedLog.id]!.logMembers.length != addedUpdatedLog.logMembers.length) {
         List<AppEntry> entries =
             appState.entriesState.entries.values.where((entry) => entry.logId == addedUpdatedLog.id).toList();
@@ -255,11 +257,14 @@ class LogAddUpdate implements AppAction {
       }*/
 
       members.putIfAbsent(
-          uid, () => LogMember(uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0));
+          uid,
+          () => LogMember(
+              uid: uid, role: OWNER, name: appState.authState.user.value.displayName, order: 0, paid: 0, spent: 0));
 
       addedUpdatedLog = addedUpdatedLog.copyWith(
         uid: uid,
         logMembers: members,
+        currency: addedUpdatedLog.currency ?? 'CAD',
       );
 
       Env.logsFetcher.addLog(addedUpdatedLog);
@@ -268,7 +273,8 @@ class LogAddUpdate implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.none(), logs: logs, userUpdated: false)),
+        updateLogsState(
+            (logsState) => logsState.copyWith(selectedLog: Maybe<Log>.none(), logs: logs, userUpdated: false)),
       ],
     );
   }
@@ -344,13 +350,12 @@ class LogAddEditCategory implements AppAction {
 
       //every new category automatically gets a new subcategory "other"
       AppCategory otherSubcategory =
-      AppCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
+          AppCategory(parentCategoryId: updatedCategory.id, id: 'other${Uuid().v4()}', name: 'Other', emojiChar: '🤷');
 
       subcategories.add(otherSubcategory);
     } else {
       //category exists, update category
       categories[categories.indexWhere((e) => e.id == updatedCategory.id)] = updatedCategory;
-
     }
 
     log = log.copyWith(categories: categories, subcategories: subcategories);
@@ -413,7 +418,6 @@ class LogAddEditSubcategory implements AppAction {
     } else {
       //category exists, update category
       subcategories[subcategories.indexWhere((e) => e.id == subcategory.id)] = subcategory;
-
     }
 
     log = log.copyWith(subcategories: subcategories);

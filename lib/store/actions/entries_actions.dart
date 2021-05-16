@@ -51,10 +51,9 @@ class EntriesSetEntries implements AppAction {
       entryList!.map((entry) => MapEntry(entry.id, entry)),
     );
 
-    entries.forEach((key, value) {print('entryMembers: ${value.entryMembers}');});
 
     logTotals =
-        entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entries);
+        _entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entries);
 
     return updateSubstates(
       appState,
@@ -103,7 +102,7 @@ class EntriesDeleteSelectedEntry implements AppAction {
 
     //TODO update tags that have been decremented in the firestore
 
-    logTotals = entriesUpdateLogsTotals(
+    logTotals = _entriesUpdateLogsTotals(
         logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: updatedEntriesState.entries);
 
     return updateSubstates(
@@ -190,7 +189,7 @@ class EntriesClearChartFilter implements AppAction {
   }
 }
 
-Map<String, LogTotal> entriesUpdateLogsTotals(
+Map<String, LogTotal> _entriesUpdateLogsTotals(
     {required Map<String, Log> logs,
     required Map<String, LogTotal> logTotals,
     required Map<String, AppEntry> entries}) {

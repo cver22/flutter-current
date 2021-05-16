@@ -158,17 +158,17 @@ class AddEditLogScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 LogNameForm(log: log),
-                log.uid.length > 0 ? Container() : SizedBox(height: 16.0),
-                log.uid.length > 0 ? Container() : NewLogCategorySourceWidget(logs: logs, log: log),
+                if (log.id == null) SizedBox(height: 16.0),
+                if (log.id == null) NewLogCategorySourceWidget(logs: logs, log: log),
                 SizedBox(height: 16.0),
-                log.uid.length > 0 ? _categoryButton(context: context, log: log) : Container(),
-                SizedBox(height: 16.0),
-                _buildLogMemberList(log: log),
-                SizedBox(height: 8.0),
-                _buildAddMemberButton(log: log),
-                SizedBox(height: 16.0),
+                if (log.id != null) _categoryButton(context: context, log: log),
+                if (log.id != null) SizedBox(height: 16.0),
+                if (log.id != null) _buildLogMemberList(log: log),
+                if (log.id != null) SizedBox(height: 8.0),
+                if (log.id != null) _buildAddMemberButton(log: log),
+                if (log.id != null) SizedBox(height: 16.0),
                 //_buildMakeDefaultButton(log: log),
-                SizedBox(height: 16.0),
+                if (log.id != null) SizedBox(height: 16.0),
                 _buildCurrencyPicker(log: log, currency: currency),
               ],
             ),
@@ -188,8 +188,7 @@ class AddEditLogScreen extends StatelessWidget {
   }
 
   Widget _categoryButton({required BuildContext context, required Log log}) {
-    return log.categories.length > 0
-        ? CategoryButton(
+    return CategoryButton(
             label: 'Edit Log Categories',
             onPressed: () => {
               showDialog(
@@ -200,17 +199,15 @@ class AddEditLogScreen extends StatelessWidget {
               ),
             },
             category: null, // do not pass a category, maintains label
-          )
-        : Container();
+          );
   }
 
   Widget _buildLogMemberList({required Log log}) {
-    return log.uid.length > 0 ? LogMemberTotalList(log: log) : Container();
+    return LogMemberTotalList(log: log);
   }
 
   Widget _buildAddMemberButton({required Log log}) {
-    return log.id != null
-        ? AppButton(
+    return AppButton(
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               mainAxisSize: MainAxisSize.min,
@@ -223,21 +220,18 @@ class AddEditLogScreen extends StatelessWidget {
             onPressed: () {
               Get.to(QRReader());
             },
-          )
-        : Container();
+    );
   }
 
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
 
   Widget _buildCurrencyPicker({required Log log, required String? currency}) {
-
     Currency? _currency; //TODO this might be broken
-    if(currency != null) {
+    if (currency != null) {
       _currency = CurrencyService().findByCode(currency);
     } else {
       _currency = CurrencyService().findByCode(Env.store.state.settingsState.settings.value.homeCurrency);
     }
-
 
     return log.id != null
         ? Text('${CurrencyUtils.currencyToEmoji(_currency!)} ${_currency.code}')
