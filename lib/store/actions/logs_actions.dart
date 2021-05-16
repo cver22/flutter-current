@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:uuid/uuid.dart';
 
 import '../../log/log_totals_model/log_total.dart';
@@ -17,7 +15,6 @@ import '../../tags/tag_model/tag.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
-
 
 class SetLogsLoading implements AppAction {
   @override

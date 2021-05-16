@@ -9,27 +9,45 @@ class Tag extends Equatable {
   final String? logId;
   final String? id;
   final String name;
-  final int tagLogFrequency;
-  final Map<String, int> tagCategoryFrequency;
-  final Map<String, int> tagSubcategoryFrequency;
-  final List<String> memberList;
+  final int tagLogFrequency; //how often the tag is used in its parent log
+  final Map<String, int> tagCategoryFrequency; //how often the tag is used for each category
+  final Map<String, DateTime> tagCategoryLastUse; //when the tag was last used for the category
+  final Map<String, int> tagSubcategoryFrequency; //how often the tag is used for each subcategory
+  final Map<String, DateTime> tagSubcategoryLastUse; // when the tag was last used for the subcategory
+  final List<String> memberList; //used for retrieval from database
 
-  Tag(
-      {this.logId,
-      this.id,
-      this.name = '',
-      this.tagLogFrequency = 0,
-      this.tagCategoryFrequency = const {},
-      this.tagSubcategoryFrequency = const {},
-      this.memberList = const []});
+  Tag({
+    this.logId,
+    this.id,
+    this.name = '',
+    this.tagLogFrequency = 0,
+    this.tagCategoryFrequency = const <String, int>{},
+    this.tagCategoryLastUse = const <String, DateTime>{},
+    this.tagSubcategoryFrequency = const <String, int>{},
+    this.tagSubcategoryLastUse = const <String, DateTime>{},
+    this.memberList = const [],
+  });
 
   @override
   String toString() {
-    return 'Tag {$LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, $TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $TAG_SUBCATEGORY_FREQUENCY: $tagSubcategoryFrequency, $MEMBER_LIST: $memberList}';
+    return 'Tag {$LOG_ID: $logId $ID: $id, $NAME: $name, $TAG_LOG_FREQUENCY: $tagLogFrequency, '
+        '$TAG_CATEGORY_FREQUENCY: $tagCategoryFrequency, $TAG_CATEGORY_LAST_USE: $tagCategoryLastUse,'
+        '$TAG_SUBCATEGORY_FREQUENCY: $tagSubcategoryFrequency, $TAG_SUBCATEGORY_LAST_USE: $tagSubcategoryLastUse'
+        '$MEMBER_LIST: $memberList}';
   }
 
   @override
-  List<Object?> get props => [logId, id, name, tagLogFrequency, tagCategoryFrequency, memberList];
+  List<Object?> get props => [
+        logId,
+        id,
+        name,
+        tagLogFrequency,
+        tagCategoryFrequency,
+        tagCategoryLastUse,
+        tagSubcategoryFrequency,
+        tagSubcategoryLastUse,
+        memberList,
+      ];
 
   TagEntity toEntity() {
     return TagEntity(
@@ -38,7 +56,9 @@ class Tag extends Equatable {
       name: name,
       tagLogFrequency: tagLogFrequency,
       tagCategoryFrequency: tagCategoryFrequency,
+      tagCategoryLastUse: tagCategoryLastUse,
       tagSubcategoryFrequency: tagSubcategoryFrequency,
+      tagSubcategoryLastUse: tagSubcategoryLastUse,
       memberList: memberList,
     );
   }
@@ -50,7 +70,9 @@ class Tag extends Equatable {
       name: entity.name,
       tagLogFrequency: entity.tagLogFrequency,
       tagCategoryFrequency: entity.tagCategoryFrequency,
+      tagCategoryLastUse: entity.tagCategoryLastUse,
       tagSubcategoryFrequency: entity.tagSubcategoryFrequency,
+      tagSubcategoryLastUse: entity.tagSubcategoryLastUse,
       memberList: entity.memberList,
     );
   }

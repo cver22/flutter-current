@@ -945,8 +945,6 @@ class EntryAddUpdateTag implements AppAction {
             id: '${Uuid().v4()}-${appState.authState.user.value.id}',
             logId: entry.logId,
             tagLogFrequency: 1,
-            tagCategoryFrequency: <String, int>{},
-            tagSubcategoryFrequency: <String, int>{},
             memberList: entry.entryMembers.keys.toList(),
           );
         } else {
