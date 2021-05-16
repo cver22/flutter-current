@@ -1,3 +1,4 @@
+import 'package:expenses/filter/filter_ui/filter_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -13,8 +14,7 @@ import 'filter_list_tile.dart';
 class FilterMemberDialog extends StatelessWidget {
   final PaidOrSpent paidOrSpent;
 
-  const FilterMemberDialog({Key? key, required this.paidOrSpent})
-      : super(key: key);
+  const FilterMemberDialog({Key? key, required this.paidOrSpent}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +27,15 @@ class FilterMemberDialog extends StatelessWidget {
           return AppDialogWithActions(
               title: paidOrSpent == PaidOrSpent.paid ? 'Who Paid' : 'Who Spent',
               shrinkWrap: true,
-              actions: _actions(),
+              actions: filterActions(
+                onPressedClear: (_) {
+                  if (paidOrSpent == PaidOrSpent.paid) {
+                    Env.store.dispatch(FilterClearPaidSelection());
+                  } else {
+                    Env.store.dispatch(FilterClearSpentSelection());
+                  }
+                },
+              ),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
                 child: ListView.builder(
@@ -52,25 +60,5 @@ class FilterMemberDialog extends StatelessWidget {
                     }),
               ));
         });
-  }
-
-  List<Widget> _actions() {
-    return [
-      TextButton(
-        child: Text('Clear'),
-        onPressed: () {
-          if (paidOrSpent == PaidOrSpent.paid) {
-            Env.store.dispatch(FilterClearPaidSelection());
-          } else {
-            Env.store.dispatch(FilterClearSpentSelection());
-          }
-        },
-      ),
-      TextButton(
-          child: Text('Done'),
-          onPressed: () {
-            Get.back();
-          }),
-    ];
   }
 }

@@ -38,6 +38,7 @@
 //TODO change formatters to a class, should make them easier to use and implement
 //TODO add currency search value to state to be able to handle case where no currencies can be found that match the search
 //TODO entries loaded from null should be given NO_CATEGORY AND NO_SUBCATEGORY defaults if the value is null
+//TODO hide filter button until a log and an entry is added
 
 
 //TODO VISUAL
@@ -61,11 +62,7 @@
 
 //TODO START HERE
 //build build local repository for currency fetcher && migrate settings
-//fix filter to handle multiple currencies
-//ask Ana, how should entry list look
-
-
-
+//make filter actions for currencies and show filter
 
 
 

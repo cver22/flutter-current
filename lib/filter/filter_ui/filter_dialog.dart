@@ -1,4 +1,6 @@
 import 'package:currency_picker/currency_picker.dart';
+import '../../app/common_widgets/list_tile_components.dart';
+import '../../currency/currency_ui/app_currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
@@ -55,13 +57,15 @@ class _FilterDialogState extends State<FilterDialog> {
     if (Env.store.state.filterState.filter.value.minAmount.isSome) {
       _minAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state.filterState.filter.value.minAmount.value ?? 0, currency: CurrencyService().findByCode('CAD')!));
+              value: Env.store.state.filterState.filter.value.minAmount.value ?? 0,
+              currency: CurrencyService().findByCode('CAD')!));
     }
 
     if (Env.store.state.filterState.filter.value.maxAmount.isSome) {
       _maxAmountController.value = TextEditingValue(
           text: formattedAmount(
-              value: Env.store.state.filterState.filter.value.maxAmount.value ?? 0, currency: CurrencyService().findByCode('CAD')!));
+              value: Env.store.state.filterState.filter.value.maxAmount.value ?? 0,
+              currency: CurrencyService().findByCode('CAD')!));
     }
 
     super.initState();
@@ -81,14 +85,12 @@ class _FilterDialogState extends State<FilterDialog> {
         where: notIdentical,
         map: (state) => state.filterState,
         builder: (filterState) {
-
-          if(filterState.filter.isSome){
+          if (filterState.filter.isSome) {
             filter = filterState.filter.value;
 
             return AppDialogWithActions(
               title: 'Filter',
-              actions:
-              _actions(filterState: filterState, entriesChart: entriesChart),
+              actions: _actions(filterState: filterState, entriesChart: entriesChart),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.max,
@@ -98,6 +100,8 @@ class _FilterDialogState extends State<FilterDialog> {
                     _amountFilter(filter: filter),
                     SizedBox(height: 8.0),
                     _dateFilter(),
+                    SizedBox(height: 8.0),
+                    _currency(filterState: filterState),
                     SizedBox(height: 8.0),
                     _categoryFilter(filterState: filterState),
                     SizedBox(height: 8.0),
@@ -113,13 +117,10 @@ class _FilterDialogState extends State<FilterDialog> {
           } else {
             return Container();
           }
-
         });
   }
 
-  List<Widget> _actions(
-      {required FilterState filterState,
-      required EntriesCharts entriesChart}) {
+  List<Widget> _actions({required FilterState filterState, required EntriesCharts entriesChart}) {
     return [
       TextButton(
         child: Text('Cancel'),
@@ -150,9 +151,7 @@ class _FilterDialogState extends State<FilterDialog> {
 
   bool _minExceedMax({required Filter filter}) {
     bool canSave = false;
-    if (filter.minAmount.isSome &&
-        filter.maxAmount.isSome &&
-        filter.minAmount.value! >= filter.maxAmount.value!) {
+    if (filter.minAmount.isSome && filter.maxAmount.isSome && filter.minAmount.value! >= filter.maxAmount.value!) {
       canSave = true;
     }
     return canSave;
@@ -211,9 +210,7 @@ class _FilterDialogState extends State<FilterDialog> {
       style: TextStyle(color: minExceedMax ? Colors.red : Colors.black),
       controller: controller,
       focusNode: focusNode,
-      inputFormatters: [
-        FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))
-      ],
+      inputFormatters: [FilteringTextInputFormatter.allow(RegExp(r"^\-?\d*\.?\d{0,2}"))],
       keyboardType: TextInputType.number,
       textInputAction: textInputAction,
       decoration: InputDecoration(
@@ -222,7 +219,9 @@ class _FilterDialogState extends State<FilterDialog> {
         hintStyle: TextStyle(color: ACTIVE_HINT_COLOR),
       ),
       onChanged: (newValue) {
-        int intValue = parseNewValue(newValue: newValue, currency: CurrencyService().findByCode('CAD')!); //TODO need this to work based on settings
+        int intValue = parseNewValue(
+            newValue: newValue,
+            currency: CurrencyService().findByCode('CAD')!); //TODO need this to work based on settings
         onChange(intValue);
       },
     );
@@ -235,8 +234,7 @@ class _FilterDialogState extends State<FilterDialog> {
       children: [
         DateButton(
           //TODO add remove focus action to these buttons
-          initialDateTime:
-              filter.startDate.isSome ? filter.startDate.value : null,
+          initialDateTime: filter.startDate.isSome ? filter.startDate.value : null,
 
           label: 'Start Date',
           datePickerType: DatePickerType.start,
@@ -263,7 +261,7 @@ class _FilterDialogState extends State<FilterDialog> {
     String categories = '';
 
     filterState.filter.value.selectedCategories.forEach((categoryName) {
-      if (categories.length > 0) {
+      if (categories.isNotEmpty) {
         categories += ', $categoryName';
       } else {
         categories += 'Categories: $categoryName';
@@ -274,7 +272,7 @@ class _FilterDialogState extends State<FilterDialog> {
       label: categories.length > 0 ? categories : 'Select Filter Categories',
       filter: true,
       onPressed: () => {
-        _removeFocus(),
+        _unfocus(),
         showDialog(
           context: context,
           builder: (_) => MasterCategoryListDialog(
@@ -315,11 +313,10 @@ class _FilterDialogState extends State<FilterDialog> {
           flex: 1,
           child: AppButton(
               onPressed: () => {
-                    _removeFocus(),
+                    _unfocus(),
                     showDialog(
                       context: context,
-                      builder: (_) =>
-                          FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
+                      builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
                     ),
                   },
               child: Text(
@@ -333,17 +330,14 @@ class _FilterDialogState extends State<FilterDialog> {
           flex: 1,
           child: AppButton(
               onPressed: () => {
-                    _removeFocus(),
+                    _unfocus(),
                     showDialog(
                       context: context,
-                      builder: (_) =>
-                          FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
+                      builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
                     ),
                   },
               child: Text(
-                membersSpentString.length > 0
-                    ? membersSpentString
-                    : 'Who spent?',
+                membersSpentString.length > 0 ? membersSpentString : 'Who spent?',
                 overflow: TextOverflow.visible,
                 softWrap: true,
               )),
@@ -366,10 +360,9 @@ class _FilterDialogState extends State<FilterDialog> {
       });
 
       return AppButton(
-        child: Text(
-            selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
+        child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
         onPressed: () => {
-          _removeFocus(),
+          _unfocus(),
           showDialog(
             context: context,
             builder: (_) => FilterLogDialog(),
@@ -399,7 +392,7 @@ class _FilterDialogState extends State<FilterDialog> {
     return AppButton(
       child: Text(tagString),
       onPressed: () => {
-        _removeFocus(),
+        _unfocus(),
         showDialog(
           context: context,
           builder: (_) => FilterTagDialog(),
@@ -408,8 +401,23 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  void _removeFocus() {
+  void _unfocus() {
     _minFocusNode.unfocus();
     _maxFocusNode.unfocus();
+  }
+
+  Widget _currency({required FilterState filterState}) {
+    return AppCurrencyPicker(
+      title: 'Filter Currencies',
+      withConversionRates: true,
+      clearCallingFocus: () {
+        _unfocus();
+      },
+      returnCurrency: (currency) {
+        //TODO make this optional
+        //Env.store.dispatch(EntryUpdateCurrency(currency: currency));
+      },
+      filterSelect: true,
+    );
   }
 }

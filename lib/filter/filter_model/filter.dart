@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:equatable/equatable.dart';
 
 import '../../utils/maybe.dart';
@@ -7,7 +5,7 @@ import '../../utils/maybe.dart';
 class Filter extends Equatable {
   final Maybe<DateTime?> startDate;
   final Maybe<DateTime?> endDate;
-  final Map<String, String> currency; // code, name
+  final List<String> currency; // code
   final List<String> selectedCategories; //name
   final List<String> selectedSubcategories; //id
   final Maybe<int?> minAmount;
@@ -35,15 +33,15 @@ class Filter extends Equatable {
     return Filter(
       startDate: Maybe<DateTime>.none(),
       endDate: Maybe<DateTime>.none(),
-      currency: LinkedHashMap(),
-      selectedCategories: const [],
-      selectedSubcategories: const [],
+      currency: const <String>[],
+      selectedCategories: const <String>[],
+      selectedSubcategories: const <String>[],
       minAmount: Maybe<int>.none(),
       maxAmount: Maybe<int>.none(),
-      membersPaid: const [],
-      membersSpent: const [],
-      selectedLogs: const [],
-      selectedTags: const [],
+      membersPaid: const <String>[],
+      membersSpent: const <String>[],
+      selectedLogs: const <String>[],
+      selectedTags: const <String>[],
     );
   }
 
@@ -68,7 +66,7 @@ class Filter extends Equatable {
   Filter copyWith({
     Maybe<DateTime?>? startDate,
     Maybe<DateTime?>? endDate,
-    Map<String, String>? currency,
+    List<String>? currency,
     List<String>? selectedCategories,
     List<String>? selectedSubcategories,
     Maybe<int?>? minAmount,

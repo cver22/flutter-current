@@ -1,8 +1,6 @@
+import '../../filter/filter_ui/filter_actions.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-
 import '../../app/common_widgets/app_dialog.dart';
-import '../../app/common_widgets/empty_content.dart';
 import '../../app/common_widgets/error_widget.dart';
 import '../../env.dart';
 import '../../filter/filter_model/filter.dart';
@@ -19,8 +17,7 @@ import 'master_category_drag_and_drop_list.dart';
 class MasterCategoryListDialog extends StatelessWidget {
   final SettingsLogFilterEntry setLogFilter;
 
-  const MasterCategoryListDialog({Key? key, required this.setLogFilter})
-      : super(key: key);
+  const MasterCategoryListDialog({Key? key, required this.setLogFilter}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +31,7 @@ class MasterCategoryListDialog extends StatelessWidget {
         builder: (dynamic logsState) {
           Log log = logsState.selectedLog.value;
 
-          return _buildDialog(
-              categories: log.categories, subcategories: log.subcategories);
+          return _buildDialog(categories: log.categories, subcategories: log.subcategories);
         },
       );
     } else if (setLogFilter == SettingsLogFilterEntry.settings) {
@@ -48,9 +44,7 @@ class MasterCategoryListDialog extends StatelessWidget {
           categories = settings.defaultCategories;
           subcategories = settings.defaultSubcategories;
 
-
-          return _buildDialog(
-              categories: categories, subcategories: subcategories);
+          return _buildDialog(categories: categories, subcategories: subcategories);
         },
       );
     } else if (setLogFilter == SettingsLogFilterEntry.filter) {
@@ -82,16 +76,21 @@ class MasterCategoryListDialog extends StatelessWidget {
       List<String>? selectedCategories,
       List<String>? selectedSubcategories}) {
     return AppDialogWithActions(
-      trailingTitleWidget:
-          setLogFilter == SettingsLogFilterEntry.filter ? null : _displayAddButton(),
+      trailingTitleWidget: setLogFilter == SettingsLogFilterEntry.filter ? null : _displayAddButton(),
       title: CATEGORY,
-      actions: setLogFilter == SettingsLogFilterEntry.filter ? _actions() : null,
+      actions: setLogFilter == SettingsLogFilterEntry.filter
+          ? filterActions(
+              onPressedClear: (_) {
+                Env.store.dispatch(FilterClearCategorySelection());
+              },
+            )
+          : null,
       child: MasterCategoryDragAndDropList(
-              selectedCategories: selectedCategories,
-              selectedSubcategories: selectedSubcategories,
-              categories: categories,
-              subcategories: subcategories,
-              setLogFilter: setLogFilter,
+        selectedCategories: selectedCategories,
+        selectedSubcategories: selectedSubcategories,
+        categories: categories,
+        subcategories: subcategories,
+        setLogFilter: setLogFilter,
       ),
     );
   }
@@ -115,19 +114,4 @@ class MasterCategoryListDialog extends StatelessWidget {
     );
   }
 
-  List<Widget> _actions() {
-    return [
-      TextButton(
-        child: Text('Clear'),
-        onPressed: () {
-          Env.store.dispatch(FilterClearCategorySelection());
-        },
-      ),
-      TextButton(
-          child: Text('Done'),
-          onPressed: () {
-            Get.back();
-          }),
-    ];
-  }
 }

@@ -1,3 +1,4 @@
+import 'package:expenses/filter/filter_ui/filter_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,7 +24,9 @@ class FilterLogDialog extends StatelessWidget {
           return AppDialogWithActions(
               title: 'Logs',
               shrinkWrap: true,
-              actions: _actions(),
+              actions: filterActions(onPressedClear: (_) {
+                Env.store.dispatch(FilterClearLogSelection());
+              },),
               child: ListView.builder(
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
@@ -41,19 +44,4 @@ class FilterLogDialog extends StatelessWidget {
         });
   }
 
-  List<Widget> _actions() {
-    return [
-      TextButton(
-        child: Text('Clear'),
-        onPressed: () {
-          Env.store.dispatch(FilterClearLogSelection());
-        },
-      ),
-      TextButton(
-          child: Text('Done'),
-          onPressed: () {
-            Get.back();
-          }),
-    ];
-  }
 }

@@ -15,8 +15,9 @@ class FilterState extends Equatable {
   final List<AppCategory> consolidatedSubcategories;
   final Map<String, String> allMembers; //id, name
   final List<Tag> allTags;
+  final List<String> usedCurrencies;
   final bool updated;
-  final Maybe<String> search;
+  final Maybe<String> tagSearch;
   final List<Tag> searchedTags;
   final Maybe<SortMethod> sortMethod; //currently unused , implement later
 
@@ -27,8 +28,9 @@ class FilterState extends Equatable {
     required this.consolidatedSubcategories,
     required this.allMembers,
     required this.allTags,
+    required this.usedCurrencies,
     required this.updated,
-    required this.search,
+    required this.tagSearch,
     required this.searchedTags,
     required this.sortMethod,
   });
@@ -36,14 +38,15 @@ class FilterState extends Equatable {
   factory FilterState.initial() {
     return FilterState(
       filter: Maybe.none(),
-      expandedCategories: const [],
-      consolidatedCategories: const [],
-      consolidatedSubcategories: const [],
+      expandedCategories: const <bool>[],
+      consolidatedCategories: const <AppCategory>[],
+      consolidatedSubcategories: const <AppCategory>[],
       allMembers: LinkedHashMap(),
-      allTags: const [],
+      allTags: const <Tag>[],
+      usedCurrencies: const <String>[],
       updated: false,
-      search: Maybe.none(),
-      searchedTags: const [],
+      tagSearch: Maybe.none(),
+      searchedTags: const <Tag>[],
       sortMethod: Maybe.none(),
     );
   }
@@ -57,7 +60,7 @@ class FilterState extends Equatable {
         allMembers,
         allTags,
         updated,
-        search,
+        tagSearch,
         searchedTags,
         sortMethod,
       ];
@@ -72,23 +75,21 @@ class FilterState extends Equatable {
     List<AppCategory>? consolidatedSubcategories,
     Map<String, String>? allMembers,
     List<Tag>? allTags,
+    List<String>? usedCurrencies,
     bool? updated,
-    Maybe<String>? search,
+    Maybe<String>? tagSearch,
     List<Tag>? searchedTags,
     Maybe<SortMethod>? sortMethod,
   }) {
     if ((filter == null || identical(filter, this.filter)) &&
-        (expandedCategories == null ||
-            identical(expandedCategories, this.expandedCategories)) &&
-        (consolidatedCategories == null ||
-            identical(consolidatedCategories, this.consolidatedCategories)) &&
-        (consolidatedSubcategories == null ||
-            identical(
-                consolidatedSubcategories, this.consolidatedSubcategories)) &&
+        (expandedCategories == null || identical(expandedCategories, this.expandedCategories)) &&
+        (consolidatedCategories == null || identical(consolidatedCategories, this.consolidatedCategories)) &&
+        (consolidatedSubcategories == null || identical(consolidatedSubcategories, this.consolidatedSubcategories)) &&
         (allMembers == null || identical(allMembers, this.allMembers)) &&
         (allTags == null || identical(allTags, this.allTags)) &&
+        (usedCurrencies == null || identical(usedCurrencies, this.usedCurrencies)) &&
         (updated == null || identical(updated, this.updated)) &&
-        (search == null || identical(search, this.search)) &&
+        (tagSearch == null || identical(tagSearch, this.tagSearch)) &&
         (searchedTags == null || identical(searchedTags, this.searchedTags)) &&
         (sortMethod == null || identical(sortMethod, this.sortMethod))) {
       return this;
@@ -97,14 +98,13 @@ class FilterState extends Equatable {
     return new FilterState(
       filter: filter ?? this.filter,
       expandedCategories: expandedCategories ?? this.expandedCategories,
-      consolidatedCategories:
-          consolidatedCategories ?? this.consolidatedCategories,
-      consolidatedSubcategories:
-          consolidatedSubcategories ?? this.consolidatedSubcategories,
+      consolidatedCategories: consolidatedCategories ?? this.consolidatedCategories,
+      consolidatedSubcategories: consolidatedSubcategories ?? this.consolidatedSubcategories,
       allMembers: allMembers ?? this.allMembers,
       allTags: allTags ?? this.allTags,
+      usedCurrencies: usedCurrencies ?? this.usedCurrencies,
       updated: updated ?? this.updated,
-      search: search ?? this.search,
+      tagSearch: tagSearch ?? this.tagSearch,
       searchedTags: searchedTags ?? this.searchedTags,
       sortMethod: sortMethod ?? this.sortMethod,
     );

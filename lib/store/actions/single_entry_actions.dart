@@ -562,7 +562,7 @@ class EntryAddEditSubcategory implements AppAction {
           tag = _decrementAppCategoryFrequency(
               categoryId: previousParentId, updatedTag: tag, categoryOrSubcategory: CategoryOrSubcategory.category);
           tag = _incrementAppCategoryFrequency(
-              appCategoryId: subcategory.parentCategoryId!,
+              categoryId: subcategory.parentCategoryId!,
               updatedTag: tag,
               categoryOrSubcategory: CategoryOrSubcategory.category);
 
@@ -973,7 +973,7 @@ class EntryAddUpdateTag implements AppAction {
               )),
               tags: tags,
               searchedTags: <Tag>[],
-              search: Maybe<String>.none(),
+              tagSearch: Maybe<String>.none(),
             ))
       ],
     );
@@ -1028,7 +1028,7 @@ class EntrySelectDeselectTag implements AppAction {
             selectedEntry: Maybe<AppEntry>.some(entry.copyWith(tagIDs: entryTagIds)),
             tags: tags,
             searchedTags: <Tag>[],
-            search: Maybe<String>.none())),
+            tagSearch: Maybe<String>.none())),
       ],
     );
   }
@@ -1054,7 +1054,7 @@ class EntrySetSearchedTags implements AppAction {
       appState,
       [
         _userUpdateSingleEntryState(
-            (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, search: searchMaybe)),
+            (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, tagSearch: searchMaybe)),
       ],
     );
   }
@@ -1248,35 +1248,45 @@ Tag _incrementCategorySubcategoryFrequency(
     {required Tag updatedTag, required String? categoryId, required String? subcategoryId}) {
   //increment use of tag for this category if present
   updatedTag = _incrementAppCategoryFrequency(
-      appCategoryId: categoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.category);
+      categoryId: categoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.category);
 
   //increment use of tag for this subcategory if present
   updatedTag = _incrementAppCategoryFrequency(
-      appCategoryId: subcategoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.subcategory);
+      categoryId: subcategoryId, updatedTag: updatedTag, categoryOrSubcategory: CategoryOrSubcategory.subcategory);
 
   return updatedTag;
 }
 
 Tag _incrementAppCategoryFrequency(
-    {required String? appCategoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
+    {required String? categoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
   print('increment tag: $updatedTag');
 
   Map<String, int> tagCategoryFrequency = const {};
+  Map<String, DateTime> tagCategoryLastUse = const {};
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
     tagCategoryFrequency = Map<String, int>.from(updatedTag.tagCategoryFrequency);
+    tagCategoryLastUse = Map<String, DateTime>.from(updatedTag.tagCategoryLastUse);
   } else {
     tagCategoryFrequency = Map<String, int>.from(updatedTag.tagSubcategoryFrequency);
+    tagCategoryLastUse = Map<String, DateTime>.from(updatedTag.tagSubcategoryLastUse);
   }
 
-  //adds frequency to tag for the category if present, adds it otherwise
-  if (appCategoryId != null) {
-    tagCategoryFrequency.update(appCategoryId, (value) => value + 1, ifAbsent: () => 1);
+  //adds frequency and last use to tag for the category or subcategory if present, adds it otherwise
+  if (categoryId != null) {
+    tagCategoryFrequency.update(categoryId, (value) => value + 1, ifAbsent: () => 1);
+    tagCategoryLastUse.update(categoryId, (value) => DateTime.now(), ifAbsent: () => DateTime.now());
   }
 
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-    updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
+    updatedTag = updatedTag.copyWith(
+      tagCategoryFrequency: tagCategoryFrequency,
+      tagCategoryLastUse: tagCategoryLastUse,
+    );
   } else {
-    updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
+    updatedTag = updatedTag.copyWith(
+      tagSubcategoryFrequency: tagCategoryFrequency,
+      tagSubcategoryLastUse: tagCategoryLastUse,
+    );
   }
   print('incremented tag: $updatedTag');
 
@@ -1308,24 +1318,35 @@ Tag _decrementCategorySubcategory(
 Tag _decrementAppCategoryFrequency(
     {required String? categoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
   Map<String, int> tagCategoryFrequency = <String, int>{};
+  Map<String, DateTime> tagCategoryLastUse = const {};
 
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
     tagCategoryFrequency = Map<String, int>.from(updatedTag.tagCategoryFrequency);
+    tagCategoryLastUse = Map<String, DateTime>.from(updatedTag.tagCategoryLastUse);
   } else {
     tagCategoryFrequency = Map<String, int>.from(updatedTag.tagSubcategoryFrequency);
+    tagCategoryLastUse = Map<String, DateTime>.from(updatedTag.tagSubcategoryLastUse);
   }
 
   //subtracts frequency to tag for the category if present, adds it otherwise
   if (categoryId != null) {
     tagCategoryFrequency.update(categoryId, (value) => value - 1, ifAbsent: () => 0);
+    //TODO look through all entries to find last use? may need to change to DateTime?
+    tagCategoryLastUse.update(categoryId, (value) => DateTime.now(), ifAbsent: () => DateTime.now());
   }
 
   tagCategoryFrequency.removeWhere(
       (key, value) => value < 1); //removes category frequencies where the tags is no longer used by any entries
   if (categoryOrSubcategory == CategoryOrSubcategory.category) {
-    updatedTag = updatedTag.copyWith(tagCategoryFrequency: tagCategoryFrequency);
+    updatedTag = updatedTag.copyWith(
+      tagCategoryFrequency: tagCategoryFrequency,
+      tagCategoryLastUse: tagCategoryLastUse,
+    );
   } else {
-    updatedTag = updatedTag.copyWith(tagSubcategoryFrequency: tagCategoryFrequency);
+    updatedTag = updatedTag.copyWith(
+      tagSubcategoryFrequency: tagCategoryFrequency,
+      tagSubcategoryLastUse: tagCategoryLastUse,
+    );
   }
 
   return updatedTag;
@@ -1347,7 +1368,7 @@ Map<String, Tag> categoryOrSubcategoryUpdateAllTagFrequencies(
       }
 
       tag = _incrementAppCategoryFrequency(
-          appCategoryId: newAppCategory, updatedTag: tag, categoryOrSubcategory: categoryOrSubcategory);
+          categoryId: newAppCategory, updatedTag: tag, categoryOrSubcategory: categoryOrSubcategory);
 
       tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
     });

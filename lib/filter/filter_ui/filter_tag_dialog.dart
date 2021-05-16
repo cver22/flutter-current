@@ -1,3 +1,4 @@
+import 'package:expenses/filter/filter_ui/filter_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -26,18 +27,20 @@ class FilterTagDialog extends StatelessWidget {
               tagFocusNode: FocusNode(),
               searchOnly: true,
             ),
-            actions: _actions(),
+            actions: filterActions(onPressedClear: (_) {
+              Env.store.dispatch(FilterClearTagSelection());
+            },),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  filterState.search.isSome
+                  filterState.tagSearch.isSome
                       ? Text('Searched Tags')
                       : Container(),
-                  filterState.search.isSome
+                  filterState.tagSearch.isSome
                       ? _buildAllTags(
                           selectedCategories:
                               filterState.filter.value.selectedCategories,
-                          search: filterState.search,
+                          search: filterState.tagSearch,
                           allTags: filterState.allTags,
                           searchedTags: filterState.searchedTags,
                           selectedTagNames:
@@ -49,14 +52,14 @@ class FilterTagDialog extends StatelessWidget {
                     selectedTagIds: filterState.filter.value.selectedTags,
                   ),
                   SizedBox(height: 8.0),
-                  filterState.search.isNone
+                  filterState.tagSearch.isNone
                       ? Text('Tags by Frequency')
                       : Container(),
-                  filterState.search.isNone
+                  filterState.tagSearch.isNone
                       ? _buildAllTags(
                           selectedCategories:
                               filterState.filter.value.selectedCategories,
-                          search: filterState.search,
+                          search: filterState.tagSearch,
                           allTags: filterState.allTags,
                           searchedTags: filterState.searchedTags,
                           selectedTagNames:
@@ -67,22 +70,6 @@ class FilterTagDialog extends StatelessWidget {
             ),
           );
         });
-  }
-
-  List<Widget> _actions() {
-    return [
-      TextButton(
-        child: Text('Clear'),
-        onPressed: () {
-          Env.store.dispatch(FilterClearTagSelection());
-        },
-      ),
-      TextButton(
-          child: Text('Done'),
-          onPressed: () {
-            Get.back();
-          }),
-    ];
   }
 
   Widget _buildSelectedTags({

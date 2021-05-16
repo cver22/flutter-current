@@ -1,4 +1,5 @@
-import '../../store/actions/currency_actions.dart';
+import 'package:expenses/app/common_widgets/list_tile_components.dart';
+
 import '../../currency/currency_models/currency_state.dart';
 import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
@@ -16,14 +17,20 @@ class CurrencyDialog extends StatefulWidget {
   final String referenceCurrency;
   final Function(String) returnCurrency;
   final bool withConversionRates;
+  final Function(String) searchFunction;
+  final List<Currency>? currencies;
+  final bool filterSelect;
 
-  const CurrencyDialog(
-      {Key? key,
-      required this.title,
-      required this.referenceCurrency,
-      required this.returnCurrency,
-      this.withConversionRates = false})
-      : super(key: key);
+  const CurrencyDialog({
+    Key? key,
+    required this.title,
+    required this.referenceCurrency,
+    required this.returnCurrency,
+    this.withConversionRates = false,
+    required this.searchFunction,
+    this.currencies,
+    this.filterSelect = false,
+  }) : super(key: key);
 
   @override
   _CurrencyDialogState createState() => _CurrencyDialogState();
@@ -50,14 +57,19 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         where: notIdentical,
         map: (state) => state.currencyState,
         builder: (currencyState) {
-
           return AppDialogWithActions(
-            topWidget: searchBox(lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]?.lastUpdated),
+            topWidget: searchBox(
+              lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]?.lastUpdated,
+              withConversionRates: widget.withConversionRates,
+              searchFunction: widget.searchFunction,
+            ),
             child: _buildCurrencyList(
               referenceCurrencyCode: widget.referenceCurrency,
               returnCurrency: widget.returnCurrency,
               withConversionRates: widget.withConversionRates,
               currencyState: currencyState,
+              currencies: widget.currencies,
+              filterSelect: widget.filterSelect,
             ),
             title: widget.title,
             actions: _actions(withConversionRates: widget.withConversionRates),
@@ -65,12 +77,15 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         });
   }
 
-  Widget searchBox({required DateTime? lastUpdated}) {
+  Widget searchBox(
+      {required DateTime? lastUpdated, required bool withConversionRates, required Function(String) searchFunction}) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
       child: Column(
         children: [
-          if (lastUpdated != null) Text('Updated: ${lastUpdated.year}/${lastUpdated.month}/${lastUpdated.day}', style: TextStyle(fontSize: 10.0, fontStyle: FontStyle.italic)),
+          if (lastUpdated != null && withConversionRates)
+            Text('Updated: ${lastUpdated.year}/${lastUpdated.month}/${lastUpdated.day}',
+                style: TextStyle(fontSize: 10.0, fontStyle: FontStyle.italic)),
           Row(
             mainAxisSize: MainAxisSize.max,
             children: [
@@ -86,7 +101,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
                   textInputAction: TextInputAction.done,
                   onChanged: (search) {
                     setState(() {
-                      Env.store.dispatch(CurrencySearchCurrencies(search: search));
+                      searchFunction(search);
                     });
                   },
                 ),
@@ -115,27 +130,28 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     ];
   }
 
-  Widget _buildCurrencyList(
-      {required String referenceCurrencyCode,
-      required Function(String) returnCurrency,
-      required bool withConversionRates,
-      required CurrencyState currencyState}) {
-    List<Currency> currencies = <Currency>[];
+  Widget _buildCurrencyList({
+    required String referenceCurrencyCode,
+    required Function(String) returnCurrency,
+    required bool withConversionRates,
+    required CurrencyState currencyState,
+    List<Currency>? currencies,
+    required bool filterSelect,
+  }) {
+    List<Currency> viewCurrencies = currencies ?? currencyState.allCurrencies;
     Currency? referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
     if (currencyState.searchCurrencies.isNotEmpty) {
-      currencies = currencyState.searchCurrencies;
-    } else {
-      currencies = currencyState.allCurrencies;
+      viewCurrencies = currencyState.searchCurrencies;
     }
 
     return ListView.builder(
         scrollDirection: Axis.vertical,
         shrinkWrap: true,
         padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
-        itemCount: currencies.length,
+        itemCount: viewCurrencies.length,
         itemBuilder: (BuildContext context, int index) {
-          final Currency _currency = currencies[index];
+          final Currency _currency = viewCurrencies[index];
 
           double? conversionRate;
 
@@ -144,11 +160,17 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
           }
 
           return CurrencyListTile(
-              currency: _currency,
-              conversionRate: conversionRate ?? 0.0,
-              baseCurrency: referenceCurrency!,
-              returnCurrency: returnCurrency,
-              withConversionRates: withConversionRates);
+            currency: _currency,
+            conversionRate: conversionRate ?? 0.0,
+            baseCurrency: referenceCurrency!,
+            returnCurrency: returnCurrency,
+            withConversionRates: withConversionRates,
+            exitOnSelect: !filterSelect,
+            //TODO make currency filter actions
+            /*trailingCheckBox: FilterListTileTrailing(
+                onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
+                selected: selectedCategories!.contains(category.id)),*/
+          );
         });
   }
 }

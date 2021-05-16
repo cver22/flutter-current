@@ -44,7 +44,7 @@ class _TagFieldState extends State<TagField> {
     if (Env.store.state.singleEntryState.search.isNone && !searchOnly) {
       //clears text for the entry search if a tag is selected
       _controller.clear();
-    } else if (Env.store.state.filterState.search.isNone && searchOnly) {
+    } else if (Env.store.state.filterState.tagSearch.isNone && searchOnly) {
       //clears text for filter state if a tag is selected
       _controller.clear();
     }
