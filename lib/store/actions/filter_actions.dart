@@ -1,5 +1,7 @@
 import 'dart:collection';
 
+import 'package:expenses/entry/entry_model/app_entry.dart';
+
 import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
 import '../../filter/filter_model/filter.dart';
@@ -42,11 +44,13 @@ class FilterSetReset implements AppAction {
   AppState updateState(AppState appState) {
     Filter updatedFilter = Filter.initial();
     List<Log?> logs = [];
+    List<AppEntry> entries = Map<String, AppEntry>.from(appState.entriesState.entries).values.toList();
     Map<String, AppCategory> allCategories = LinkedHashMap();
     Map<String, AppCategory> allSubcategories = LinkedHashMap();
     Map<String, AppCategory> consolidatedCategories = LinkedHashMap();
     Map<String, AppCategory> consolidatedSubcategories = LinkedHashMap();
-    List<bool> expandedCategories = [];
+    List<bool> expandedCategories = <bool>[];
+    List<String> usedCurrencies = <String>[];
     Map<String, String> members = LinkedHashMap();
     List<Tag> allTags = [];
     List<String> selectedLogs = [];
@@ -127,6 +131,13 @@ class FilterSetReset implements AppAction {
         tags: Map.from(appState.tagState.tags),
         selectedLogs: selectedLogs);
 
+    entries.forEach((entry) {
+      if(!usedCurrencies.contains(entry.currency)){
+        usedCurrencies.add(entry.currency);
+      }
+
+    });
+
     //create list of expanded categories the same size as the list of categories and set expanded to false
     consolidatedCategories.forEach((key, value) {
       expandedCategories.add(false);
@@ -154,6 +165,7 @@ class FilterSetReset implements AppAction {
               expandedCategories: expandedCategories,
               consolidatedCategories: consolidatedCategories.values.toList(),
               consolidatedSubcategories: consolidatedSubcategories.values.toList(),
+              usedCurrencies: usedCurrencies,
               allMembers: members,
               filter: Maybe<Filter>.some(updatedFilter),
               updated: updated,

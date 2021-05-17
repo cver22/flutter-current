@@ -73,7 +73,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
                   ),
                   child: _buildCurrencyList(
                     referenceCurrencyCode: widget.referenceCurrency,
-                    returnCurrency: widget.returnCurrency,
+                    onTap: widget.returnCurrency,
                     withConversionRates: widget.withConversionRates,
                     currencyState: currencyState,
                     currencies: widget.currencies,
@@ -144,7 +144,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
 
   Widget _buildCurrencyList({
     required String referenceCurrencyCode,
-    required Function(String) returnCurrency,
+    required Function(String) onTap,
     required bool withConversionRates,
     required CurrencyState currencyState,
     List<Currency>? currencies,
@@ -176,7 +176,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
             currency: _currency,
             conversionRate: conversionRate ?? 0.0,
             baseCurrency: referenceCurrency!,
-            returnCurrency: returnCurrency,
+            onTap: onTap,
             withConversionRates: withConversionRates,
             exitOnSelect: !filterSelect,
             trailingCheckBox: filterSelect ? FilterListTileTrailing(

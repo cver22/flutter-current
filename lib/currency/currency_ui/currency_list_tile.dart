@@ -6,7 +6,7 @@ class CurrencyListTile extends StatelessWidget {
   final Currency currency;
   final double conversionRate;
   final Currency baseCurrency;
-  final Function(String) returnCurrency;
+  final Function(String) onTap;
   final bool withConversionRates;
   final bool exitOnSelect;
   final Widget? trailingCheckBox;
@@ -16,7 +16,7 @@ class CurrencyListTile extends StatelessWidget {
     required this.currency,
     this.conversionRate = 0.0,
     required this.baseCurrency,
-    required this.returnCurrency,
+    required this.onTap,
     this.withConversionRates = false,
     this.exitOnSelect = true,
     this.trailingCheckBox,
@@ -32,7 +32,7 @@ class CurrencyListTile extends StatelessWidget {
         children: [
           InkWell(
             onTap: () {
-              returnCurrency(currency.code);
+              onTap(currency.code);
               if (exitOnSelect) Get.back();
             },
             child: Padding(
@@ -80,10 +80,11 @@ class CurrencyListTile extends StatelessWidget {
                   ),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: trailingCheckBox ?? Text(
-                      currency.symbol,
-                      style: const TextStyle(fontSize: 18),
-                    ),
+                    child: trailingCheckBox ??
+                        Text(
+                          currency.symbol,
+                          style: const TextStyle(fontSize: 18),
+                        ),
                   ),
                 ],
               ),
