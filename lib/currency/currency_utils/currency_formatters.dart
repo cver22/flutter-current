@@ -12,7 +12,8 @@ String formattedAmount(
     bool showTrailingZeros = false,
     required Currency currency,
     bool showSymbol = false,
-    bool showCurrency = false}) {
+    bool showCode = false,
+    bool showFlag = false}) {
   String returnString = '';
 
   if (value != 0) {
@@ -70,7 +71,11 @@ String formattedAmount(
     returnString = '$returnString ${currency.symbol}';
   }
 
-  if (showCurrency) {
+  if (showFlag) {
+    returnString = '${CurrencyUtils.currencyToEmoji(currency)} $returnString';
+  }
+
+  if (showCode) {
     returnString = '${currency.code} $returnString';
   }
 

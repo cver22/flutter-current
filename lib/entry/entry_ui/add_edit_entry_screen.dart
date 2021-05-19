@@ -262,7 +262,7 @@ class AddEditEntryScreen extends StatelessWidget {
         currency: currency,
         showSymbol: true,
         showTrailingZeros: true,
-        showCurrency: true,
+        showCode: true,
       )}',
       style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
     );

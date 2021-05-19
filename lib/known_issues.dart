@@ -32,7 +32,6 @@
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 //add anonymous sign in and create red banner asking the user to signup or risk losing their data
 //TODO, give user option to change default payer on a log and from there the FAB button will chose that as default for EntrySetNewSelect, until then, it defaults to the user
-//TODO entry time stamp at 12pm is wrong
 //TODO modify tags to also include date of recent use
 //TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? should the adding of someone go through an update all the entries?
 //TODO change formatters to a class, should make them easier to use and implement

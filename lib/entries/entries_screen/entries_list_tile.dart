@@ -82,6 +82,7 @@ class EntriesListTile extends StatelessWidget {
   }
 
   Widget _buildTrailingContents({required DateTime date, required Currency logCurrency}) {
+    String settingCurrency = Env.store.state.settingsState.settings.value.homeCurrency;
     return Container(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
@@ -89,12 +90,26 @@ class EntriesListTile extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(
-            '${formattedAmount(value: entry.amount, showSeparators: true, currency: logCurrency, showSymbol: true)}',
+            '${formattedAmount(
+              value: entry.amount,
+              showSeparators: true,
+              currency: logCurrency,
+              showSymbol: true,
+              showCode: logCurrency.code != settingCurrency,
+              showFlag: logCurrency.code != settingCurrency,
+            )}',
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
           ),
           if (entry.currency != logCurrency.code)
             Text(
-              '${formattedAmount(value: entry.amountForeign ?? 0, showSeparators: true, currency: CurrencyService().findByCode(entry.currency)!, showSymbol: true, showCurrency: true)}',
+              '${formattedAmount(
+                value: entry.amountForeign ?? 0,
+                showSeparators: true,
+                currency: CurrencyService().findByCode(entry.currency)!,
+                showSymbol: true,
+                showCode: true,
+                showFlag: true,
+              )}',
               style: TextStyle(fontSize: 14.0),
             ),
           SizedBox(height: 4.0),
@@ -169,5 +184,3 @@ class EntriesListTile extends StatelessWidget {
     return tagString.isNotEmpty ? Text(tagString) : Container();
   }
 }
-
-
