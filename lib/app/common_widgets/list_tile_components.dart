@@ -85,9 +85,7 @@ class FilterListTileTrailing extends StatelessWidget {
       child: IconButton(
         padding: EdgeInsets.all(0),
         icon: Icon(
-          selected
-              ? Icons.check_box_outlined
-              : Icons.check_box_outline_blank_outlined,
+          selected ? Icons.check_box_outlined : Icons.check_box_outline_blank_outlined,
           size: EMOJI_SIZE,
         ),
         onPressed: onTap,
@@ -129,17 +127,27 @@ class MasterCategoryListTileTrailing extends StatelessWidget {
   _onTapAdd() {
     AppCategory subcategory = AppCategory(parentCategoryId: category.id);
     if (setLogFilter == SettingsLogFilterEntry.log) {
-      getLogAddEditSubcategoryDialog(
-          subcategory: subcategory, categories: categories);
+      getLogAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     } else if (setLogFilter == SettingsLogFilterEntry.settings) {
-      getSettingsAddEditSubcategoryDialog(
-          subcategory: subcategory, categories: categories);
+      getSettingsAddEditSubcategoryDialog(subcategory: subcategory, categories: categories);
     }
   }
 
   bool _canAddSubcategory() {
-    return expanded &&
-        category.id != NO_CATEGORY &&
-        category.id != TRANSFER_FUNDS;
+    return expanded && category.id != NO_CATEGORY && category.id != TRANSFER_FUNDS;
+  }
+}
+
+class AppDivider extends StatelessWidget {
+  const AppDivider({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return const Divider(
+      height: 0.0,
+      color: const Color(0x42000000),
+    );
   }
 }

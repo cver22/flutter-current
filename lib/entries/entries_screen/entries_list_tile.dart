@@ -1,5 +1,6 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/app/common_widgets/list_tile_components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -30,37 +31,49 @@ class EntriesListTile extends StatelessWidget {
       Currency logCurrency = CurrencyService().findByCode(log.currency!)!;
       return Column(
         children: [
-          ListTile(
-            leading: Text(
-              '${displayChar(log: log)}',
-              textAlign: TextAlign.center,
-              style: TextStyle(fontSize: EMOJI_SIZE),
-            ),
-            title: Transform.translate(
-              offset: Offset(-16, 0),
-              child: categoriesSubcategories(log: log),
-            ),
-            subtitle: Transform.translate(
-              offset: Offset(-16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  if (entry.tagIDs.isNotEmpty) _buildTagWidget(logId: log.id!),
-                  if (entry.comment != null) Text(entry.comment!),
-                ],
-              ),
-            ),
-            trailing: _buildTrailingContents(date: date, logCurrency: logCurrency),
+          InkWell(
             onTap: () => {
               Env.store.dispatch(EntrySelectEntry(entryId: entry.id)),
               Get.toNamed(ExpenseRoutes.addEditEntries),
             },
-            /* onLongPress: () => {
-              //TODO multi select
-            },*/
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Expanded(
+                    child: Row(
+                      children: [
+                        const SizedBox(width: 15),
+                        Text(
+                          '${displayChar(log: log)}',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: EMOJI_SIZE),
+                        ),
+                        const SizedBox(width: 15),
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              categoriesSubcategories(log: log),
+                              if (entry.tagIDs.isNotEmpty) _buildTagWidget(logId: log.id!),
+                              if (entry.comment != null) Text(entry.comment!),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10),
+                    child: _buildTrailingContents(date: date, logCurrency: logCurrency),
+                  ),
+                ],
+              ),
+            ),
           ),
-          Divider(height: 0.0),
+          AppDivider(),
         ],
       );
     } else {
@@ -156,3 +169,5 @@ class EntriesListTile extends StatelessWidget {
     return tagString.isNotEmpty ? Text(tagString) : Container();
   }
 }
+
+

@@ -298,7 +298,7 @@ class EntryUpdateDateTime implements AppAction {
       appState,
       [
         _userUpdateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
-            selectedEntry: Maybe<AppEntry?>.some(singleEntryState.selectedEntry.value.copyWith(dateTime: dateTime)))),
+            selectedEntry: Maybe<AppEntry>.some(singleEntryState.selectedEntry.value.copyWith(dateTime: dateTime)))),
       ],
     );
   }

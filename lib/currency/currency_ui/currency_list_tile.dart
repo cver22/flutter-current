@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/app/common_widgets/list_tile_components.dart';
 import 'package:flutter/material.dart';
 
 class CurrencyListTile extends StatelessWidget {
@@ -90,7 +91,7 @@ class CurrencyListTile extends StatelessWidget {
               ),
             ),
           ),
-          Divider(height: 0.0),
+          AppDivider(),
         ],
       ),
     );
