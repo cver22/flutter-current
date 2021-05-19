@@ -21,7 +21,7 @@ class FilterListTile extends StatelessWidget {
       title: Text(title!),
       trailing: FilterListTileTrailing(
         selected: selected,
-        onSelect: onSelect,
+        onTap: onSelect,
       ),
     );
   }

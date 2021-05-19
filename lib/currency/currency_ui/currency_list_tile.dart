@@ -1,24 +1,21 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 
 class CurrencyListTile extends StatelessWidget {
   final Currency currency;
-  final double conversionRate;
-  final Currency baseCurrency;
+  final double? conversionRate;
+  final Currency? referenceCurrency;
   final Function(String) onTap;
   final bool withConversionRates;
-  final bool exitOnSelect;
   final Widget? trailingCheckBox;
 
   const CurrencyListTile({
     Key? key,
     required this.currency,
-    this.conversionRate = 0.0,
-    required this.baseCurrency,
+    this.conversionRate,
+    this.referenceCurrency,
     required this.onTap,
     this.withConversionRates = false,
-    this.exitOnSelect = true,
     this.trailingCheckBox,
   }) : super(key: key);
 
@@ -33,7 +30,6 @@ class CurrencyListTile extends StatelessWidget {
           InkWell(
             onTap: () {
               onTap(currency.code);
-              if (exitOnSelect) Get.back();
             },
             child: Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
@@ -64,9 +60,13 @@ class CurrencyListTile extends StatelessWidget {
                                   color: Theme.of(context).hintColor,
                                 ),
                               ),
-                              if (withConversionRates && currency.code != baseCurrency.code && conversionRate != 0)
+                              if (withConversionRates &&
+                                  conversionRate != null &&
+                                  referenceCurrency != null &&
+                                  currency.code != referenceCurrency!.code &&
+                                  conversionRate != 0)
                                 Text(
-                                  '1 ${CurrencyUtils.currencyToEmoji(currency)} => ${conversionRate.toPrecision(5)} ${CurrencyUtils.currencyToEmoji(baseCurrency)}',
+                                  '1 ${CurrencyUtils.currencyToEmoji(currency)} => ${conversionRate!.toStringAsFixed(5)} ${CurrencyUtils.currencyToEmoji(referenceCurrency)}',
                                   style: TextStyle(
                                     fontSize: 15,
                                     color: Theme.of(context).hintColor,

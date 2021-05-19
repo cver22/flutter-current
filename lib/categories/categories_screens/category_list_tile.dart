@@ -39,7 +39,7 @@ class CategoryListTile extends StatelessWidget {
       ),
       title: Text(category.name!),
       trailing: setLogFilter == SettingsLogFilterEntry.filter
-          ? FilterListTileTrailing(onSelect: onTapEdit, selected: selected)
+          ? FilterListTileTrailing(onTap: onTapEdit, selected: selected)
           : CategoryListTileTrailing(onTapEdit: onTapEdit),
       onTap: onTap,
     );

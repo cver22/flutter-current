@@ -1,4 +1,4 @@
-import 'package:currency_picker/currency_picker.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -226,20 +226,19 @@ class AddEditLogScreen extends StatelessWidget {
   //TODO need to react to change in settings for this widget to rebuild, or make it a stateful widget
 
   Widget _buildCurrencyPicker({required Log log, required String? currency}) {
-    Currency? _currency; //TODO this might be broken
-    if (currency != null) {
-      _currency = CurrencyService().findByCode(currency);
-    } else {
-      _currency = CurrencyService().findByCode(Env.store.state.settingsState.settings.value.homeCurrency);
+    if (currency == null) {
+      currency = Env.store.state.settingsState.settings.value.homeCurrency;
     }
 
     return log.id != null
-        ? Text('${CurrencyUtils.currencyToEmoji(_currency!)} ${_currency.code}')
+        ? Text(currencyLabelFromCode(currencyCode: currency))
         : AppCurrencyPicker(
             title: 'Log Currency',
-            logCurrency: log.currency,
-            currency: currency,
-            returnCurrency: (currency) => Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency))));
+            buttonLabel: currencyLabelFromCode(currencyCode: currency), //TODO need to pull this from settings
+            returnCurrency: (currency) {
+              Env.store.dispatch(UpdateSelectedLog(log: log.copyWith(currency: currency)));
+              Get.back();
+            });
   }
 }
 

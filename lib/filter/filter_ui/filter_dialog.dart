@@ -271,7 +271,7 @@ class _FilterDialogState extends State<FilterDialog> {
       label: categories.length > 0 ? categories : 'Select Filter Categories',
       filter: true,
       onPressed: () => {
-        _unfocus(),
+        _unFocus(),
         showDialog(
           context: context,
           builder: (_) => MasterCategoryListDialog(
@@ -312,7 +312,7 @@ class _FilterDialogState extends State<FilterDialog> {
           flex: 1,
           child: AppButton(
               onPressed: () => {
-                    _unfocus(),
+                    _unFocus(),
                     showDialog(
                       context: context,
                       builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.paid),
@@ -329,7 +329,7 @@ class _FilterDialogState extends State<FilterDialog> {
           flex: 1,
           child: AppButton(
               onPressed: () => {
-                    _unfocus(),
+                    _unFocus(),
                     showDialog(
                       context: context,
                       builder: (_) => FilterMemberDialog(paidOrSpent: PaidOrSpent.spent),
@@ -361,7 +361,7 @@ class _FilterDialogState extends State<FilterDialog> {
       return AppButton(
         child: Text(selectedLogString.length > 0 ? selectedLogString : 'Select Logs'),
         onPressed: () => {
-          _unfocus(),
+          _unFocus(),
           showDialog(
             context: context,
             builder: (_) => FilterLogDialog(),
@@ -391,7 +391,7 @@ class _FilterDialogState extends State<FilterDialog> {
     return AppButton(
       child: Text(tagString),
       onPressed: () => {
-        _unfocus(),
+        _unFocus(),
         showDialog(
           context: context,
           builder: (_) => FilterTagDialog(),
@@ -400,7 +400,7 @@ class _FilterDialogState extends State<FilterDialog> {
     );
   }
 
-  void _unfocus() {
+  void _unFocus() {
     _minFocusNode.unfocus();
     _maxFocusNode.unfocus();
   }
@@ -409,32 +409,31 @@ class _FilterDialogState extends State<FilterDialog> {
     return AppCurrencyPicker(
       title: 'Filter Currencies',
       withConversionRates: false,
-      clearCallingFocus: () {
-        _unfocus();
+      unFocus: () {
+        _unFocus();
       },
       returnCurrency: (currency) {
-        //nothing here
+        Env.store.dispatch(FilterSelectDeselectCurrency(currency: currency));
       },
-      currencies: _getCurrencyList(usedCurrencyCodes: filterState.usedCurrencies), //TODO start here
+      currencies: _getCurrencyList(usedCurrencyCodes: filterState.usedCurrencies),
       filterSelect: true,
       buttonLabel: _buildButtonLabel(),
     );
   }
 
-  String? _buildButtonLabel() {
+  String _buildButtonLabel() {
     List<String> selectedCurrencies = Env.store.state.filterState.filter.value.selectedCurrencies;
     String buttonLabel = '';
 
     if (selectedCurrencies.isNotEmpty) {
       selectedCurrencies.forEach((currencyCode) {
-        ;
 
         if (buttonLabel.length > 0) {
           buttonLabel +=
-              '\, ${CurrencyUtils.currencyToEmoji(CurrencyService().findByCode(currencyCode)!)} $currencyCode';
+              '\, ${currencyLabelFromCode(currencyCode: currencyCode)}';
         } else {
           buttonLabel +=
-              'Currencies: ${CurrencyUtils.currencyToEmoji(CurrencyService().findByCode(currencyCode)!)} $currencyCode';
+              'Currencies: ${currencyLabelFromCode(currencyCode: currencyCode)}';
         }
       });
     } else {

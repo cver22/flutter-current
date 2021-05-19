@@ -1,5 +1,10 @@
 import 'package:currency_picker/currency_picker.dart';
 
+String currencyLabelFromCode ({required String currencyCode}){
+  Currency currency = CurrencyService().findByCode(currencyCode)!;
+  return '${CurrencyUtils.currencyToEmoji(currency)} ${currency.code}';
+}
+
 
 String formattedAmount(
     {int value = 0,

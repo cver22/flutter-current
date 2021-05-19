@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/utils/maybe.dart';
 import '../../currency/currency_models/conversion_rates.dart';
 import '../../app/models/app_state.dart';
 import 'app_actions.dart';
@@ -22,18 +23,20 @@ class CurrencySearchCurrencies implements AppAction {
 
   AppState updateState(AppState appState) {
     List<Currency> searchCurrencies = <Currency>[];
+    Maybe<String> searchMaybe = Maybe.none();
 
     if (search.isNotEmpty) {
       searchCurrencies = List<Currency>.from(appState.currencyState.allCurrencies)
         ..retainWhere((element) =>
             element.name.toLowerCase().contains(search.toLowerCase()) ||
             element.code.toLowerCase().contains(search.toLowerCase()));
+      searchMaybe = Maybe.some(search);
     }
 
     return updateSubstates(
       appState,
       [
-        updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: searchCurrencies)),
+        updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: searchCurrencies, search: searchMaybe)),
       ],
     );
   }

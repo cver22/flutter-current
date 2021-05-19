@@ -18,8 +18,8 @@ import 'currency_list_tile.dart';
 
 class CurrencyDialog extends StatefulWidget {
   final String title;
-  final String referenceCurrency;
-  final Function(String) returnCurrency;
+  final String? referenceCurrency;
+  final Function(String) onTap;
   final bool withConversionRates;
   final Function(String) searchFunction;
   final List<Currency>? currencies;
@@ -28,8 +28,8 @@ class CurrencyDialog extends StatefulWidget {
   const CurrencyDialog({
     Key? key,
     required this.title,
-    required this.referenceCurrency,
-    required this.returnCurrency,
+    this.referenceCurrency,
+    required this.onTap,
     this.withConversionRates = false,
     required this.searchFunction,
     this.currencies,
@@ -73,7 +73,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
                   ),
                   child: _buildCurrencyList(
                     referenceCurrencyCode: widget.referenceCurrency,
-                    onTap: widget.returnCurrency,
+                    onTap: widget.onTap,
                     withConversionRates: widget.withConversionRates,
                     currencyState: currencyState,
                     currencies: widget.currencies,
@@ -143,7 +143,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
   }
 
   Widget _buildCurrencyList({
-    required String referenceCurrencyCode,
+    required String? referenceCurrencyCode,
     required Function(String) onTap,
     required bool withConversionRates,
     required CurrencyState currencyState,
@@ -154,7 +154,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     List<Currency> viewCurrencies = currencies ?? currencyState.allCurrencies;
     Currency? referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
-    if (currencyState.searchCurrencies.isNotEmpty) {
+    if (currencyState.search.isSome) {
       viewCurrencies = currencyState.searchCurrencies;
     }
 
@@ -174,13 +174,12 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
 
           return CurrencyListTile(
             currency: _currency,
-            conversionRate: conversionRate ?? 0.0,
-            baseCurrency: referenceCurrency!,
+            conversionRate: conversionRate,
+            referenceCurrency: referenceCurrency,
             onTap: onTap,
             withConversionRates: withConversionRates,
-            exitOnSelect: !filterSelect,
             trailingCheckBox: filterSelect ? FilterListTileTrailing(
-              onSelect: () => Env.store.dispatch(FilterSelectDeselectCurrency(currency: _currency.code)),
+              onTap: () => onTap(_currency.code),
               selected: selectedCurrencies!.contains(_currency.code),
             ) : null,
           );

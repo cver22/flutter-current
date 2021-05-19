@@ -7,43 +7,40 @@ import '../../app/common_widgets/app_button.dart';
 import '../../env.dart';
 
 class AppCurrencyPicker extends StatelessWidget {
-  final String? currency;
   final Function(String) returnCurrency;
-  final String? logCurrency;
+  final String? referenceCurrency;
   final bool withConversionRates;
   final String title;
-  final String? buttonLabel;
-  final VoidCallback? clearCallingFocus;
+  final String buttonLabel;
+  final VoidCallback? unFocus;
   final List<Currency>? currencies;
   final bool filterSelect;
 
   const AppCurrencyPicker({
     Key? key,
-    this.currency = 'CAD', //TODO change this to localizations and required
     required this.returnCurrency,
-    this.logCurrency,
+    this.referenceCurrency,
     this.withConversionRates = false,
     required this.title,
-    this.buttonLabel,
-    this.clearCallingFocus,
+    required this.buttonLabel,
+    this.unFocus,
     this.currencies,
     this.filterSelect = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    Currency _currency = CurrencyService().findByCode(currency ?? 'CAD')!;
 
     return AppButton(
       onPressed: () {
-        if (clearCallingFocus != null) {
-          clearCallingFocus!();
+        if (unFocus != null) {
+          unFocus!();
         }
         Get.dialog(CurrencyDialog(
           title: title,
           withConversionRates: withConversionRates,
-          referenceCurrency: logCurrency ?? _currency.code,
-          returnCurrency: returnCurrency,
+          referenceCurrency: referenceCurrency,
+          onTap: returnCurrency,
           searchFunction: (search) {
             Env.store.dispatch(CurrencySearchCurrencies(search: search));
           },
@@ -51,7 +48,7 @@ class AppCurrencyPicker extends StatelessWidget {
           filterSelect: filterSelect,
         ));
       },
-      child: Text(buttonLabel ?? '${CurrencyUtils.currencyToEmoji(_currency)} ${_currency.code}'),
+      child: Text(buttonLabel),
     );
   }
 

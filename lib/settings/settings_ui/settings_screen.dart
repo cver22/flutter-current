@@ -1,4 +1,6 @@
+import '../../currency/currency_utils/currency_formatters.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../app/common_widgets/app_button.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
@@ -48,18 +50,17 @@ class SettingsScreen extends StatelessWidget {
                       Text('Default Currency:'),
                       SizedBox(width: 10),
                       AppCurrencyPicker(
-                        title: 'Default Currency',
-                          currency: settingsState.settings.value.homeCurrency,
-                          returnCurrency: (currency) => Env.store.dispatch(
-                              SettingsUpdate(
-                                  settings: Maybe.some(settingsState
-                                      .settings.value
-                                      .copyWith(homeCurrency: currency))))),
+                          title: 'Default Currency',
+                          buttonLabel: currencyLabelFromCode(currencyCode: settingsState.settings.value.homeCurrency),
+                          returnCurrency: (currency) {
+                            Env.store.dispatch(SettingsUpdate(
+                                settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))));
+                            Get.back();
+                          }),
                     ],
                   ),
                   SizedBox(height: 10),
-                  _categoryButton(
-                      settingsState: settingsState, context: context),
+                  _categoryButton(settingsState: settingsState, context: context),
                   SizedBox(
                     height: 50,
                   ),
@@ -73,8 +74,7 @@ class SettingsScreen extends StatelessWidget {
                                 builder: (BuildContext context) {
                                   return AlertDialog(
                                     title: Text('Reset Settings'),
-                                    content: Text(
-                                        'Are you sure you want to reset all settings?'),
+                                    content: Text('Are you sure you want to reset all settings?'),
                                     actions: [
                                       TextButton(
                                         child: Text('Cancel'),
@@ -85,9 +85,7 @@ class SettingsScreen extends StatelessWidget {
                                       TextButton(
                                         child: Text('Yes'),
                                         onPressed: () {
-                                          Env.settingsFetcher
-                                              .readResetAppSettings(
-                                                  resetSettings: true);
+                                          Env.settingsFetcher.readResetAppSettings(resetSettings: true);
                                           Navigator.of(context).pop();
                                         },
                                       ),
@@ -98,8 +96,7 @@ class SettingsScreen extends StatelessWidget {
                   AppButton(
                     child: Text('Reload settings'),
                     onPressed: () {
-                      Env.settingsFetcher
-                          .readResetAppSettings(resetSettings: false);
+                      Env.settingsFetcher.readResetAppSettings(resetSettings: false);
                     },
                   ),
                 ],
@@ -153,8 +150,7 @@ class SettingsScreen extends StatelessWidget {
           context: context!,
           builder: (_) {
             Env.store.dispatch(SettingsSetExpandedCategories());
-            return MasterCategoryListDialog(
-                setLogFilter: SettingsLogFilterEntry.settings);
+            return MasterCategoryListDialog(setLogFilter: SettingsLogFilterEntry.settings);
           },
         ),
       },

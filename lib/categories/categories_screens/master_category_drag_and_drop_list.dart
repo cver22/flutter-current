@@ -84,7 +84,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
       {required AppCategory category, required List<bool> expandedCategories, required int outerIndex}) {
     if (setLogFilter == SettingsLogFilterEntry.filter && selectedCategories != null) {
       return FilterListTileTrailing(
-          onSelect: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
+          onTap: () => Env.store.dispatch(FilterSelectDeselectCategory(id: category.id!)),
           selected: selectedCategories!.contains(category.id));
     } else {
       return MasterCategoryListTileTrailing(

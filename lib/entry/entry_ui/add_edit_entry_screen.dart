@@ -170,14 +170,15 @@ class AddEditEntryScreen extends StatelessWidget {
           children: <Widget>[
             AppCurrencyPicker(
                 title: 'Entry Currency',
+                buttonLabel: currencyLabelFromCode(currencyCode: entry.currency),
                 withConversionRates: true,
-                clearCallingFocus: () {
+                unFocus: () {
                   Env.store.dispatch(EntryClearAllFocus());
                 },
-                logCurrency: log.currency,
-                currency: entry.currency,
+                referenceCurrency: log.currency!,
                 returnCurrency: (currency) {
                   Env.store.dispatch(EntryUpdateCurrency(currency: currency));
+                  Get.back();
                 }),
             Column(
               crossAxisAlignment: CrossAxisAlignment.end,

@@ -69,11 +69,11 @@ class CategoryListTileTrailing extends StatelessWidget {
 class FilterListTileTrailing extends StatelessWidget {
   const FilterListTileTrailing({
     Key? key,
-    required this.onSelect,
+    required this.onTap,
     required this.selected,
   }) : super(key: key);
 
-  final VoidCallback onSelect;
+  final VoidCallback onTap;
   final bool selected;
 
   @override
@@ -90,7 +90,7 @@ class FilterListTileTrailing extends StatelessWidget {
               : Icons.check_box_outline_blank_outlined,
           size: EMOJI_SIZE,
         ),
-        onPressed: onSelect,
+        onPressed: onTap,
       ),
     );
   }
