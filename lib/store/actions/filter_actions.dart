@@ -1,5 +1,6 @@
 import 'dart:collection';
 
+import 'package:currency_picker/currency_picker.dart';
 import 'package:expenses/entry/entry_model/app_entry.dart';
 
 import '../../app/models/app_state.dart';
@@ -625,6 +626,10 @@ class FilterSelectDeselectCurrency implements AppAction {
                 filter: Maybe<Filter>.some(appState.filterState.filter.value.copyWith(
               selectedCurrencies: selectedCurrencies,
             )))),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+          searchCurrencies: <Currency>[],
+          search: Maybe<String>.none(),
+        )),
       ],
     );
   }

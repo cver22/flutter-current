@@ -1,9 +1,9 @@
-import 'package:expenses/filter/filter_ui/filter_actions.dart';
+import '../../store/actions/currency_actions.dart';
 
+import '../../filter/filter_ui/filter_actions.dart';
 import '../../app/common_widgets/list_tile_components.dart';
 import '../../filter/filter_model/filter_state.dart';
 import '../../store/actions/filter_actions.dart';
-
 import '../../currency/currency_models/currency_state.dart';
 import '../../app/common_widgets/app_dialog.dart';
 import '../../env.dart';
@@ -21,9 +21,8 @@ class CurrencyDialog extends StatefulWidget {
   final String? referenceCurrency;
   final Function(String) onTap;
   final bool withConversionRates;
-  final Function(String) searchFunction;
   final List<Currency>? currencies;
-  final bool filterSelect;
+  final bool multiSelect;
 
   const CurrencyDialog({
     Key? key,
@@ -31,9 +30,8 @@ class CurrencyDialog extends StatefulWidget {
     this.referenceCurrency,
     required this.onTap,
     this.withConversionRates = false,
-    required this.searchFunction,
     this.currencies,
-    this.filterSelect = false,
+    this.multiSelect = false,
   }) : super(key: key);
 
   @override
@@ -69,7 +67,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
                   topWidget: searchBox(
                     lastUpdated: currencyState.conversionRateMap[widget.referenceCurrency]?.lastUpdated,
                     withConversionRates: widget.withConversionRates,
-                    searchFunction: widget.searchFunction,
+                    currencies: widget.currencies,
                   ),
                   child: _buildCurrencyList(
                     referenceCurrencyCode: widget.referenceCurrency,
@@ -77,20 +75,34 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
                     withConversionRates: widget.withConversionRates,
                     currencyState: currencyState,
                     currencies: widget.currencies,
-                    filterSelect: widget.filterSelect,
-                    selectedCurrencies: widget.filterSelect ? filterState.filter.value.selectedCurrencies : null,
+                    multiSelect: widget.multiSelect,
+                    selectedCurrencies: widget.multiSelect ? filterState.filter.value.selectedCurrencies : null,
                   ),
                   title: widget.title,
-                  actions: widget.filterSelect ? filterActions(onPressedClear: () {
-                    Env.store.dispatch(FilterClearCurrencySelection());
-                  },) : _actions(withConversionRates: widget.withConversionRates),
+                  backChevron: () {
+                    Env.store.dispatch(CurrencyClearSearch());
+                    Get.back();
+                  },
+                  actions: widget.multiSelect
+                      ? filterActions(
+                          onPressedClear: () {
+                            Env.store.dispatch(FilterClearCurrencySelection());
+                          },
+                        )
+                      : _actions(
+                          withConversionRates: widget.withConversionRates,
+                          referenceCurrency: widget.referenceCurrency,
+                        ),
                 );
               });
         });
   }
 
-  Widget searchBox(
-      {required DateTime? lastUpdated, required bool withConversionRates, required Function(String) searchFunction}) {
+  Widget searchBox({
+    required DateTime? lastUpdated,
+    required bool withConversionRates,
+    List<Currency>? currencies,
+  }) {
     return Padding(
       padding: const EdgeInsets.fromLTRB(16.0, 0, 16.0, 16.0),
       child: Column(
@@ -113,7 +125,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
                   textInputAction: TextInputAction.done,
                   onChanged: (search) {
                     setState(() {
-                      searchFunction(search);
+                      Env.store.dispatch(CurrencySearchCurrencies(search: search, currencies: currencies));
                     });
                   },
                 ),
@@ -125,13 +137,13 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     );
   }
 
-  List<Widget> _actions({required bool withConversionRates}) {
+  List<Widget> _actions({required bool withConversionRates, String? referenceCurrency}) {
     return [
       if (withConversionRates)
         TextButton(
           child: Text('Refresh'),
           onPressed: () {
-            Env.currencyFetcher.loadRemoteConversionRates(referenceCurrency: 'CAD');
+            Env.currencyFetcher.loadRemoteConversionRates(referenceCurrency: referenceCurrency!);
           },
         ),
       TextButton(
@@ -147,14 +159,16 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     required Function(String) onTap,
     required bool withConversionRates,
     required CurrencyState currencyState,
-    List<Currency>? currencies,
-    required bool filterSelect,
+    required bool multiSelect,
     required List<String>? selectedCurrencies,
+    List<Currency>? currencies,
   }) {
     List<Currency> viewCurrencies = currencies ?? currencyState.allCurrencies;
+
     Currency? referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
-    if (currencyState.search.isSome) {
+    if (currencyState.search.isSome && currencyState.search.value.length > 0) {
+      print('set searched currencies');
       viewCurrencies = currencyState.searchCurrencies;
     }
 
@@ -178,10 +192,12 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
             referenceCurrency: referenceCurrency,
             onTap: onTap,
             withConversionRates: withConversionRates,
-            trailingCheckBox: filterSelect ? FilterListTileTrailing(
-              onTap: () => onTap(_currency.code),
-              selected: selectedCurrencies!.contains(_currency.code),
-            ) : null,
+            trailingCheckBox: multiSelect
+                ? FilterListTileTrailing(
+                    onTap: () => onTap(_currency.code),
+                    selected: selectedCurrencies!.contains(_currency.code),
+                  )
+                : null,
           );
         });
   }

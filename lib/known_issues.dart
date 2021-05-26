@@ -37,7 +37,8 @@
 //TODO change formatters to a class, should make them easier to use and implement
 //TODO entries loaded from null should be given NO_CATEGORY AND NO_SUBCATEGORY defaults if the value is null
 //TODO hide filter button until a log and an entry is added
-//Entry tiles only show currency if log/entry is different then settings
+//TODO auto pull currency conversions on load if they haven't been o set all to 0.0
+//TODO backup setting to cloud and retrieve
 
 
 //TODO VISUAL
@@ -61,6 +62,8 @@
 
 //TODO START HERE
 //build build local repository for currency fetcher && migrate settings
+//add hive to project and auto load currencies the first time, change location of settings
+
 
 
 

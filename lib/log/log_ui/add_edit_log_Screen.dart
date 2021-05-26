@@ -1,7 +1,8 @@
-import '../../currency/currency_utils/currency_formatters.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../app/common_widgets/app_button.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
 import '../../app/common_widgets/simple_confirmation_dialog.dart';

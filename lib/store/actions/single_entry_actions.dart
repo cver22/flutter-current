@@ -235,7 +235,6 @@ class EntryUpdateCurrency implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-
     AppEntry entry = appState.singleEntryState.selectedEntry.value;
     Map<String, EntryMember> entryMembers = Map<String, EntryMember>.from(entry.entryMembers);
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
@@ -264,7 +263,10 @@ class EntryUpdateCurrency implements AppAction {
               amount: 0,
               amountForeign: 0,
             )))),
-        updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: <Currency>[])),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+              searchCurrencies: <Currency>[],
+              search: Maybe<String>.none(),
+            )),
       ],
     );
   }

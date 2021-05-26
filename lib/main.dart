@@ -1,8 +1,12 @@
 
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
+import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 
+import 'utils/db_consts.dart';
 import 'account/account_ui/account_screen.dart';
 import 'app/app_screen.dart';
 import 'app/home_screen.dart';
@@ -15,9 +19,15 @@ import 'utils/expense_routes.dart';
 import 'utils/keys.dart';
 
 void main() async {
+  // allows code before runApp
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp();
-  Env.userFetcher.startApp(); // allows code before runApp
+  await Hive.initFlutter();
+  await Hive.openBox<String>(SETTINGS_BOX);
+  await Hive.openBox<String>(CURRENCY_BOX);
+  Env.userFetcher.startApp();
+
   runApp(App());
 }
 

@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../app/models/app_state.dart';
@@ -23,6 +24,10 @@ class SettingsUpdate implements AppAction {
       appState,
       [
         updateSettingsState((settingsState) => settingsState.copyWith(settings: settings)),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+          searchCurrencies: <Currency>[],
+          search: Maybe<String>.none(),
+        )),
       ],
     );
   }

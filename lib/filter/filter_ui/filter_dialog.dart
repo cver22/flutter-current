@@ -416,7 +416,7 @@ class _FilterDialogState extends State<FilterDialog> {
         Env.store.dispatch(FilterSelectDeselectCurrency(currency: currency));
       },
       currencies: _getCurrencyList(usedCurrencyCodes: filterState.usedCurrencies),
-      filterSelect: true,
+      multiSelect: true,
       buttonLabel: _buildButtonLabel(),
     );
   }

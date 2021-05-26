@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import '../../app/common_widgets/list_tile_components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,11 +18,7 @@ class LogListTile extends StatelessWidget {
   final LogTotal? logTotal;
   final TabController tabController;
 
-  const LogListTile(
-      {Key? key,
-      required this.log,
-      required this.logTotal,
-      required this.tabController})
+  const LogListTile({Key? key, required this.log, required this.logTotal, required this.tabController})
       : super(key: key);
 
   @override
@@ -42,14 +39,13 @@ class LogListTile extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               mainAxisSize: MainAxisSize.max,
               children: [
-                Text(log.name!),
+                Text(_getName(log: log)),
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     IconButton(
                       onPressed: () {
-                        Env.store
-                            .dispatch(EntriesSetEntriesFilter(logId: log.id));
+                        Env.store.dispatch(EntriesSetEntriesFilter(logId: log.id));
                         tabController.animateTo(1);
                       },
                       icon: Icon(Icons.assignment_outlined),
@@ -71,7 +67,7 @@ class LogListTile extends StatelessWidget {
                 ),
               ],
             ),
-            Divider(height: 0.0),
+            AppDivider(),
             LogMemberMonthList(log: log, logTotal: logTotal),
             SizedBox(height: 10.0),
             Row(
@@ -97,5 +93,14 @@ class LogListTile extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String _getName({required Log log}) {
+    String name = log.name!;
+    if (log.currency != Env.store.state.settingsState.settings.value.homeCurrency) {
+      name = '${CurrencyUtils.currencyToEmoji(CurrencyService().findByCode(log.currency))} $name';
+    }
+
+    return name;
   }
 }

@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import '../../../app/common_widgets/list_tile_components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,11 +15,7 @@ class LogMemberMonthListTile extends StatelessWidget {
   final Log log;
   final bool singleMemberLog;
 
-  const LogMemberMonthListTile(
-      {Key? key,
-      required this.log,
-      required this.member,
-      this.singleMemberLog = false})
+  const LogMemberMonthListTile({Key? key, required this.log, required this.member, this.singleMemberLog = false})
       : super(key: key);
 
   @override
@@ -35,8 +32,7 @@ class LogMemberMonthListTile extends StatelessWidget {
             )),
             Get.toNamed(ExpenseRoutes.addEditEntries),
           },
-          contentPadding:
-              EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
+          contentPadding: EdgeInsets.only(left: 0.0, right: 0.0, top: 0.0, bottom: 0.0),
           title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -55,7 +51,7 @@ class LogMemberMonthListTile extends StatelessWidget {
             ],
           ),
         ),
-        Divider(height: 0.0),
+        AppDivider(),
       ],
     );
   }

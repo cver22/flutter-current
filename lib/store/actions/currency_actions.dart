@@ -18,15 +18,24 @@ class CurrencyInitializeCurrencies implements AppAction {
 
 class CurrencySearchCurrencies implements AppAction {
   final String search;
+  final List<Currency>? currencies;
 
-  CurrencySearchCurrencies({required this.search});
+  CurrencySearchCurrencies({
+    required this.search,
+    this.currencies,
+  });
 
   AppState updateState(AppState appState) {
     List<Currency> searchCurrencies = <Currency>[];
     Maybe<String> searchMaybe = Maybe.none();
+    List<Currency>? passedCurrencies;
+
+    if (currencies != null) {
+      passedCurrencies = List<Currency>.from(currencies!);
+    }
 
     if (search.isNotEmpty) {
-      searchCurrencies = List<Currency>.from(appState.currencyState.allCurrencies)
+      searchCurrencies = passedCurrencies ?? List<Currency>.from(appState.currencyState.allCurrencies)
         ..retainWhere((element) =>
             element.name.toLowerCase().contains(search.toLowerCase()) ||
             element.code.toLowerCase().contains(search.toLowerCase()));
@@ -36,7 +45,23 @@ class CurrencySearchCurrencies implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateCurrencyState((currencyState) => currencyState.copyWith(searchCurrencies: searchCurrencies, search: searchMaybe)),
+        updateCurrencyState(
+            (currencyState) => currencyState.copyWith(searchCurrencies: searchCurrencies, search: searchMaybe)),
+      ],
+    );
+  }
+}
+
+class CurrencyClearSearch implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+              search: Maybe<String>.none(),
+              searchCurrencies: <Currency>[],
+            )),
       ],
     );
   }
@@ -48,7 +73,9 @@ class CurrencySetLoading implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateCurrencyState((currencyState) => currencyState.copyWith()),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+              isLoading: true,
+            )),
       ],
     );
   }
@@ -60,7 +87,9 @@ class CurrencySetLoaded implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateCurrencyState((currencyState) => currencyState.copyWith()),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+              isLoading: false,
+            )),
       ],
     );
   }

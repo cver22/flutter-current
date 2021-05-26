@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../../app/models/app_state.dart';
 import '../../auth_user/models/app_user.dart';
 import '../../auth_user/models/auth_state.dart';

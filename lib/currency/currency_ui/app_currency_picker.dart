@@ -1,10 +1,8 @@
 import 'package:currency_picker/currency_picker.dart';
-import '../../store/actions/currency_actions.dart';
 import '../../currency/currency_ui/currency_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../app/common_widgets/app_button.dart';
-import '../../env.dart';
 
 class AppCurrencyPicker extends StatelessWidget {
   final Function(String) returnCurrency;
@@ -14,7 +12,7 @@ class AppCurrencyPicker extends StatelessWidget {
   final String buttonLabel;
   final VoidCallback? unFocus;
   final List<Currency>? currencies;
-  final bool filterSelect;
+  final bool multiSelect;
 
   const AppCurrencyPicker({
     Key? key,
@@ -25,12 +23,11 @@ class AppCurrencyPicker extends StatelessWidget {
     required this.buttonLabel,
     this.unFocus,
     this.currencies,
-    this.filterSelect = false,
+    this.multiSelect = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-
     return AppButton(
       onPressed: () {
         if (unFocus != null) {
@@ -41,19 +38,11 @@ class AppCurrencyPicker extends StatelessWidget {
           withConversionRates: withConversionRates,
           referenceCurrency: referenceCurrency,
           onTap: returnCurrency,
-          searchFunction: (search) {
-            Env.store.dispatch(CurrencySearchCurrencies(search: search));
-          },
           currencies: currencies,
-          filterSelect: filterSelect,
+          multiSelect: multiSelect,
         ));
       },
       child: Text(buttonLabel),
     );
   }
-
-
-
-
-  }
-
+}

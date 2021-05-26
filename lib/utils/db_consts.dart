@@ -107,3 +107,8 @@ const List<String> MONTHS_LONG = [
 ];
 
 const List<String> MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+
+//HIVE BOXES
+const String SETTINGS_BOX = 'settingsBox';
+const String CURRENCY_BOX = 'currencyBox';

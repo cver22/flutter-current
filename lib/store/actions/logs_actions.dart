@@ -1,3 +1,4 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../log/log_totals_model/log_total.dart';
@@ -63,7 +64,14 @@ class UpdateSelectedLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateLogsState((logsState) => logsState.copyWith(selectedLog: Maybe<Log>.some(log), userUpdated: true)),
+        updateLogsState((logsState) => logsState.copyWith(
+              selectedLog: Maybe<Log>.some(log),
+              userUpdated: true,
+            )),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+              searchCurrencies: <Currency>[],
+              search: Maybe<String>.none(),
+            )),
       ],
     );
   }

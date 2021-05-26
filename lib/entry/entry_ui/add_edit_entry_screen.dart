@@ -1,8 +1,8 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:currency_picker/currency_picker.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../../app/common_widgets/app_button.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
 import '../../app/common_widgets/date_button.dart';

@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import 'currency_local_repository.dart';
 import '../store/actions/currency_actions.dart';
 import '../store/app_store.dart';

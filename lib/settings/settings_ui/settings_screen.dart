@@ -1,7 +1,9 @@
-import '../../currency/currency_utils/currency_formatters.dart';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../store/actions/currency_actions.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 import '../../app/common_widgets/app_button.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
 import '../../categories/categories_screens/category_button.dart';
