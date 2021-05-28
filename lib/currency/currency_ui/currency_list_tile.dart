@@ -64,8 +64,8 @@ class CurrencyListTile extends StatelessWidget {
                               if (withConversionRates &&
                                   conversionRate != null &&
                                   referenceCurrency != null &&
-                                  currency.code != referenceCurrency!.code &&
-                                  conversionRate != 0)
+                                  currency.code != referenceCurrency!.code /*&&
+                                  conversionRate != 0*/)
                                 Text(
                                   '1 ${CurrencyUtils.currencyToEmoji(currency)} => ${conversionRate!.toStringAsFixed(5)} ${CurrencyUtils.currencyToEmoji(referenceCurrency)}',
                                   style: TextStyle(

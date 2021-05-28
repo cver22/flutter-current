@@ -1,16 +1,48 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/utils/maybe.dart';
+import '../../env.dart';
+import '../../log/log_model/log.dart';
+import '../../utils/maybe.dart';
 import '../../currency/currency_models/conversion_rates.dart';
 import '../../app/models/app_state.dart';
 import 'app_actions.dart';
 
-class CurrencyInitializeCurrencies implements AppAction {
-  //TODO will be used to pull exchange rates from sqflite
+class CurrencyLoadAllCurrenciesFromLocal implements AppAction {
+  final Map<String, ConversionRates>? localConversionRatesMap;
+
+  CurrencyLoadAllCurrenciesFromLocal({this.localConversionRatesMap});
+
+  //pulls exchange rates from hive if present, otherwise provides 0.0
   AppState updateState(AppState appState) {
+    Map<String, Log> logs = Map<String, Log>.from(appState.logsState.logs);
+    Map<String, ConversionRates> conversionRateMap =
+        Map<String, ConversionRates>.from(appState.currencyState.conversionRateMap);
+    List<Currency> allCurrencies = List<Currency>.from(appState.currencyState.allCurrencies);
+
+    logs.forEach((key, log) {
+      String referenceCurrency = log.currency!;
+
+      ConversionRates conversionRates =
+          mapConversionRates(referenceCurrency: referenceCurrency, allCurrencies: allCurrencies);
+
+      conversionRateMap.update(referenceCurrency, (value) => conversionRates, ifAbsent: () => conversionRates);
+    });
+
+    //if local repository has rates, load those rates
+    if (localConversionRatesMap != null) {
+      localConversionRatesMap!.forEach((reference, conversionRates) {
+        if (conversionRateMap.containsKey(reference) && conversionRates.rates.isNotEmpty) {
+          conversionRateMap.update(reference, (value) => conversionRates, ifAbsent: () => conversionRates);
+        }
+      });
+    }
+
     return updateSubstates(
       appState,
       [
-        updateCurrencyState((currencyState) => currencyState.copyWith()),
+        updateCurrencyState((currencyState) => currencyState.copyWith(
+              conversionRateMap: conversionRateMap,
+              isLoading: false,
+            )),
       ],
     );
   }
@@ -81,20 +113,6 @@ class CurrencySetLoading implements AppAction {
   }
 }
 
-class CurrencySetLoaded implements AppAction {
-  @override
-  AppState updateState(AppState appState) {
-    return updateSubstates(
-      appState,
-      [
-        updateCurrencyState((currencyState) => currencyState.copyWith(
-              isLoading: false,
-            )),
-      ],
-    );
-  }
-}
-
 class CurrencySetExchangeRatesFromRemote implements AppAction {
   final Map<String, dynamic>? json;
   final String referenceCurrency;
@@ -105,34 +123,48 @@ class CurrencySetExchangeRatesFromRemote implements AppAction {
   AppState updateState(AppState appState) {
     Map<String, ConversionRates> conversionRateMap =
         Map<String, ConversionRates>.from(appState.currencyState.conversionRateMap);
-    Map<String, double> rates = Map<String, double>();
-    List<Currency> allCurrencies = appState.currencyState.allCurrencies;
+    List<Currency> allCurrencies = List<Currency>.from(appState.currencyState.allCurrencies);
 
-    allCurrencies.forEach((currency) {
-      var jsonConversionRate = json!['conversion_rates'][currency.code];
-
-      //error checking to prevent attempting to convert null return from json for a particular currency
-      if (jsonConversionRate != null) {
-        double conversionRate = jsonConversionRate.toDouble();
-
-        rates.update(currency.code, (value) => conversionRate, ifAbsent: () => conversionRate);
-      }
-    });
-
-    ConversionRates conversionRates = ConversionRates(
-        lastUpdated: DateTime.fromMillisecondsSinceEpoch(json!['time_last_update_unix'].toInt() * 1000), rates: rates);
-
-    print('rates: $conversionRates');
+    ConversionRates conversionRates =
+        mapConversionRates(referenceCurrency: referenceCurrency, allCurrencies: allCurrencies, json: json);
 
     conversionRateMap.update(referenceCurrency, (value) => conversionRates, ifAbsent: () => conversionRates);
+
+    //save to local
+    Env.currencyFetcher.localSaveAllConversionRates(conversionRateMap: conversionRateMap);
 
     return updateSubstates(
       appState,
       [
         updateCurrencyState((currencyState) => currencyState.copyWith(
               conversionRateMap: conversionRateMap,
+              isLoading: false,
             )),
       ],
     );
   }
+}
+
+ConversionRates mapConversionRates(
+    {required String referenceCurrency, required List<Currency> allCurrencies, Map<String, dynamic>? json}) {
+  Map<String, double> rates = Map<String, double>();
+  DateTime? dateUpdated;
+
+  allCurrencies.forEach((currency) {
+    double conversionRate = 0.0;
+    if (json != null) {
+      var jsonConversionRate = json['conversion_rates'][currency.code];
+
+      //error checking to prevent attempting to convert null return from json for a particular currency
+      if (jsonConversionRate != null) {
+        conversionRate = jsonConversionRate.toDouble();
+      }
+    }
+    rates.update(currency.code, (value) => conversionRate, ifAbsent: () => conversionRate);
+  });
+
+  if (json != null) {
+    dateUpdated = DateTime.fromMillisecondsSinceEpoch(json['time_last_update_unix'].toInt() * 1000);
+  }
+  return ConversionRates(lastUpdated: dateUpdated, rates: rates);
 }

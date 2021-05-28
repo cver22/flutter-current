@@ -6,7 +6,7 @@ import 'package:hive/hive.dart';
 part 'settings_hive.g.dart';
 //type id can neve3r be changed
 @HiveType(typeId: 0)
-class SettingsHive extends Equatable {
+class SettingsHive {
   //field ids can only be dropped, never changed
   @HiveField(0)
   String homeCurrency;
@@ -30,6 +30,4 @@ class SettingsHive extends Equatable {
     this.logOrder,
   });
 
-  @override
-  List<Object?> get props => [homeCurrency, defaultCategories, defaultSubcategories, defaultLogId];
 }

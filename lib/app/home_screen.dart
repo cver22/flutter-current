@@ -1,5 +1,3 @@
-import 'package:expenses/store/actions/currency_actions.dart';
-
 import 'splash_screen.dart';
 import '../auth_user/models/auth_state.dart';
 import '../env.dart';
@@ -34,48 +32,15 @@ class HomeScreen extends StatelessWidget {
           Env.entriesFetcher.loadEntries();
           Env.userFetcher.isUserSignedInWithEmail();
 
-
-
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);
           });
-          /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
-                ModalRoute.withName(ExpenseRoutes.home));*/
         } else if (authState.user.isNone && authState.isLoading == false) {
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.loginRegister);
           });
-          /* Navigator.pushNamedAndRemoveUntil(
-                context,
-                ExpenseRoutes.loginRegister,
-                ModalRoute.withName(ExpenseRoutes.home));*/
         }
-        return SplashScreen();
-
-        /*if (authState.isLoading == true) {
-          return SplashScreen();
-        } else if (authState.user.isSome) {
-          Env.settingsFetcher.readResetAppSettings(resetSettings: false);
-          Env.logsFetcher.loadLogs();
-          Env.tagFetcher.loadTags();
-          Env.entriesFetcher.loadEntries();
-          Env.userFetcher.isUserSignedInWithEmail();
-
-          Future.delayed(Duration.zero, () {
-            Get.offAllNamed(ExpenseRoutes.app);
-          });
-          */ /*Navigator.pushNamedAndRemoveUntil(context, ExpenseRoutes.app,
-                ModalRoute.withName(ExpenseRoutes.home));*/ /*
-        } else if (authState.user.isNone) {
-          Future.delayed(Duration.zero, () {
-            Get.offAllNamed(ExpenseRoutes.loginRegister);
-          });
-          */ /* Navigator.pushNamedAndRemoveUntil(
-                context,
-                ExpenseRoutes.loginRegister,
-                ModalRoute.withName(ExpenseRoutes.home));*/ /*
-        }
-        return ErrorContent();*/
+        return LoadScreen();
       },
     );
   }

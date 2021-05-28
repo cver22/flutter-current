@@ -63,7 +63,9 @@
 //TODO START HERE
 //build build local repository for currency fetcher && migrate settings
 //add hive to project and auto load currencies the first time, change location of settings
-
+//setup actions to write and retrieve
+//formatters and converters need to accept conversion rates of 0
+//redo hive to save and retrieve conversion rates using the reference as the key
 
 
 

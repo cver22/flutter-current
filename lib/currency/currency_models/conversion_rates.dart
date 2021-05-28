@@ -1,10 +1,18 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 
+part 'conversion_rates.g.dart';
+
 @immutable
-class ConversionRates extends Equatable {
+//type id can never be changed
+@HiveType(typeId: 2)
+class ConversionRates extends Equatable{
+  //field ids can only be dropped, not changed
+  @HiveField(0)
   final Map<String, double> rates; // Currency to convert from to log currency and rate
-  final DateTime lastUpdated;
+  @HiveField(1)
+  final DateTime? lastUpdated;
 
   ConversionRates({
     this.rates = const <String, double>{},
@@ -12,7 +20,7 @@ class ConversionRates extends Equatable {
   });
 
   @override
-  List<Object> get props => [rates, lastUpdated];
+  List<Object?> get props => [rates, lastUpdated];
 
   @override
   bool get stringify => true;

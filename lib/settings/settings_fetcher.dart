@@ -82,7 +82,6 @@ class SettingsFetcher {
         prefs.setBool('settings_initialized', true);
       } else {
         //reads the settings from the saved file to reload them if they are not yet loaded
-        print('this does something');
 
         final file = await _localFile;
 

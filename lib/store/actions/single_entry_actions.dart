@@ -32,6 +32,10 @@ class EntrySetNew implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
+    //TODO there has to be a better place to load this
+    if(appState.currencyState.conversionRateMap.isEmpty){
+      Env.currencyFetcher.localLoadAllConversionRates();
+    }
     Log? log;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     String? defaultLogId = appState.settingsState.settings.value.defaultLogId;
@@ -93,6 +97,10 @@ class EntrySelectEntry implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
+    //TODO there has to be a better place to load this
+    if(appState.currencyState.conversionRateMap.isEmpty){
+      Env.currencyFetcher.localLoadAllConversionRates();
+    }
     AppEntry entry = appState.entriesState.entries[entryId]!;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);
     Currency? currency = CurrencyService().findByCode(entry.currency);

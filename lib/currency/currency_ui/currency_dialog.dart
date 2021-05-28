@@ -143,7 +143,7 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
         TextButton(
           child: Text('Refresh'),
           onPressed: () {
-            Env.currencyFetcher.loadRemoteConversionRates(referenceCurrency: referenceCurrency!);
+            Env.currencyFetcher.remoteLoadReferenceConversionRates(referenceCurrency: referenceCurrency!);
           },
         ),
       TextButton(
@@ -168,7 +168,6 @@ class _CurrencyDialogState extends State<CurrencyDialog> {
     Currency? referenceCurrency = CurrencyService().findByCode(referenceCurrencyCode);
 
     if (currencyState.search.isSome && currencyState.search.value.length > 0) {
-      print('set searched currencies');
       viewCurrencies = currencyState.searchCurrencies;
     }
 

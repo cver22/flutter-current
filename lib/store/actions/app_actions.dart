@@ -111,7 +111,6 @@ LogTotal updateLogMemberTotals({required List<AppEntry> entries, required Log lo
             key, (value) => value.copyWith(paid: (value.paid ?? 0) + paid, spent: (value.spent ?? 0) + spent));
       });
 
-      print('logMembers: $logMembers');
     } else if (entryYear == lastMonthYear && entryMonth == lastMonth) {
       entry.entryMembers.forEach((key, member) {
         if (member.paid != null) {

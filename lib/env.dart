@@ -1,3 +1,4 @@
+import 'currency/currency_local_repository.dart';
 import 'currency/currency_remote_repository.dart';
 import 'currency/currency_fetcher.dart';
 import 'app/models/app_state.dart';
@@ -35,11 +36,13 @@ class Env {
     tagRepository: FirebaseTagRepository(),
   );
 
-  static final settingsFetcher =
-      SettingsFetcher(store: store); //SettingsFetcher
+  static final settingsFetcher = SettingsFetcher(
+    store: store,
+  ); //SettingsFetcher
 
   static final currencyFetcher = CurrencyFetcher(
     store: store,
     currencyRemoteRepository: ExchangeRatesApiRepository(),
+    currencyLocalRepository: HiveCurrencyRepository(),
   );
 }
