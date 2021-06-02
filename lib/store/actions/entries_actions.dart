@@ -51,9 +51,11 @@ class EntriesSetEntries implements AppAction {
       entryList!.map((entry) => MapEntry(entry.id, entry)),
     );
 
-
-    logTotals =
-        _entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entries);
+    logTotals = _entriesUpdateLogsTotals(
+      logs: Map.from(appState.logsState.logs),
+      logTotals: logTotals,
+      entries: entries,
+    );
 
     return updateSubstates(
       appState,
@@ -93,7 +95,8 @@ class EntriesDeleteSelectedEntry implements AppAction {
       Tag tag = tags[tagId]!;
 
       //decrement use of tag for this category and log
-      tag = decrementCategorySubcategoryLogFrequency(updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
+      tag = decrementCategorySubcategoryLogFrequency(
+          updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
 
       tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
     });

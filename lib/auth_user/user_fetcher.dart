@@ -1,5 +1,3 @@
-import 'package:meta/meta.dart';
-
 import '../login_register/login_register_model/login_or_register.dart';
 import '../login_register/login_register_model/login_reg_state.dart';
 import '../store/actions/account_actions.dart';

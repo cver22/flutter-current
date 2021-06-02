@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import '../entry/entry_model/app_entry.dart';
-import '../env.dart';
 import '../member/member_model/entry_member_model/entry_member.dart';
 import '../member/member_model/log_member_model/log_member.dart';
 import '../store/actions/entries_actions.dart';

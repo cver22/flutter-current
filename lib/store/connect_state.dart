@@ -8,6 +8,7 @@ class ConnectState<T> extends StatelessWidget {
   final T Function(AppState appState) map;
   final bool Function(T prev, T next)? where;
   final Widget Function(T state) builder;
+  final
 
   const ConnectState({
     Key? key,

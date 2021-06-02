@@ -1,17 +1,28 @@
 import 'package:equatable/equatable.dart';
+import 'package:hive/hive.dart';
 import 'package:meta/meta.dart';
 
 import '../../categories/categories_model/app_category/app_category.dart';
 import '../../categories/categories_model/app_category/app_category_entity.dart';
 import 'settings_entity.dart';
 
+part 'settings.g.dart';
+
 @immutable
+//type id can never be changed
+@HiveType(typeId: 0)
 class Settings extends Equatable {
+  @HiveField(0)
   final String homeCurrency;
+  @HiveField(1)
   final List<AppCategory> defaultCategories;
+  @HiveField(2)
   final List<AppCategory> defaultSubcategories;
+  @HiveField(3)
   final String? defaultLogId;
+  @HiveField(4)
   final bool? autoInsertDecimalPoint;
+  @HiveField(5)
   final List<String>? logOrder;
 
   Settings(

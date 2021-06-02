@@ -1,4 +1,3 @@
-
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
@@ -10,8 +9,8 @@ import '../../utils/db_consts.dart';
 class AppEntryEntity extends Equatable {
   const AppEntryEntity(
       {required this.id,
-        required this.logId,
-        required this.currency,
+      required this.logId,
+      required this.currency,
       this.category,
       this.subcategory,
       this.amount = 0,
@@ -70,12 +69,16 @@ class AppEntryEntity extends Equatable {
       category: json[CATEGORY] as String?,
       subcategory: json[SUBCATEGORY] as String?,
       amount: json[AMOUNT] as int,
-      amountForeign:  json[AMOUNT_FOREIGN] as int?,
+      amountForeign: json[AMOUNT_FOREIGN] as int?,
       exchangeRate: json[EXCHANGE_RATE] as double?,
       comment: json[COMMENT] as String?,
       dateTime: DateTime.fromMillisecondsSinceEpoch(json[DATE_TIME] as int),
       tagIDs: (json[TAGS] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
-      entryMembers: (json[MEMBERS] as Map<String, dynamic>).map((key, value) => MapEntry(key, EntryMember.fromEntity(EntryMemberEntity.fromJson(value)))),
+      entryMembers: (json[MEMBERS] as Map<String, dynamic>).map((key, value) => MapEntry(
+          key,
+          EntryMember.fromEntity(
+            EntryMemberEntity.fromJson(value),
+          ))),
     );
   }
 

@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:flutter/foundation.dart';
-
 import '../store/actions/logs_actions.dart';
 import '../store/app_store.dart';
 import 'log_model/log.dart';

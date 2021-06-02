@@ -11,20 +11,20 @@ abstract class CurrencyLocalRepository {
 }
 
 class HiveCurrencyRepository extends CurrencyLocalRepository {
+  final box = Hive.box(CURRENCY_BOX);
+
   @override
   Future<Map<String, ConversionRates>> loadAllConversionRates() async {
-    var box = Hive.box<Map<String, ConversionRates>>(CURRENCY_BOX);
     Map<String, ConversionRates> conversionRateMap =
         Map<String, ConversionRates>.from(Env.store.state.currencyState.conversionRateMap);
 
-    conversionRateMap = box.get(CONVERSION_RATE_MAP)!.cast<String, ConversionRates>();
+    conversionRateMap = box.get(CONVERSION_RATE_MAP) ?? conversionRateMap;
 
     return conversionRateMap;
   }
 
   @override
   Future<void> saveConversionRates({required Map<String, ConversionRates> conversionRateMap}) async {
-    var box = Hive.box<Map<String, ConversionRates>>(CURRENCY_BOX);
     box.put(CONVERSION_RATE_MAP, conversionRateMap);
   }
 }
