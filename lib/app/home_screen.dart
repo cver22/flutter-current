@@ -1,5 +1,8 @@
 import 'package:hive/hive.dart';
 
+import '../currency/currency_models/conversion_rates.dart';
+import '../utils/db_consts.dart';
+
 import 'splash_screen.dart';
 import '../auth_user/models/auth_state.dart';
 import '../env.dart';
@@ -13,9 +16,7 @@ import 'package:get/get.dart';
 //signed in users have their content loaded, once the content is loaded, the user is directed to the AppScreen
 
 class HomeScreen extends StatelessWidget {
-  final Box? currencyBox;
-
-  const HomeScreen({Key? key, this.currencyBox}) : super(key: key);
+  const HomeScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +36,7 @@ class HomeScreen extends StatelessWidget {
           Env.tagFetcher.loadTags();
           Env.entriesFetcher.loadEntries();
           Env.userFetcher.isUserSignedInWithEmail();
+          Env.currencyFetcher.localLoadAllConversionRates();
 
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);

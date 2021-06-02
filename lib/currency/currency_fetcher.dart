@@ -1,3 +1,5 @@
+import 'package:hive/hive.dart';
+
 import 'currency_local_repository.dart';
 import '../store/actions/currency_actions.dart';
 import '../store/app_store.dart';
@@ -8,14 +10,17 @@ class CurrencyFetcher {
   final AppStore _store;
   final CurrencyRemoteRepository _currencyRemoteRepository;
   final CurrencyLocalRepository _currencyLocalRepository;
+  final Box? currencyBox;
 
   CurrencyFetcher({
     required AppStore store,
     required CurrencyRemoteRepository currencyRemoteRepository,
     required CurrencyLocalRepository currencyLocalRepository,
-  })   : _store = store,
+    Box? currencyBox,
+  })  : _store = store,
         _currencyRemoteRepository = currencyRemoteRepository,
-        _currencyLocalRepository = currencyLocalRepository;
+        _currencyLocalRepository = currencyLocalRepository,
+        currencyBox = currencyBox;
 
   Future<void> remoteLoadReferenceConversionRates({required String referenceCurrency}) async {
     _store.dispatch(CurrencySetLoading());

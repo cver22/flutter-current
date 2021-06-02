@@ -1,4 +1,3 @@
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get_navigation/get_navigation.dart';
@@ -24,26 +23,23 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
+
   await Hive.initFlutter();
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ConversionRatesAdapter());
-  await Hive.openBox<Settings>(SETTINGS_BOX);
-  final currencyBox = await Hive.openBox<Map<String, ConversionRates>>(CURRENCY_BOX);
+  await Hive.openBox(CURRENCY_BOX);
   Env.userFetcher.startApp();
 
-  runApp(App(currencyBox: currencyBox));
+  runApp(App());
 }
 
 class App extends StatelessWidget {
-  final Box? currencyBox;
-
-  const App({Key? key, this.currencyBox}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: [
-        GetPage(name: ExpenseRoutes.home, page: () => HomeScreen(key: ExpenseKeys.homeScreen, currencyBox: currencyBox)),
+        GetPage(
+            name: ExpenseRoutes.home, page: () => HomeScreen(key: ExpenseKeys.homeScreen)),
         GetPage(name: ExpenseRoutes.loginRegister, page: () => LoginRegisterScreen(key: ExpenseKeys.loginScreen)),
         GetPage(name: ExpenseRoutes.app, page: () => AppScreen(key: ExpenseKeys.appScreen)),
         GetPage(name: ExpenseRoutes.account, page: () => AccountScreen(key: ExpenseKeys.accountScreen)),
