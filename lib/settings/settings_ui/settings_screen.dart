@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
-import '../../store/actions/currency_actions.dart';
 import '../../currency/currency_utils/currency_formatters.dart';
 import '../../app/common_widgets/app_button.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
@@ -20,6 +17,7 @@ import '../settings_model/settings_state.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key? key}) : super(key: key);
+  late String currency;
 
   @override
   Widget build(BuildContext context) {
@@ -28,6 +26,11 @@ class SettingsScreen extends StatelessWidget {
         map: (state) => state.settingsState,
         builder: (settingsState) {
           print('Rendering SettingsScreen');
+          if(settingsState.settings.isSome){
+            currency = settingsState.settings.value.homeCurrency;
+          } else {
+            currency = 'CAD';
+          }
 
           return Scaffold(
             appBar: AppBar(
@@ -53,7 +56,7 @@ class SettingsScreen extends StatelessWidget {
                       SizedBox(width: 10),
                       AppCurrencyPicker(
                           title: 'Default Currency',
-                          buttonLabel: currencyLabelFromCode(currencyCode: settingsState.settings.value.homeCurrency),
+                          buttonLabel: currencyLabelFromCode(currencyCode: currency),
                           returnCurrency: (currency) {
                             Env.store.dispatch(SettingsUpdate(
                                 settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))));
@@ -114,7 +117,11 @@ class SettingsScreen extends StatelessWidget {
       Map<String, Log> _logsMap = _store.state.logsState.logs;
       List<Log> _logs = _logsMap.entries.map((e) => e.value).toList();
 
-      String? _defaultLogId = settingsState!.settings.value.defaultLogId;
+      String? _defaultLogId;
+
+      if(settingsState!.settings.isSome) {
+        _defaultLogId = settingsState.settings.value.defaultLogId;
+      }
 
       //catches error if default log is null or is no longer active
       if (_defaultLogId == null || !_logsMap.containsKey(_defaultLogId)) {

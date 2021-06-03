@@ -1,13 +1,23 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:hive/hive.dart';
 
 import 'app_category_entity.dart';
 
+part 'app_category.g.dart';
+
 @immutable
+//type id can never be changed
+@HiveType(typeId: 1)
 class AppCategory extends Equatable {
+  //field ids can only be dropped, not changed
+  @HiveField(0)
   final String? id;
+  @HiveField(1)
   final String? name;
+  @HiveField(2)
   final String emojiChar;
+  @HiveField(3)
   final String? parentCategoryId; //only used for subcategories
 
   AppCategory(

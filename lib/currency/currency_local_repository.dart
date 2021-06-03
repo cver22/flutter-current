@@ -1,5 +1,3 @@
-import 'package:flutter/cupertino.dart';
-
 import '../env.dart';
 import '../utils/db_consts.dart';
 import 'package:hive/hive.dart';

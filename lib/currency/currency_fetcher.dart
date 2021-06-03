@@ -31,13 +31,10 @@ class CurrencyFetcher {
   }
 
   Future<void> localLoadAllConversionRates() async {
-    print('loadAllConversionRatesTriggered');
     _store.dispatch(CurrencySetLoading());
 
     _store.dispatch(CurrencyLoadAllCurrenciesFromLocal(
         localConversionRatesMap: await _currencyLocalRepository.loadAllConversionRates()));
-
-    print('loadAllConversionRatesComplete');
   }
 
   Future<void> localSaveAllConversionRates({required Map<String, ConversionRates> conversionRateMap}) async {

@@ -61,11 +61,9 @@
 
 
 //TODO START HERE
-//build build local repository for currency fetcher && migrate settings
-//add hive to project and auto load currencies the first time, change location of settings
-//setup actions to write and retrieve
 //formatters and converters need to accept conversion rates of 0
-//something wrong with casting the hive on retrieval
+//change how fetcher handles settings, what to do if there are no setttings, maybe load settings when the app starts, not just when the user is loaded
+
 
 
 

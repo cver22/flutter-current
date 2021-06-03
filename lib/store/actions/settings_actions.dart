@@ -18,7 +18,9 @@ class SettingsUpdate implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Env.settingsFetcher.writeAppSettings(settings.value);
+    if(settings.isSome){
+      Env.settingsFetcher.writeAppSettings(settings.value);
+    }
 
     return updateSubstates(
       appState,

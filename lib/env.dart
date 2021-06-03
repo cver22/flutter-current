@@ -1,3 +1,4 @@
+import 'settings/settings_repository.dart';
 import 'currency/currency_local_repository.dart';
 import 'currency/currency_remote_repository.dart';
 import 'currency/currency_fetcher.dart';
@@ -38,6 +39,7 @@ class Env {
 
   static final settingsFetcher = SettingsFetcher(
     store: store,
+    hiveSettingsRepository: HiveSettingsRepository(),
   ); //SettingsFetcher
 
   static final currencyFetcher = CurrencyFetcher(

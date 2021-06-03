@@ -111,5 +111,7 @@ const List<String> MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Ju
 
 //HIVE BOXES
 const String SETTINGS_BOX = 'settingsBox';
+const String SETTINGS_HIVE_INDEX = 'settingsHiveIndex';
+const String SETTINGS_INITIALIZED_INDEX = 'settingsInitializedIndex';
 const String CURRENCY_BOX = 'currencyBox';
 const String CONVERSION_RATE_MAP = 'conversionRateMap';

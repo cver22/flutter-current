@@ -1,10 +1,6 @@
-import 'dart:collection';
 import 'dart:convert';
-import 'dart:io';
-
+import '../settings/settings_repository.dart';
 import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../env.dart';
 import '../store/actions/settings_actions.dart';
@@ -15,87 +11,46 @@ import 'settings_model/settings_entity.dart';
 
 class SettingsFetcher {
   final AppStore _store;
+  final HiveSettingsRepository _hiveSettingsRepository;
 
-  SettingsFetcher({
-    required AppStore store,
-  }) : _store = store;
-
-  //TODO create setter and getter to the JSON file
-  //TODO separate repository and fetchers
-
-  Future<String> get _localPath async {
-    final directory = await getApplicationDocumentsDirectory();
-
-    return directory.path;
-  }
-
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    bool fileExists = await File(path).exists();
-
-    if (!fileExists) {
-      File('$path/settings.txt').create(recursive: true);
-    }
-
-    return File('$path/settings.txt');
-  }
+  SettingsFetcher({required AppStore store, required HiveSettingsRepository hiveSettingsRepository})
+      : _store = store,
+        _hiveSettingsRepository = hiveSettingsRepository;
 
   Future<void> writeAppSettings(Settings settings) async {
-    final file = await _localFile;
-    try {
-      // Write settings to file from store as a json.
-      file.writeAsString(json.encode(settings.toEntity().toJson()));
-    } catch (e) {
-      print('Error writing settings: ${e.toString()}');
-    }
+    _hiveSettingsRepository.saveSettings(settings: settings);
   }
 
-  Future<void> readResetAppSettings({required bool resetSettings}) async {
-    Future<SharedPreferences> _prefs = SharedPreferences.getInstance();
-    final SharedPreferences prefs = await _prefs;
-    //determines if this is the first instance the user has logged in and sets the default settings
-    bool settingsInitialized = (prefs.getBool('settings_initialized') ?? false);
-
+  Future<void> readResetAppSettings({ bool resetSettings = false}) async {
+    bool settingsInitialized = (await _hiveSettingsRepository.settingsInitialized());
 
     if (resetSettings) {
       settingsInitialized = false;
     }
 
-    try {
-      if (settingsInitialized &&
-          Env.store.state.settingsState.settings.isSome) {
-        //if the settings are already loaded, do nothing
-        return;
-      } else if (!settingsInitialized) {
-        print('Resetting settings');
-        //if no settings have ever been loaded, load the default
-        String jsonString =
-            await rootBundle.loadString('assets/default_settings.txt');
+    if (settingsInitialized && Env.store.state.settingsState.settings.isSome && resetSettings) {
+      //if the settings are already loaded, do nothing
+      return;
+    } else if (!settingsInitialized) {
+      print('Resetting settings');
+      //if no settings have ever been loaded, load the default
+      String jsonString = await rootBundle.loadString('assets/default_settings.txt');
+      Settings settings = Settings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)));
 
-        _store.dispatch(SettingsUpdate(
-          settings: Maybe.some(Settings.fromEntity(
-              SettingsEntity.fromJson(json.decode(jsonString)))),
-        ));
+      //load default settings to app
+      _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
 
-        //marks that default settings have previously been read from assets
-        prefs.setBool('settings_initialized', true);
-      } else {
-        //reads the settings from the saved file to reload them if they are not yet loaded
-
-        final file = await _localFile;
-
-        Map<String, dynamic> jsonData = LinkedHashMap();
-        jsonData = json.decode(await file.readAsString());
-        //jsonData.forEach((key, value) {print('$key: $value');});
-
-        _store.dispatch(SettingsUpdate(
-          settings: Maybe.some(
-              Settings.fromEntity(SettingsEntity.fromJson(jsonData))),
-        ));
+      //initialize settings to hive
+      _hiveSettingsRepository.saveSettings(settings: settings);
+    } else {
+      //loads hive settings
+      Settings? settings = await _hiveSettingsRepository.loadSettings();
+      if ( settings != null) {
+        _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
+      }  else {
+        _store.dispatch(SettingsUpdate(settings: Maybe.none()));
       }
-    } catch (e) {
-      // If encountering an error
-      print('Error reading settings ${e.toString()}');
+
     }
   }
 }

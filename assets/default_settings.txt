@@ -1,5 +1,5 @@
 {
-   "homeCurrency":null,
+   "homeCurrency":"CAD",
    "defaultCategoryEntities":[
       {
          "id":"grocery",

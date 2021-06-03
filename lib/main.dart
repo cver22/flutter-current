@@ -4,6 +4,7 @@ import 'package:get/get_navigation/get_navigation.dart';
 import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
+import 'categories/categories_model/app_category/app_category.dart';
 import 'settings/settings_model/settings.dart';
 import 'currency/currency_models/conversion_rates.dart';
 import 'utils/db_consts.dart';
@@ -27,7 +28,9 @@ void main() async {
   await Hive.initFlutter();
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ConversionRatesAdapter());
+  Hive.registerAdapter(AppCategoryAdapter());
   await Hive.openBox(CURRENCY_BOX);
+  await Hive.openBox(SETTINGS_BOX);
   Env.userFetcher.startApp();
 
   runApp(App());
