@@ -62,7 +62,6 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
-//change how fetcher handles settings, what to do if there are no setttings, maybe load settings when the app starts, not just when the user is loaded
 
 
 

@@ -28,10 +28,10 @@ class SettingsFetcher {
       settingsInitialized = false;
     }
 
-    if (settingsInitialized && Env.store.state.settingsState.settings.isSome && resetSettings) {
+    if (settingsInitialized && Env.store.state.settingsState.settings.isSome) {
       //if the settings are already loaded, do nothing
       return;
-    } else if (!settingsInitialized) {
+    } else if (!settingsInitialized && resetSettings) {
       print('Resetting settings');
       //if no settings have ever been loaded, load the default
       String jsonString = await rootBundle.loadString('assets/default_settings.txt');
@@ -43,7 +43,7 @@ class SettingsFetcher {
       //initialize settings to hive
       _hiveSettingsRepository.saveSettings(settings: settings);
     } else {
-      //loads hive settings
+      //load or reloads hive settings
       Settings? settings = await _hiveSettingsRepository.loadSettings();
       if ( settings != null) {
         _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));

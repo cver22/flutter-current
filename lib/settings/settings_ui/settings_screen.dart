@@ -17,7 +17,6 @@ import '../settings_model/settings_state.dart';
 
 class SettingsScreen extends StatelessWidget {
   SettingsScreen({Key? key}) : super(key: key);
-  late String currency;
 
   @override
   Widget build(BuildContext context) {
@@ -26,11 +25,7 @@ class SettingsScreen extends StatelessWidget {
         map: (state) => state.settingsState,
         builder: (settingsState) {
           print('Rendering SettingsScreen');
-          if(settingsState.settings.isSome){
-            currency = settingsState.settings.value.homeCurrency;
-          } else {
-            currency = 'CAD';
-          }
+
 
           return Scaffold(
             appBar: AppBar(
@@ -56,7 +51,7 @@ class SettingsScreen extends StatelessWidget {
                       SizedBox(width: 10),
                       AppCurrencyPicker(
                           title: 'Default Currency',
-                          buttonLabel: currencyLabelFromCode(currencyCode: currency),
+                          buttonLabel: currencyLabelFromCode(currencyCode: settingsState.settings.value.homeCurrency),
                           returnCurrency: (currency) {
                             Env.store.dispatch(SettingsUpdate(
                                 settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))));

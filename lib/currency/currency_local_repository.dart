@@ -13,16 +13,13 @@ abstract class CurrencyLocalRepository {
 class HiveCurrencyRepository extends CurrencyLocalRepository {
   @override
   Future<Map<String, ConversionRates>> loadAllConversionRates() async {
+    print('Loading conversion rates from hive');
     var box = Hive.box(CURRENCY_BOX);
 
     Map<String, ConversionRates> conversionRateMap =
         Map<String, ConversionRates>.from(Env.store.state.currencyState.conversionRateMap);
 
     conversionRateMap = box.get(CONVERSION_RATE_MAP).cast<String, ConversionRates>();
-
-    conversionRateMap.forEach((key, value) {
-      print('loading conversion rates for $key: $value');
-    });
 
     return conversionRateMap;
   }
