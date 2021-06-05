@@ -1,8 +1,3 @@
-import 'package:hive/hive.dart';
-
-import '../currency/currency_models/conversion_rates.dart';
-import '../utils/db_consts.dart';
-
 import 'splash_screen.dart';
 import '../auth_user/models/auth_state.dart';
 import '../env.dart';
@@ -35,7 +30,6 @@ class HomeScreen extends StatelessWidget {
           Env.tagFetcher.loadTags();
           Env.entriesFetcher.loadEntries();
           Env.userFetcher.isUserSignedInWithEmail();
-          Env.currencyFetcher.localLoadAllConversionRates();
 
           Future.delayed(Duration.zero, () {
             Get.offAllNamed(ExpenseRoutes.app);

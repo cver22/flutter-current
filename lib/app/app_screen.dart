@@ -63,11 +63,14 @@ class _AppScreenState extends State<AppScreen>
           return WillPopScope(
             onWillPop: () async {
               if (_controller.index == 0) {
+                //exit app
                 return true;
               } else if (_controller.index != 0) {
+                //back to logs
                 _controller.animateTo(0);
                 return false;
               } else if (_key.currentState!.isDrawerOpen) {
+                //back to logs
                 Navigator.of(context).pop();
                 return false;
               }

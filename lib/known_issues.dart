@@ -32,9 +32,8 @@
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 //add anonymous sign in and create red banner asking the user to signup or risk losing their data
 //TODO, give user option to change default payer on a log and from there the FAB button will chose that as default for EntrySetNewSelect, until then, it defaults to the user
-//TODO modify tags to also include date of recent use
+//TODO tag recent use, modify UI
 //TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? should the adding of someone go through an update all the entries?
-//TODO change formatters to a class, should make them easier to use and implement
 //TODO entries loaded from null should be given NO_CATEGORY AND NO_SUBCATEGORY defaults if the value is null
 //TODO hide filter button until a log and an entry is added
 //TODO auto pull currency conversions on load if they haven't been o set all to 0.0
@@ -47,6 +46,7 @@
 //TODO settings for month/day separator on the entries screen
 //TODO make note that transfer funds do not show up in monthly totals
 //TODO is there a better way to handle "Other" in entries tiles
+//TODO error checking for internet connection to refresh conversion rates and don't allow change of conversion rate if no exchange is present (maybe based on refresh date)
 
 
 
@@ -62,8 +62,6 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
-
-
 
 
 

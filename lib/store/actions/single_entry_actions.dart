@@ -9,7 +9,7 @@ import '../../entry/entry_model/single_entry_state.dart';
 import '../../env.dart';
 import '../../log/log_model/log.dart';
 import '../../member/member_model/entry_member_model/entry_member.dart';
-import '../../settings/settings_model/settings.dart';
+import '../../settings/settings_model/app_settings.dart';
 import '../../tags/tag_model/tag.dart';
 import '../../currency/currency_utils/currency_formatters.dart';
 import '../../utils/db_consts.dart';
@@ -34,12 +34,12 @@ class EntrySetNew implements AppAction {
   AppState updateState(AppState appState) {
     //TODO there has to be a better place to load this
     if(appState.currencyState.conversionRateMap.isEmpty){
-      Env.currencyFetcher.localLoadAllConversionRates();
+      Env.currencyFetcher.localLoadConversionRates();
     }
     Log? log;
     Map<String, Log> logs = Map.from(appState.logsState.logs);
     String? defaultLogId = appState.settingsState.settings.value.defaultLogId;
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
 
     //TODO possibly abstract this away as the setting log dropdown probably uses similar logic
     if (logId != null) {
@@ -69,7 +69,7 @@ class EntrySetNew implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
         updateSingleEntryState((singleEntryState) => singleEntryState.copyWith(
               selectedEntry: Maybe<AppEntry>.some(entry),
               selectedTag: Maybe<Tag>.some(Tag(
@@ -99,7 +99,7 @@ class EntrySelectEntry implements AppAction {
   AppState updateState(AppState appState) {
     //TODO there has to be a better place to load this
     if(appState.currencyState.conversionRateMap.isEmpty){
-      Env.currencyFetcher.localLoadAllConversionRates();
+      Env.currencyFetcher.localLoadConversionRates();
     }
     AppEntry entry = appState.entriesState.entries[entryId]!;
     Log log = appState.logsState.logs.values.firstWhere((element) => element.id == entry.logId);

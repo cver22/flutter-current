@@ -5,7 +5,7 @@ import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import 'categories/categories_model/app_category/app_category.dart';
-import 'settings/settings_model/settings.dart';
+import 'settings/settings_model/app_settings.dart';
 import 'currency/currency_models/conversion_rates.dart';
 import 'utils/db_consts.dart';
 import 'account/account_ui/account_screen.dart';
@@ -24,7 +24,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await Firebase.initializeApp();
-
   await Hive.initFlutter();
   Hive.registerAdapter(SettingsAdapter());
   Hive.registerAdapter(ConversionRatesAdapter());
@@ -33,6 +32,7 @@ void main() async {
   await Hive.openBox(SETTINGS_BOX);
   Env.userFetcher.startApp();
   Env.settingsFetcher.readResetAppSettings();
+  Env.currencyFetcher.loadAllConversionRates();
 
   runApp(App());
 }

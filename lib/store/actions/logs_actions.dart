@@ -11,7 +11,7 @@ import '../../env.dart';
 import '../../log/log_model/log.dart';
 import '../../log/log_model/logs_state.dart';
 import '../../member/member_model/log_member_model/log_member.dart';
-import '../../settings/settings_model/settings.dart';
+import '../../settings/settings_model/app_settings.dart';
 import '../../tags/tag_model/tag.dart';
 import '../../utils/db_consts.dart';
 import '../../utils/maybe.dart';
@@ -273,6 +273,8 @@ class LogAddUpdate implements AppAction {
       );
 
       Env.logsFetcher.addLog(addedUpdatedLog);
+      //Automatically refresh and add conversion rates for new log
+      Env.currencyFetcher.remoteLoadReferenceConversionRates(referenceCurrency: addedUpdatedLog.currency!);
     }
 
     return updateSubstates(
@@ -575,7 +577,7 @@ class DeleteLog implements AppAction {
   @override
   AppState updateState(AppState appState) {
     LogsState updatedLogsState = appState.logsState;
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     updatedLogsState.logs.removeWhere((key, value) => key == log!.id);
 
     List<AppEntry> deletedEntriesList = [];
@@ -620,7 +622,7 @@ class DeleteLog implements AppAction {
         updateLogsState((logsState) => updatedLogsState.copyWith(selectedLog: Maybe<Log>.none(), userUpdated: false)),
         updateEntriesState((entriesState) => entriesState.copyWith(entries: entriesMap)),
         updateTagState((tagState) => tagState.copyWith(tags: tagsMap)),
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }

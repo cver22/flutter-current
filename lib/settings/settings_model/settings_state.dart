@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
 
 import '../../utils/maybe.dart';
-import 'settings.dart';
+import 'app_settings.dart';
 
 class SettingsState extends Equatable {
-  final Maybe<Settings> settings;
+  final Maybe<AppSettings> settings;
   final List<bool> expandedCategories;
 
   SettingsState({
@@ -14,7 +14,7 @@ class SettingsState extends Equatable {
 
   factory SettingsState.initial() {
     return SettingsState(
-      settings: Maybe<Settings>.none(),
+      settings: Maybe<AppSettings>.none(),
       expandedCategories: const [],
     );
   }
@@ -26,7 +26,7 @@ class SettingsState extends Equatable {
   bool get stringify => true;
 
   SettingsState copyWith({
-    Maybe<Settings>? settings,
+    Maybe<AppSettings>? settings,
     List<bool>? expandedCategories,
   }) {
     if ((settings == null || identical(settings, this.settings)) &&

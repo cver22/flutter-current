@@ -5,14 +5,14 @@ import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
 import '../../env.dart';
 import '../../log/log_model/log.dart';
-import '../../settings/settings_model/settings.dart';
+import '../../settings/settings_model/app_settings.dart';
 import '../../utils/maybe.dart';
 import 'app_actions.dart';
 
 //TODO load setting from JSON file, change settings
 
 class SettingsUpdate implements AppAction {
-  final Maybe<Settings> settings;
+  final Maybe<AppSettings> settings;
 
   SettingsUpdate({required this.settings});
 
@@ -42,7 +42,7 @@ class SettingsChangeDefaultLog implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     Map<String, Log> logs = appState.logsState.logs;
     if (log != null && logs.containsKey(log!.id)) {
       settings = settings.copyWith(defaultLogId: log!.id);
@@ -53,7 +53,7 @@ class SettingsChangeDefaultLog implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }
@@ -66,7 +66,7 @@ class SettingsAddEditCategory implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     List<AppCategory> categories = List.from(settings.defaultCategories);
 
     if (category.id != null) {
@@ -81,7 +81,7 @@ class SettingsAddEditCategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }
@@ -94,7 +94,7 @@ class SettingsDeleteCategory implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     List<AppCategory> categories = List.from(settings.defaultCategories);
 
     if (canDeleteCategory(id: category.id)) {
@@ -106,7 +106,7 @@ class SettingsDeleteCategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }
@@ -119,7 +119,7 @@ class SettingsAddEditSubcategory implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     List<AppCategory> subcategories = settings.defaultSubcategories;
 
     if (subcategory.id != null) {
@@ -134,7 +134,7 @@ class SettingsAddEditSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }
@@ -147,7 +147,7 @@ class SettingsDeleteSubcategory implements AppAction {
 
   @override
   AppState updateState(AppState appState) {
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     List<AppCategory> subcategories = settings.defaultSubcategories;
 
     if (canDeleteSubcategory(subcategory: subcategory)) {
@@ -158,7 +158,7 @@ class SettingsDeleteSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }
@@ -206,7 +206,7 @@ class SettingsReorderCategory implements AppAction {
 
   AppState updateState(AppState appState) {
     //reorder categories list
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     List<AppCategory> categories = List.from(settings.defaultCategories);
     categories = reorderLogSettingsCategories(
         categories: categories, oldCategoryIndex: oldCategoryIndex, newCategoryIndex: newCategoryIndex);
@@ -223,7 +223,7 @@ class SettingsReorderCategory implements AppAction {
       appState,
       [
         updateSettingsState((settingsState) =>
-            settingsState.copyWith(settings: Maybe<Settings>.some(settings), expandedCategories: expandedCategories)),
+            settingsState.copyWith(settings: Maybe<AppSettings>.some(settings), expandedCategories: expandedCategories)),
       ],
     );
   }
@@ -242,7 +242,7 @@ class SettingsReorderSubcategory implements AppAction {
       required this.newSubcategoryIndex});
 
   AppState updateState(AppState appState) {
-    Settings settings = appState.settingsState.settings.value;
+    AppSettings settings = appState.settingsState.settings.value;
     String oldParentId = settings.defaultCategories[oldCategoryIndex].id!;
     String newParentId = settings.defaultCategories[newCategoryIndex].id!;
     List<AppCategory> subcategories = List.from(settings.defaultSubcategories);
@@ -265,7 +265,7 @@ class SettingsReorderSubcategory implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<Settings>.some(settings))),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe<AppSettings>.some(settings))),
       ],
     );
   }

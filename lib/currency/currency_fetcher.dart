@@ -1,3 +1,4 @@
+import 'package:expenses/log/log_model/log.dart';
 import 'package:hive/hive.dart';
 
 import 'currency_local_repository.dart';
@@ -26,19 +27,53 @@ class CurrencyFetcher {
     _store.dispatch(CurrencySetLoading());
 
     _store.dispatch(CurrencySetExchangeRatesFromRemote(
-        json: await _currencyRemoteRepository.loadReferenceConversionRates(referenceCurrency: referenceCurrency),
+        conversionRates: await _currencyRemoteRepository.loadReferenceConversionRates(
+          allCurrencies: _store.state.currencyState.allCurrencies,
+          referenceCurrency: referenceCurrency,
+        ),
         referenceCurrency: referenceCurrency));
   }
 
-  Future<void> localLoadAllConversionRates() async {
+  Future<void> localLoadConversionRates() async {
     _store.dispatch(CurrencySetLoading());
 
     _store.dispatch(CurrencyLoadAllCurrenciesFromLocal(
         localConversionRatesMap: await _currencyLocalRepository.loadAllConversionRates()));
   }
 
-  Future<void> localSaveAllConversionRates({required Map<String, ConversionRates> conversionRateMap}) async {
-    //TODO some kind of error checking
+  Future<void> localSaveConversionRates({required Map<String, ConversionRates> conversionRateMap}) async {
     _currencyLocalRepository.saveConversionRates(conversionRateMap: conversionRateMap);
+  }
+
+  Future<void> loadAllConversionRates() async {
+    //loads rates for all logs and settings from local unless not present, then load from remote
+    _store.dispatch(CurrencySetLoading());
+    Map<String, Log> logs = _store.state.logsState.logs;
+    List<String> currencies = <String>[];
+    Map<String, ConversionRates> conversionRatesMap = await _currencyLocalRepository.loadAllConversionRates();
+    String? settingsCurrency;
+
+    if (_store.state.settingsState.settings.isSome) {
+      settingsCurrency = _store.state.settingsState.settings.value.homeCurrency;
+      currencies.add(settingsCurrency);
+    }
+
+    logs.forEach((key, log) {
+      if (log.currency != settingsCurrency) {
+        currencies.add(log.currency!);
+      }
+    });
+
+    currencies.forEach((currency) async {
+      if (!conversionRatesMap.containsKey(currency)) {
+        ConversionRates conversionRates = await _currencyRemoteRepository.loadReferenceConversionRates(
+          allCurrencies: _store.state.currencyState.allCurrencies,
+          referenceCurrency: currency,
+        );
+        conversionRatesMap.update(currency, (value) => conversionRates, ifAbsent: () => conversionRates);
+      }
+    });
+
+    _store.dispatch(CurrencyLoadAllCurrenciesFromLocal(localConversionRatesMap: conversionRatesMap));
   }
 }

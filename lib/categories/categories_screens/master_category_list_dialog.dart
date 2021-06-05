@@ -5,7 +5,7 @@ import '../../app/common_widgets/error_widget.dart';
 import '../../env.dart';
 import '../../filter/filter_model/filter.dart';
 import '../../log/log_model/log.dart';
-import '../../settings/settings_model/settings.dart';
+import '../../settings/settings_model/app_settings.dart';
 import '../../store/actions/filter_actions.dart';
 import '../../store/connect_state.dart';
 import '../../utils/db_consts.dart';
@@ -40,7 +40,7 @@ class MasterCategoryListDialog extends StatelessWidget {
         map: (state) => state.settingsState,
         builder: (dynamic settingsState) {
           print('Rendering Settings Category Dialog');
-          Settings settings = settingsState.settings.value;
+          AppSettings settings = settingsState.settings.value;
           categories = settings.defaultCategories;
           subcategories = settings.defaultSubcategories;
 

@@ -6,7 +6,7 @@ import '../env.dart';
 import '../store/actions/settings_actions.dart';
 import '../store/app_store.dart';
 import '../utils/maybe.dart';
-import 'settings_model/settings.dart';
+import 'settings_model/app_settings.dart';
 import 'settings_model/settings_entity.dart';
 
 class SettingsFetcher {
@@ -17,7 +17,7 @@ class SettingsFetcher {
       : _store = store,
         _hiveSettingsRepository = hiveSettingsRepository;
 
-  Future<void> writeAppSettings(Settings settings) async {
+  Future<void> writeAppSettings(AppSettings settings) async {
     _hiveSettingsRepository.saveSettings(settings: settings);
   }
 
@@ -35,7 +35,7 @@ class SettingsFetcher {
       print('Resetting settings');
       //if no settings have ever been loaded, load the default
       String jsonString = await rootBundle.loadString('assets/default_settings.txt');
-      Settings settings = Settings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)));
+      AppSettings settings = AppSettings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)));
 
       //load default settings to app
       _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
@@ -44,7 +44,7 @@ class SettingsFetcher {
       _hiveSettingsRepository.saveSettings(settings: settings);
     } else {
       //load or reloads hive settings
-      Settings? settings = await _hiveSettingsRepository.loadSettings();
+      AppSettings? settings = await _hiveSettingsRepository.loadSettings();
       if ( settings != null) {
         _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
       }  else {

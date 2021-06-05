@@ -6,12 +6,12 @@ import '../../categories/categories_model/app_category/app_category.dart';
 import '../../categories/categories_model/app_category/app_category_entity.dart';
 import 'settings_entity.dart';
 
-part 'settings.g.dart';
+part 'app_settings.g.dart';
 
 @immutable
 //type id can never be changed
 @HiveType(typeId: 0)
-class Settings extends Equatable {
+class AppSettings extends Equatable {
   @HiveField(0)
   final String homeCurrency;
   @HiveField(1)
@@ -25,7 +25,7 @@ class Settings extends Equatable {
   @HiveField(5)
   final List<String>? logOrder;
 
-  Settings(
+  AppSettings(
       {required this.homeCurrency,
       required this.defaultCategories,
       required this.defaultSubcategories,
@@ -69,7 +69,7 @@ class Settings extends Equatable {
     );
   }
 
-  static Settings fromEntity(SettingsEntity entity) {
+  static AppSettings fromEntity(SettingsEntity entity) {
     //converts entity back to model
     List<AppCategory> returnedDefaultCategories = [];
     entity.defaultCategoryEntities.every((e) {
@@ -83,7 +83,7 @@ class Settings extends Equatable {
       return true;
     });
 
-    return Settings(
+    return AppSettings(
       homeCurrency: entity.homeCurrency!,
       defaultCategories: returnedDefaultCategories,
       defaultSubcategories: returnedDefaultSubcategories,
@@ -93,7 +93,7 @@ class Settings extends Equatable {
     );
   }
 
-  Settings copyWith({
+  AppSettings copyWith({
     String? homeCurrency,
     List<AppCategory>? defaultCategories,
     List<AppCategory>? defaultSubcategories,
@@ -113,7 +113,7 @@ class Settings extends Equatable {
       return this;
     }
 
-    return new Settings(
+    return new AppSettings(
       homeCurrency: homeCurrency ?? this.homeCurrency,
       defaultCategories: defaultCategories ?? this.defaultCategories,
       defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,

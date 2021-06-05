@@ -22,7 +22,7 @@ class CurrencyLoadAllCurrenciesFromLocal implements AppAction {
       String referenceCurrency = log.currency!;
 
       ConversionRates conversionRates =
-          mapConversionRates(referenceCurrency: referenceCurrency, allCurrencies: allCurrencies);
+          mapAllLogCurrencies(referenceCurrency: referenceCurrency, allCurrencies: allCurrencies);
 
       conversionRateMap.update(referenceCurrency, (value) => conversionRates, ifAbsent: () => conversionRates);
     });
@@ -114,24 +114,20 @@ class CurrencySetLoading implements AppAction {
 }
 
 class CurrencySetExchangeRatesFromRemote implements AppAction {
-  final Map<String, dynamic>? json;
+  final ConversionRates conversionRates;
   final String referenceCurrency;
 
-  CurrencySetExchangeRatesFromRemote({required this.json, required this.referenceCurrency});
+  CurrencySetExchangeRatesFromRemote({required this.conversionRates, required this.referenceCurrency});
 
   @override
   AppState updateState(AppState appState) {
     Map<String, ConversionRates> conversionRateMap =
         Map<String, ConversionRates>.from(appState.currencyState.conversionRateMap);
-    List<Currency> allCurrencies = List<Currency>.from(appState.currencyState.allCurrencies);
-
-    ConversionRates conversionRates =
-        mapConversionRates(referenceCurrency: referenceCurrency, allCurrencies: allCurrencies, json: json);
 
     conversionRateMap.update(referenceCurrency, (value) => conversionRates, ifAbsent: () => conversionRates);
 
     //save to local
-    Env.currencyFetcher.localSaveAllConversionRates(conversionRateMap: conversionRateMap);
+    Env.currencyFetcher.localSaveConversionRates(conversionRateMap: conversionRateMap);
 
     return updateSubstates(
       appState,
@@ -145,26 +141,14 @@ class CurrencySetExchangeRatesFromRemote implements AppAction {
   }
 }
 
-ConversionRates mapConversionRates(
-    {required String referenceCurrency, required List<Currency> allCurrencies, Map<String, dynamic>? json}) {
+ConversionRates mapAllLogCurrencies({required String referenceCurrency, required List<Currency> allCurrencies}) {
   Map<String, double> rates = Map<String, double>();
   DateTime? dateUpdated;
 
   allCurrencies.forEach((currency) {
     double conversionRate = 0.0;
-    if (json != null) {
-      var jsonConversionRate = json['conversion_rates'][currency.code];
-
-      //error checking to prevent attempting to convert null return from json for a particular currency
-      if (jsonConversionRate != null) {
-        conversionRate = jsonConversionRate.toDouble();
-      }
-    }
     rates.update(currency.code, (value) => conversionRate, ifAbsent: () => conversionRate);
   });
 
-  if (json != null) {
-    dateUpdated = DateTime.fromMillisecondsSinceEpoch(json['time_last_update_unix'].toInt() * 1000);
-  }
   return ConversionRates(lastUpdated: dateUpdated, rates: rates);
 }

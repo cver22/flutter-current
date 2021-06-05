@@ -11,7 +11,7 @@ import '../../categories/categories_screens/master_category_list_dialog.dart';
 import '../../env.dart';
 import '../../member/member_ui/log_member_simple_ui/log_member_total_list.dart';
 import '../../qr_reader/qr_ui/qr_reader.dart';
-import '../../settings/settings_model/settings.dart';
+import '../../settings/settings_model/app_settings.dart';
 import '../../store/actions/logs_actions.dart';
 import '../../store/connect_state.dart';
 import '../../utils/db_consts.dart';
@@ -267,7 +267,7 @@ class _NewLogCategorySourceWidgetState extends State<NewLogCategorySourceWidget>
     super.initState();
     //converts the settings to a temporary log for the purpose of creating a drop down list
     //from this list, the user can decide where they are getting the category list from
-    Settings settings = Env.store.state.settingsState.settings.value;
+    AppSettings settings = Env.store.state.settingsState.settings.value;
 
     defaultLog = Log(
         name: 'Default',
