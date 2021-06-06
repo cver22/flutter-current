@@ -21,7 +21,7 @@ class SettingsFetcher {
     _hiveSettingsRepository.saveSettings(settings: settings);
   }
 
-  Future<void> readResetAppSettings({ bool resetSettings = false}) async {
+  Future<void> readResetAppSettings({bool resetSettings = false}) async {
     bool settingsInitialized = (await _hiveSettingsRepository.settingsInitialized());
 
     if (resetSettings) {
@@ -38,19 +38,15 @@ class SettingsFetcher {
       AppSettings settings = AppSettings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)));
 
       //load default settings to app
-      _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
-
-      //initialize settings to hive
-      _hiveSettingsRepository.saveSettings(settings: settings);
+      _store.dispatch(SettingsUpdate(settings: Maybe.some(settings.copyWith(logOrder: <String>[]))));
     } else {
       //load or reloads hive settings
       AppSettings? settings = await _hiveSettingsRepository.loadSettings();
-      if ( settings != null) {
+      if (settings != null) {
         _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
-      }  else {
+      } else {
         _store.dispatch(SettingsUpdate(settings: Maybe.none()));
       }
-
     }
   }
 }

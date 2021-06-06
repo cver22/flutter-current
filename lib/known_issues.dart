@@ -13,9 +13,6 @@
 
 //TODO GENERAL
 //TODO recover password
-//TODO don't show the currency on a log in the list if it is the default currency
-//TODO find an api to get the currency exchange rate information
-//TODO Settings are not being retrieved? JSON error?
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
 // name to the same log, this will allow two logs to have the same categories even at the ID level regardless of their log
 //TODO method to change the photo
@@ -27,16 +24,15 @@
 //TODO start splash screen earlier?
 //TODO move tag list creators from UI (tag picker) to actions and state
 //button on tags to visualize stats for that tag, spent, average, etc
-//add blank option to new log
+//add blank option to new log categories
 //multi select delete, if selected, they turn red, will need to add multiSelect to entries state, add icons to the tabBar, and have a confirmation dialog
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 //add anonymous sign in and create red banner asking the user to signup or risk losing their data
 //TODO, give user option to change default payer on a log and from there the FAB button will chose that as default for EntrySetNewSelect, until then, it defaults to the user
 //TODO tag recent use, modify UI
-//TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? should the adding of someone go through an update all the entries?
+//TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? Have option to add person to all previous entries
 //TODO entries loaded from null should be given NO_CATEGORY AND NO_SUBCATEGORY defaults if the value is null
 //TODO hide filter button until a log and an entry is added
-//TODO auto pull currency conversions on load if they haven't been o set all to 0.0
 //TODO backup setting to cloud and retrieve
 
 
@@ -62,6 +58,7 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
+//why does the app save the settings on load
 
 
 

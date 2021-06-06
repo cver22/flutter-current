@@ -174,6 +174,12 @@ class SetLogs implements AppAction {
     Map<String, Log> logsMap = Map.from(appState.logsState.logs);
     Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, LogTotal> logTotals = Map.from(appState.logTotalsState.logTotals);
+    AppSettings settings = appState.settingsState.settings.value;
+    List<String>? settingsLogOrder = <String>[];
+
+    if (settings.logOrder != null) {
+      settingsLogOrder = List<String>.from(settings.logOrder!);
+    }
 
     logsMap.addEntries(
       logList!.map(
@@ -185,11 +191,43 @@ class SetLogs implements AppAction {
       logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
     });
 
+    //adds new logs to the log order
+    logsMap.forEach((logId, value) {
+      if (!settingsLogOrder!.contains(logId)) {
+        settingsLogOrder.add(logId);
+      }
+    });
+
+    bool writeToLocal = false;
+
+    if (settings.logOrder == null) {
+      //no log order was loaded from settings, save the order to settings
+      writeToLocal = true;
+    } else {
+      //check if local and settings  logOrder match, if they don't save to local
+      int count = 0;
+      settingsLogOrder.forEach((logId) {
+        String log = settings.logOrder![count];
+
+        if (log != logId) {
+          writeToLocal = true;
+        }
+        count++;
+      });
+    }
+
+    settings = settings.copyWith(logOrder: settingsLogOrder);
+
+    if (writeToLocal) {
+      Env.settingsFetcher.writeAppSettings(settings);
+    }
+
     return updateSubstates(
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(logs: logsMap)),
         updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
       ],
     );
   }
@@ -206,19 +244,25 @@ class LogReorder implements AppAction {
   AppState updateState(AppState appState) {
     Map<String, Log> logsMap = Map.from(appState.logsState.logs);
     List<Log> organizedLogs = logs!;
+    AppSettings settings = appState.settingsState.settings.value;
+    List<String> settingsLogOrder = <String>[];
 
     Log movedLog = organizedLogs.removeAt(oldIndex!);
     organizedLogs.insert(newIndex!, movedLog);
 
-    /*organizedLogs.forEach((log) {
-      logsMap[log.id] = log.copyWith(order: organizedLogs.indexOf(log));
-    });*/
-    //TODO reorder should affect settings not the log
+    organizedLogs.forEach((log) {
+      settingsLogOrder.add(log.id!);
+    });
+
+    settings = settings.copyWith(logOrder: settingsLogOrder);
+
+    Env.settingsFetcher.writeAppSettings(settings);
 
     return updateSubstates(
       appState,
       [
         updateLogsState((logsState) => logsState.copyWith(logs: logsMap)),
+        updateSettingsState((settingsState) => settingsState.copyWith(settings: Maybe.some(settings))),
       ],
     );
   }
@@ -570,46 +614,51 @@ class LogUpdateCategoriesSubcategoriesOnEntryScreenClose implements AppAction {
 }
 
 class DeleteLog implements AppAction {
-  final Log? log;
+  final Log log;
 
-  DeleteLog({this.log});
+  DeleteLog({required this.log});
 
   @override
   AppState updateState(AppState appState) {
     LogsState updatedLogsState = appState.logsState;
     AppSettings settings = appState.settingsState.settings.value;
-    updatedLogsState.logs.removeWhere((key, value) => key == log!.id);
+    updatedLogsState.logs.removeWhere((key, value) => key == log.id);
 
     List<AppEntry> deletedEntriesList = [];
     List<Tag> deletedTagsList = [];
     Map<String, AppEntry> entriesMap = Map.from(appState.entriesState.entries);
     Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
+    List<String> logOrder = <String>[]; //= List<String>.from(settings.logOrder!);
 
     entriesMap.forEach((key, entry) {
-      if (entry.logId == log!.id) {
+      if (entry.logId == log.id) {
         deletedEntriesList.add(entry);
       }
     });
 
-    entriesMap.removeWhere((key, entry) => entry.logId == log!.id);
+    entriesMap.removeWhere((key, entry) => entry.logId == log.id);
 
     tagsMap.forEach((key, tag) {
-      if (tag.logId == log!.id) {
+      if (tag.logId == log.id) {
         deletedTagsList.add(tag);
       }
     });
 
-    tagsMap.removeWhere((key, tag) => tag.logId == log!.id);
+    tagsMap.removeWhere((key, tag) => tag.logId == log.id);
 
     //ensures the default log is updated if the current log is default and deleted
-    if (appState.settingsState.settings.value.defaultLogId == log!.id) {
+    if (appState.settingsState.settings.value.defaultLogId == log.id) {
       if (updatedLogsState.logs.isNotEmpty) {
         settings = settings.copyWith(
-            defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log!.id).id);
+            defaultLogId: updatedLogsState.logs.values.firstWhere((element) => element.id != log.id).id);
       } else {
         settings = settings.copyWith(defaultLogId: '');
       }
     }
+
+    //remove log from log order
+    logOrder.remove(log.id!);
+    settings = settings.copyWith(logOrder: logOrder);
 
     Env.entriesFetcher.batchDeleteEntries(deletedEntries: deletedEntriesList);
     Env.tagFetcher.batchDeleteTags(deletedTags: deletedTagsList);

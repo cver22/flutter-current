@@ -25,7 +25,7 @@ void main() async {
 
   await Firebase.initializeApp();
   await Hive.initFlutter();
-  Hive.registerAdapter(SettingsAdapter());
+  Hive.registerAdapter(AppSettingsAdapter());
   Hive.registerAdapter(ConversionRatesAdapter());
   Hive.registerAdapter(AppCategoryAdapter());
   await Hive.openBox(CURRENCY_BOX);
@@ -38,13 +38,11 @@ void main() async {
 }
 
 class App extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       getPages: [
-        GetPage(
-            name: ExpenseRoutes.home, page: () => HomeScreen(key: ExpenseKeys.homeScreen)),
+        GetPage(name: ExpenseRoutes.home, page: () => HomeScreen(key: ExpenseKeys.homeScreen)),
         GetPage(name: ExpenseRoutes.loginRegister, page: () => LoginRegisterScreen(key: ExpenseKeys.loginScreen)),
         GetPage(name: ExpenseRoutes.app, page: () => AppScreen(key: ExpenseKeys.appScreen)),
         GetPage(name: ExpenseRoutes.account, page: () => AccountScreen(key: ExpenseKeys.accountScreen)),

@@ -14,11 +14,10 @@ abstract class SettingsLocalRepository {
 class HiveSettingsRepository extends SettingsLocalRepository {
   @override
   Future<AppSettings?> loadSettings() async {
+    print('Retrieving settings from hive');
     var box = Hive.box(SETTINGS_BOX);
 
     AppSettings? settings = box.get(SETTINGS_HIVE_INDEX);
-
-    print('Retrieving settings from hive: $settings');
 
     return settings;
   }

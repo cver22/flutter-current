@@ -10,19 +10,19 @@ part 'settings_entity.g.dart';
 @JsonSerializable()
 class SettingsEntity implements Equatable {
   const SettingsEntity({
-    this.homeCurrency,
+    required this.homeCurrency,
     this.defaultCategoryEntities = const [],
     this.defaultSubcategoryEntities = const [],
     this.defaultLogId,
     this.autoInsertDecimalPoint = false,
-    this.logOrder = const [],
+    this.logOrder = const <String>[],
   });
 
-  final String? homeCurrency;
+  final String homeCurrency;
   final List<AppCategoryEntity> defaultCategoryEntities;
   final List<AppCategoryEntity> defaultSubcategoryEntities;
   final String? defaultLogId;
-  final bool? autoInsertDecimalPoint;
+  final bool autoInsertDecimalPoint;
   final List<String>? logOrder;
 
   @override

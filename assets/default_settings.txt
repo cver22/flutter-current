@@ -1,5 +1,6 @@
 {
    "homeCurrency":"CAD",
+   "autoInsertDecimalPoint": false,
    "defaultCategoryEntities":[
       {
          "id":"grocery",

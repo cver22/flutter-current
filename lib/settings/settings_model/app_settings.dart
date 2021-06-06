@@ -21,7 +21,7 @@ class AppSettings extends Equatable {
   @HiveField(3)
   final String? defaultLogId;
   @HiveField(4)
-  final bool? autoInsertDecimalPoint;
+  final bool autoInsertDecimalPoint;
   @HiveField(5)
   final List<String>? logOrder;
 
@@ -31,7 +31,7 @@ class AppSettings extends Equatable {
       required this.defaultSubcategories,
       this.defaultLogId,
       this.autoInsertDecimalPoint = false,
-      required this.logOrder});
+      this.logOrder = const <String>[]});
 
   @override
   List<Object?> get props => [
@@ -84,7 +84,7 @@ class AppSettings extends Equatable {
     });
 
     return AppSettings(
-      homeCurrency: entity.homeCurrency!,
+      homeCurrency: entity.homeCurrency,
       defaultCategories: returnedDefaultCategories,
       defaultSubcategories: returnedDefaultSubcategories,
       defaultLogId: entity.defaultLogId,
