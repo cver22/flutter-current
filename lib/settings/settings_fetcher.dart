@@ -29,6 +29,7 @@ class SettingsFetcher {
     }
 
     if (settingsInitialized && Env.store.state.settingsState.settings.isSome) {
+      print('settings are loaded');
       //if the settings are already loaded, do nothing
       return;
     } else if (!settingsInitialized && resetSettings) {
@@ -40,6 +41,7 @@ class SettingsFetcher {
       //load default settings to app
       _store.dispatch(SettingsUpdate(settings: Maybe.some(settings.copyWith(logOrder: <String>[]))));
     } else {
+      print('Load settings');
       //load or reloads hive settings
       AppSettings? settings = await _hiveSettingsRepository.loadSettings();
       if (settings != null) {

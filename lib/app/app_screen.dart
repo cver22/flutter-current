@@ -1,8 +1,9 @@
+import '../log/log_model/logs_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../entries/entries_model/entries_state.dart';
-import '../entries/entries_screen/entries_screen.dart';
+import '../entries/entries_ui/entries_screen.dart';
 import '../env.dart';
 import '../filter/filter_ui/filter_dialog.dart';
 import '../log/log_ui/logs_screen.dart';
@@ -25,8 +26,7 @@ class AppScreen extends StatefulWidget {
   _AppScreenState createState() => _AppScreenState();
 }
 
-class _AppScreenState extends State<AppScreen>
-    with SingleTickerProviderStateMixin {
+class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMixin {
   late TabController _controller;
   GlobalKey<ScaffoldState> _key = GlobalKey<ScaffoldState>();
 
@@ -39,8 +39,7 @@ class _AppScreenState extends State<AppScreen>
   @override
   void initState() {
     super.initState();
-    _controller =
-        TabController(length: tabs.length, vsync: this, initialIndex: 0);
+    _controller = TabController(length: tabs.length, vsync: this, initialIndex: 0);
     _controller.addListener(() {
       setState(() {});
     });
@@ -55,6 +54,7 @@ class _AppScreenState extends State<AppScreen>
   @override
   Widget build(BuildContext context) {
     print('Rendering App Screen');
+    bool logsPresent = Env.store.state.logsState.logs.isNotEmpty;
 
     return DefaultTabController(
       length: 3,
@@ -82,8 +82,8 @@ class _AppScreenState extends State<AppScreen>
                 actions: <Widget>[
                   Builder(builder: (BuildContext context) {
                     if (_controller.index == 0) {
-                      return _buildLogPopupMenuButton();
-                    } else if (_controller.index == 1) {
+                      return _buildLogActions();
+                    } else if (_controller.index == 1 && logsPresent) {
                       return _buildEntriesActions();
                     } else {
                       return Container();
@@ -98,8 +98,7 @@ class _AppScreenState extends State<AppScreen>
               body: TabBarView(
                 controller: _controller,
                 children: [
-                  LogsScreen(
-                      key: ExpenseKeys.logsScreen, tabController: _controller),
+                  LogsScreen(key: ExpenseKeys.logsScreen, tabController: _controller),
                   EntriesScreen(key: ExpenseKeys.entriesScreen),
                   Icon(Icons.assessment),
                 ],
@@ -111,8 +110,7 @@ class _AppScreenState extends State<AppScreen>
     );
   }
 
-  PopupMenuButton<String> _buildEntriesPopupMenuButton(
-      {required EntriesState state}) {
+  PopupMenuButton<String> _buildEntriesPopupMenuButton({required EntriesState state}) {
     return PopupMenuButton<String>(
       onSelected: handleClick,
       itemBuilder: (BuildContext context) {
@@ -178,28 +176,50 @@ class _AppScreenState extends State<AppScreen>
         where: notIdentical,
         map: (state) => state.entriesState,
         builder: (state) {
+          return state.entries.isNotEmpty
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (state.entriesFilter.isSome)
+                      IconButton(
+                        icon: Stack(
+                          children: [
+                            Icon(Icons.filter_alt_outlined),
+                            Positioned(
+                                bottom: 3.0,
+                                child: Icon(
+                                  Icons.close_outlined,
+                                  color: Colors.black,
+                                )),
+                          ],
+                        ),
+                        onPressed: () {
+                          Env.store.dispatch(EntriesClearEntriesFilter());
+                        },
+                      ),
+                    _buildEntriesPopupMenuButton(state: state),
+                  ],
+                )
+              : Container();
+        });
+  }
+
+  Widget _buildLogActions() {
+    return ConnectState<LogsState>(
+        where: notIdentical,
+        map: (state) => state.logsState,
+        builder: (state) {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              state.entriesFilter.isSome
-                  ? IconButton(
-                      icon: Stack(
-                        children: [
-                          Icon(Icons.filter_alt_outlined),
-                          Positioned(
-                              bottom: 3.0,
-                              child: Icon(
-                                Icons.close_outlined,
-                                color: Colors.black,
-                              )),
-                        ],
-                      ),
-                      onPressed: () {
-                        Env.store.dispatch(EntriesClearEntriesFilter());
-                      },
-                    )
-                  : Container(),
-              _buildEntriesPopupMenuButton(state: state),
+              if (state.logs.isEmpty)
+                Row(
+                  children: [
+                    Text('Add your first log here'),
+                    Icon(Icons.arrow_forward_outlined),
+                  ],
+                ),
+              _buildLogPopupMenuButton(),
             ],
           );
         });

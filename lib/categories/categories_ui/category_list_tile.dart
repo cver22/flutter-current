@@ -31,6 +31,41 @@ class CategoryListTile extends StatelessWidget {
     }else{
       name = category.name;
     }*/
+    return InkWell(
+      onTap: onTap,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 12.0, horizontal: 0.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Expanded(
+              child: Row(
+                children: [
+                  const SizedBox(width: 10),
+                  CategoryListTileLeading(
+                    category: category,
+                    sublist: inset, //only a sublist if there is no ontap method
+                  ),
+                  const SizedBox(width: 20),
+                  Expanded(
+                    child: Text(category.name!),
+                  ),
+                ],
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: setLogFilter == SettingsLogFilterEntry.filter
+                  ? FilterListTileTrailing(onTap: onTapEdit, selected: selected)
+                  : CategoryListTileTrailing(onTapEdit: onTapEdit),
+            ),
+          ],
+        ),
+      ),
+    );
+
+
+
     return ListTile(
       contentPadding: EdgeInsets.fromLTRB(8, 0, 16, 0),
       leading: CategoryListTileLeading(

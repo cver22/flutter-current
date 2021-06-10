@@ -29,7 +29,7 @@ class MasterCategoryDragAndDropList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print('build drag and drop');
+    print('Build drag and drop');
     return DragAndDropLists(
       children: List.generate(categories.length, (index) => _buildList(outerIndex: index)),
       onItemReorder: _onItemReorder,

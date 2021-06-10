@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart' show IterableExtension;
 import 'package:currency_picker/currency_picker.dart';
 import 'package:expenses/app/common_widgets/list_tile_components.dart';
+import 'package:expenses/store/actions/entries_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,13 +18,16 @@ import '../../utils/expense_routes.dart';
 class EntriesListTile extends StatelessWidget {
   final AppEntry entry;
   final Map<String, Tag> tags;
+  final List<String> selectedEntries;
 
-  const EntriesListTile({Key? key, required this.entry, required this.tags}) : super(key: key);
+  const EntriesListTile({Key? key, required this.entry, required this.tags, required this.selectedEntries})
+      : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     late Log? log;
     late DateTime date = entry.dateTime;
+    bool selected = selectedEntries.contains(entry.id);
 
     log = Env.store.state.logsState.logs.values.firstWhereOrNull((element) => element.id == entry.logId);
 
@@ -31,45 +35,55 @@ class EntriesListTile extends StatelessWidget {
       Currency logCurrency = CurrencyService().findByCode(log.currency!)!;
       return Column(
         children: [
-          InkWell(
-            onTap: () => {
-              Env.store.dispatch(EntrySelectEntry(entryId: entry.id)),
-              Get.toNamed(ExpenseRoutes.addEditEntries),
-            },
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Expanded(
-                    child: Row(
-                      children: [
-                        const SizedBox(width: 15),
-                        Text(
-                          '${displayChar(log: log)}',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: EMOJI_SIZE),
-                        ),
-                        const SizedBox(width: 15),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              categoriesSubcategories(log: log),
-                              if (entry.tagIDs.isNotEmpty) _buildTagWidget(logId: log.id!),
-                              if (entry.comment != null) Text(entry.comment!),
-                            ],
+          Material(
+            color: selected ? Colors.red[300] : ThemeData.light().canvasColor,
+            child: InkWell(
+              onLongPress: () {
+                Env.store.dispatch(EntriesSelectEntry(entryId: entry.id));
+              },
+              onTap: () {
+                if (selectedEntries.isNotEmpty) {
+                  Env.store.dispatch(EntriesSelectEntry(entryId: entry.id));
+                } else {
+                  Env.store.dispatch(EntrySelectEntry(entryId: entry.id));
+                  Get.toNamed(ExpenseRoutes.addEditEntries);
+                }
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 0.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Expanded(
+                      child: Row(
+                        children: [
+                          const SizedBox(width: 15),
+                          Text(
+                            '${displayChar(log: log)}',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(fontSize: EMOJI_SIZE),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 15),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                categoriesSubcategories(log: log),
+                                if (entry.tagIDs.isNotEmpty) _buildTagWidget(logId: log.id!),
+                                if (entry.comment != null) Text(entry.comment!),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 10),
-                    child: _buildTrailingContents(date: date, logCurrency: logCurrency),
-                  ),
-                ],
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 10),
+                      child: _buildTrailingContents(date: date, logCurrency: logCurrency),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

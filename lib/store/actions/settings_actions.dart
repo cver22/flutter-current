@@ -13,12 +13,13 @@ import 'app_actions.dart';
 
 class SettingsUpdate implements AppAction {
   final Maybe<AppSettings> settings;
+  final bool write;
 
-  SettingsUpdate({required this.settings});
+  SettingsUpdate({required this.settings, this.write = false});
 
   @override
   AppState updateState(AppState appState) {
-    if(settings.isSome){
+    if(settings.isSome && write){
       Env.settingsFetcher.writeAppSettings(settings.value);
     }
 

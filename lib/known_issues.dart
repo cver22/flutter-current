@@ -19,7 +19,6 @@
 //TODO how to handle auto scroll on the account screen and login screen
 //TODO update all entries where a subcategory is deleted to use the "other" subcategory
 //TODO confirm change password tool works as I have it commented out at the moment
-//TODO log order needs to be an individual thing, as multiple users with different logs will oder them differently
 //TODO add calculator
 //TODO start splash screen earlier?
 //TODO move tag list creators from UI (tag picker) to actions and state
@@ -32,8 +31,9 @@
 //TODO tag recent use, modify UI
 //TODO probably need to handle what happens when adding a new user to an existing log, how are the entries treated? Have option to add person to all previous entries
 //TODO entries loaded from null should be given NO_CATEGORY AND NO_SUBCATEGORY defaults if the value is null
-//TODO hide filter button until a log and an entry is added
 //TODO backup setting to cloud and retrieve
+//TODO error checking for internet connection to refresh conversion rates and don't allow change of conversion rate if no exchange is present (maybe based on refresh date)
+//TODO trace Renderings, why so much rendering duplication and re-rendering
 
 
 //TODO VISUAL
@@ -42,7 +42,6 @@
 //TODO settings for month/day separator on the entries screen
 //TODO make note that transfer funds do not show up in monthly totals
 //TODO is there a better way to handle "Other" in entries tiles
-//TODO error checking for internet connection to refresh conversion rates and don't allow change of conversion rate if no exchange is present (maybe based on refresh date)
 
 
 
@@ -58,7 +57,8 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
-//why does the app save the settings on load
+//implement batch selection and deletion of
+//add clear entries button to top bar and "confirm deletion dialog"
 
 
 

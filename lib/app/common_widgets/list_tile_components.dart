@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../categories/categories_model/app_category/app_category.dart';
-import '../../categories/categories_screens/category_list_tools.dart';
+import '../../categories/categories_ui/category_list_tools.dart';
 import '../../utils/db_consts.dart';
 
 //leading and trailing components for category list tiles
@@ -27,7 +27,7 @@ class CategoryListTileLeading extends StatelessWidget {
               )
             : Container(),
         Icon(Icons.unfold_more_outlined),
-        SizedBox(width: 5),
+        SizedBox(width: 10),
         Text(
           category.emojiChar /*?? '\u{2757}'*/,
           textAlign: TextAlign.center,

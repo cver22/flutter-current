@@ -3,8 +3,8 @@ import 'package:get/get.dart';
 import '../../currency/currency_utils/currency_formatters.dart';
 import '../../app/common_widgets/app_button.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
-import '../../categories/categories_screens/category_button.dart';
-import '../../categories/categories_screens/master_category_list_dialog.dart';
+import '../../categories/categories_ui/category_button.dart';
+import '../../categories/categories_ui/master_category_list_dialog.dart';
 import '../../env.dart';
 import '../../log/log_model/log.dart';
 import '../../store/actions/settings_actions.dart';
@@ -54,7 +54,7 @@ class SettingsScreen extends StatelessWidget {
                           buttonLabel: currencyLabelFromCode(currencyCode: settingsState.settings.value.homeCurrency),
                           returnCurrency: (currency) {
                             Env.store.dispatch(SettingsUpdate(
-                                settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency))));
+                                settings: Maybe.some(settingsState.settings.value.copyWith(homeCurrency: currency)), write: true));
                             Get.back();
                           }),
                     ],
@@ -121,7 +121,6 @@ class SettingsScreen extends StatelessWidget {
       //catches error if default log is null or is no longer active
       if (_defaultLogId == null || !_logsMap.containsKey(_defaultLogId)) {
         _defaultLogId = _logs.first.id;
-        print(_defaultLogId);
       }
 
       return DropdownButton<Log>(

@@ -201,3 +201,58 @@ Map<String, LogTotal> _entriesUpdateLogsTotals(
   });
   return logTotals;
 }
+
+class EntriesSelectEntry implements AppAction {
+  final String entryId;
+
+  EntriesSelectEntry({required this.entryId});
+
+  @override
+  AppState updateState(AppState appState) {
+    List<String> selectedEntries = List<String>.from(appState.entriesState.selectedEntries);
+
+    if(selectedEntries.contains(entryId)){
+      selectedEntries.remove(entryId);
+    } else {
+      selectedEntries.add(entryId);
+    }
+
+
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(selectedEntries: selectedEntries)),
+      ],
+    );
+  }
+}
+
+class EntriesClearSelection implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    List<String> selectedEntries = <String>[];
+
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(selectedEntries: selectedEntries)),
+      ],
+    );
+  }
+}
+
+class EntriesDeleteSelectedEntries implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    List<String> selectedEntries = <String>[];
+
+    //TODO batch delete entries here and remove from the state
+
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(selectedEntries: selectedEntries)),
+      ],
+    );
+  }
+}
