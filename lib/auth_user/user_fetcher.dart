@@ -23,7 +23,7 @@ class UserFetcher {
       final AppUser user = await _userRepository.getUser();
       _store.dispatch(AuthSuccess(user: user));
       _store.dispatch(LoginRegSuccess());
-      print('User authenticated: $user');
+      print('User authenticated');
     } else {
       _store.dispatch(AuthFailure());
       print('User is not authenticated');

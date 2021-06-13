@@ -124,7 +124,7 @@ class AddEditEntryScreen extends StatelessWidget {
           ),
           onPressed: canSave ? () => {_save(entry: entry)} : null,
         ),
-        _buildDeleteEntryButton(entry: entry),
+        _buildDeleteEntryButton(newEntry: singleEntryState.newEntry),
       ],
     );
   }
@@ -333,7 +333,6 @@ class AddEditEntryScreen extends StatelessWidget {
             onTapConfirm: (confirmDelete) {
               if (confirmDelete) {
                 Env.store.dispatch(EntriesDeleteSelectedEntry());
-                _updateCategoriesOnClose();
                 Get.back();
               }
             },
@@ -343,8 +342,8 @@ class AddEditEntryScreen extends StatelessWidget {
     }
   }
 
-  Widget _buildDeleteEntryButton({AppEntry? entry}) {
-    return entry?.id == null
+  Widget _buildDeleteEntryButton({required bool newEntry}) {
+    return newEntry
         ? Container()
         : PopupMenuButton<String>(
             onSelected: handleClick,

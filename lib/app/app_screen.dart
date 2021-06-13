@@ -16,6 +16,7 @@ import '../utils/expense_routes.dart';
 import '../utils/keys.dart';
 import '../utils/utils.dart';
 import 'app_drawer.dart';
+import 'common_widgets/simple_confirmation_dialog.dart';
 
 //main screen of the app from which we can navigate to other areas of the app
 
@@ -180,28 +181,33 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (state.entriesFilter.isSome)
-                      IconButton(
-                        icon: Stack(
-                          children: [
-                            Icon(Icons.filter_alt_outlined),
-                            Positioned(
-                                bottom: 3.0,
-                                child: Icon(
-                                  Icons.close_outlined,
-                                  color: Colors.black,
-                                )),
-                          ],
-                        ),
-                        onPressed: () {
-                          Env.store.dispatch(EntriesClearEntriesFilter());
-                        },
-                      ),
+                    if (state.entriesFilter.isSome) _clearFilterButton(),
+                    if (state.selectedEntries.isNotEmpty) _clearSelectionButton(),
+                    if (state.selectedEntries.isNotEmpty) _deleteSelectionButton(),
                     _buildEntriesPopupMenuButton(state: state),
                   ],
                 )
               : Container();
         });
+  }
+
+  Widget _clearFilterButton() {
+    return IconButton(
+      icon: Stack(
+        children: [
+          Icon(Icons.filter_alt_outlined),
+          Positioned(
+              bottom: 3.0,
+              child: Icon(
+                Icons.close_outlined,
+                color: Colors.black,
+              )),
+        ],
+      ),
+      onPressed: () {
+        Env.store.dispatch(EntriesClearEntriesFilter());
+      },
+    );
   }
 
   Widget _buildLogActions() {
@@ -223,5 +229,33 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
             ],
           );
         });
+  }
+
+  Widget _clearSelectionButton() {
+    return IconButton(
+      icon: Icon(Icons.check_outlined),
+      onPressed: () {
+        Env.store.dispatch(EntriesClearSelection());
+      },
+    );
+  }
+
+  Widget _deleteSelectionButton() {
+    return IconButton(
+      icon: Icon(Icons.delete_outline),
+      onPressed: () async {
+        await Get.dialog(
+          SimpleConfirmationDialog(
+            title: 'Are you sure you want to delete these entries? These cannot be recovered.',
+            onTapConfirm: (confirmDelete) {
+              if (confirmDelete) {
+                Env.store.dispatch(EntriesDeleteSelectedEntries());
+              }
+            },
+          ),
+        );
+
+      },
+    );
   }
 }

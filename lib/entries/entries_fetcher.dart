@@ -82,7 +82,7 @@ class EntriesFetcher {
   }
 
   Future<void> batchDeleteEntries(
-      {required List<AppEntry> deletedEntries}) async {
+      {required List<String> deletedEntries}) async {
     //log has been deleted, delete all associated entries
 
     if (deletedEntries.isNotEmpty) {

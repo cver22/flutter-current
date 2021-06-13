@@ -1,7 +1,6 @@
 import 'dart:collection';
 import '../../entry/entry_model/single_entry_state.dart';
 import '../../app/models/app_state.dart';
-import '../../entries/entries_model/entries_state.dart';
 import '../../entry/entry_model/app_entry.dart';
 import '../../env.dart';
 import '../../filter/filter_model/filter.dart';
@@ -74,46 +73,6 @@ class EntriesSetOrder implements AppAction {
       appState,
       [
         updateEntriesState((entriesState) => entriesState.copyWith(descending: !appState.entriesState.descending)),
-      ],
-    );
-  }
-}
-
-class EntriesDeleteSelectedEntry implements AppAction {
-  @override
-  AppState updateState(AppState appState) {
-    Env.store.dispatch(EntryProcessing());
-    AppEntry entry = appState.singleEntryState.selectedEntry.value;
-    //List<AppCategory> categories = appState.singleEntryState.categories;
-    Map<String, Tag> tags = appState.singleEntryState.tags;
-    EntriesState updatedEntriesState = appState.entriesState;
-    updatedEntriesState.entries.removeWhere((key, value) => key == entry.id);
-    Map<String, LogTotal> logTotals = LinkedHashMap();
-
-    entry.tagIDs.forEach((tagId) {
-      //updates log list of tags
-      Tag tag = tags[tagId]!;
-
-      //decrement use of tag for this category and log
-      tag = decrementCategorySubcategoryLogFrequency(
-          updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
-
-      tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
-    });
-
-    Env.entriesFetcher.deleteEntry(entry);
-
-    //TODO update tags that have been decremented in the firestore
-
-    logTotals = _entriesUpdateLogsTotals(
-        logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: updatedEntriesState.entries);
-
-    return updateSubstates(
-      appState,
-      [
-        updateEntriesState((entriesState) => updatedEntriesState),
-        updateSingleEntryState((singleEntryState) => SingleEntryState.initial()),
-        updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
       ],
     );
   }
@@ -192,16 +151,6 @@ class EntriesClearChartFilter implements AppAction {
   }
 }
 
-Map<String, LogTotal> _entriesUpdateLogsTotals(
-    {required Map<String, Log> logs,
-    required Map<String, LogTotal> logTotals,
-    required Map<String, AppEntry> entries}) {
-  logs.forEach((key, log) {
-    logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
-  });
-  return logTotals;
-}
-
 class EntriesSelectEntry implements AppAction {
   final String entryId;
 
@@ -211,12 +160,11 @@ class EntriesSelectEntry implements AppAction {
   AppState updateState(AppState appState) {
     List<String> selectedEntries = List<String>.from(appState.entriesState.selectedEntries);
 
-    if(selectedEntries.contains(entryId)){
+    if (selectedEntries.contains(entryId)) {
       selectedEntries.remove(entryId);
     } else {
       selectedEntries.add(entryId);
     }
-
 
     return updateSubstates(
       appState,
@@ -241,18 +189,120 @@ class EntriesClearSelection implements AppAction {
   }
 }
 
-class EntriesDeleteSelectedEntries implements AppAction {
+///ENTRIES DELETE ENTRIES///
+
+class EntriesDeleteSelectedEntry implements AppAction {
   @override
   AppState updateState(AppState appState) {
-    List<String> selectedEntries = <String>[];
+    Env.store.dispatch(EntryProcessing());
+    AppEntry entry = appState.singleEntryState.selectedEntry.value;
+    Map<String, Tag> tags = appState.singleEntryState.tags;
+    Map<String, AppEntry> entriesMap = Map<String, AppEntry>.from(appState.entriesState.entries);
+    Map<String, LogTotal> logTotals = LinkedHashMap();
+    List<Tag> updatedTags = <Tag>[];
+    Map<String, Log> logs = Map.from(appState.logsState.logs);
 
-    //TODO batch delete entries here and remove from the state
+    entriesMap.removeWhere((key, value) => key == entry.id);
+
+    entry.tagIDs.forEach((tagId) {
+      //updates log list of tags
+      Tag tag = tags[tagId]!;
+
+      //decrement use of tag for this category and log
+      tag = decrementCategorySubcategoryLogFrequency(
+          updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
+
+      //update state tags map
+      tags.update(tag.id!, (value) => tag, ifAbsent: () => tag);
+      //list of remote tags to update
+      updatedTags.add(tag);
+    });
+
+    //update any changed categories/subcategories
+    logs = updateLogCategoriesSubcategoriesFromEntry(appState: appState, logId: entry.logId, logs: logs);
+
+    //also updates remote
+    logTotals =
+        _entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entriesMap);
+
+    Env.entriesFetcher.deleteEntry(entry);
+    Env.tagFetcher.batchAddUpdate(addedTags: <Tag>[], updatedTags: updatedTags);
 
     return updateSubstates(
       appState,
       [
-        updateEntriesState((entriesState) => entriesState.copyWith(selectedEntries: selectedEntries)),
+        updateEntriesState((entriesState) => entriesState.copyWith(entries: entriesMap)),
+        updateSingleEntryState((singleEntryState) => SingleEntryState.initial()),
+        updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
+        updateTagState((tagState) => tagState.copyWith(tags: tags)),
+        updateLogsState((logsState) => logsState.copyWith(logs: logs)),
       ],
     );
   }
+}
+
+class EntriesDeleteSelectedEntries implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    List<String> selectedEntries = List<String>.from(appState.entriesState.selectedEntries);
+    List<AppEntry> deletedEntriesList = [];
+    List<Tag> updatedTags = [];
+    Map<String, AppEntry> entriesMap = Map.from(appState.entriesState.entries);
+    Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
+    Map<String, LogTotal> logTotals = LinkedHashMap();
+
+    selectedEntries.forEach((entryId) {
+      AppEntry? entry = entriesMap.remove(entryId);
+      if (entry != null) {
+        entry.tagIDs.forEach((tagId) {
+          //updates log list of tags
+          Tag tag = tagsMap[tagId]!;
+
+          //decrement use of tag for this category and log
+          tag = decrementCategorySubcategoryLogFrequency(
+              updatedTag: tag, categoryId: entry.categoryId, subcategoryId: entry.subcategoryId);
+
+          //update state tags map
+          tagsMap.update(tag.id!, (value) => tag, ifAbsent: () => tag);
+
+          //list of remote tags to update, check if already added to the list
+          if (updatedTags.contains(tag)) {
+            //remove previously added tag, no need to update as we're pulling from the already updated tagsMap
+            updatedTags.removeWhere((updatedTag) => updatedTag.id == tag.id);
+            //add updated tag back to the list
+            updatedTags.add(tag);
+          } else {
+            updatedTags.add(tag);
+          }
+        });
+
+        deletedEntriesList.add(entry);
+      }
+    });
+
+    Env.entriesFetcher.batchDeleteEntries(deletedEntries: selectedEntries);
+    Env.tagFetcher.batchAddUpdate(addedTags: <Tag>[], updatedTags: updatedTags);
+
+    logTotals =
+        _entriesUpdateLogsTotals(logs: Map.from(appState.logsState.logs), logTotals: logTotals, entries: entriesMap);
+
+    return updateSubstates(
+      appState,
+      [
+        updateEntriesState((entriesState) => entriesState.copyWith(entries: entriesMap, selectedEntries: <String>[])),
+        updateTagState((tagState) => tagState.copyWith(tags: tagsMap)),
+        updateLogTotalsState((logTotalsState) => logTotalsState.copyWith(logTotals: logTotals)),
+      ],
+    );
+  }
+}
+
+Map<String, LogTotal> _entriesUpdateLogsTotals(
+    {required Map<String, Log> logs,
+    required Map<String, LogTotal> logTotals,
+    required Map<String, AppEntry> entries}) {
+  logs.forEach((key, log) {
+    logTotals.putIfAbsent(key, () => updateLogMemberTotals(entries: entries.values.toList(), log: log));
+  });
+  return logTotals;
 }

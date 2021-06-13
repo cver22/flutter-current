@@ -1,7 +1,4 @@
 import 'dart:async';
-
-import 'package:meta/meta.dart';
-
 import '../store/actions/tag_actions.dart';
 import '../store/app_store.dart';
 import 'tag_model/tag.dart';

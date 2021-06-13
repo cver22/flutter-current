@@ -624,7 +624,7 @@ class DeleteLog implements AppAction {
     AppSettings settings = appState.settingsState.settings.value;
     updatedLogsState.logs.removeWhere((key, value) => key == log.id);
 
-    List<AppEntry> deletedEntriesList = [];
+    List<String> deletedEntriesList = [];
     List<Tag> deletedTagsList = [];
     Map<String, AppEntry> entriesMap = Map.from(appState.entriesState.entries);
     Map<String, Tag> tagsMap = Map.from(appState.tagState.tags);
@@ -632,7 +632,7 @@ class DeleteLog implements AppAction {
 
     entriesMap.forEach((key, entry) {
       if (entry.logId == log.id) {
-        deletedEntriesList.add(entry);
+        deletedEntriesList.add(entry.id);
       }
     });
 

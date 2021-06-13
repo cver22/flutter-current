@@ -57,7 +57,7 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
-//implement batch selection and deletion of
+//implement batch selection and deletion of entries
 //add clear entries button to top bar and "confirm deletion dialog"
 
 

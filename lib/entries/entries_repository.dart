@@ -14,7 +14,7 @@ abstract class EntriesRepository {
 
   Future<void> deleteEntry(AppEntry entry);
 
-  Future<void> batchDeleteEntries({required List<AppEntry> deletedEntries}) async {}
+  Future<void> batchDeleteEntries({required List<String> deletedEntries}) async {}
 
   Future<void> batchUpdateEntries({required List<AppEntry> updatedEntries}) async {}
 }
@@ -60,11 +60,11 @@ class FirebaseEntriesRepository implements EntriesRepository {
   }
 
   @override
-  Future<void> batchDeleteEntries({required List<AppEntry> deletedEntries}) async {
+  Future<void> batchDeleteEntries({required List<String> deletedEntries}) async {
     WriteBatch batch = db.batch();
 
-    deletedEntries.forEach((entry) {
-      batch.delete(db.collection(ENTRY_COLLECTION).doc(entry.id));
+    deletedEntries.forEach((entryId) {
+      batch.delete(db.collection(ENTRY_COLLECTION).doc(entryId));
     });
 
 //TODO maybe add a whenComplete to this?
