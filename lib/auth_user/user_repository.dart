@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
-import 'package:meta/meta.dart';
 
 import 'models/app_user.dart';
 
@@ -23,8 +22,7 @@ abstract class UserRepository {
 
   Future<AppUser> updateUserProfile({required String displayName});
 
-  Future<bool> updatePassword(
-      {required String currentPassword, required String newPassword});
+  Future<bool> updatePassword({required String currentPassword, required String newPassword});
 
   Future<bool> isUserSignedInWithEmail();
 }
@@ -39,25 +37,25 @@ class FirebaseUserRepository implements UserRepository {
 
   @override
   Future<User?> signInWithGoogle() async {
-    final GoogleSignInAccount googleUser = await (_googleSignIn.signIn() as FutureOr<GoogleSignInAccount>);
-    final GoogleSignInAuthentication googleAuth =
-        await googleUser.authentication;
-    final AuthCredential credential = GoogleAuthProvider.credential(
-        idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
-    await _firebaseAuth.signInWithCredential(credential);
+    final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+    if (googleUser != null) {
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final AuthCredential credential =
+          GoogleAuthProvider.credential(idToken: googleAuth.idToken, accessToken: googleAuth.accessToken);
+      await _firebaseAuth.signInWithCredential(credential);
+    }
+
     return _firebaseAuth.currentUser;
   }
 
   @override
   Future<void> signInWithCredentials({required String email, required String password}) {
-    return _firebaseAuth.signInWithEmailAndPassword(
-        email: email, password: password);
+    return _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
   }
 
   @override
   Future<UserCredential> signUp({required String email, required String password}) async {
-    var auth = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, password: password);
+    var auth = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
     auth.toString();
 
     return auth;
@@ -81,11 +79,7 @@ class FirebaseUserRepository implements UserRepository {
   Future<AppUser> getUser() async {
     User user = _firebaseAuth.currentUser!;
 
-    return AppUser(
-        id: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoUrl: user.photoURL);
+    return AppUser(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoURL);
   }
 
   @override
@@ -95,17 +89,12 @@ class FirebaseUserRepository implements UserRepository {
     await user.reload();
     user = _firebaseAuth.currentUser!;
 
-    return AppUser(
-        id: user.uid,
-        displayName: user.displayName,
-        email: user.email,
-        photoUrl: user.photoURL);
+    return AppUser(id: user.uid, displayName: user.displayName, email: user.email, photoUrl: user.photoURL);
   }
 
   //only available if user has signed in with email
   @override
-  Future<bool> updatePassword(
-      {required String currentPassword, required String newPassword}) async {
+  Future<bool> updatePassword({required String currentPassword, required String newPassword}) async {
     // FirebaseUser user = await _firebaseAuth.currentUser();
     bool success = false;
 

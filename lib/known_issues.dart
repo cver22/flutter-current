@@ -10,7 +10,6 @@
 //TODO give each person an emoji Icon option
 
 
-
 //TODO GENERAL
 //TODO recover password
 //TODO add customer journey account and setting setup screen to set the currency, create your categories, and add your name
@@ -24,7 +23,6 @@
 //TODO move tag list creators from UI (tag picker) to actions and state
 //button on tags to visualize stats for that tag, spent, average, etc
 //add blank option to new log categories
-//multi select delete, if selected, they turn red, will need to add multiSelect to entries state, add icons to the tabBar, and have a confirmation dialog
 //modify setting categories to utilize 3 buttons, cancel, restore to factory, and save
 //add anonymous sign in and create red banner asking the user to signup or risk losing their data
 //TODO, give user option to change default payer on a log and from there the FAB button will chose that as default for EntrySetNewSelect, until then, it defaults to the user
@@ -57,8 +55,7 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
-//implement batch selection and deletion of entries
-//add clear entries button to top bar and "confirm deletion dialog"
+
 
 
 

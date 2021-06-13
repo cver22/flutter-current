@@ -32,8 +32,6 @@ void main() async {
   await Hive.openBox(SETTINGS_BOX);
   Env.userFetcher.startApp();
   Env.settingsFetcher.readResetAppSettings();
-  Env.currencyFetcher.loadAllConversionRates();
-
   runApp(App());
 }
 

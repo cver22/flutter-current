@@ -175,7 +175,7 @@ class SetLogs implements AppAction {
     Map<String, AppEntry> entries = Map.from(appState.entriesState.entries);
     Map<String, LogTotal> logTotals = Map.from(appState.logTotalsState.logTotals);
     AppSettings settings = appState.settingsState.settings.value;
-    List<String>? settingsLogOrder = <String>[];
+    List<String> settingsLogOrder = <String>[];
 
     if (settings.logOrder != null) {
       settingsLogOrder = List<String>.from(settings.logOrder!);
@@ -193,7 +193,7 @@ class SetLogs implements AppAction {
 
     //adds new logs to the log order
     logsMap.forEach((logId, value) {
-      if (!settingsLogOrder!.contains(logId)) {
+      if (!settingsLogOrder.contains(logId)) {
         settingsLogOrder.add(logId);
       }
     });
@@ -207,7 +207,10 @@ class SetLogs implements AppAction {
       //check if local and settings  logOrder match, if they don't save to local
       int count = 0;
       settingsLogOrder.forEach((logId) {
-        String log = settings.logOrder![count];
+        String? log;
+        if (settings.logOrder!.length >= count + 1) {
+          log = settings.logOrder![count];
+        }
 
         if (log != logId) {
           writeToLocal = true;
@@ -221,6 +224,9 @@ class SetLogs implements AppAction {
     if (writeToLocal) {
       Env.settingsFetcher.writeAppSettings(settings);
     }
+
+    //loads currencies after logs have been loaded
+    Env.currencyFetcher.loadConversionRates(logs: logsMap);
 
     return updateSubstates(
       appState,

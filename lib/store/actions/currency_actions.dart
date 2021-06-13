@@ -127,7 +127,7 @@ class CurrencySetExchangeRatesFromRemote implements AppAction {
     conversionRateMap.update(referenceCurrency, (value) => conversionRates, ifAbsent: () => conversionRates);
 
     //save to local
-    Env.currencyFetcher.localSaveConversionRates(conversionRateMap: conversionRateMap);
+    Env.currencyFetcher.localSaveConversionRates(conversionRatesMap: conversionRateMap);
 
     return updateSubstates(
       appState,

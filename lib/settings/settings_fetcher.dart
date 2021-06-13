@@ -22,7 +22,7 @@ class SettingsFetcher {
   }
 
   Future<void> readResetAppSettings({bool resetSettings = false}) async {
-    bool settingsInitialized = (await _hiveSettingsRepository.settingsInitialized());
+    bool settingsInitialized = await _hiveSettingsRepository.settingsInitialized();
 
     if (resetSettings) {
       settingsInitialized = false;
@@ -32,8 +32,8 @@ class SettingsFetcher {
       print('settings are loaded');
       //if the settings are already loaded, do nothing
       return;
-    } else if (!settingsInitialized && resetSettings) {
-      print('Resetting settings');
+    } else if (!settingsInitialized || resetSettings) {
+      print('Load/Reload default settings');
       //if no settings have ever been loaded, load the default
       String jsonString = await rootBundle.loadString('assets/default_settings.txt');
       AppSettings settings = AppSettings.fromEntity(SettingsEntity.fromJson(json.decode(jsonString)));

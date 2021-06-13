@@ -19,10 +19,12 @@ class HiveCurrencyRepository extends CurrencyLocalRepository {
     Map<String, ConversionRates> conversionRateMap =
         Map<String, ConversionRates>.from(Env.store.state.currencyState.conversionRateMap);
 
-    Map<String, ConversionRates> hiveConversionRateMap = box.get(CONVERSION_RATE_MAP).cast<String, ConversionRates>();
+    if (box.get(CONVERSION_RATE_MAP) != null) {
+      Map<String, ConversionRates> hiveConversionRateMap = box.get(CONVERSION_RATE_MAP).cast<String, ConversionRates>();
 
-    if(hiveConversionRateMap.isNotEmpty){
-      conversionRateMap = hiveConversionRateMap;
+      if (hiveConversionRateMap.isNotEmpty) {
+        conversionRateMap = hiveConversionRateMap;
+      }
     }
 
     return conversionRateMap;

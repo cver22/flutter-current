@@ -59,7 +59,8 @@ class TagEntity extends Equatable {
               ?.map((key, value) => MapEntry(key, DateTime.fromMillisecondsSinceEpoch(value))) ??
           const {},
       tagSubcategoryFrequency:
-          (json[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>).map((key, value) => MapEntry(key, value)),
+          (json[TAG_SUBCATEGORY_FREQUENCY] as Map<String, dynamic>?)?.map((key, value) => MapEntry(key, value)) ??
+              const {},
       tagSubcategoryLastUse: (json[TAG_SUBCATEGORY_LAST_USE] as Map<String, dynamic>?)
               ?.map((key, value) => MapEntry(key, DateTime.fromMillisecondsSinceEpoch(value))) ??
           const {},

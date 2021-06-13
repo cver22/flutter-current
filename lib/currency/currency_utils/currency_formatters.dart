@@ -61,8 +61,8 @@ String formattedAmount(
     if (currency.decimalDigits > 0) {
       returnString += '${currency.decimalSeparator}${smallUnits.toString().padLeft(2, '0')}';
     }
-  } else {
-    returnString = showTrailingZeros ? '0.00' : returnString;
+  } else if(showTrailingZeros){
+    returnString ='0${currency.decimalSeparator}00';
   }
 
   if (showSymbol && currency.symbolOnLeft) {
