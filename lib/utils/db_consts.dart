@@ -80,6 +80,10 @@ const String PHOTO_URL = 'photoUrl';
 const String EMAIL = 'email';
 const String MEMBER_NAME = 'memberName';
 
+//Chart constants
+enum ChartGrouping { day, month, year }
+enum ChartType { line, bar, pie }
+
 //UI constants
 const double EMOJI_SIZE = 22.0;
 const double ELEVATED_BUTTON_ELEVATION = 3.0;
@@ -105,9 +109,7 @@ const List<String> MONTHS_LONG = [
   'November',
   'December'
 ];
-
 const List<String> MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-
 
 //HIVE BOXES
 const String SETTINGS_BOX = 'settingsBox';
@@ -115,3 +117,5 @@ const String SETTINGS_HIVE_INDEX = 'settingsHiveIndex';
 const String SETTINGS_INITIALIZED_INDEX = 'settingsInitializedIndex';
 const String CURRENCY_BOX = 'currencyBox';
 const String CONVERSION_RATE_MAP = 'conversionRateMap';
+const String CHART_BOX = 'chartBox';
+const String APP_CHART_INDEX = 'appChartIndex';
