@@ -33,6 +33,7 @@
 //TODO error checking for internet connection to refresh conversion rates and don't allow change of conversion rate if no exchange is present (maybe based on refresh date)
 //TODO trace Renderings, why so much rendering duplication and re-rendering
 //TODO fix paid spent averaging/rounding, use odd even days
+//TODO add entriesFiltered and chartFiltered to entriesState and move filtering code from the UI so that its not handled on every rebuild of the UI
 
 
 //TODO VISUAL

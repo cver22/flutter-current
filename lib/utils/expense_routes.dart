@@ -7,6 +7,7 @@ class ExpenseRoutes {
   static final addEditLog = "/addEditLogScreen";
   static final entries = "/entriesScreen";
   static final addEditEntries = "/addEditEntriesScreen";
+  static final charts = "/chartsScreen";
   static final categories = '/categoriesDialog';
   static final subcategories = '/subcategoriesDialog';
   static final settings = "/subcategoriesScreen";

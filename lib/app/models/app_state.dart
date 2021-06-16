@@ -1,7 +1,8 @@
 import 'package:equatable/equatable.dart';
-import 'package:expenses/currency/currency_models/currency_state.dart';
 import 'package:meta/meta.dart';
 
+import '../../chart/chart_model/chart_state.dart';
+import '../../currency/currency_models/currency_state.dart';
 import '../../account/account_model/account_state.dart';
 import '../../auth_user/models/auth_state.dart';
 import '../../entries/entries_model/entries_state.dart';
@@ -26,6 +27,7 @@ class AppState extends Equatable {
   final AccountState accountState;
   final FilterState filterState;
   final CurrencyState currencyState;
+  final ChartState chartState;
 
   AppState({
     required this.authState,
@@ -39,21 +41,23 @@ class AppState extends Equatable {
     required this.accountState,
     required this.filterState,
     required this.currencyState,
+    required this.chartState,
   });
 
   factory AppState.initial() {
     return AppState(
-        authState: AuthState.initial(),
-        loginRegState: LoginRegState.initial(),
-        logsState: LogsState.initial(),
-        entriesState: EntriesState.initial(),
-        settingsState: SettingsState.initial(),
-        singleEntryState: SingleEntryState.initial(),
-        tagState: TagState.initial(),
-        logTotalsState: LogTotalsState.initial(),
-        accountState: AccountState.initial(),
-        filterState: FilterState.initial(),
-        currencyState: CurrencyState.initial(),
+      authState: AuthState.initial(),
+      loginRegState: LoginRegState.initial(),
+      logsState: LogsState.initial(),
+      entriesState: EntriesState.initial(),
+      settingsState: SettingsState.initial(),
+      singleEntryState: SingleEntryState.initial(),
+      tagState: TagState.initial(),
+      logTotalsState: LogTotalsState.initial(),
+      accountState: AccountState.initial(),
+      filterState: FilterState.initial(),
+      currencyState: CurrencyState.initial(),
+      chartState: ChartState.initial(),
     );
   }
 
@@ -61,8 +65,7 @@ class AppState extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props =>
-      [
+  List<Object> get props => [
         authState,
         loginRegState,
         logsState,
@@ -74,6 +77,7 @@ class AppState extends Equatable {
         accountState,
         filterState,
         currencyState,
+        chartState,
       ];
 
   AppState copyWith({
@@ -88,6 +92,7 @@ class AppState extends Equatable {
     AccountState? accountState,
     FilterState? filterState,
     CurrencyState? currencyState,
+    ChartState? chartState,
   }) {
     if ((authState == null || identical(authState, this.authState)) &&
         (loginRegState == null || identical(loginRegState, this.loginRegState)) &&
@@ -99,7 +104,8 @@ class AppState extends Equatable {
         (logTotalsState == null || identical(logTotalsState, this.logTotalsState)) &&
         (accountState == null || identical(accountState, this.accountState)) &&
         (filterState == null || identical(filterState, this.filterState)) &&
-        (currencyState == null || identical(currencyState, this.currencyState))) {
+        (currencyState == null || identical(currencyState, this.currencyState)) &&
+        (chartState == null || identical(chartState, this.chartState))) {
       return this;
     }
 
@@ -115,6 +121,7 @@ class AppState extends Equatable {
       accountState: accountState ?? this.accountState,
       filterState: filterState ?? this.filterState,
       currencyState: currencyState ?? this.currencyState,
+      chartState: chartState ?? this.chartState,
     );
   }
 }

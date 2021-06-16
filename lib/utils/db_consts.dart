@@ -107,9 +107,22 @@ const List<String> MONTHS_LONG = [
   'September',
   'October',
   'November',
-  'December'
+  'December',
 ];
-const List<String> MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+const List<String> MONTHS_SHORT = [
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
+];
 
 //HIVE BOXES
 const String SETTINGS_BOX = 'settingsBox';

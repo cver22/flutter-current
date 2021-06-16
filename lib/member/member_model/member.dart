@@ -43,4 +43,25 @@ class Member extends Equatable {
       order: entity.order,
     );
   }
+
+  Member copyWith({
+    String? uid,
+    int? paid,
+    int? spent,
+    int? order,
+  }) {
+    if ((uid == null || identical(uid, this.uid)) &&
+        (paid == null || identical(paid, this.paid)) &&
+        (spent == null || identical(spent, this.spent)) &&
+        (order == null || identical(order, this.order))) {
+      return this;
+    }
+
+    return new Member(
+      uid: uid ?? this.uid,
+      paid: paid ?? this.paid,
+      spent: spent ?? this.spent,
+      order: order ?? this.order,
+    );
+  }
 }

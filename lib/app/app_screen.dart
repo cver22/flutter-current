@@ -1,3 +1,5 @@
+import 'package:expenses/chart/chart_ui/chart_screen.dart';
+
 import '../log/log_model/logs_state.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -101,7 +103,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                 children: [
                   LogsScreen(key: ExpenseKeys.logsScreen, tabController: _controller),
                   EntriesScreen(key: ExpenseKeys.entriesScreen),
-                  Icon(Icons.assessment),
+                  ChartScreen(key: ExpenseKeys.chartsScreen),
                 ],
               ),
             ),
