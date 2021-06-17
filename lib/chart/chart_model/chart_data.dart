@@ -1,31 +1,31 @@
 import 'package:equatable/equatable.dart';
 
 class ChartData extends Equatable {
-  final String? categoryName;
+  final DateTime? dateTime;
   final List<int> amounts;
 
   ChartData({
-    this.categoryName,
+    this.dateTime,
     required this.amounts,
   });
 
   @override
-  List<Object?> get props => [categoryName, amounts];
+  List<Object?> get props => [dateTime, amounts];
 
   @override
   bool get stringify => true;
 
   ChartData copyWith({
-    String? categoryName,
+    DateTime? dateTime,
     List<int>? amounts,
   }) {
-    if ((categoryName == null || identical(categoryName, this.categoryName)) &&
+    if ((dateTime == null || identical(dateTime, this.dateTime)) &&
         (amounts == null || identical(amounts, this.amounts))) {
       return this;
     }
 
     return new ChartData(
-      categoryName: categoryName ?? this.categoryName,
+      dateTime: dateTime ?? this.dateTime,
       amounts: amounts ?? this.amounts,
     );
   }

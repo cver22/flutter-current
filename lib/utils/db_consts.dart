@@ -22,7 +22,6 @@ enum TagCollectionType { entry, category, log }
 enum SortMethod { alphabetical, frequency }
 enum DatePickerType { start, end, entry }
 //TODO implement filtering later
-//enum GroupBy {day, week, month, year}
 //enum FilterBy {none, all, category, subcategory, tag}
 
 //Log constants
@@ -82,7 +81,7 @@ const String MEMBER_NAME = 'memberName';
 
 //Chart constants
 enum ChartGrouping { day, month, year }
-enum ChartType { line, bar, pie }
+enum ChartType { line, bar, donut }
 
 //UI constants
 const double EMOJI_SIZE = 22.0;

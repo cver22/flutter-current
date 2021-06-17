@@ -1,5 +1,4 @@
 import 'package:equatable/equatable.dart';
-import '../../categories/categories_model/app_category/app_category.dart';
 import '../../member/member_model/member.dart';
 
 class ExpenseByCategory extends Equatable {

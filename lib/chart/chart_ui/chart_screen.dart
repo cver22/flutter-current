@@ -1,4 +1,5 @@
 import 'package:expenses/chart/chart_model/chart_data.dart';
+import 'package:intl/intl.dart';
 
 import '../../categories/categories_model/app_category/app_category.dart';
 import '../../log/log_model/log.dart';
@@ -30,23 +31,42 @@ class _ChartScreenState extends State<ChartScreen> {
   Widget build(BuildContext context) {
     List<ChartData> chartData = Env.store.state.chartState.chartData;
     List<ChartSeries> series = <ChartSeries>[];
-    List<String> periods = Env.store.state.chartState.chartPeriods;
+    List<String> categories = Env.store.state.chartState.categories;
 
-    for (int i = 0; i < periods.length; i++) {
-      chartData.forEach((element) {
-        series.add(StackedColumnSeries<ChartData, String>(
-          dataSource: chartData,
-          xValueMapper: (ChartData exp, _) => periods[i],
-          yValueMapper: (ChartData exp, _) => element.amounts[i],
-          name: element.categoryName,
-        ));
-      });
+   /* for (int i = 0; i < categories.length; i++) {
+      series.add(DoughnutSeries<ChartData, DateTime>(
+        dataSource: chartData,
+        xValueMapper: (ChartData exp, _) => exp.dateTime,
+        yValueMapper: (ChartData exp, _) => exp.amounts[i].toDouble() / 100,
+        name: categories[i],
+      ));
+    }
+    return SfCircularChart(
+      series: series,
+      tooltipBehavior: _tooltipBehavior,
+    );*/
+
+
+    for (int i = 0; i < categories.length; i++) {
+      series.add(StackedColumnSeries<ChartData, DateTime>(
+        dataSource: chartData,
+        xValueMapper: (ChartData exp, _) => exp.dateTime,
+        yValueMapper: (ChartData exp, _) => exp.amounts[i].toDouble() / 100,
+        name: categories[i],
+      ));
     }
 
     return SfCartesianChart(
       legend: Legend(isVisible: true),
-      primaryXAxis: CategoryAxis(),
+      primaryXAxis: DateTimeCategoryAxis(
+        intervalType: DateTimeIntervalType.months,
+          dateFormat: DateFormat.MMM()
+      ),
+      primaryYAxis: NumericAxis(
+        numberFormat: NumberFormat.simpleCurrency(decimalDigits: 2),
+      ),
       series: series,
+      tooltipBehavior: _tooltipBehavior,
     );
   }
 }

@@ -1,6 +1,5 @@
 import 'package:expenses/chart/chart_model/chart_data.dart';
-import 'package:flutter/material.dart';
-
+import 'package:expenses/log/log_model/log.dart';
 import '../../member/member_model/member.dart';
 import '../../utils/db_consts.dart';
 import '../../chart/chart_model/expense_by_category.dart';
@@ -19,133 +18,157 @@ class ChartUpdateData implements AppAction {
     List<ExpenseByCategory> expenseByCategoryList = <ExpenseByCategory>[];
     Map<String, AppEntry> entries = Map<String, AppEntry>.from(appState.entriesState.entries);
     ChartGrouping chartGrouping = appState.chartState.chartGrouping;
-    Map<String, ChartData> chartMap = <String, ChartData>{};
-    List<String> periods = <String>[];
+    Map<DateTime, ChartData> chartMap = <DateTime, ChartData>{};
+    List<String> categories = <String>[];
+    Map<String, Log> logs = Map<String, Log>.from(appState.logsState.logs);
+    Map<String, String> categoriesMap = <String, String>{};
+    Map<String, String> subcategoriesMap = <String, String>{};
+
+
+    logs.forEach((key, log) {
+      log.categories.forEach((category) {
+        if (!categoriesMap.containsKey(category.id) && category.id != TRANSFER_FUNDS) {
+          categoriesMap.putIfAbsent(category.id!, () => category.name!);
+        }
+      });
+      log.subcategories.forEach((subcategory) {
+        if (!subcategoriesMap.containsKey(subcategory.id)) {
+          subcategoriesMap.putIfAbsent(subcategory.id!, () => subcategory.name!);
+        }
+      });
+    });
 
     //TODO this will need to be refactored to handle named categories and other things that the filter handles
 
     entries.forEach((key, entry) {
-      int entryYear = entry.dateTime.year;
-      int entryMonth = entry.dateTime.month;
-      int entryDay = entry.dateTime.day;
-      Map<String, Member> members = <String, Member>{};
-      int amount = 0;
+      if(entry.categoryId != TRANSFER_FUNDS) {
+        int entryYear = entry.dateTime.year;
+        int entryMonth = entry.dateTime.month;
+        int entryDay = entry.dateTime.day;
+        Map<String, Member> members = <String, Member>{};
+        int amount = 0;
 
+        if (chartGrouping == ChartGrouping.month) {
+          ExpenseByCategory? expense;
 
-      if (chartGrouping == ChartGrouping.month) {
-        ExpenseByCategory? expense;
-
-        if (expenseByCategoryList.isNotEmpty) {
-          int index = expenseByCategoryList.indexWhere(
-            (element) =>
-                element.dateTime.year == entryYear &&
-                element.dateTime.month == entryMonth &&
-                element.category == entry.categoryId &&
-                element.subcategory == entry.subcategoryId,
-          );
-          if (index >= 0) {
-            expense = expenseByCategoryList.removeAt(index);
-          }
-        }
-
-        if (expense != null) {
-          members = expense.members;
-          amount = expense.amount;
-
-          entry.entryMembers.forEach((key, entryMember) {
-            Member? member;
-            if (members.containsKey(key)) {
-              member = members[key];
-              int paid = member!.paid! + (entryMember.paid ?? 0);
-              int spent = member.spent! + (entryMember.spent ?? 0);
-              amount += entryMember.paid ?? 0;
-              member = member.copyWith(paid: paid, spent: spent);
-              members.update(key, (value) => member!);
-            } else {
-              member = Member(uid: entryMember.uid, paid: entryMember.paid ?? 0, spent: entryMember.spent ?? 0);
-              amount += entryMember.paid ?? 0;
-              members.putIfAbsent(key, () => member!);
+          if (expenseByCategoryList.isNotEmpty) {
+            int index = expenseByCategoryList.indexWhere(
+                  (element) =>
+              element.dateTime.year == entryYear &&
+                  element.dateTime.month == entryMonth &&
+                  element.category == entry.categoryId &&
+                  element.subcategory == entry.subcategoryId,
+            );
+            if (index >= 0) {
+              expense = expenseByCategoryList.removeAt(index);
             }
-          });
-        } else {
-          entry.entryMembers.forEach((key, entryMember) {
-            Member member = Member(uid: entryMember.uid, paid: entryMember.paid ?? 0, spent: entryMember.spent ?? 0);
-            amount += entryMember.paid ?? 0;
-            members.putIfAbsent(key, () => member);
-          });
+          }
 
-          expense = ExpenseByCategory(
-              dateTime: DateTime(entryYear, entryMonth, entryDay),
-              category: entry.categoryId!,
-              subcategory: entry.subcategoryId!,
-              members: members,
-              amount: amount);
+          if (expense != null) {
+            members = expense.members;
+            amount = expense.amount;
 
-          expenseByCategoryList.add(expense);
+            entry.entryMembers.forEach((key, entryMember) {
+              Member? member;
+              if (members.containsKey(key)) {
+                member = members[key];
+                int paid = member!.paid! + (entryMember.paid ?? 0);
+                int spent = member.spent! + (entryMember.spent ?? 0);
+                amount += entryMember.paid ?? 0;
+                member = member.copyWith(paid: paid, spent: spent);
+                members.update(key, (value) => member!);
+              } else {
+                member = Member(uid: entryMember.uid, paid: entryMember.paid ?? 0, spent: entryMember.spent ?? 0);
+                amount += entryMember.paid ?? 0;
+                members.putIfAbsent(key, () => member!);
+              }
+            });
+          } else {
+            entry.entryMembers.forEach((key, entryMember) {
+              Member member = Member(uid: entryMember.uid, paid: entryMember.paid ?? 0, spent: entryMember.spent ?? 0);
+              amount += entryMember.paid ?? 0;
+              members.putIfAbsent(key, () => member);
+            });
+
+            //TODO this won't handle multiple logs with identical named categories but different category id, will need to sue the chart method
+            expense = ExpenseByCategory(
+                dateTime: DateTime(entryYear, entryMonth, entryDay),
+                category: categoriesMap[entry.categoryId!]!,
+                subcategory: subcategoriesMap[entry.subcategoryId] ?? 'No Subcategory',
+                members: members,
+                amount: amount);
+
+            expenseByCategoryList.add(expense);
+          }
+          expenseByCategoryList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
         }
-        expenseByCategoryList.sort((a, b) => a.dateTime.compareTo(b.dateTime));
-
-
       }
+
     });
 
-    //TODO this is UGLY!!!!
+    //list all categories
     expenseByCategoryList.forEach((exp) {
-      String expDate = '${MONTHS_SHORT[exp.dateTime.month - 1]} ${exp.dateTime.year.toString()}';
+      String category = exp.category;
 
-      if (!periods.contains(expDate)) {
-        periods.add(expDate);
+      if (!categories.contains(category)) {
+        categories.add(category);
       }
     });
-    print('periods $periods');
 
+    //chart data base to contain array of the same size at the number of categories
     List<int> amounts = <int>[];
 
-    periods.forEach((element) {
+    categories.forEach((category) {
       amounts.add(0);
     });
     print('amounts $amounts');
     ChartData chartDataBase = ChartData(amounts: amounts);
-    print(chartDataBase);
 
     expenseByCategoryList.forEach((exp) {
-      ChartData newChartData = chartDataBase;
-      String expDate = '${MONTHS_SHORT[exp.dateTime.month - 1]} ${exp.dateTime.year.toString()}';
-      int dateIndex = periods.indexOf(expDate);
+      DateTime expDateTime = DateTime(exp.dateTime.year, exp.dateTime.month);
+      int categoryIndex = categories.indexOf(exp.category);
       int chartDataAmount = 0;
+      List<int> seriesAmounts = <int>[];
+      ChartData chartData = chartDataBase;
+      bool newSeries = true;
 
-      if(chartMap.containsKey(exp.category)){
-        ChartData chartData = chartMap[exp.category]!;
-        List<int> chartDataAmounts = List<int>.from(chartData.amounts);
-        print(chartDataAmounts);
-        chartDataAmount = exp.amount + chartDataAmounts[dateIndex];
-        chartDataAmounts.removeAt(dateIndex);
-        chartDataAmounts.insert(dateIndex, chartDataAmount);
-        chartData = chartData.copyWith(amounts: chartDataAmounts);
-        chartMap.putIfAbsent(exp.category, () => chartData);
+      if (chartMap.containsKey(expDateTime)) {
+        chartData = chartMap[expDateTime]!;
+        seriesAmounts = List<int>.from(chartData.amounts);
+        chartDataAmount = exp.amount + seriesAmounts[categoryIndex];
+        seriesAmounts.removeAt(categoryIndex);
+        newSeries = false;
+
+        chartData = chartData.copyWith(amounts: seriesAmounts);
       } else {
-        print('triggered');
-        List<int> chartDataAmounts = List<int>.from(newChartData.amounts);
-        print('chartDataAmounts: $chartDataAmounts');
+        seriesAmounts = List<int>.from(chartDataBase.amounts);
         chartDataAmount = exp.amount;
-        chartDataAmounts.removeAt(dateIndex);
-        if(dateIndex > chartDataAmounts.length) {
-          chartDataAmounts.add(chartDataAmount);
-        } else {
-          chartDataAmounts.insert(dateIndex, chartDataAmount);
-        }
-        print('chartDataAmounts: $chartDataAmounts');
-        newChartData = newChartData.copyWith(amounts: chartDataAmounts);
-        chartMap.putIfAbsent(exp.category, () => newChartData);
+        seriesAmounts.removeAt(categoryIndex);
       }
 
+      //remove the existing data from the seriesAmounts
+      if (categoryIndex > seriesAmounts.length) {
+        seriesAmounts.add(chartDataAmount);
+      } else {
+        seriesAmounts.insert(categoryIndex, chartDataAmount);
+      }
+
+      //if date grouping is new, add with date
+      if (newSeries) {
+        chartData = chartData.copyWith(amounts: seriesAmounts, dateTime: expDateTime);
+      } else {
+        chartData = chartData.copyWith(amounts: seriesAmounts);
+      }
+      chartMap.update(expDateTime, (v) => chartData, ifAbsent: () => chartData);
     });
+
+    print('chart map: $chartMap');
 
     return updateSubstates(
       appState,
       [
-        _updateChartState((chartState) => chartState.copyWith(expenseByCategory: expenseByCategoryList,
-        chartPeriods: periods, chartData: chartMap.values.toList())),
+        _updateChartState((chartState) => chartState.copyWith(
+            expenseByCategory: expenseByCategoryList, categories: categories, chartData: chartMap.values.toList())),
       ],
     );
   }

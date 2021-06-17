@@ -43,6 +43,15 @@
 //TODO make note that transfer funds do not show up in monthly totals
 //TODO is there a better way to handle "Other" in entries tiles
 
+//TODO CHART
+//toggle total/categories/subcategories
+//toggle day/month/year
+//toggle stackedBar/line/donut
+//add filter
+//line chart by tag
+//uses default currency by default but can select others (only one at a time)
+//copy filter from entries if it is a valid chart filter
+
 
 
 
