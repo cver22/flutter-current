@@ -1,12 +1,8 @@
 import 'package:expenses/chart/chart_model/chart_data.dart';
 import 'package:intl/intl.dart';
-
-import '../../categories/categories_model/app_category/app_category.dart';
-import '../../log/log_model/log.dart';
-import '../../utils/db_consts.dart';
 import 'package:flutter/material.dart';
 import 'package:syncfusion_flutter_charts/charts.dart';
-import '../../chart/chart_model/expense_by_category.dart';
+
 import '../../store/actions/chart_actions.dart';
 import '../../env.dart';
 
@@ -19,9 +15,15 @@ class ChartScreen extends StatefulWidget {
 
 class _ChartScreenState extends State<ChartScreen> {
   late TooltipBehavior _tooltipBehavior;
+  late ZoomPanBehavior _zoomPanBehavior;
 
   @override
   void initState() {
+    _zoomPanBehavior = ZoomPanBehavior(
+      enablePinching: true,
+      zoomMode: ZoomMode.x,
+      enablePanning: true,
+    );
     _tooltipBehavior = TooltipBehavior(enable: true);
     Env.store.dispatch(ChartUpdateData());
     super.initState();
@@ -67,6 +69,7 @@ class _ChartScreenState extends State<ChartScreen> {
       ),
       series: series,
       tooltipBehavior: _tooltipBehavior,
+        zoomPanBehavior: _zoomPanBehavior,
     );
   }
 }
