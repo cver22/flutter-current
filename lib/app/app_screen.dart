@@ -1,4 +1,6 @@
-import 'package:expenses/chart/chart_ui/chart_screen.dart';
+import 'package:expenses/chart/chart_ui/chart_dialog.dart';
+
+import '../chart/chart_ui/chart_screen.dart';
 
 import '../log/log_model/logs_state.dart';
 import 'package:flutter/material.dart';
@@ -89,7 +91,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
                     } else if (_controller.index == 1 && logsPresent) {
                       return _buildEntriesActions();
                     } else {
-                      return Container();
+                      return _buildChartActions();
                     }
                   })
                 ],
@@ -174,6 +176,24 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     }
   }
 
+  Widget _buildChartActions() {
+    return ConnectState<EntriesState>(
+        where: notIdentical,
+        map: (state) => state.entriesState,
+        builder: (state) {
+          return state.entries.isNotEmpty
+              ? Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    _chartSettingButton(),
+                    //if (state.entriesFilter.isSome) _clearFilterButton(),
+                    //_buildChartPopupMenuButton(state: state),
+                  ],
+                )
+              : Container();
+        });
+  }
+
   Widget _buildEntriesActions() {
     return ConnectState<EntriesState>(
         where: notIdentical,
@@ -256,7 +276,19 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
             },
           ),
         );
+      },
+    );
+  }
 
+  Widget _chartSettingButton() {
+    return IconButton(
+      icon: Icon(Icons.tune_outlined),
+      onPressed: () {
+        //load adjustment dialog
+        showDialog(
+          context: context,
+          builder: (_) => ChartDialog(),
+        );
       },
     );
   }

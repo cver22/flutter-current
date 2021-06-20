@@ -26,6 +26,7 @@ class HomeScreen extends StatelessWidget {
 
         //Prevents calling in the current build cycle
         if (authState.user.isSome && authState.isLoading == false) {
+          Env.settingsFetcher.readResetAppSettings();
           Env.logsFetcher.loadLogs();
           Env.tagFetcher.loadTags();
           Env.entriesFetcher.loadEntries();

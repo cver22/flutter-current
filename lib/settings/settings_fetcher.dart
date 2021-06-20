@@ -18,21 +18,14 @@ class SettingsFetcher {
         _hiveSettingsRepository = hiveSettingsRepository;
 
   Future<void> writeAppSettings(AppSettings settings) async {
-    _hiveSettingsRepository.saveSettings(settings: settings);
+    _hiveSettingsRepository.saveSettings(settings: settings, uid: _store.state.authState.user.value.id);
   }
 
   Future<void> readResetAppSettings({bool resetSettings = false}) async {
-    bool settingsInitialized = await _hiveSettingsRepository.settingsInitialized();
 
-    if (resetSettings) {
-      settingsInitialized = false;
-    }
+    AppSettings? settings = await _hiveSettingsRepository.loadSettings(uid: _store.state.authState.user.value.id);
 
-    if (settingsInitialized && Env.store.state.settingsState.settings.isSome) {
-      print('settings are loaded');
-      //if the settings are already loaded, do nothing
-      return;
-    } else if (!settingsInitialized || resetSettings) {
+    if (resetSettings || settings == null) {
       print('Load/Reload default settings');
       //if no settings have ever been loaded, load the default
       String jsonString = await rootBundle.loadString('assets/default_settings.txt');
@@ -41,14 +34,7 @@ class SettingsFetcher {
       //load default settings to app
       _store.dispatch(SettingsUpdate(settings: Maybe.some(settings.copyWith(logOrder: <String>[]))));
     } else {
-      print('Load settings');
-      //load or reloads hive settings
-      AppSettings? settings = await _hiveSettingsRepository.loadSettings();
-      if (settings != null) {
-        _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
-      } else {
-        _store.dispatch(SettingsUpdate(settings: Maybe.none()));
-      }
+      _store.dispatch(SettingsUpdate(settings: Maybe.some(settings)));
     }
   }
 }

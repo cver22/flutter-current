@@ -985,7 +985,7 @@ class EntryAddUpdateTag implements AppAction {
               )),
               tags: tags,
               searchedTags: <Tag>[],
-              tagSearch: Maybe<String>.none(),
+              search: Maybe<String>.none(),
             ))
       ],
     );
@@ -1040,7 +1040,7 @@ class EntrySelectDeselectTag implements AppAction {
             selectedEntry: Maybe<AppEntry>.some(entry.copyWith(tagIDs: entryTagIds)),
             tags: tags,
             searchedTags: <Tag>[],
-            tagSearch: Maybe<String>.none())),
+            search: Maybe<String>.none())),
       ],
     );
   }
@@ -1056,7 +1056,7 @@ class EntrySetSearchedTags implements AppAction {
     Map<String, Tag> tagMap = Map.from(appState.singleEntryState.tags);
     List<Tag> tags = tagMap.values.toList();
     List<Tag> searchedTags = [];
-    Maybe<String?> searchMaybe = search != null && search!.length > 0 ? Maybe.some(search) : Maybe.none();
+    Maybe<String> searchMaybe = search != null && search!.length > 0 ? Maybe.some(search!) : Maybe.none();
     int maxTags = MAX_TAGS;
     List<String> selectedTagIds = List.from(appState.singleEntryState.selectedEntry.value.tagIDs);
 
@@ -1066,7 +1066,7 @@ class EntrySetSearchedTags implements AppAction {
       appState,
       [
         _userUpdateSingleEntryState(
-            (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, tagSearch: searchMaybe)),
+            (singleEntryState) => singleEntryState.copyWith(searchedTags: searchedTags, search: searchMaybe)),
       ],
     );
   }
@@ -1271,7 +1271,6 @@ Tag _incrementCategorySubcategoryFrequency(
 
 Tag _incrementAppCategoryFrequency(
     {required String? categoryId, required Tag updatedTag, required CategoryOrSubcategory categoryOrSubcategory}) {
-  print('increment tag: $updatedTag');
 
   Map<String, int> tagCategoryFrequency = const {};
   Map<String, DateTime> tagCategoryLastUse = const {};
@@ -1300,7 +1299,6 @@ Tag _incrementAppCategoryFrequency(
       tagSubcategoryLastUse: tagCategoryLastUse,
     );
   }
-  print('incremented tag: $updatedTag');
 
   return updatedTag;
 }

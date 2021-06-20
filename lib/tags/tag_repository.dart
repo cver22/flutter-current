@@ -66,7 +66,7 @@ class FirebaseTagRepository implements TagRepository {
 
     addedTags.forEach((tag) {
       batch.set(
-          db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity());
+          db.collection(TAG_COLLECTION).doc(tag.id), tag.toEntity().toJson());
     });
 
 //TODO maybe add a whenComplete to this?

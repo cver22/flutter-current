@@ -4,40 +4,28 @@ import 'package:hive/hive.dart';
 import 'settings_model/app_settings.dart';
 
 abstract class SettingsLocalRepository {
-  Future<AppSettings?> loadSettings();
+  Future<AppSettings?> loadSettings({required String uid});
 
-  Future<void> saveSettings({required AppSettings settings});
+  Future<void> saveSettings({required AppSettings settings, required String uid});
 
-  Future<bool> settingsInitialized();
 }
 
 class HiveSettingsRepository extends SettingsLocalRepository {
   @override
-  Future<AppSettings?> loadSettings() async {
+  Future<AppSettings?> loadSettings({required String uid}) async {
     print('Retrieving settings from hive');
     var box = Hive.box(SETTINGS_BOX);
 
-    AppSettings? settings = box.get(SETTINGS_HIVE_INDEX);
+    AppSettings? settings = box.get(uid);
 
     return settings;
   }
 
-  @override
-  Future<bool> settingsInitialized() async {
-    var box = Hive.box(SETTINGS_BOX);
-
-    bool initialized = box.get(SETTINGS_INITIALIZED_INDEX) ?? false;
-
-    print('Settings initialized: $initialized');
-
-    return initialized;
-  }
 
   @override
-  Future<void> saveSettings({required AppSettings settings}) async {
+  Future<void> saveSettings({required AppSettings settings, required String uid}) async {
     print('Saving settings to hive');
     var box = Hive.box(SETTINGS_BOX);
-    box.put(SETTINGS_HIVE_INDEX, settings);
-    box.put(SETTINGS_INITIALIZED_INDEX, true);
+    box.put(uid, settings);
   }
 }

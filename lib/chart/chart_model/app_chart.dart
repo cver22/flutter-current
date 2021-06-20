@@ -12,10 +12,12 @@ class AppChart extends Equatable {
   final ChartGrouping chartGrouping;
   @HiveField(1)
   final ChartType chartType;
+  //@HiveField(2) unused
+  //final String uid; unused
 
   AppChart({
     this.chartGrouping = ChartGrouping.day,
-    this.chartType = ChartType.line,
+    this.chartType = ChartType.line
   });
 
   @override

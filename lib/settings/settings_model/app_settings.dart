@@ -24,14 +24,17 @@ class AppSettings extends Equatable {
   final bool autoInsertDecimalPoint;
   @HiveField(5)
   final List<String>? logOrder;
+  //@HiveField(6) unused
+  //final String? uid; unused
 
-  AppSettings(
-      {required this.homeCurrency,
-      required this.defaultCategories,
-      required this.defaultSubcategories,
-      this.defaultLogId,
-      this.autoInsertDecimalPoint = false,
-      this.logOrder = const <String>[]});
+  AppSettings({
+    required this.homeCurrency,
+    required this.defaultCategories,
+    required this.defaultSubcategories,
+    this.defaultLogId,
+    this.autoInsertDecimalPoint = false,
+    this.logOrder = const <String>[],
+  });
 
   @override
   List<Object?> get props => [
@@ -40,7 +43,7 @@ class AppSettings extends Equatable {
         defaultSubcategories,
         defaultLogId,
         autoInsertDecimalPoint,
-        logOrder
+        logOrder,
       ];
 
   @override
@@ -100,16 +103,14 @@ class AppSettings extends Equatable {
     String? defaultLogId,
     bool? autoInsertDecimalPoint,
     List<String>? logOrder,
+
   }) {
     if ((homeCurrency == null || identical(homeCurrency, this.homeCurrency)) &&
-        (defaultCategories == null ||
-            identical(defaultCategories, this.defaultCategories)) &&
-        (defaultSubcategories == null ||
-            identical(defaultSubcategories, this.defaultSubcategories)) &&
+        (defaultCategories == null || identical(defaultCategories, this.defaultCategories)) &&
+        (defaultSubcategories == null || identical(defaultSubcategories, this.defaultSubcategories)) &&
         (defaultLogId == null || identical(defaultLogId, this.defaultLogId)) &&
-        (autoInsertDecimalPoint == null ||
-            identical(autoInsertDecimalPoint, this.autoInsertDecimalPoint)) &&
-        (logOrder == null || identical(logOrder, this.logOrder))) {
+        (autoInsertDecimalPoint == null || identical(autoInsertDecimalPoint, this.autoInsertDecimalPoint)) &&
+        (logOrder == null || identical(logOrder, this.logOrder)) ) {
       return this;
     }
 
@@ -118,9 +119,9 @@ class AppSettings extends Equatable {
       defaultCategories: defaultCategories ?? this.defaultCategories,
       defaultSubcategories: defaultSubcategories ?? this.defaultSubcategories,
       defaultLogId: defaultLogId ?? this.defaultLogId,
-      autoInsertDecimalPoint:
-          autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
+      autoInsertDecimalPoint: autoInsertDecimalPoint ?? this.autoInsertDecimalPoint,
       logOrder: logOrder ?? this.logOrder,
+
     );
   }
 }

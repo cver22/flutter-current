@@ -221,7 +221,7 @@ class _TagPickerState extends State<TagPicker> {
       for (int i = 0; i < entryTagIDs.length; i++) {
         //if the tag is lost somehow, do not try to display the tag
         //TODO should this also remove a lost tag?
-        Tag? tag = logAllTags.firstWhere((e) => e!.id == entryTagIDs[i], orElse: () => null);
+        Tag? tag = logAllTags.firstWhere((e) => e!.id == entryTagIDs[i]);
         if (tag != null) {
           selectedEntryTags.add(tag);
         }

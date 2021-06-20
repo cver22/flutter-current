@@ -36,10 +36,30 @@ class LogsScreen extends StatelessWidget {
                   return ModalLoadingIndicator(loadingMessage: 'Loading your logs...', activate: true);
                 } else if (logsState.isLoading == false && logsState.logs.isNotEmpty) {
                   //TODO create archive bool to show logs that have been archived and not visible
-                  logs = [];
-                  Env.store.state.settingsState.settings.value.logOrder!.forEach((logId) {
-                    logs.add(logsState.logs[logId]!);
-                  });
+                  logs = logsState.logs.values.toList();
+
+                  List<String>? logOrder = Env.store.state.settingsState.settings.value.logOrder;
+
+                  //if all logs are present in the logOrder, reorder the logs
+                  if (logOrder != null) {
+                    bool allLogsPresent = true;
+                    logs.forEach((log) {
+                      if (!logOrder.contains(log.id)) {
+                        allLogsPresent = false;
+                      }
+                    });
+
+                    if (allLogsPresent) {
+                      logs = [];
+                      logOrder.forEach((logId) {
+                        Log? nextLog = logsState.logs[logId];
+                        //add log if it exists
+                        if (nextLog != null) {
+                          logs.add(nextLog);
+                        }
+                      });
+                    }
+                  }
 
                   return _buildReorderableList(
                       logs: logs, logTotalsState: logTotalsState, context: context, tabController: tabController);

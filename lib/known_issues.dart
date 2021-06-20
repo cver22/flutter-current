@@ -34,7 +34,7 @@
 //TODO trace Renderings, why so much rendering duplication and re-rendering
 //TODO fix paid spent averaging/rounding, use odd even days
 //TODO add entriesFiltered and chartFiltered to entriesState and move filtering code from the UI so that its not handled on every rebuild of the UI
-
+//add pull to refresh
 
 //TODO VISUAL
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
@@ -66,6 +66,8 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0
+//cant open shared entries on my phone
+//build chart type/grouping actions
 
 
 

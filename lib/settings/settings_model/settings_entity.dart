@@ -16,6 +16,7 @@ class SettingsEntity implements Equatable {
     this.defaultLogId,
     this.autoInsertDecimalPoint = false,
     this.logOrder = const <String>[],
+
   });
 
   final String homeCurrency;
@@ -32,14 +33,14 @@ class SettingsEntity implements Equatable {
         defaultSubcategoryEntities,
         defaultLogId,
         autoInsertDecimalPoint,
-        logOrder
+        logOrder,
+
       ];
 
   @override
   bool get stringify => true;
 
-  factory SettingsEntity.fromJson(Map<String, dynamic> json) =>
-      _$SettingsEntityFromJson(json);
+  factory SettingsEntity.fromJson(Map<String, dynamic> json) => _$SettingsEntityFromJson(json);
 
   Map<String, dynamic> toJson() => _$SettingsEntityToJson(this);
 }

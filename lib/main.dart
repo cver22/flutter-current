@@ -32,7 +32,6 @@ void main() async {
   await Hive.openBox(CURRENCY_BOX);
   await Hive.openBox(SETTINGS_BOX);
   Env.userFetcher.startApp();
-  Env.settingsFetcher.readResetAppSettings();
   runApp(App());
 }
 

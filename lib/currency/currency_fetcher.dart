@@ -38,11 +38,11 @@ class CurrencyFetcher {
     _store.dispatch(CurrencySetLoading());
 
     _store.dispatch(CurrencyLoadAllCurrenciesFromLocal(
-        localConversionRatesMap: await _currencyLocalRepository.loadAllConversionRates()));
+        localConversionRatesMap: await _currencyLocalRepository.loadAllConversionRates(uid: _store.state.authState.user.value.id)));
   }
 
   Future<void> localSaveConversionRates({required Map<String, ConversionRates> conversionRatesMap}) async {
-    _currencyLocalRepository.saveConversionRates(conversionRateMap: conversionRatesMap);
+    _currencyLocalRepository.saveConversionRates(conversionRateMap: conversionRatesMap, uid: _store.state.authState.user.value.id);
   }
 
   Future<void> loadConversionRates({required Map<String, Log> logs}) async {
@@ -50,7 +50,7 @@ class CurrencyFetcher {
     //loads rates for all logs and settings from local unless not present, then load from remote
     _store.dispatch(CurrencySetLoading());
     List<String> currencies = <String>[];
-    Map<String, ConversionRates> conversionRatesMap = await _currencyLocalRepository.loadAllConversionRates();
+    Map<String, ConversionRates> conversionRatesMap = await _currencyLocalRepository.loadAllConversionRates(uid: _store.state.authState.user.value.id);
     bool writeToStorage = false;
     String? settingsCurrency;
 
@@ -60,7 +60,6 @@ class CurrencyFetcher {
     }
 
     logs.forEach((key, log) {
-      print('log currency ${log.currency}');
       if (log.currency != settingsCurrency) {
         currencies.add(log.currency!);
       }
@@ -69,14 +68,12 @@ class CurrencyFetcher {
     //remotely loads any previously unloaded currencies
     for (String referenceCurrency in currencies) {
       if (!conversionRatesMap.containsKey(referenceCurrency)) {
-
         await _currencyRemoteRepository
             .loadReferenceConversionRates(
           allCurrencies: _store.state.currencyState.allCurrencies,
           referenceCurrency: referenceCurrency,
         )
             .then((conversionRates) {
-          print('remote conversionRates $conversionRates');
           conversionRatesMap.update(referenceCurrency, (value) => conversionRates, ifAbsent: () => conversionRates);
           writeToStorage = true;
         });
@@ -84,7 +81,7 @@ class CurrencyFetcher {
     }
 
     //write to local in loading new rates
-    if(writeToStorage){
+    if (writeToStorage) {
       localSaveConversionRates(conversionRatesMap: conversionRatesMap);
     }
 
