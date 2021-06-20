@@ -80,8 +80,9 @@ const String EMAIL = 'email';
 const String MEMBER_NAME = 'memberName';
 
 //Chart constants
-enum ChartGrouping { day, month, year }
+enum ChartDateGrouping { day, month, year }
 enum ChartType { line, bar, donut }
+enum ChartDataGrouping { total, categories, subcategories }
 
 //UI constants
 const double EMOJI_SIZE = 22.0;

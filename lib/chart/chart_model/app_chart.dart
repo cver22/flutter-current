@@ -9,19 +9,19 @@ import 'package:meta/meta.dart';
 class AppChart extends Equatable {
   //field ids can only be dropped, not changed
   @HiveField(0)
-  final ChartGrouping chartGrouping;
+  final ChartDateGrouping chartDateGrouping;
   @HiveField(1)
   final ChartType chartType;
   //@HiveField(2) unused
   //final String uid; unused
 
   AppChart({
-    this.chartGrouping = ChartGrouping.day,
+    this.chartDateGrouping = ChartDateGrouping.day,
     this.chartType = ChartType.line
   });
 
   @override
-  List<Object?> get props => [chartGrouping, chartType];
+  List<Object?> get props => [chartDateGrouping, chartType];
 
   @override
   bool get stringify => true;

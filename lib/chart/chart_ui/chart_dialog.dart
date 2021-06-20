@@ -15,13 +15,15 @@ class ChartDialog extends StatefulWidget {
 
 class _ChartDialogState extends State<ChartDialog> {
   late ChartType _chartType;
-  late ChartGrouping _chartGrouping;
+  late ChartDateGrouping _chartDateGrouping;
+  late ChartDataGrouping _chartDataGrouping;
 
   @override
   void initState() {
     var _chartState = Env.store.state.chartState;
     _chartType = _chartState.chartType;
-    _chartGrouping = _chartState.chartGrouping;
+    _chartDateGrouping = _chartState.chartDateGrouping;
+    _chartDataGrouping = _chartState.chartDataGrouping;
 
     super.initState();
   }
@@ -37,9 +39,9 @@ class _ChartDialogState extends State<ChartDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _chartGroupingRadio(chartGrouping: ChartGrouping.day, title: 'Day'),
-              _chartGroupingRadio(chartGrouping: ChartGrouping.month, title: 'Month'),
-              _chartGroupingRadio(chartGrouping: ChartGrouping.year, title: 'Year'),
+              _chartDateGroupingRadio(chartDateGrouping: ChartDateGrouping.day, title: 'Day'),
+              _chartDateGroupingRadio(chartDateGrouping: ChartDateGrouping.month, title: 'Month'),
+              _chartDateGroupingRadio(chartDateGrouping: ChartDateGrouping.year, title: 'Year'),
             ],
           ),
           SizedBox(height: 32),
@@ -53,15 +55,31 @@ class _ChartDialogState extends State<ChartDialog> {
               _chartTypeRadio(chartType: ChartType.donut, title: 'Donut'),
             ],
           ),
+          SizedBox(height: 32),
+          Text('Show total of:'),
+          SizedBox(height: 8),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _chartGroupingRadio(chartGrouping: ChartDataGrouping.total, title: 'Overall'),
+            ],
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              _chartGroupingRadio(chartGrouping: ChartDataGrouping.categories, title: 'Categories'),
+              _chartGroupingRadio(chartGrouping: ChartDataGrouping.subcategories, title: 'Subcategories'),
+            ],
+          ),
         ],
       ),
       title: 'Chart Settings',
-      actions: _actions(chartType: _chartType, chartGrouping: _chartGrouping),
+      actions: _actions(chartType: _chartType, chartGrouping: _chartDateGrouping),
     );
   }
 
   List<Widget> _actions({
-    required ChartGrouping chartGrouping,
+    required ChartDateGrouping chartGrouping,
     required ChartType chartType,
   }) {
     return [
@@ -74,26 +92,24 @@ class _ChartDialogState extends State<ChartDialog> {
       TextButton(
           child: Text('Save'),
           onPressed: () {
-            Env.store.dispatch(ChartSetOptions(
-              chartGrouping: _chartGrouping,
-              chartType: _chartType,
-            ));
+            Env.store.dispatch(ChartUpdateData(
+                chartType: _chartType, chartDataGrouping: _chartDataGrouping, chartDateGrouping: _chartDateGrouping));
             //TODO save new chart setting with Env
             Get.back();
           }),
     ];
   }
 
-  Widget _chartGroupingRadio({required ChartGrouping chartGrouping, required String title}) {
+  Widget _chartDateGroupingRadio({required ChartDateGrouping chartDateGrouping, required String title}) {
     return InkWell(
       onTap: () {
         setState(() {
-          _chartGrouping = chartGrouping;
+          _chartDateGrouping = chartDateGrouping;
         });
       },
       child: Row(
         children: [
-          _chartGrouping == chartGrouping
+          _chartDateGrouping == chartDateGrouping
               ? Icon(Icons.radio_button_checked_outlined)
               : Icon(Icons.radio_button_off_outlined),
           SizedBox(width: 8),
@@ -113,6 +129,25 @@ class _ChartDialogState extends State<ChartDialog> {
       child: Row(
         children: [
           _chartType == chartType ? Icon(Icons.radio_button_checked_outlined) : Icon(Icons.radio_button_off_outlined),
+          SizedBox(width: 8),
+          Text(title)
+        ],
+      ),
+    );
+  }
+
+  Widget _chartGroupingRadio({required ChartDataGrouping chartGrouping, required String title}) {
+    return InkWell(
+      onTap: () {
+        setState(() {
+          _chartDataGrouping = chartGrouping;
+        });
+      },
+      child: Row(
+        children: [
+          _chartDataGrouping == chartGrouping
+              ? Icon(Icons.radio_button_checked_outlined)
+              : Icon(Icons.radio_button_off_outlined),
           SizedBox(width: 8),
           Text(title)
         ],

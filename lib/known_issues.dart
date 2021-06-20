@@ -65,9 +65,8 @@
 
 
 //TODO START HERE
-//formatters and converters need to accept conversion rates of 0
-//cant open shared entries on my phone, has something to do with trying to load currencies that do not yet exists maybe, probably need to debug
-//build chart type/grouping actions
+//formatters and converters need to accept conversion rates of 0 ?? this works i think
+//build chart type/grouping actions and data builder
 
 
 
