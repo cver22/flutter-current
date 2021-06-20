@@ -13,7 +13,6 @@ AppState Function(AppState) _updateChartState(ChartState update(chartState)) {
 class ChartUpdateData implements AppAction {
   @override
   AppState updateState(AppState appState) {
-
     Map<String, AppEntry> entries = Map<String, AppEntry>.from(appState.entriesState.entries);
     ChartGrouping chartGrouping = appState.chartState.chartGrouping;
     Map<DateTime, ChartData> chartMap = <DateTime, ChartData>{};
@@ -104,45 +103,33 @@ class ChartUpdateData implements AppAction {
       }
     });
 
+    return updateSubstates(
+      appState,
+      [
+        _updateChartState(
+            (chartState) => chartState.copyWith(categories: categoriesList, chartData: chartMap.values.toList())),
+      ],
+    );
+  }
+}
 
+class ChartSetOptions implements AppAction {
+  final ChartGrouping chartGrouping;
+  final ChartType chartType;
+
+  ChartSetOptions({required this.chartGrouping, required this.chartType});
+
+  @override
+  AppState updateState(AppState appState) {
     return updateSubstates(
       appState,
       [
         _updateChartState((chartState) => chartState.copyWith(
-            categories: categoriesList, chartData: chartMap.values.toList())),
+              chartGrouping: chartGrouping,
+              chartType: chartType,
+            )),
       ],
     );
   }
 }
 
-class ChartSetGrouping implements AppAction {
-  final ChartGrouping chartGrouping;
-
-  ChartSetGrouping({required this.chartGrouping});
-
-  @override
-  AppState updateState(AppState appState) {
-    return updateSubstates(
-      appState,
-      [
-        _updateChartState((chartState) => chartState.copyWith(chartGrouping: chartGrouping)),
-      ],
-    );
-  }
-}
-
-class ChartSetType implements AppAction {
-  final ChartType chartType;
-
-  ChartSetType({required this.chartType});
-
-  @override
-  AppState updateState(AppState appState) {
-    return updateSubstates(
-      appState,
-      [
-        _updateChartState((chartState) => chartState.copyWith(chartType: chartType)),
-      ],
-    );
-  }
-}

@@ -1,3 +1,4 @@
+import 'package:expenses/store/actions/chart_actions.dart';
 import 'package:get/get.dart';
 
 import '../../app/common_widgets/app_dialog.dart';
@@ -73,6 +74,10 @@ class _ChartDialogState extends State<ChartDialog> {
       TextButton(
           child: Text('Save'),
           onPressed: () {
+            Env.store.dispatch(ChartSetOptions(
+              chartGrouping: _chartGrouping,
+              chartType: _chartType,
+            ));
             //TODO save new chart setting with Env
             Get.back();
           }),

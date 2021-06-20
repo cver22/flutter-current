@@ -108,8 +108,8 @@ class EntrySelectEntry implements AppAction {
     Map<String, Tag> tags = Map.from(appState.tagState.tags)..removeWhere((key, value) => value.logId != log.id);
     Map<String, EntryMember> entryMembers = Map.from(entry.entryMembers);
     entryMembers.updateAll((key, value) => value.copyWith(
-          payingController: TextEditingController(text: formattedAmount(value: value.paid!, currency: currency!)),
-          spendingController: TextEditingController(text: formattedAmount(value: value.spent!, currency: currency)),
+          payingController: TextEditingController(text: formattedAmount(value: value.paid ?? 0, currency: currency!)),
+          spendingController: TextEditingController(text: formattedAmount(value: value.spent ?? 0, currency: currency)),
           payingFocusNode: FocusNode(),
           spendingFocusNode: FocusNode(),
         ));
