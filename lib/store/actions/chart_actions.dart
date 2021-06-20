@@ -29,46 +29,62 @@ class ChartUpdateData implements AppAction {
     ChartDateGrouping dateGrouping = chartDateGrouping ?? appState.chartState.chartDateGrouping;
     ChartDataGrouping dataGrouping = chartDataGrouping ?? appState.chartState.chartDataGrouping;
     ChartType type = chartType ?? appState.chartState.chartType;
-    Map<DateTime, ChartData> chartMap = Map<DateTime,ChartData>.from(appState.chartState.chartData);
-    List<String> categoriesList = <String>[];
+    Map<DateTime, ChartData> chartMap = Map<DateTime, ChartData>.from(appState.chartState.chartData);
+    List<String> categoriesList = List<String>.from(appState.chartState.categories);
     Map<String, Log> logs = Map<String, Log>.from(appState.logsState.logs);
     Map<String, String> categoriesMap = <String, String>{};
-    Map<String, String> subcategoriesMap = <String, String>{};
     bool rebuildData = rebuildChartData ?? appState.chartState.rebuildChartData;
-
-
 
     if (dateGrouping != appState.chartState.chartDateGrouping ||
         dataGrouping != appState.chartState.chartDataGrouping ||
         rebuildData) {
       chartMap = <DateTime, ChartData>{};
+      categoriesList = <String>[];
       print('date grouping: $dateGrouping');
       print('data grouping: $dataGrouping');
 
       logs.forEach((key, log) {
-        log.categories.forEach((category) {
-          if (!categoriesMap.containsKey(category.id) && category.id != TRANSFER_FUNDS) {
-            categoriesMap.putIfAbsent(category.id!, () => category.name!);
-          }
-        });
-        log.subcategories.forEach((subcategory) {
-          if (!subcategoriesMap.containsKey(subcategory.id)) {
-            subcategoriesMap.putIfAbsent(subcategory.id!, () => subcategory.name!);
-          }
-        });
+        if (dataGrouping == ChartDataGrouping.categories) {
+          log.categories.forEach((category) {
+            if (!categoriesMap.containsKey(category.id) && category.id != TRANSFER_FUNDS) {
+              categoriesMap.putIfAbsent(category.id!, () => category.name!);
+            }
+          });
+        } else if (dataGrouping == ChartDataGrouping.subcategories) {
+          log.subcategories.forEach((subcategory) {
+            if (!categoriesMap.containsKey(subcategory.id)) {
+              categoriesMap.putIfAbsent(subcategory.id!, () => subcategory.name!);
+            }
+          });
+          categoriesMap.putIfAbsent(NO_SUBCATEGORY, () => 'No Subcategory');
+        } else {
+          categoriesMap.putIfAbsent('total', () => 'Total');
+        }
       });
 
       //TODO this will need to be refactored to handle named categories and other things that the filter handles
 
-      //list all categories
-      entries.forEach((key, entry) {
-        if (entry.categoryId != TRANSFER_FUNDS) {
-          String category = categoriesMap[entry.categoryId!]!;
-          if (!categoriesList.contains(category)) {
-            categoriesList.add(category);
+      //list all categories of subcategories
+      if (dataGrouping != ChartDataGrouping.total) {
+        entries.forEach((key, entry) {
+          if (entry.categoryId != TRANSFER_FUNDS) {
+            String? category;
+
+            if (dataGrouping == ChartDataGrouping.categories) {
+              category = categoriesMap[entry.categoryId!]!;
+            } else if (dataGrouping == ChartDataGrouping.subcategories) {
+              category = categoriesMap[entry.subcategoryId ?? NO_SUBCATEGORY]!;
+            }
+
+            if (!categoriesList.contains(category)) {
+              categoriesList.add(category!);
+            }
           }
-        }
-      });
+        });
+      } else {
+        categoriesList.add(categoriesMap['total']!);
+      }
+
       //TODO sort this to match the log category order
       categoriesList.sort();
 
@@ -89,8 +105,13 @@ class ChartUpdateData implements AppAction {
           } else if (dateGrouping == ChartDateGrouping.month) {
             expDateTime = DateTime(entry.dateTime.year, entry.dateTime.month);
           }
+          int categoryIndex = 0;
+          if (dataGrouping == ChartDataGrouping.categories) {
+            categoryIndex = categoriesList.indexOf(categoriesMap[entry.categoryId!]!);
+          } else if (dataGrouping == ChartDataGrouping.subcategories) {
+            categoryIndex = categoriesList.indexOf(categoriesMap[entry.subcategoryId ?? NO_SUBCATEGORY]!);
+          }
 
-          int categoryIndex = categoriesList.indexOf(categoriesMap[entry.categoryId!]!);
           int chartDataAmount = 0;
           List<int> seriesAmounts = <int>[];
           ChartData chartData = chartDataBase;
@@ -126,10 +147,7 @@ class ChartUpdateData implements AppAction {
           chartMap.update(expDateTime, (v) => chartData, ifAbsent: () => chartData);
         }
       });
-
     }
-
-
 
     return updateSubstates(
       appState,
@@ -141,6 +159,75 @@ class ChartUpdateData implements AppAction {
               chartDateGrouping: dateGrouping,
               chartDataGrouping: dataGrouping,
               rebuildChartData: false,
+              loading: false,
+            )),
+      ],
+    );
+  }
+}
+
+class ChartSetOptions implements AppAction {
+  final ChartDateGrouping? chartDateGrouping;
+  final ChartDataGrouping? chartDataGrouping;
+  final ChartType? chartType;
+  final bool? showTrendLine;
+  final bool? showMarkers;
+
+  ChartSetOptions({
+    this.chartDateGrouping,
+    this.chartDataGrouping,
+    this.chartType,
+    this.showTrendLine,
+    this.showMarkers,
+  });
+
+  @override
+  AppState updateState(AppState appState) {
+    ChartDateGrouping dateGrouping = chartDateGrouping ?? appState.chartState.chartDateGrouping;
+    ChartDataGrouping dataGrouping = chartDataGrouping ?? appState.chartState.chartDataGrouping;
+    ChartType type = chartType ?? appState.chartState.chartType;
+    bool showTrend = showTrendLine ?? appState.chartState.showTrendLine;
+    bool markers = showMarkers ?? appState.chartState.showMarkers;
+
+    return updateSubstates(
+      appState,
+      [
+        _updateChartState((chartState) => chartState.copyWith(
+              chartType: type,
+              chartDateGrouping: dateGrouping,
+              chartDataGrouping: dataGrouping,
+              showTrendLine: showTrend,
+              showMarkers: markers,
+              rebuildChartData: true,
+              loading: true,
+            )),
+      ],
+    );
+  }
+}
+
+class ChartSetLoading implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        _updateChartState((chartState) => chartState.copyWith(
+              loading: true,
+            )),
+      ],
+    );
+  }
+}
+
+class ChartShowTrendLine implements AppAction {
+  @override
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        _updateChartState((chartState) => chartState.copyWith(
+              showTrendLine: !appState.chartState.showTrendLine,
             )),
       ],
     );

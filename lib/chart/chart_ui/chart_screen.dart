@@ -1,3 +1,5 @@
+import 'package:expenses/app/common_widgets/loading_indicator.dart';
+
 import '../../chart/chart_model/chart_data.dart';
 import '../../chart/chart_model/chart_state.dart';
 import '../../store/connect_state.dart';
@@ -21,7 +23,6 @@ class ChartScreen extends StatelessWidget {
       zoomMode: ZoomMode.x,
       enablePanning: true,
     );
-    Env.store.dispatch(ChartUpdateData(rebuildChartData: true));
     List<ChartData> chartData = <ChartData>[];
     List<ChartSeries> series = <ChartSeries>[];
     List<String> categories = <String>[];
@@ -30,8 +31,19 @@ class ChartScreen extends StatelessWidget {
         where: notIdentical,
         map: (state) => state.chartState,
         builder: (chartState) {
+          bool loading = chartState.loading;
+          bool showTrendLine = chartState.showTrendLine;
+          bool showMarkers = chartState.showMarkers;
+          if (chartState.rebuildChartData) {
+            loading = true;
+          }
           categories = chartState.categories;
           chartData = chartState.chartData.values.toList();
+
+         /* print('type: ${chartState.chartType}, '
+              'date: ${chartState.chartDateGrouping}, '
+              'categories: $categories');*/
+
           //sets date interval
           DateTimeIntervalType dateTimeIntervalType = DateTimeIntervalType.months;
           DateFormat dateFormat = DateFormat.MMM();
@@ -43,10 +55,17 @@ class ChartScreen extends StatelessWidget {
             dateFormat = DateFormat.d();
           }
 
-          if (chartState.chartType == ChartType.bar) {
+          if (chartState.chartType == ChartType.bar && !loading) {
             series = <ChartSeries>[];
             for (int i = 0; i < categories.length; i++) {
               series.add(StackedColumnSeries<ChartData, DateTime>(
+                trendlines: <Trendline>[
+                  Trendline(
+                    isVisible: showTrendLine,
+                      type: TrendlineType.polynomial,
+                      color: Colors.blue)
+                ],
+                markerSettings: MarkerSettings(isVisible: showMarkers),
                 dataSource: chartData,
                 xValueMapper: (ChartData exp, _) => exp.dateTime,
                 yValueMapper: (ChartData exp, _) => exp.amounts[i].toDouble() / 100,
@@ -63,10 +82,17 @@ class ChartScreen extends StatelessWidget {
               tooltipBehavior: _tooltipBehavior,
               zoomPanBehavior: _zoomPanBehavior,
             );
-          } else if (chartState.chartType == ChartType.line) {
+          } else if (chartState.chartType == ChartType.line && !loading) {
             series = <ChartSeries>[];
             for (int i = 0; i < categories.length; i++) {
               series.add(LineSeries<ChartData, DateTime>(
+                trendlines: <Trendline>[
+                  Trendline(
+                      isVisible: showTrendLine,
+                      type: TrendlineType.polynomial,
+                      color: Colors.blue)
+                ],
+                markerSettings: MarkerSettings(isVisible: showMarkers),
                 dataSource: chartData,
                 xValueMapper: (ChartData exp, _) => exp.dateTime,
                 yValueMapper: (ChartData exp, _) => exp.amounts[i].toDouble() / 100,
@@ -84,7 +110,12 @@ class ChartScreen extends StatelessWidget {
               zoomPanBehavior: _zoomPanBehavior,
             );
           } else {
-            return Container();
+            //TODO can this run in an isolate?
+            Env.store.dispatch(ChartUpdateData(rebuildChartData: true));
+            return ModalLoadingIndicator(
+              activate: true,
+              loadingMessage: 'Loading Chart',
+            );
             /* for (int i = 0; i < categories.length; i++) {
             series.add(DoughnutSeries<ChartData, DateTime>(
               dataSource: chartData,

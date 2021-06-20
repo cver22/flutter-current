@@ -1,3 +1,4 @@
+import 'package:expenses/chart/chart_model/chart_state.dart';
 import 'package:expenses/store/actions/chart_actions.dart';
 import 'package:get/get.dart';
 
@@ -17,13 +18,17 @@ class _ChartDialogState extends State<ChartDialog> {
   late ChartType _chartType;
   late ChartDateGrouping _chartDateGrouping;
   late ChartDataGrouping _chartDataGrouping;
+  late bool _showTrendLine;
+  late bool _showMarkers;
 
   @override
   void initState() {
-    var _chartState = Env.store.state.chartState;
-    _chartType = _chartState.chartType;
-    _chartDateGrouping = _chartState.chartDateGrouping;
-    _chartDataGrouping = _chartState.chartDataGrouping;
+    ChartState chartState = Env.store.state.chartState;
+    _chartType = chartState.chartType;
+    _chartDateGrouping = chartState.chartDateGrouping;
+    _chartDataGrouping = chartState.chartDataGrouping;
+    _showTrendLine = chartState.showTrendLine;
+    _showMarkers = chartState.showMarkers;
 
     super.initState();
   }
@@ -71,6 +76,36 @@ class _ChartDialogState extends State<ChartDialog> {
               _chartGroupingRadio(chartGrouping: ChartDataGrouping.subcategories, title: 'Subcategories'),
             ],
           ),
+          SizedBox(height: 32),
+          Row(
+            children: [
+              Text('Show Trend Line'),
+              SizedBox(width: 16),
+              Switch(
+                value: _showTrendLine,
+                onChanged: (bool value) {
+                  setState(() {
+                    _showTrendLine = value;
+                  });
+                },
+              ),
+            ],
+          ),
+
+          Row(
+            children: [
+              Text('Show Markers'),
+              SizedBox(width: 16),
+              Switch(
+                value: _showMarkers,
+                onChanged: (bool value) {
+                  setState(() {
+                    _showMarkers = value;
+                  });
+                },
+              ),
+            ],
+          )
         ],
       ),
       title: 'Chart Settings',
@@ -92,10 +127,15 @@ class _ChartDialogState extends State<ChartDialog> {
       TextButton(
           child: Text('Save'),
           onPressed: () {
-            Env.store.dispatch(ChartUpdateData(
-                chartType: _chartType, chartDataGrouping: _chartDataGrouping, chartDateGrouping: _chartDateGrouping));
-            //TODO save new chart setting with Env
             Get.back();
+            Env.store.dispatch(ChartSetOptions(
+              chartType: _chartType,
+              chartDataGrouping: _chartDataGrouping,
+              chartDateGrouping: _chartDateGrouping,
+              showTrendLine: _showTrendLine,
+              showMarkers: _showMarkers,
+            ));
+            //TODO save new chart setting with Env
           }),
     ];
   }
@@ -124,6 +164,11 @@ class _ChartDialogState extends State<ChartDialog> {
       onTap: () {
         setState(() {
           _chartType = chartType;
+          if(_chartType == ChartType.bar) {
+            _showMarkers = false;
+          } else if(_chartType == ChartType.line) {
+            _showMarkers = true;
+          }
         });
       },
       child: Row(

@@ -10,6 +10,8 @@ class ChartState extends Equatable {
   final List<String> categories;
   final bool loading;
   final bool rebuildChartData; //used to prevent complete rebuild of data for minor chart changes
+  final bool showTrendLine;
+  final bool showMarkers;
 
   ChartState({
     required this.chartDateGrouping,
@@ -19,11 +21,13 @@ class ChartState extends Equatable {
     required this.categories,
     required this.loading,
     required this.rebuildChartData,
+    required this.showTrendLine,
+    required this.showMarkers,
 
   });
 
   @override
-  List<Object?> get props => [chartDateGrouping, chartType, chartDataGrouping, chartData, categories, loading, rebuildChartData];
+  List<Object?> get props => [chartDateGrouping, chartType, chartDataGrouping, chartData, categories, loading, rebuildChartData, showTrendLine, showMarkers];
 
   @override
   bool get stringify => true;
@@ -35,8 +39,10 @@ class ChartState extends Equatable {
       chartDataGrouping: ChartDataGrouping.categories,
       chartData: <DateTime, ChartData>{},
       categories: <String>[],
-      loading: false,
+      loading: true,
       rebuildChartData: true,
+        showTrendLine: false,
+        showMarkers: false,
     );
   }
 
@@ -48,6 +54,8 @@ class ChartState extends Equatable {
     List<String>? categories,
     bool? loading,
     bool? rebuildChartData,
+    bool? showTrendLine,
+    bool? showMarkers,
   }) {
     if ((chartDateGrouping == null || identical(chartDateGrouping, this.chartDateGrouping)) &&
         (chartType == null || identical(chartType, this.chartType)) &&
@@ -55,7 +63,9 @@ class ChartState extends Equatable {
         (chartData == null || identical(chartData, this.chartData)) &&
         (categories == null || identical(categories, this.categories)) &&
         (loading == null || identical(loading, this.loading)) &&
-        (rebuildChartData == null || identical(rebuildChartData, this.rebuildChartData))) {
+        (rebuildChartData == null || identical(rebuildChartData, this.rebuildChartData)) &&
+        (showTrendLine == null || identical(showTrendLine, this.showTrendLine)) &&
+        (showMarkers == null || identical(showMarkers, this.showMarkers))) {
       return this;
     }
 
@@ -67,6 +77,8 @@ class ChartState extends Equatable {
       categories: categories ?? this.categories,
       loading: loading ?? this.loading,
       rebuildChartData: rebuildChartData ?? this.rebuildChartData,
+      showTrendLine: showTrendLine ?? this.showTrendLine,
+      showMarkers: showMarkers ?? this.showMarkers,
     );
   }
 }

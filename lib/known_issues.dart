@@ -44,8 +44,6 @@
 //TODO is there a better way to handle "Other" in entries tiles
 
 //TODO CHART
-//toggle total/categories/subcategories
-//toggle day/month/year
 //toggle stackedBar/line/donut
 //add filter
 //line chart by tag
@@ -60,13 +58,15 @@
 
 //TODO PERFORMANCE
 //make entry list tiles the same size and trail off too many tags
+//can I run my data layer in an isolate?
 
 //TODO GENERAL IMPORTANT *************************
 
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0 ?? this works i think
-//build chart type/grouping actions and data builder
+//chart trendline option
+//build chart filter mechanism
 
 
 
