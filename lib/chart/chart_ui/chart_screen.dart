@@ -1,4 +1,7 @@
+import 'package:currency_picker/currency_picker.dart';
 import 'package:expenses/app/common_widgets/loading_indicator.dart';
+import 'package:expenses/chart/chart_model/donut_chart_data.dart';
+import 'package:expenses/currency/currency_utils/currency_formatters.dart';
 
 import '../../chart/chart_model/chart_data.dart';
 import '../../chart/chart_model/chart_state.dart';
@@ -24,8 +27,10 @@ class ChartScreen extends StatelessWidget {
       enablePanning: true,
     );
     List<ChartData> chartData = <ChartData>[];
+    List<DonutChartData> donutChartData = <DonutChartData>[];
     List<ChartSeries> series = <ChartSeries>[];
     List<String> categories = <String>[];
+    int total = 0;
 
     return ConnectState<ChartState>(
         where: notIdentical,
@@ -34,13 +39,15 @@ class ChartScreen extends StatelessWidget {
           bool loading = chartState.loading;
           bool showTrendLine = chartState.showTrendLine;
           bool showMarkers = chartState.showMarkers;
+          total = 0;
           if (chartState.rebuildChartData) {
             loading = true;
           }
           categories = chartState.categories;
           chartData = chartState.chartData.values.toList();
+          donutChartData = chartState.donutChartData;
 
-         /* print('type: ${chartState.chartType}, '
+          /* print('type: ${chartState.chartType}, '
               'date: ${chartState.chartDateGrouping}, '
               'categories: $categories');*/
 
@@ -60,10 +67,7 @@ class ChartScreen extends StatelessWidget {
             for (int i = 0; i < categories.length; i++) {
               series.add(StackedColumnSeries<ChartData, DateTime>(
                 trendlines: <Trendline>[
-                  Trendline(
-                    isVisible: showTrendLine,
-                      type: TrendlineType.polynomial,
-                      color: Colors.blue)
+                  Trendline(isVisible: showTrendLine, type: TrendlineType.polynomial, color: Colors.blue)
                 ],
                 markerSettings: MarkerSettings(isVisible: showMarkers),
                 dataSource: chartData,
@@ -87,10 +91,7 @@ class ChartScreen extends StatelessWidget {
             for (int i = 0; i < categories.length; i++) {
               series.add(LineSeries<ChartData, DateTime>(
                 trendlines: <Trendline>[
-                  Trendline(
-                      isVisible: showTrendLine,
-                      type: TrendlineType.polynomial,
-                      color: Colors.blue)
+                  Trendline(isVisible: showTrendLine, type: TrendlineType.polynomial, color: Colors.blue)
                 ],
                 markerSettings: MarkerSettings(isVisible: showMarkers),
                 dataSource: chartData,
@@ -108,6 +109,54 @@ class ChartScreen extends StatelessWidget {
               series: series,
               tooltipBehavior: _tooltipBehavior,
               zoomPanBehavior: _zoomPanBehavior,
+            );
+          } else if (chartState.chartType == ChartType.donut && !loading) {
+            donutChartData.forEach((element) {
+              total = total + element.amount;
+            });
+
+            return Column(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+                  IconButton(
+                      icon: Icon(Icons.chevron_left_outlined),
+                      onPressed: () {
+                        Env.store.dispatch(ChartIncrementDecrementDonutDate(increment: false));
+                      }),
+                  _getDonutDate(donutStartDate: chartState.donutStartDate, dateGrouping: chartState.chartDateGrouping),
+                  IconButton(
+                      icon: Icon(Icons.chevron_right_outlined),
+                      onPressed: () {
+                        Env.store.dispatch(ChartIncrementDecrementDonutDate(increment: true));
+                      }),
+                ]),
+                Expanded(
+                  child: SfCircularChart(
+                    title: ChartTitle(
+                      text:
+                          'Total spend: ${formattedAmount(currency: CurrencyService().findByCode('USD')!, value: total, showSymbol: true)}',
+                    ),
+                    legend: Legend(
+                      isVisible: true,
+                      overflowMode: LegendItemOverflowMode.wrap,
+                      position: LegendPosition.bottom,
+                      toggleSeriesVisibility: true,
+                    ),
+                    tooltipBehavior: _tooltipBehavior,
+                    series: <CircularSeries>[
+                      DoughnutSeries<DonutChartData, String>(
+                        dataLabelSettings: DataLabelSettings(isVisible: true),
+                        dataSource: donutChartData,
+                        xValueMapper: (DonutChartData data, _) => data.category,
+                        yValueMapper: (DonutChartData data, _) => data.amount.toDouble() / 100,
+                        dataLabelMapper: (DonutChartData data, _) => data.text,
+                        animationDuration: 600,
+                      ),
+                    ],
+                  ),
+                )
+              ],
             );
           } else {
             //TODO can this run in an isolate?
@@ -131,5 +180,19 @@ class ChartScreen extends StatelessWidget {
 
           }
         });
+  }
+
+  Widget _getDonutDate({required DateTime donutStartDate, required ChartDateGrouping dateGrouping}) {
+    String date = '';
+
+    if (dateGrouping == ChartDateGrouping.day) {
+      date = '${MONTHS_SHORT[donutStartDate.month - 1]} ${donutStartDate.day.toString()}, ${donutStartDate.year}';
+    } else if (dateGrouping == ChartDateGrouping.month) {
+      date = '${MONTHS_SHORT[donutStartDate.month - 1]} ${donutStartDate.year}';
+    } else {
+      date = '${donutStartDate.year}';
+    }
+
+    return Text(date);
   }
 }

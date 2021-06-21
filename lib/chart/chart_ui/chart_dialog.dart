@@ -66,7 +66,7 @@ class _ChartDialogState extends State<ChartDialog> {
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _chartGroupingRadio(chartGrouping: ChartDataGrouping.total, title: 'Overall'),
+              _chartGroupingRadio(chartGrouping: ChartDataGrouping.total, title: 'Total'),
             ],
           ),
           Row(
@@ -91,7 +91,6 @@ class _ChartDialogState extends State<ChartDialog> {
               ),
             ],
           ),
-
           Row(
             children: [
               Text('Show Markers'),
@@ -164,10 +163,15 @@ class _ChartDialogState extends State<ChartDialog> {
       onTap: () {
         setState(() {
           _chartType = chartType;
-          if(_chartType == ChartType.bar) {
+          if (_chartType == ChartType.bar) {
             _showMarkers = false;
-          } else if(_chartType == ChartType.line) {
+          } else if (_chartType == ChartType.line) {
             _showMarkers = true;
+          } else if (_chartType == ChartType.donut) {
+            _showMarkers = false;
+            if(_chartDataGrouping == ChartDataGrouping.total){
+              _chartDataGrouping = ChartDataGrouping.categories;
+            }
           }
         });
       },

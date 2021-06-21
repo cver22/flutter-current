@@ -1,3 +1,7 @@
+import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/chart/chart_model/donut_chart_data.dart';
+import 'package:expenses/currency/currency_utils/currency_formatters.dart';
+
 import '../../chart/chart_model/chart_data.dart';
 import '../../log/log_model/log.dart';
 import '../../utils/db_consts.dart';
@@ -15,12 +19,14 @@ class ChartUpdateData implements AppAction {
   final ChartDataGrouping? chartDataGrouping;
   final ChartType? chartType;
   final bool? rebuildChartData;
+  final DateTime? donutStartDate;
 
   ChartUpdateData({
     this.chartDateGrouping,
     this.chartDataGrouping,
     this.chartType,
     this.rebuildChartData,
+    this.donutStartDate,
   });
 
   @override
@@ -34,14 +40,28 @@ class ChartUpdateData implements AppAction {
     Map<String, Log> logs = Map<String, Log>.from(appState.logsState.logs);
     Map<String, String> categoriesMap = <String, String>{};
     bool rebuildData = rebuildChartData ?? appState.chartState.rebuildChartData;
+    DateTime startDate = donutStartDate ?? appState.chartState.donutStartDate;
+    DateTime donutEndDate = DateTime.now();
+    Map<String, DonutChartData> donutChartMap = <String, DonutChartData>{};
 
     if (dateGrouping != appState.chartState.chartDateGrouping ||
         dataGrouping != appState.chartState.chartDataGrouping ||
         rebuildData) {
       chartMap = <DateTime, ChartData>{};
       categoriesList = <String>[];
-      print('date grouping: $dateGrouping');
-      print('data grouping: $dataGrouping');
+
+      if (type == ChartType.donut) {
+        if (dateGrouping == ChartDateGrouping.day) {
+          startDate = DateTime(startDate.year, startDate.month, startDate.day);
+          donutEndDate = DateTime(startDate.year, startDate.month, startDate.day + 1);
+        } else if (dateGrouping == ChartDateGrouping.month) {
+          startDate = DateTime(startDate.year, startDate.month);
+          donutEndDate = DateTime(startDate.year, startDate.month + 1);
+        } else {
+          startDate = DateTime(startDate.year);
+          donutEndDate = DateTime(startDate.year + 1);
+        }
+      }
 
       logs.forEach((key, log) {
         if (dataGrouping == ChartDataGrouping.categories) {
@@ -93,58 +113,78 @@ class ChartUpdateData implements AppAction {
 
       categoriesList.forEach((category) {
         amounts.add(0);
+        donutChartMap.putIfAbsent(category, () => DonutChartData(category: category));
       });
 
       ChartData chartDataBase = ChartData(amounts: amounts);
 
       entries.forEach((key, entry) {
         if (entry.categoryId != TRANSFER_FUNDS) {
-          DateTime expDateTime = DateTime(entry.dateTime.year);
+          DateTime entryDateTime = DateTime(entry.dateTime.year);
+          bool inDonutRange = false;
           if (dateGrouping == ChartDateGrouping.day) {
-            expDateTime = DateTime(entry.dateTime.year, entry.dateTime.month, entry.dateTime.day);
+            entryDateTime = DateTime(entry.dateTime.year, entry.dateTime.month, entry.dateTime.day);
           } else if (dateGrouping == ChartDateGrouping.month) {
-            expDateTime = DateTime(entry.dateTime.year, entry.dateTime.month);
-          }
-          int categoryIndex = 0;
-          if (dataGrouping == ChartDataGrouping.categories) {
-            categoryIndex = categoriesList.indexOf(categoriesMap[entry.categoryId!]!);
-          } else if (dataGrouping == ChartDataGrouping.subcategories) {
-            categoryIndex = categoriesList.indexOf(categoriesMap[entry.subcategoryId ?? NO_SUBCATEGORY]!);
+            entryDateTime = DateTime(entry.dateTime.year, entry.dateTime.month);
           }
 
-          int chartDataAmount = 0;
-          List<int> seriesAmounts = <int>[];
-          ChartData chartData = chartDataBase;
-          bool newSeries = true;
-
-          if (chartMap.containsKey(expDateTime)) {
-            chartData = chartMap[expDateTime]!;
-            seriesAmounts = List<int>.from(chartData.amounts);
-            chartDataAmount = entry.amount + seriesAmounts[categoryIndex];
-            seriesAmounts.removeAt(categoryIndex);
-            newSeries = false;
-
-            chartData = chartData.copyWith(amounts: seriesAmounts);
-          } else {
-            seriesAmounts = List<int>.from(chartDataBase.amounts);
-            chartDataAmount = entry.amount;
-            seriesAmounts.removeAt(categoryIndex);
+          if (entryDateTime.isAtSameMomentAs(startDate) && entryDateTime.isBefore(donutEndDate)) {
+            inDonutRange = true;
           }
 
-          //remove the existing data from the seriesAmounts
-          if (categoryIndex > seriesAmounts.length) {
-            seriesAmounts.add(chartDataAmount);
-          } else {
-            seriesAmounts.insert(categoryIndex, chartDataAmount);
-          }
+          if (type == ChartType.donut && inDonutRange) {
+            donutChartMap.update(categoriesMap[entry.categoryId!]!, (value) {
+              int newAmount = value.amount + entry.amount;
 
-          //if date grouping is new, add with date
-          if (newSeries) {
-            chartData = chartData.copyWith(amounts: seriesAmounts, dateTime: expDateTime);
-          } else {
-            chartData = chartData.copyWith(amounts: seriesAmounts);
+              return value.copyWith(
+                  amount: newAmount,
+                  text: formattedAmount(
+                    currency: CurrencyService().findByCode('USD')!,
+                    value: newAmount,
+                  ));
+            });
+          } else if (type != ChartType.donut) {
+            int categoryIndex = 0;
+            if (dataGrouping == ChartDataGrouping.categories) {
+              categoryIndex = categoriesList.indexOf(categoriesMap[entry.categoryId!]!);
+            } else if (dataGrouping == ChartDataGrouping.subcategories) {
+              categoryIndex = categoriesList.indexOf(categoriesMap[entry.subcategoryId ?? NO_SUBCATEGORY]!);
+            }
+
+            int chartDataAmount = 0;
+            List<int> seriesAmounts = <int>[];
+            ChartData chartData = chartDataBase;
+            bool newSeries = true;
+
+            if (chartMap.containsKey(entryDateTime)) {
+              chartData = chartMap[entryDateTime]!;
+              seriesAmounts = List<int>.from(chartData.amounts);
+              chartDataAmount = entry.amount + seriesAmounts[categoryIndex];
+              seriesAmounts.removeAt(categoryIndex);
+              newSeries = false;
+
+              chartData = chartData.copyWith(amounts: seriesAmounts);
+            } else {
+              seriesAmounts = List<int>.from(chartDataBase.amounts);
+              chartDataAmount = entry.amount;
+              seriesAmounts.removeAt(categoryIndex);
+            }
+
+            //remove the existing data from the seriesAmounts
+            if (categoryIndex > seriesAmounts.length) {
+              seriesAmounts.add(chartDataAmount);
+            } else {
+              seriesAmounts.insert(categoryIndex, chartDataAmount);
+            }
+
+            //if date grouping is new, add with date
+            if (newSeries) {
+              chartData = chartData.copyWith(amounts: seriesAmounts, dateTime: entryDateTime);
+            } else {
+              chartData = chartData.copyWith(amounts: seriesAmounts);
+            }
+            chartMap.update(entryDateTime, (v) => chartData, ifAbsent: () => chartData);
           }
-          chartMap.update(expDateTime, (v) => chartData, ifAbsent: () => chartData);
         }
       });
     }
@@ -155,6 +195,7 @@ class ChartUpdateData implements AppAction {
         _updateChartState((chartState) => chartState.copyWith(
               categories: categoriesList,
               chartData: chartMap,
+              donutChartData: donutChartMap.values.toList(),
               chartType: type,
               chartDateGrouping: dateGrouping,
               chartDataGrouping: dataGrouping,
@@ -228,6 +269,37 @@ class ChartShowTrendLine implements AppAction {
       [
         _updateChartState((chartState) => chartState.copyWith(
               showTrendLine: !appState.chartState.showTrendLine,
+            )),
+      ],
+    );
+  }
+}
+
+class ChartIncrementDecrementDonutDate implements AppAction {
+  final bool increment;
+
+  ChartIncrementDecrementDonutDate({this.increment = false});
+
+  @override
+  AppState updateState(AppState appState) {
+    ChartDateGrouping dateGrouping = appState.chartState.chartDateGrouping;
+    DateTime donutStartDate = appState.chartState.donutStartDate;
+    int adjustment = increment ? 1 : -1;
+
+    if (dateGrouping == ChartDateGrouping.day) {
+      donutStartDate = DateTime(donutStartDate.year, donutStartDate.month, donutStartDate.day + adjustment);
+    } else if (dateGrouping == ChartDateGrouping.month) {
+      donutStartDate = DateTime(donutStartDate.year, donutStartDate.month + adjustment);
+    } else {
+      donutStartDate = DateTime(donutStartDate.year + adjustment);
+    }
+
+    return updateSubstates(
+      appState,
+      [
+        _updateChartState((chartState) => chartState.copyWith(
+              donutStartDate: donutStartDate,
+              rebuildChartData: true,
             )),
       ],
     );

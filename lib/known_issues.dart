@@ -65,7 +65,6 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0 ?? this works i think
-//chart trendline option
 //build chart filter mechanism
 
 
