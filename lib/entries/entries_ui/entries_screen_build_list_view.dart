@@ -20,18 +20,27 @@ class EntriesScreenBuildListView extends StatelessWidget {
     Map<String, Tag> tags = Env.store.state.tagState.tags;
 
 
-    return ListView.builder(
-        scrollDirection: Axis.vertical,
-        shrinkWrap: true,
-        padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
-        itemCount: entries.length,
-        itemBuilder: (BuildContext context, int index) {
-          final AppEntry entry = entries[index];
-          return EntriesListTile(
-            entry: entry,
-            tags: tags,
-            selectedEntries: selectedEntries,
-          );
-        });
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: ListView.builder(
+          scrollDirection: Axis.vertical,
+          shrinkWrap: true,
+          padding: const EdgeInsets.only(bottom: kFloatingActionButtonMargin + 48),
+          itemCount: entries.length,
+          itemBuilder: (BuildContext context, int index) {
+            final AppEntry entry = entries[index];
+            return EntriesListTile(
+              entry: entry,
+              tags: tags,
+              selectedEntries: selectedEntries,
+            );
+          }),
+    );
+  }
+
+  Future<void> _onRefresh() async {
+      Env.entriesFetcher.loadEntries();
+      Env.tagFetcher.loadTags();
+      await Future.delayed(Duration(seconds: 2));
   }
 }

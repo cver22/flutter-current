@@ -34,7 +34,6 @@
 //TODO trace Renderings, why so much rendering duplication and re-rendering
 //TODO fix paid spent averaging/rounding, use odd even days
 //TODO add entriesFiltered and chartFiltered to entriesState and move filtering code from the UI so that its not handled on every rebuild of the UI
-//add pull to refresh
 
 //TODO VISUAL
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
@@ -44,13 +43,10 @@
 //TODO is there a better way to handle "Other" in entries tiles
 
 //TODO CHART
-//toggle stackedBar/line/donut
 //add filter
 //line chart by tag
 //uses default currency by default but can select others (only one at a time)
 //copy filter from entries if it is a valid chart filter
-
-
 
 
 //TODO WARNINGS AND TOASTS to build
@@ -66,8 +62,6 @@
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0 ?? this works i think
 //build chart filter mechanism
-
-
 
 
 

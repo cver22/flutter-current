@@ -1524,6 +1524,7 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
 
   if (membersSpending != 0) {
     remainder = divisibleAmount.remainder(membersSpending);
+    //TODO use Random.nextInt(maxNumberOfMembers) then distribute remainder accordingly, will need to figure out how to do this regardless of the number of members
   }
 
   entryMembers.updateAll((key, member) {

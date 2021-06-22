@@ -79,27 +79,30 @@ class LogsScreen extends StatelessWidget {
       BuildContext? context,
       required TabController tabController}) {
     //TODO need better way of handling size of reorderablelist
-    return DragAndDropLists(
-      onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) {
-        //unused function
-      },
-      onListReorder: (oldIndex, newIndex) => {
-        Env.store.dispatch(LogReorder(oldIndex: oldIndex, newIndex: newIndex, logs: logs)),
-      },
-      children: List.generate(
-          logs.length,
-          (index) =>
-              _buildList(outerIndex: index, logs: logs, logTotalsState: logTotalsState, tabController: tabController)),
-      listGhost: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 30.0),
-        child: Center(
-          child: Container(
-            padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 100.0),
-            decoration: BoxDecoration(
-              border: Border.all(),
-              borderRadius: BorderRadius.circular(7.0),
+    return RefreshIndicator(
+      onRefresh: _onRefresh,
+      child: DragAndDropLists(
+        onItemReorder: (oldItemIndex, oldListIndex, newItemIndex, newListIndex) {
+          //unused function
+        },
+        onListReorder: (oldIndex, newIndex) => {
+          Env.store.dispatch(LogReorder(oldIndex: oldIndex, newIndex: newIndex, logs: logs)),
+        },
+        children: List.generate(
+            logs.length,
+            (index) =>
+                _buildList(outerIndex: index, logs: logs, logTotalsState: logTotalsState, tabController: tabController)),
+        listGhost: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 30.0),
+          child: Center(
+            child: Container(
+              padding: EdgeInsets.symmetric(vertical: 40.0, horizontal: 100.0),
+              decoration: BoxDecoration(
+                border: Border.all(),
+                borderRadius: BorderRadius.circular(7.0),
+              ),
+              child: Icon(Icons.add_box),
             ),
-            child: Icon(Icons.add_box),
           ),
         ),
       ),
@@ -122,5 +125,10 @@ class LogsScreen extends StatelessWidget {
         children: [
           DragAndDropItem(child: Container()),
         ]);
+  }
+
+  Future<void> _onRefresh() async {
+    Env.logsFetcher.loadLogs();
+    await Future.delayed(Duration(seconds: 2));
   }
 }

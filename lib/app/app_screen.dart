@@ -1,4 +1,5 @@
 import 'package:expenses/chart/chart_ui/chart_dialog.dart';
+import 'package:expenses/store/actions/app_actions.dart';
 
 import '../chart/chart_ui/chart_screen.dart';
 
@@ -115,29 +116,6 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
     );
   }
 
-  PopupMenuButton<String> _buildEntriesPopupMenuButton({required EntriesState state}) {
-    return PopupMenuButton<String>(
-      onSelected: handleClick,
-      itemBuilder: (BuildContext context) {
-        Set<String> menuOptions;
-
-        //TODO need to make this so it work with all languages
-        if (state.descending) {
-          menuOptions = {'Filter', 'Ascending'};
-        } else {
-          menuOptions = {'Filter', 'Descending'};
-        }
-
-        return menuOptions.map((String choice) {
-          return PopupMenuItem<String>(
-            value: choice,
-            child: Text(choice),
-          );
-        }).toList();
-      },
-    );
-  }
-
   PopupMenuButton<String> _buildLogPopupMenuButton() {
     return PopupMenuButton<String>(
       onSelected: handleClick,
@@ -156,19 +134,6 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
 
   void handleClick(String value) {
     switch (value) {
-      case 'Filter':
-        Env.store.dispatch(FilterSetReset(entriesChart: EntriesCharts.entries));
-        showDialog(
-          context: context,
-          builder: (_) => FilterDialog(entriesChart: EntriesCharts.entries),
-        );
-        break;
-      case 'Ascending':
-        Env.store.dispatch(EntriesSetOrder());
-        break;
-      case 'Descending':
-        Env.store.dispatch(EntriesSetOrder());
-        break;
       case 'Add Log':
         Env.store.dispatch(SetNewLog());
         Get.toNamed(ExpenseRoutes.addEditLog);
@@ -185,9 +150,9 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    //if (state.chartFilter.isSome) _clearFilterButton(action: Clear chart filter action),
+                    _filterButton(entriesChart: EntriesCharts.charts),
                     _chartSettingButton(),
-                    //if (state.entriesFilter.isSome) _clearFilterButton(),
-                    //_buildChartPopupMenuButton(state: state),
                   ],
                 )
               : Container();
@@ -203,17 +168,19 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    if (state.entriesFilter.isSome) _clearFilterButton(),
+                    if (state.entriesFilter.isSome) _clearFilterButton(action: EntriesClearEntriesFilter()),
                     if (state.selectedEntries.isNotEmpty) _clearSelectionButton(),
                     if (state.selectedEntries.isNotEmpty) _deleteSelectionButton(),
-                    _buildEntriesPopupMenuButton(state: state),
+                    _filterButton(entriesChart: EntriesCharts.entries),
+                    _entriesOrder(state: state),
+                    //_buildEntriesPopupMenuButton(state: state),
                   ],
                 )
               : Container();
         });
   }
 
-  Widget _clearFilterButton() {
+  Widget _clearFilterButton({required AppAction action}) {
     return IconButton(
       icon: Stack(
         children: [
@@ -227,7 +194,7 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
         ],
       ),
       onPressed: () {
-        Env.store.dispatch(EntriesClearEntriesFilter());
+        Env.store.dispatch(action);
       },
     );
   }
@@ -251,6 +218,15 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
             ],
           );
         });
+  }
+
+  Widget _entriesOrder({required EntriesState state}) {
+    return IconButton(
+      icon: !state.descending ? Icon(Icons.arrow_upward_outlined) : Icon(Icons.arrow_downward_outlined),
+      onPressed: () {
+        Env.store.dispatch(EntriesSetOrder());
+      },
+    );
   }
 
   Widget _clearSelectionButton() {
@@ -288,6 +264,19 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
         showDialog(
           context: context,
           builder: (_) => ChartDialog(),
+        );
+      },
+    );
+  }
+
+  Widget _filterButton({required EntriesCharts entriesChart}) {
+    return IconButton(
+      icon: Icon(Icons.filter_alt_outlined),
+      onPressed: () {
+        Env.store.dispatch(FilterSetReset(entriesChart: entriesChart));
+        showDialog(
+          context: context,
+          builder: (_) => FilterDialog(entriesChart: entriesChart),
         );
       },
     );

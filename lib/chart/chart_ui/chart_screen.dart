@@ -26,6 +26,16 @@ class ChartScreen extends StatelessWidget {
       zoomMode: ZoomMode.x,
       enablePanning: true,
     );
+    Legend _legend = Legend(
+      isVisible: true,
+      overflowMode: LegendItemOverflowMode.wrap,
+      position: LegendPosition.bottom,
+      toggleSeriesVisibility: true,
+    );
+    late DateTimeCategoryAxis _dateTimeCategoryAxis;
+    late NumericAxis _numericAxis;
+    late Trendline _trendLine;
+
     List<ChartData> chartData = <ChartData>[];
     List<DonutChartData> donutChartData = <DonutChartData>[];
     List<ChartSeries> series = <ChartSeries>[];
@@ -40,6 +50,13 @@ class ChartScreen extends StatelessWidget {
           bool showTrendLine = chartState.showTrendLine;
           bool showMarkers = chartState.showMarkers;
           total = 0;
+          _numericAxis = NumericAxis(numberFormat: NumberFormat.simpleCurrency(decimalDigits: 2));
+          _trendLine = Trendline(
+            isVisible: showTrendLine,
+            type: TrendlineType.polynomial,
+            color: Colors.blue,
+            isVisibleInLegend: false,
+          );
           if (chartState.rebuildChartData) {
             loading = true;
           }
@@ -54,6 +71,7 @@ class ChartScreen extends StatelessWidget {
           //sets date interval
           DateTimeIntervalType dateTimeIntervalType = DateTimeIntervalType.months;
           DateFormat dateFormat = DateFormat.MMM();
+          _dateTimeCategoryAxis = DateTimeCategoryAxis(intervalType: dateTimeIntervalType, dateFormat: dateFormat);
           if (chartState.chartDateGrouping == ChartDateGrouping.year) {
             dateTimeIntervalType = DateTimeIntervalType.years;
             dateFormat = DateFormat.y();
@@ -66,9 +84,7 @@ class ChartScreen extends StatelessWidget {
             series = <ChartSeries>[];
             for (int i = 0; i < categories.length; i++) {
               series.add(StackedColumnSeries<ChartData, DateTime>(
-                trendlines: <Trendline>[
-                  Trendline(isVisible: showTrendLine, type: TrendlineType.polynomial, color: Colors.blue)
-                ],
+                trendlines: <Trendline>[_trendLine],
                 markerSettings: MarkerSettings(isVisible: showMarkers),
                 dataSource: chartData,
                 xValueMapper: (ChartData exp, _) => exp.dateTime,
@@ -77,11 +93,9 @@ class ChartScreen extends StatelessWidget {
               ));
             }
             return SfCartesianChart(
-              legend: Legend(isVisible: true),
-              primaryXAxis: DateTimeCategoryAxis(intervalType: dateTimeIntervalType, dateFormat: dateFormat),
-              primaryYAxis: NumericAxis(
-                numberFormat: NumberFormat.simpleCurrency(decimalDigits: 2),
-              ),
+              legend: _legend,
+              primaryXAxis: _dateTimeCategoryAxis,
+              primaryYAxis: _numericAxis,
               series: series,
               tooltipBehavior: _tooltipBehavior,
               zoomPanBehavior: _zoomPanBehavior,
@@ -90,9 +104,7 @@ class ChartScreen extends StatelessWidget {
             series = <ChartSeries>[];
             for (int i = 0; i < categories.length; i++) {
               series.add(LineSeries<ChartData, DateTime>(
-                trendlines: <Trendline>[
-                  Trendline(isVisible: showTrendLine, type: TrendlineType.polynomial, color: Colors.blue)
-                ],
+                trendlines: <Trendline>[_trendLine],
                 markerSettings: MarkerSettings(isVisible: showMarkers),
                 dataSource: chartData,
                 xValueMapper: (ChartData exp, _) => exp.dateTime,
@@ -101,11 +113,9 @@ class ChartScreen extends StatelessWidget {
               ));
             }
             return SfCartesianChart(
-              legend: Legend(isVisible: true),
-              primaryXAxis: DateTimeCategoryAxis(intervalType: dateTimeIntervalType, dateFormat: dateFormat),
-              primaryYAxis: NumericAxis(
-                numberFormat: NumberFormat.simpleCurrency(decimalDigits: 2),
-              ),
+              legend: _legend,
+              primaryXAxis: _dateTimeCategoryAxis,
+              primaryYAxis: _numericAxis,
               series: series,
               tooltipBehavior: _tooltipBehavior,
               zoomPanBehavior: _zoomPanBehavior,
@@ -118,31 +128,14 @@ class ChartScreen extends StatelessWidget {
             return Column(
               mainAxisSize: MainAxisSize.max,
               children: [
-                Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-                  IconButton(
-                      icon: Icon(Icons.chevron_left_outlined),
-                      onPressed: () {
-                        Env.store.dispatch(ChartIncrementDecrementDonutDate(increment: false));
-                      }),
-                  _getDonutDate(donutStartDate: chartState.donutStartDate, dateGrouping: chartState.chartDateGrouping),
-                  IconButton(
-                      icon: Icon(Icons.chevron_right_outlined),
-                      onPressed: () {
-                        Env.store.dispatch(ChartIncrementDecrementDonutDate(increment: true));
-                      }),
-                ]),
+                _buildDateSelector(chartState: chartState),
                 Expanded(
                   child: SfCircularChart(
                     title: ChartTitle(
                       text:
                           'Total spend: ${formattedAmount(currency: CurrencyService().findByCode('USD')!, value: total, showSymbol: true)}',
                     ),
-                    legend: Legend(
-                      isVisible: true,
-                      overflowMode: LegendItemOverflowMode.wrap,
-                      position: LegendPosition.bottom,
-                      toggleSeriesVisibility: true,
-                    ),
+                    legend: _legend,
                     tooltipBehavior: _tooltipBehavior,
                     series: <CircularSeries>[
                       DoughnutSeries<DonutChartData, String>(
@@ -165,21 +158,26 @@ class ChartScreen extends StatelessWidget {
               activate: true,
               loadingMessage: 'Loading Chart',
             );
-            /* for (int i = 0; i < categories.length; i++) {
-            series.add(DoughnutSeries<ChartData, DateTime>(
-              dataSource: chartData,
-              xValueMapper: (ChartData exp, _) => exp.dateTime,
-              yValueMapper: (ChartData exp, _) => exp.amounts[i].toDouble() / 100,
-              name: categories[i],
-            ));
-            }
-            return SfCircularChart(
-              series: series,
-              tooltipBehavior: _tooltipBehavior,
-            );*/
+
 
           }
         });
+  }
+
+  Widget _buildDateSelector({required ChartState chartState}) {
+    return Row(mainAxisSize: MainAxisSize.max, mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+      IconButton(
+          icon: Icon(Icons.chevron_left_outlined),
+          onPressed: () {
+            Env.store.dispatch(ChartIncrementDecrementDonutDate(increment: false));
+          }),
+      _getDonutDate(donutStartDate: chartState.donutStartDate, dateGrouping: chartState.chartDateGrouping),
+      IconButton(
+          icon: Icon(Icons.chevron_right_outlined),
+          onPressed: () {
+            Env.store.dispatch(ChartIncrementDecrementDonutDate(increment: true));
+          }),
+    ]);
   }
 
   Widget _getDonutDate({required DateTime donutStartDate, required ChartDateGrouping dateGrouping}) {
