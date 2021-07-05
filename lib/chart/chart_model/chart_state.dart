@@ -1,4 +1,9 @@
+import 'dart:collection';
+
 import 'package:equatable/equatable.dart';
+import 'package:expenses/entry/entry_model/app_entry.dart';
+import '../../filter/filter_model/filter.dart';
+import '../../utils/maybe.dart';
 import '../../utils/db_consts.dart';
 import 'chart_data.dart';
 import 'donut_chart_data.dart';
@@ -15,19 +20,25 @@ class ChartState extends Equatable {
   final bool showTrendLine;
   final bool showMarkers;
   final DateTime donutStartDate;
+  final Maybe<Filter> chartFilter;
+  final Map<String, AppEntry> filteredEntries;
+  //TODO need rebuildFilteredEntries bool for when entries are created/updated
 
-  ChartState(
-      {required this.chartDateGrouping,
-      required this.chartType,
-      required this.chartDataGrouping,
-      required this.chartData,
-      required this.donutChartData,
-      required this.categories,
-      required this.loading,
-      required this.rebuildChartData,
-      required this.showTrendLine,
-      required this.showMarkers,
-      required this.donutStartDate});
+  ChartState({
+    required this.chartDateGrouping,
+    required this.chartType,
+    required this.chartDataGrouping,
+    required this.chartData,
+    required this.donutChartData,
+    required this.categories,
+    required this.loading,
+    required this.rebuildChartData,
+    required this.showTrendLine,
+    required this.showMarkers,
+    required this.donutStartDate,
+    required this.chartFilter,
+    required this.filteredEntries,
+  });
 
   @override
   List<Object?> get props => [
@@ -35,13 +46,15 @@ class ChartState extends Equatable {
         chartType,
         chartDataGrouping,
         chartData,
-    donutChartData,
+        donutChartData,
         categories,
         loading,
         rebuildChartData,
         showTrendLine,
         showMarkers,
         donutStartDate,
+        chartFilter,
+        filteredEntries,
       ];
 
   @override
@@ -60,6 +73,8 @@ class ChartState extends Equatable {
       showTrendLine: false,
       showMarkers: false,
       donutStartDate: DateTime.utc(DateTime.now().year, DateTime.now().month),
+      chartFilter: Maybe<Filter>.none(),
+      filteredEntries: LinkedHashMap(),
     );
   }
 
@@ -75,6 +90,8 @@ class ChartState extends Equatable {
     bool? showTrendLine,
     bool? showMarkers,
     DateTime? donutStartDate,
+    Maybe<Filter>? chartFilter,
+    Map<String, AppEntry>? filteredEntries,
   }) {
     if ((chartDateGrouping == null || identical(chartDateGrouping, this.chartDateGrouping)) &&
         (chartType == null || identical(chartType, this.chartType)) &&
@@ -86,7 +103,9 @@ class ChartState extends Equatable {
         (rebuildChartData == null || identical(rebuildChartData, this.rebuildChartData)) &&
         (showTrendLine == null || identical(showTrendLine, this.showTrendLine)) &&
         (showMarkers == null || identical(showMarkers, this.showMarkers)) &&
-        (donutStartDate == null || identical(donutStartDate, this.donutStartDate))) {
+        (donutStartDate == null || identical(donutStartDate, this.donutStartDate)) &&
+        (chartFilter == null || identical(chartFilter, this.chartFilter)) &&
+        (filteredEntries == null || identical(filteredEntries, this.filteredEntries))) {
       return this;
     }
 
@@ -102,6 +121,8 @@ class ChartState extends Equatable {
       showTrendLine: showTrendLine ?? this.showTrendLine,
       showMarkers: showMarkers ?? this.showMarkers,
       donutStartDate: donutStartDate ?? this.donutStartDate,
+      chartFilter: chartFilter ?? this.chartFilter,
+      filteredEntries: filteredEntries ?? this.filteredEntries,
     );
   }
 }

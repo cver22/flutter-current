@@ -1,6 +1,10 @@
 import 'package:currency_picker/currency_picker.dart';
 import 'package:expenses/chart/chart_model/donut_chart_data.dart';
 import 'package:expenses/currency/currency_utils/currency_formatters.dart';
+import 'package:expenses/filter/filter_model/filter.dart';
+import 'package:expenses/filter/filter_model/filter_state.dart';
+import 'package:expenses/tags/tag_model/tag.dart';
+import 'package:expenses/utils/maybe.dart';
 
 import '../../chart/chart_model/chart_data.dart';
 import '../../log/log_model/log.dart';
@@ -10,7 +14,7 @@ import '../../chart/chart_model/chart_state.dart';
 import '../../app/models/app_state.dart';
 import 'app_actions.dart';
 
-AppState Function(AppState) _updateChartState(ChartState update(chartState)) {
+AppState Function(AppState) updateChartState(ChartState update(chartState)) {
   return (state) => state.copyWith(chartState: update(state.chartState));
 }
 
@@ -20,6 +24,7 @@ class ChartUpdateData implements AppAction {
   final ChartType? chartType;
   final bool? rebuildChartData;
   final DateTime? donutStartDate;
+  final bool clearFilter;
 
   ChartUpdateData({
     this.chartDateGrouping,
@@ -27,6 +32,7 @@ class ChartUpdateData implements AppAction {
     this.chartType,
     this.rebuildChartData,
     this.donutStartDate,
+    this.clearFilter = false,
   });
 
   @override
@@ -43,6 +49,11 @@ class ChartUpdateData implements AppAction {
     DateTime startDate = donutStartDate ?? appState.chartState.donutStartDate;
     DateTime donutEndDate = DateTime.now();
     Map<String, DonutChartData> donutChartMap = <String, DonutChartData>{};
+    Maybe<Filter> chartFilter = clearFilter ? Maybe<Filter>.none() : appState.chartState.chartFilter;
+
+    if (chartFilter.isSome) {
+      entries = Map<String, AppEntry>.of(appState.chartState.filteredEntries);
+    }
 
     if (dateGrouping != appState.chartState.chartDateGrouping ||
         dataGrouping != appState.chartState.chartDataGrouping ||
@@ -50,6 +61,7 @@ class ChartUpdateData implements AppAction {
       chartMap = <DateTime, ChartData>{};
       categoriesList = <String>[];
 
+      //if the chart type is a donut, set the date grouping
       if (type == ChartType.donut) {
         if (dateGrouping == ChartDateGrouping.day) {
           startDate = DateTime(startDate.year, startDate.month, startDate.day);
@@ -63,6 +75,7 @@ class ChartUpdateData implements AppAction {
         }
       }
 
+      //if the data is grouped by category or subcategory, create a map of all categories and subcategories from the logs
       logs.forEach((key, log) {
         if (dataGrouping == ChartDataGrouping.categories) {
           log.categories.forEach((category) {
@@ -82,9 +95,7 @@ class ChartUpdateData implements AppAction {
         }
       });
 
-      //TODO this will need to be refactored to handle named categories and other things that the filter handles
-
-      //list all categories of subcategories
+      //list all categories or subcategories and prevent duplication of the category map names
       if (dataGrouping != ChartDataGrouping.total) {
         entries.forEach((key, entry) {
           if (entry.categoryId != TRANSFER_FUNDS) {
@@ -192,7 +203,7 @@ class ChartUpdateData implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateChartState((chartState) => chartState.copyWith(
+        updateChartState((chartState) => chartState.copyWith(
               categories: categoriesList,
               chartData: chartMap,
               donutChartData: donutChartMap.values.toList(),
@@ -201,6 +212,8 @@ class ChartUpdateData implements AppAction {
               chartDataGrouping: dataGrouping,
               rebuildChartData: false,
               loading: false,
+              chartFilter: chartFilter,
+              filteredEntries: clearFilter ? <String, AppEntry>{} : appState.chartState.filteredEntries,
             )),
       ],
     );
@@ -233,7 +246,7 @@ class ChartSetOptions implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateChartState((chartState) => chartState.copyWith(
+        updateChartState((chartState) => chartState.copyWith(
               chartType: type,
               chartDateGrouping: dateGrouping,
               chartDataGrouping: dataGrouping,
@@ -253,7 +266,7 @@ class ChartSetLoading implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateChartState((chartState) => chartState.copyWith(
+        updateChartState((chartState) => chartState.copyWith(
               loading: true,
             )),
       ],
@@ -267,7 +280,7 @@ class ChartShowTrendLine implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateChartState((chartState) => chartState.copyWith(
+        updateChartState((chartState) => chartState.copyWith(
               showTrendLine: !appState.chartState.showTrendLine,
             )),
       ],
@@ -297,10 +310,53 @@ class ChartIncrementDecrementDonutDate implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateChartState((chartState) => chartState.copyWith(
+        updateChartState((chartState) => chartState.copyWith(
               donutStartDate: donutStartDate,
               rebuildChartData: true,
             )),
+      ],
+    );
+  }
+}
+
+class ChartSetChartFilter implements AppAction {
+  final String? logId;
+
+  ChartSetChartFilter({this.logId});
+
+  @override
+  AppState updateState(AppState appState) {
+    FilterState filterState = appState.filterState;
+    Map<String, AppEntry> filteredEntries = <String, AppEntry>{};
+
+    Maybe<Filter> updatedFilter = Maybe<Filter>.some(Filter.initial());
+
+    if (logId == null) {
+      //if filter has been changed, save new filter, if reset, pass no filter
+      updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
+    } else {
+      //filter was set fro a logListTile and should only filter based on the log
+      List<String> selectedLogs = [];
+      selectedLogs.add(logId!);
+      updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
+    }
+
+    filteredEntries = buildFilteredEntries(
+      entries: appState.entriesState.entries.values.toList(),
+      filter: updatedFilter.value,
+      logs: Map<String, Log>.of(appState.logsState.logs),
+      allTags: Map<String, Tag>.of(appState.tagState.tags),
+    );
+
+    return updateSubstates(
+      appState,
+      [
+        updateChartState((chartState) => chartState.copyWith(
+              chartFilter: updatedFilter,
+              filteredEntries: filteredEntries,
+          rebuildChartData: true,
+            )),
+        updateFilterState((filterState) => FilterState.initial()),
       ],
     );
   }

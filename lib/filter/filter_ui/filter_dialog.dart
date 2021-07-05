@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/store/actions/chart_actions.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -141,7 +142,7 @@ class _FilterDialogState extends State<FilterDialog> {
                   if (entriesChart == EntriesCharts.entries) {
                     Env.store.dispatch(EntriesSetEntriesFilter());
                   } else if (entriesChart == EntriesCharts.charts) {
-                    Env.store.dispatch(EntriesSetChartFilter());
+                    Env.store.dispatch(ChartSetChartFilter());
                   }
                   Get.back();
                 }),

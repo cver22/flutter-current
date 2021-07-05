@@ -46,7 +46,7 @@ dependencies:
   functional_data: ^1.0.0
   hive: ^2.0.4
   hive_flutter: ^1.0.0
-  syncfusion_flutter_charts: ^19.1.69
+  syncfusion_flutter_charts: ^19.2.44+1
   encrypt: ^5.0.0
 
 

@@ -158,8 +158,6 @@ class ChartScreen extends StatelessWidget {
               activate: true,
               loadingMessage: 'Loading Chart',
             );
-
-
           }
         });
   }

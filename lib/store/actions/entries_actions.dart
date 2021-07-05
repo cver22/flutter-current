@@ -1,4 +1,6 @@
 import 'dart:collection';
+import 'package:expenses/categories/categories_model/app_category/app_category.dart';
+
 import '../../entry/entry_model/single_entry_state.dart';
 import '../../app/models/app_state.dart';
 import '../../entry/entry_model/app_entry.dart';
@@ -86,6 +88,7 @@ class EntriesSetEntriesFilter implements AppAction {
   @override
   AppState updateState(AppState appState) {
     FilterState filterState = appState.filterState;
+    Map<String, AppEntry> filteredEntries = <String, AppEntry>{};
 
     Maybe<Filter> updatedFilter = Maybe<Filter>.some(Filter.initial());
 
@@ -99,10 +102,20 @@ class EntriesSetEntriesFilter implements AppAction {
       updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 
+    filteredEntries = buildFilteredEntries(
+      entries: appState.entriesState.entries.values.toList(),
+      filter: updatedFilter.value,
+      logs: Map<String, Log>.of(appState.logsState.logs),
+      allTags: Map<String, Tag>.of(appState.tagState.tags),
+    );
+
     return updateSubstates(
       appState,
       [
-        updateEntriesState((entriesState) => entriesState.copyWith(entriesFilter: updatedFilter)),
+        updateEntriesState((entriesState) => entriesState.copyWith(
+              entriesFilter: updatedFilter,
+              filteredEntries: filteredEntries,
+            )),
         updateFilterState((filterState) => FilterState.initial()),
       ],
     );
@@ -115,7 +128,10 @@ class EntriesClearEntriesFilter implements AppAction {
     return updateSubstates(
       appState,
       [
-        updateEntriesState((entriesState) => entriesState.copyWith(entriesFilter: Maybe<Filter>.none())),
+        updateEntriesState((entriesState) => entriesState.copyWith(
+              entriesFilter: Maybe<Filter>.none(),
+              filteredEntries: <String, AppEntry>{},
+            )),
       ],
     );
   }
@@ -306,3 +322,4 @@ Map<String, LogTotal> _entriesUpdateLogsTotals(
   });
   return logTotals;
 }
+

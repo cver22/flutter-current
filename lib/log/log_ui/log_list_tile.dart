@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/store/actions/chart_actions.dart';
 import '../../app/common_widgets/list_tile_components.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -52,6 +53,7 @@ class LogListTile extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
+                        Env.store.dispatch(ChartSetChartFilter(logId: log.id));
                         tabController.animateTo(2);
                       },
                       icon: Icon(Icons.assessment_outlined),

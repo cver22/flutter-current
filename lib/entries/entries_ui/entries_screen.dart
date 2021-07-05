@@ -4,16 +4,11 @@ import 'package:get/get.dart';
 import '../../app/common_widgets/empty_content.dart';
 import '../../app/common_widgets/error_widget.dart';
 import '../../app/common_widgets/loading_indicator.dart';
-import '../../categories/categories_model/app_category/app_category.dart';
 import '../../entry/entry_model/app_entry.dart';
 import '../../env.dart';
-import '../../filter/filter_model/filter.dart';
-import '../../log/log_model/log.dart';
 import '../../store/actions/single_entry_actions.dart';
 import '../../store/connect_state.dart';
-import '../../tags/tag_model/tag.dart';
 import '../../utils/expense_routes.dart';
-import '../../utils/maybe.dart';
 import '../../utils/utils.dart';
 import '../entries_model/entries_state.dart';
 import 'entries_screen_build_list_view.dart';
@@ -46,16 +41,19 @@ class EntriesScreen extends StatelessWidget {
           if (entriesState.isLoading == true) {
             return ModalLoadingIndicator(loadingMessage: 'Loading your entries...', activate: true);
           } else if (entriesState.isLoading == false && entriesState.entries.isNotEmpty) {
-            entries = entriesState.entries.entries.map((e) => e.value).toList()
-              ..sort((a, b) => b.dateTime.compareTo(a.dateTime));
+            entries = entriesState.entriesFilter.isSome
+                ? entriesState.filteredEntries.entries.map((e) => e.value).toList()
+                : entriesState.entries.entries.map((e) => e.value).toList();
 
             if (!entriesState.descending) {
               //resort ascending if selected
               entries.sort((a, b) => a.dateTime.compareTo(b.dateTime));
+            } else {
+              entries.sort((a, b) => b.dateTime.compareTo(a.dateTime));
             }
 
             return EntriesScreenBuildListView(
-              entries: _buildFilteredEntries(entries: List.from(entries), entriesFilter: entriesState.entriesFilter),
+              entries: entries,
               selectedEntries: entriesState.selectedEntries,
             );
           } else if (entriesState.isLoading == false && entriesState.entries.isEmpty) {
@@ -69,7 +67,7 @@ class EntriesScreen extends StatelessWidget {
     );
   }
 }
-
+/*
 List<AppEntry> _buildFilteredEntries({
   required List<AppEntry> entries,
   required Maybe<Filter> entriesFilter,
@@ -109,8 +107,11 @@ List<AppEntry> _buildFilteredEntries({
       entries.removeWhere((entry) {
         List<AppCategory?> subcategories = logs[entry.logId]!.subcategories;
 
-        AppCategory? subcategory =
-            subcategories.firstWhere((subcategory) => subcategory!.id == entry.subcategoryId, orElse: () => null);
+        AppCategory? subcategory;
+
+        if (entry.subcategoryId != null) {
+          subcategory = subcategories.firstWhere((subcategory) => subcategory!.id == entry.subcategoryId);
+        }
 
         if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
           //filter contains subcategory, show entry
@@ -214,4 +215,4 @@ List<AppEntry> _buildFilteredEntries({
   }
 
   return entries;
-}
+}*/

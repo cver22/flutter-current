@@ -1,5 +1,7 @@
 import 'package:expenses/chart/chart_ui/chart_dialog.dart';
 import 'package:expenses/store/actions/app_actions.dart';
+import 'package:expenses/store/actions/chart_actions.dart';
+import '../chart/chart_model/chart_state.dart';
 
 import '../chart/chart_ui/chart_screen.dart';
 
@@ -142,15 +144,20 @@ class _AppScreenState extends State<AppScreen> with SingleTickerProviderStateMix
   }
 
   Widget _buildChartActions() {
-    return ConnectState<EntriesState>(
+    return ConnectState<ChartState>(
         where: notIdentical,
-        map: (state) => state.entriesState,
+        map: (state) => state.chartState,
         builder: (state) {
-          return state.entries.isNotEmpty
+          return Env.store.state.entriesState.entries.isNotEmpty
               ? Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    //if (state.chartFilter.isSome) _clearFilterButton(action: Clear chart filter action),
+                    if (state.chartFilter.isSome)
+                      _clearFilterButton(
+                          action: ChartUpdateData(
+                        clearFilter: true,
+                        rebuildChartData: true,
+                      )),
                     _filterButton(entriesChart: EntriesCharts.charts),
                     _chartSettingButton(),
                   ],

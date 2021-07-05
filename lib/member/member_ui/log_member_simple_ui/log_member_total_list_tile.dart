@@ -1,7 +1,7 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/log/log_model/log.dart';
 import 'package:flutter/material.dart';
 
+import '../../../log/log_model/log.dart';
 import '../../../env.dart';
 import '../../../currency/currency_utils/currency_formatters.dart';
 import '../../member_model/log_member_model/log_member.dart';
@@ -44,8 +44,15 @@ Widget _totals({required LogMember member, required String logId, required Curre
   Env.store.state.entriesState.entries.values
       .where((entry) => entry.logId == logId)
       .forEach((element) {
-    paid += element.entryMembers[member.uid]?.paid ?? 0;
-    spent += element.entryMembers[member.uid]?.spent ?? 0;
+        if(element.entryMembers[member.uid]!.paying) {
+          paid += element.entryMembers[member.uid]?.paid ?? 0;
+        }
+        if(element.entryMembers[member.uid]!.spending) {
+          spent += element.entryMembers[member.uid]?.spent ?? 0;
+        }
+
+
+   //print('user: ${member.uid} entry id: ${element.id} paid: ${element.entryMembers[member.uid]?.paid}, spent: ${element.entryMembers[member.uid]?.spent}, total paid: $paid, total spent: $spent');
   });
 
   owed = paid - spent;

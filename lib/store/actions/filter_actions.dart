@@ -1,7 +1,7 @@
 import 'dart:collection';
 
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/entry/entry_model/app_entry.dart';
+import '../../entry/entry_model/app_entry.dart';
 
 import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
@@ -133,10 +133,9 @@ class FilterSetReset implements AppAction {
         selectedLogs: selectedLogs);
 
     entries.forEach((entry) {
-      if(!usedCurrencies.contains(entry.currency)){
+      if (!usedCurrencies.contains(entry.currency)) {
         usedCurrencies.add(entry.currency);
       }
-
     });
 
     //create list of expanded categories the same size as the list of categories and set expanded to false
@@ -148,8 +147,8 @@ class FilterSetReset implements AppAction {
     if (entriesChart == EntriesCharts.entries && appState.entriesState.entriesFilter.isSome) {
       updatedFilter = appState.entriesState.entriesFilter.value;
       updated = true;
-    } else if (entriesChart == EntriesCharts.charts && appState.entriesState.chartFilter.isSome) {
-      updatedFilter = appState.entriesState.chartFilter.value;
+    } else if (entriesChart == EntriesCharts.charts && appState.chartState.chartFilter.isSome) {
+      updatedFilter = appState.chartState.chartFilter.value;
       updated = true;
     } else if (log != null) {
       updatedFilter = updatedFilter.copyWith(selectedLogs: selectedLogs);
@@ -627,9 +626,9 @@ class FilterSelectDeselectCurrency implements AppAction {
               selectedCurrencies: selectedCurrencies,
             )))),
         updateCurrencyState((currencyState) => currencyState.copyWith(
-          searchCurrencies: <Currency>[],
-          search: Maybe<String>.none(),
-        )),
+              searchCurrencies: <Currency>[],
+              search: Maybe<String>.none(),
+            )),
       ],
     );
   }
@@ -679,7 +678,6 @@ List<Tag> _sortTags({
     tag.tagCategoryFrequency.forEach((categoryId, frequency) {
       String? categoryName =
           allCategories![categoryId]?.name; //TODO this shouldn't need fixing after handling subcategories differently
-      print(categoryName);
       categoryFrequency.putIfAbsent(categoryName!, () => frequency);
     });
 
@@ -711,3 +709,4 @@ List<Tag> _sortTags({
 
   return orderTags;
 }
+

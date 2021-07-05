@@ -10,17 +10,17 @@ import '../../utils/maybe.dart';
 @immutable
 class EntriesState extends Equatable {
   final Map<String, AppEntry> entries;
+  final Map<String, AppEntry> filteredEntries;
   final bool isLoading;
   final Maybe<Filter> entriesFilter;
-  final Maybe<Filter> chartFilter;
   final bool descending;
   final List<String> selectedEntries;
 
   EntriesState({
     required this.entries,
+    required this.filteredEntries,
     required this.isLoading,
     required this.entriesFilter,
-    required this.chartFilter,
     required this.descending,
     required this.selectedEntries,
   });
@@ -28,31 +28,32 @@ class EntriesState extends Equatable {
   factory EntriesState.initial() {
     return EntriesState(
       entries: LinkedHashMap(),
+      filteredEntries: LinkedHashMap(),
       isLoading: true,
       entriesFilter: Maybe.none(),
-      chartFilter: Maybe.none(),
       descending: true,
       selectedEntries: <String>[],
     );
   }
 
   @override
-  List<Object> get props => [entries, isLoading, entriesFilter, chartFilter, descending, selectedEntries];
+  List<Object> get props => [entries, filteredEntries, isLoading, entriesFilter, descending, selectedEntries];
 
   @override
   bool get stringify => true;
 
-  EntriesState copyWith(
-      {Map<String, AppEntry>? entries,
-      bool? isLoading,
-      Maybe<Filter>? entriesFilter,
-      Maybe<Filter>? chartFilter,
-      bool? descending,
-      List<String>? selectedEntries}) {
+  EntriesState copyWith({
+    Map<String, AppEntry>? entries,
+    Map<String, AppEntry>? filteredEntries,
+    bool? isLoading,
+    Maybe<Filter>? entriesFilter,
+    bool? descending,
+    List<String>? selectedEntries,
+  }) {
     if ((entries == null || identical(entries, this.entries)) &&
+        (filteredEntries == null || identical(filteredEntries, this.filteredEntries)) &&
         (isLoading == null || identical(isLoading, this.isLoading)) &&
         (entriesFilter == null || identical(entriesFilter, this.entriesFilter)) &&
-        (chartFilter == null || identical(chartFilter, this.chartFilter)) &&
         (descending == null || identical(descending, this.descending)) &&
         (selectedEntries == null || identical(selectedEntries, this.selectedEntries))) {
       return this;
@@ -60,9 +61,9 @@ class EntriesState extends Equatable {
 
     return new EntriesState(
       entries: entries ?? this.entries,
+      filteredEntries: filteredEntries ?? this.filteredEntries,
       isLoading: isLoading ?? this.isLoading,
       entriesFilter: entriesFilter ?? this.entriesFilter,
-      chartFilter: chartFilter ?? this.chartFilter,
       descending: descending ?? this.descending,
       selectedEntries: selectedEntries ?? this.selectedEntries,
     );

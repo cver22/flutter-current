@@ -89,7 +89,7 @@
       },
       {
          "id":"noCategory",
-         "name":" No Category",
+         "name":"No Category",
          "emojiChar":"🔴",
          "isDefault":true
       }

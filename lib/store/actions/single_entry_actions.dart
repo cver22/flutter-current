@@ -1478,7 +1478,11 @@ Map<String, EntryMember> _distributeDivisibleAmount({
 
     if (member.userEditedSpent && !divideRemaining) {
       return member;
-    } else {
+    } else if (!member.spending) {
+      member.spendingController!.value =
+          TextEditingValue(text: formattedAmount(value: memberSpentAmount, currency: logCurrency));
+      return member.copyWith(spent: memberSpentAmount);
+    }else {
       if (divideRemaining && member.spent != null) {
         memberSpentAmount = member.spent! + (divisibleAmount / membersSpending).truncate();
       } else {
@@ -1532,6 +1536,10 @@ Map<String, EntryMember> _distributeDivisibleAmountForeign({
 
     if (member.userEditedSpent && !divideRemaining) {
       return member;
+    } else if (!member.spending) {
+      member.spendingController!.value =
+          TextEditingValue(text: formattedAmount(value: memberSpentAmount, currency: entryCurrency));
+      return member.copyWith(spent: memberSpentAmount, spentForeign: memberSpentAmount);
     } else {
       if (divideRemaining && member.spentForeign != null) {
         memberSpentAmount = member.spentForeign! + (divisibleAmount / membersSpending).truncate();

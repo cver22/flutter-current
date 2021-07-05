@@ -1,3 +1,5 @@
+import '../../filter/filter_model/filter.dart';
+import '../../utils/maybe.dart';
 import '../../filter/filter_model/filter_state.dart';
 import '../../app/models/app_state.dart';
 import '../../categories/categories_model/app_category/app_category.dart';
@@ -226,4 +228,147 @@ List<bool> reorderLogSettingsExpandedCategories(
   bool movedExpansion = expandedCategories.removeAt(oldCategoryIndex);
   expandedCategories.insert(newCategoryIndex, movedExpansion);
   return expandedCategories;
+}
+
+Map<String, AppEntry> buildFilteredEntries({
+  required List<AppEntry> entries,
+  required Filter filter,
+  required Map<String, Log> logs,
+  required Map<String, Tag> allTags,
+}) {
+  //only processes filters if a filter is present
+    //minimum entry date
+    if (filter.startDate.isSome) {
+      entries.removeWhere((entry) => entry.dateTime.isBefore(filter.startDate.value!));
+    }
+    //maximum entry date
+    if (filter.endDate.isSome) {
+      entries.removeWhere((entry) => entry.dateTime.isAfter(filter.endDate.value!));
+    }
+    //is the entry logId found in the list of logIds selected
+    if (filter.selectedLogs.isNotEmpty) {
+      entries.removeWhere((entry) => !filter.selectedLogs.contains(entry.logId));
+    }
+
+    if (filter.selectedCurrencies.isNotEmpty) {
+      entries.removeWhere((entry) => !filter.selectedCurrencies.contains(entry.currency));
+    }
+
+    if (filter.minAmount.isSome) {
+      entries.removeWhere((entry) => entry.amount < filter.minAmount.value!);
+    }
+    //is the entry amount more than the max amount
+    if (filter.maxAmount.isSome) {
+      entries.removeWhere((entry) => entry.amount > filter.maxAmount.value!);
+    }
+
+    //is the entry subcategoryId found in the list of subcategories selected
+    if (filter.selectedSubcategories.isNotEmpty) {
+      entries.removeWhere((entry) {
+        List<AppCategory?> subcategories = logs[entry.logId]!.subcategories;
+
+        AppCategory? subcategory;
+
+        if (entry.subcategoryId != null) {
+          subcategory = subcategories.firstWhere((subcategory) => subcategory!.id == entry.subcategoryId);
+        }
+
+        if (subcategory != null && filter.selectedSubcategories.contains(subcategory.id)) {
+          //filter contains subcategory, show entry
+          return false;
+        } else {
+          //filter does not contain subcategory, remove entry
+          return true;
+        }
+      });
+    }
+
+    //is the entry categoryID found in the list of categories selected
+    if (filter.selectedCategories.length > 0) {
+      entries.removeWhere((entry) {
+        List<AppCategory?> categories = logs[entry.logId]!.categories;
+        String categoryName = categories.firstWhere((category) => category!.id! == entry.categoryId)!.name!;
+
+        if (filter.selectedCategories.contains(categoryName)) {
+          //filter contains category, show entry
+          return false;
+        } else {
+          //filter does not contain category, remove entry
+          return true;
+        }
+      });
+    }
+
+    //filter entries by who spent
+    if (filter.membersPaid.length > 0) {
+      entries.retainWhere((entry) {
+        List<String> uids = [];
+        bool retain = false;
+        entry.entryMembers.values.forEach((entryMember) {
+          if (entryMember.paying) {
+            uids.add(entryMember.uid);
+          }
+        });
+
+        filter.membersPaid.forEach((element) {
+          if (uids.contains(element)) {
+            retain = true;
+          }
+        });
+
+        return retain;
+      });
+    }
+
+    //filter entries by who paid
+    if (filter.membersSpent.length > 0) {
+      entries.retainWhere((entry) {
+        List<String> uids = [];
+        bool retain = false;
+        entry.entryMembers.values.forEach((entryMember) {
+          if (entryMember.spending) {
+            uids.add(entryMember.uid);
+          }
+        });
+
+        filter.membersSpent.forEach((element) {
+          if (uids.contains(element)) {
+            retain = true;
+          }
+        });
+
+        return retain;
+      });
+    }
+
+    //is the entry categoryID found in the list of categories selected
+    if (filter.selectedTags.isNotEmpty) {
+      entries.retainWhere((entry) {
+        List<String> entryTagIds = entry.tagIDs;
+        List<String> entryTagNames = [];
+        bool retain = false;
+
+        if (entryTagIds.isNotEmpty) {
+          //get name of all tags in the entry
+          entryTagIds.forEach((id) {
+            //error checking for improperly deleted tags
+            if (allTags.keys.contains(id)) {
+              entryTagNames.add(allTags[id]!.name);
+            }
+          });
+
+          for (int i = 0; i < entryTagNames.length; i++) {
+            if (filter.selectedTags.contains(entryTagNames[i])) {
+              //entry contains at least one instance of a filtered tag
+              retain = true;
+              break;
+            }
+          }
+        }
+
+        return retain;
+      });
+    }
+
+  return Map.fromIterable(entries, key: (entry) => entry.id, value: (entry) => entry);
 }

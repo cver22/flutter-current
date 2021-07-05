@@ -43,8 +43,8 @@
 //TODO is there a better way to handle "Other" in entries tiles
 
 //TODO CHART
-//add filter
-//line chart by tag
+//line/bar chart by tag (stack categories)
+//donut chart by tag (split by categories)
 //uses default currency by default but can select others (only one at a time)
 //copy filter from entries if it is a valid chart filter
 
@@ -61,7 +61,8 @@
 
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0 ?? this works i think
-//build chart filter mechanism
+//need rebuildFilteredEntries bool for when entries are created/updated
+
 
 
 
