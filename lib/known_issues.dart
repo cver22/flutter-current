@@ -1,6 +1,6 @@
 //TODO KNOWN ISSUES/ERRORS
 //adding new category and subcategory to settings
-//navigating to account screen
+//TODO modified entries not reflected in filtered results, have torest filter first, some sort of error
 
 // TODO LONG TERM GOALS
 // TODO setting option for auto insert decimal
@@ -34,6 +34,9 @@
 //TODO trace Renderings, why so much rendering duplication and re-rendering
 //TODO fix paid spent averaging/rounding, use odd even days
 //TODO add entriesFiltered and chartFiltered to entriesState and move filtering code from the UI so that its not handled on every rebuild of the UI
+//TODO new log currency is auto set to CAD unless specifically changed
+//TODO add "rebuild chart data" to nearly every change function for categories, subcategories, logs, entries, and tags
+
 
 //TODO VISUAL
 //TODO appDialog needs an invisible icon on the trailing side if there is no trailing
@@ -47,6 +50,7 @@
 //donut chart by tag (split by categories)
 //uses default currency by default but can select others (only one at a time)
 //copy filter from entries if it is a valid chart filter
+//add quick ranges to the date filter and default to last "12 months", "this month", "today",
 
 
 //TODO WARNINGS AND TOASTS to build
@@ -62,6 +66,7 @@
 //TODO START HERE
 //formatters and converters need to accept conversion rates of 0 ?? this works i think
 //need rebuildFilteredEntries bool for when entries are created/updated
+//complete quickDate filter, filterState, and actions
 
 
 

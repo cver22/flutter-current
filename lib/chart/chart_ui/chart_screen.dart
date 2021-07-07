@@ -53,10 +53,11 @@ class ChartScreen extends StatelessWidget {
           _numericAxis = NumericAxis(numberFormat: NumberFormat.simpleCurrency(decimalDigits: 2));
           _trendLine = Trendline(
             isVisible: showTrendLine,
-            type: TrendlineType.polynomial,
+            type: TrendlineType.movingAverage,
             color: Colors.blue,
             isVisibleInLegend: false,
           );
+
           if (chartState.rebuildChartData) {
             loading = true;
           }

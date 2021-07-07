@@ -169,7 +169,7 @@ class _ChartDialogState extends State<ChartDialog> {
             _showMarkers = true;
           } else if (_chartType == ChartType.donut) {
             _showMarkers = false;
-            if(_chartDataGrouping == ChartDataGrouping.total){
+            if (_chartDataGrouping == ChartDataGrouping.total) {
               _chartDataGrouping = ChartDataGrouping.categories;
             }
           }

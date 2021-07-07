@@ -53,7 +53,7 @@ class LogListTile extends StatelessWidget {
                     ),
                     IconButton(
                       onPressed: () {
-                        Env.store.dispatch(ChartSetChartFilter(logId: log.id));
+                        Env.store.dispatch(ChartSetChartByLog(logId: log.id!));
                         tabController.animateTo(2);
                       },
                       icon: Icon(Icons.assessment_outlined),

@@ -53,6 +53,24 @@ class ChartUpdateData implements AppAction {
 
     if (chartFilter.isSome) {
       entries = Map<String, AppEntry>.of(appState.chartState.filteredEntries);
+    } else {
+      print('triggered chart by currency: ${appState.settingsState.settings.value.homeCurrency}');
+      //select only logs with the default currency
+      List<String> selectedLogs = [];
+      logs.forEach((key, log) {
+        if (log.currency == appState.settingsState.settings.value.homeCurrency) {
+          selectedLogs.add(log.id!);
+        }
+      });
+      print('selected logs: $selectedLogs');
+
+      Maybe<Filter> updatedFilter = Maybe<Filter>.some(Filter.initial().copyWith(selectedLogs: selectedLogs));
+      print('filter: $updatedFilter');
+
+      entries = _buildFilteredEntries(
+        appState: appState,
+        updatedFilter: updatedFilter,
+      );
     }
 
     if (dateGrouping != appState.chartState.chartDateGrouping ||
@@ -320,32 +338,13 @@ class ChartIncrementDecrementDonutDate implements AppAction {
 }
 
 class ChartSetChartFilter implements AppAction {
-  final String? logId;
-
-  ChartSetChartFilter({this.logId});
-
   @override
   AppState updateState(AppState appState) {
-    FilterState filterState = appState.filterState;
-    Map<String, AppEntry> filteredEntries = <String, AppEntry>{};
+    Maybe<Filter> updatedFilter = appState.filterState.filter;
 
-    Maybe<Filter> updatedFilter = Maybe<Filter>.some(Filter.initial());
-
-    if (logId == null) {
-      //if filter has been changed, save new filter, if reset, pass no filter
-      updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
-    } else {
-      //filter was set fro a logListTile and should only filter based on the log
-      List<String> selectedLogs = [];
-      selectedLogs.add(logId!);
-      updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
-    }
-
-    filteredEntries = buildFilteredEntries(
-      entries: appState.entriesState.entries.values.toList(),
-      filter: updatedFilter.value,
-      logs: Map<String, Log>.of(appState.logsState.logs),
-      allTags: Map<String, Tag>.of(appState.tagState.tags),
+    Map<String, AppEntry> filteredEntries = _buildFilteredEntries(
+      appState: appState,
+      updatedFilter: updatedFilter,
     );
 
     return updateSubstates(
@@ -354,10 +353,51 @@ class ChartSetChartFilter implements AppAction {
         updateChartState((chartState) => chartState.copyWith(
               chartFilter: updatedFilter,
               filteredEntries: filteredEntries,
-          rebuildChartData: true,
+              rebuildChartData: true,
             )),
         updateFilterState((filterState) => FilterState.initial()),
       ],
     );
   }
+}
+
+class ChartSetChartByLog implements AppAction {
+  final String logId;
+
+  ChartSetChartByLog({required this.logId});
+
+  @override
+  AppState updateState(AppState appState) {
+    //filter was set from a logListTile and should filter based on the log selected
+    List<String> selectedLogs = [];
+    selectedLogs.add(logId);
+    Maybe<Filter> updatedFilter = Maybe<Filter>.some(Filter.initial().copyWith(selectedLogs: selectedLogs));
+
+    Map<String, AppEntry> filteredEntries = _buildFilteredEntries(
+      appState: appState,
+      updatedFilter: updatedFilter,
+    );
+
+    return updateSubstates(
+      appState,
+      [
+        updateChartState((chartState) => chartState.copyWith(
+              chartFilter: updatedFilter,
+              filteredEntries: filteredEntries,
+              rebuildChartData: true,
+            )),
+        updateFilterState((filterState) => FilterState.initial()),
+      ],
+    );
+  }
+}
+
+Map<String, AppEntry> _buildFilteredEntries({required AppState appState, required Maybe<Filter> updatedFilter}) {
+  Map<String, AppEntry> filteredEntries = buildFilteredEntries(
+    entries: appState.entriesState.entries.values.toList(),
+    filter: updatedFilter.value,
+    logs: Map<String, Log>.of(appState.logsState.logs),
+    allTags: Map<String, Tag>.of(appState.tagState.tags),
+  );
+  return filteredEntries;
 }

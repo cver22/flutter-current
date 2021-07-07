@@ -99,6 +99,8 @@ class _FilterDialogState extends State<FilterDialog> {
                   children: [
                     _amountFilter(filter: filter),
                     SizedBox(height: 8.0),
+                    _quickDate(filterState: filterState),
+                    SizedBox(height: 8.0),
                     _dateFilter(),
                     SizedBox(height: 8.0),
                     _currency(filterState: filterState),
@@ -428,13 +430,10 @@ class _FilterDialogState extends State<FilterDialog> {
 
     if (selectedCurrencies.isNotEmpty) {
       selectedCurrencies.forEach((currencyCode) {
-
         if (buttonLabel.length > 0) {
-          buttonLabel +=
-              '\, ${currencyLabelFromCode(currencyCode: currencyCode)}';
+          buttonLabel += '\, ${currencyLabelFromCode(currencyCode: currencyCode)}';
         } else {
-          buttonLabel +=
-              'Currencies: ${currencyLabelFromCode(currencyCode: currencyCode)}';
+          buttonLabel += 'Currencies: ${currencyLabelFromCode(currencyCode: currencyCode)}';
         }
       });
     } else {
@@ -452,7 +451,33 @@ class _FilterDialogState extends State<FilterDialog> {
     });
 
     return currencyList;
+  }
 
+  Widget _quickDate({required FilterState filterState}) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        _quickDateRadio(quickDate: QuickDate.custom, title: 'Custom'),
+        _quickDateRadio(quickDate: QuickDate.day, title: 'Day'),
+        _quickDateRadio(quickDate: QuickDate.month, title: 'Month'),
+        _quickDateRadio(quickDate: QuickDate.year, title: 'Year'),
+      ],
+    );
+  }
 
+  Widget _quickDateRadio({required QuickDate quickDate, required String title}) {
+    return InkWell(
+      onTap: () {
+        setState(() {});
+      },
+      child: Row(
+        children: [
+          /*? Icon(Icons.radio_button_checked_outlined)
+            : Icon(Icons.radio_button_off_outlined),*/
+          SizedBox(width: 8),
+          Text(title)
+        ],
+      ),
+    );
   }
 }

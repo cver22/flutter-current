@@ -79,6 +79,9 @@ const String PHOTO_URL = 'photoUrl';
 const String EMAIL = 'email';
 const String MEMBER_NAME = 'memberName';
 
+//Filter constants
+enum QuickDate { custom, day, month, year }
+
 //Chart constants
 enum ChartDateGrouping { day, month, year }
 enum ChartType { line, bar, donut }
