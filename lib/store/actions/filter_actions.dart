@@ -187,6 +187,24 @@ class FilterInitial implements AppAction {
   }
 }
 
+class FilterCopy implements AppAction {
+  final Filter filter;
+
+  FilterCopy({required this.filter});
+
+  AppState updateState(AppState appState) {
+    return updateSubstates(
+      appState,
+      [
+        updateFilterState((filterState) => filterState.copyWith(
+              filter: Maybe<Filter>.some(filter),
+              updated: true,
+            )),
+      ],
+    );
+  }
+}
+
 class FilterSelectDeselectCategory implements AppAction {
   final String id;
 
@@ -296,6 +314,24 @@ class FilterClearCategorySelection implements AppAction {
   }
 }
 
+class FilterClearDates implements AppAction {
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+
+    return updateSubstates(
+      appState,
+      [
+        _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
+              startDate: Maybe<DateTime?>.none(),
+              endDate: Maybe<DateTime?>.none(),
+              quickDate: QuickDate.custom,
+            )))),
+      ],
+    );
+  }
+}
+
 class FilterSetStartDate implements AppAction {
   final DateTime? date;
 
@@ -317,8 +353,11 @@ class FilterSetStartDate implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(startDate: updatedDate)))),
+        _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
+              startDate: updatedDate,
+              quickDate: QuickDate.custom,
+            )))),
       ],
     );
   }
@@ -345,8 +384,39 @@ class FilterSetEndDate implements AppAction {
     return updateSubstates(
       appState,
       [
-        _updateFilterAndFlagUpdated(
-            (filterState) => filterState.copyWith(filter: Maybe<Filter>.some(filter.copyWith(endDate: updatedDate)))),
+        _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
+              endDate: updatedDate,
+              quickDate: QuickDate.custom,
+            )))),
+      ],
+    );
+  }
+}
+
+class FilterSetDates implements AppAction {
+  final DateTime startDate;
+  final DateTime endDate;
+  final QuickDate quickDate;
+
+  FilterSetDates({
+    required this.startDate,
+    required this.endDate,
+    required this.quickDate,
+  });
+
+  AppState updateState(AppState appState) {
+    Filter filter = appState.filterState.filter.value;
+
+    return updateSubstates(
+      appState,
+      [
+        _updateFilterAndFlagUpdated((filterState) => filterState.copyWith(
+                filter: Maybe<Filter>.some(filter.copyWith(
+              startDate: Maybe<DateTime?>.some(startDate),
+              endDate: Maybe<DateTime?>.some(endDate),
+              quickDate: quickDate,
+            )))),
       ],
     );
   }
@@ -709,4 +779,3 @@ List<Tag> _sortTags({
 
   return orderTags;
 }
-

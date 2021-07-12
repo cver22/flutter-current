@@ -102,12 +102,14 @@ class EntriesSetEntriesFilter implements AppAction {
       updatedFilter = Maybe<Filter>.some(updatedFilter.value.copyWith(selectedLogs: selectedLogs));
     }
 
+
     filteredEntries = buildFilteredEntries(
       entries: appState.entriesState.entries.values.toList(),
       filter: updatedFilter.value,
       logs: Map<String, Log>.of(appState.logsState.logs),
       allTags: Map<String, Tag>.of(appState.tagState.tags),
     );
+
 
     return updateSubstates(
       appState,
@@ -132,36 +134,6 @@ class EntriesClearEntriesFilter implements AppAction {
               entriesFilter: Maybe<Filter>.none(),
               filteredEntries: <String, AppEntry>{},
             )),
-      ],
-    );
-  }
-}
-
-class EntriesSetChartFilter implements AppAction {
-  @override
-  AppState updateState(AppState appState) {
-    FilterState filterState = appState.filterState;
-
-    //if filter has been changed, save new filter, if reset, pass no filter
-    Maybe<Filter> updatedFilter = filterState.updated ? filterState.filter : Maybe<Filter>.none();
-
-    return updateSubstates(
-      appState,
-      [
-        updateEntriesState((entriesState) => entriesState.copyWith(chartFilter: updatedFilter)),
-        updateFilterState((filterState) => FilterState.initial()),
-      ],
-    );
-  }
-}
-
-class EntriesClearChartFilter implements AppAction {
-  @override
-  AppState updateState(AppState appState) {
-    return updateSubstates(
-      appState,
-      [
-        updateEntriesState((entriesState) => entriesState.copyWith(chartFilter: Maybe<Filter>.none())),
       ],
     );
   }

@@ -1,7 +1,7 @@
 import 'package:currency_picker/currency_picker.dart';
-import 'package:expenses/app/common_widgets/loading_indicator.dart';
-import 'package:expenses/chart/chart_model/donut_chart_data.dart';
-import 'package:expenses/currency/currency_utils/currency_formatters.dart';
+import '../../app/common_widgets/loading_indicator.dart';
+import '../../chart/chart_model/donut_chart_data.dart';
+import '../../currency/currency_utils/currency_formatters.dart';
 
 import '../../chart/chart_model/chart_data.dart';
 import '../../chart/chart_model/chart_state.dart';
@@ -21,6 +21,7 @@ class ChartScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     TooltipBehavior _tooltipBehavior = TooltipBehavior(enable: true);
+    TooltipBehavior _donutTooltipBehavior = TooltipBehavior(enable: true, format: 'point.x: \$ point.y');
     ZoomPanBehavior _zoomPanBehavior = ZoomPanBehavior(
       enablePinching: true,
       zoomMode: ZoomMode.x,
@@ -137,7 +138,7 @@ class ChartScreen extends StatelessWidget {
                           'Total spend: ${formattedAmount(currency: CurrencyService().findByCode('USD')!, value: total, showSymbol: true)}',
                     ),
                     legend: _legend,
-                    tooltipBehavior: _tooltipBehavior,
+                    tooltipBehavior: _donutTooltipBehavior,
                     series: <CircularSeries>[
                       DoughnutSeries<DonutChartData, String>(
                         dataLabelSettings: DataLabelSettings(isVisible: true),

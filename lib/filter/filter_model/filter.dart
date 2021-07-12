@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:expenses/utils/db_consts.dart';
 
 import '../../utils/maybe.dart';
 
@@ -14,6 +15,7 @@ class Filter extends Equatable {
   final List<String> membersSpent; //id
   final List<String> selectedLogs;
   final List<String> selectedTags;
+  final QuickDate quickDate;
 
   Filter({
     required this.startDate,
@@ -27,6 +29,7 @@ class Filter extends Equatable {
     required this.membersSpent,
     required this.selectedLogs,
     required this.selectedTags,
+    required this.quickDate,
   });
 
   factory Filter.initial() {
@@ -42,11 +45,13 @@ class Filter extends Equatable {
       membersSpent: const <String>[],
       selectedLogs: const <String>[],
       selectedTags: const <String>[],
+      quickDate: QuickDate.custom,
     );
   }
 
   @override
-  List<Object> get props => [
+  List<Object> get props =>
+      [
         startDate,
         endDate,
         selectedCurrencies,
@@ -57,7 +62,8 @@ class Filter extends Equatable {
         membersPaid,
         membersSpent,
         selectedLogs,
-        selectedTags
+        selectedTags,
+        quickDate,
       ]; //id, name
 
   @override
@@ -75,20 +81,20 @@ class Filter extends Equatable {
     List<String>? membersSpent,
     List<String>? selectedLogs,
     List<String>? selectedTags,
+    QuickDate? quickDate,
   }) {
     if ((startDate == null || identical(startDate, this.startDate)) &&
         (endDate == null || identical(endDate, this.endDate)) &&
         (selectedCurrencies == null || identical(selectedCurrencies, this.selectedCurrencies)) &&
-        (selectedCategories == null ||
-            identical(selectedCategories, this.selectedCategories)) &&
-        (selectedSubcategories == null ||
-            identical(selectedSubcategories, this.selectedSubcategories)) &&
+        (selectedCategories == null || identical(selectedCategories, this.selectedCategories)) &&
+        (selectedSubcategories == null || identical(selectedSubcategories, this.selectedSubcategories)) &&
         (minAmount == null || identical(minAmount, this.minAmount)) &&
         (maxAmount == null || identical(maxAmount, this.maxAmount)) &&
         (membersPaid == null || identical(membersPaid, this.membersPaid)) &&
         (membersSpent == null || identical(membersSpent, this.membersSpent)) &&
         (selectedLogs == null || identical(selectedLogs, this.selectedLogs)) &&
-        (selectedTags == null || identical(selectedTags, this.selectedTags))) {
+        (selectedTags == null || identical(selectedTags, this.selectedTags)) &&
+        (quickDate == null || identical(quickDate, this.quickDate))) {
       return this;
     }
 
@@ -97,14 +103,16 @@ class Filter extends Equatable {
       endDate: endDate ?? this.endDate,
       selectedCurrencies: selectedCurrencies ?? this.selectedCurrencies,
       selectedCategories: selectedCategories ?? this.selectedCategories,
-      selectedSubcategories:
-          selectedSubcategories ?? this.selectedSubcategories,
+      selectedSubcategories: selectedSubcategories ?? this.selectedSubcategories,
       minAmount: minAmount ?? this.minAmount,
       maxAmount: maxAmount ?? this.maxAmount,
       membersPaid: membersPaid ?? this.membersPaid,
       membersSpent: membersSpent ?? this.membersSpent,
       selectedLogs: selectedLogs ?? this.selectedLogs,
       selectedTags: selectedTags ?? this.selectedTags,
+      quickDate: quickDate ?? this.quickDate,
     );
   }
+
+
 }

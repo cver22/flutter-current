@@ -1,4 +1,5 @@
 import 'package:currency_picker/currency_picker.dart';
+import 'package:expenses/app/common_widgets/list_tile_components.dart';
 import 'package:expenses/store/actions/chart_actions.dart';
 import '../../currency/currency_ui/app_currency_picker.dart';
 import 'package:flutter/material.dart';
@@ -98,10 +99,16 @@ class _FilterDialogState extends State<FilterDialog> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     _amountFilter(filter: filter),
-                    SizedBox(height: 8.0),
-                    _quickDate(filterState: filterState),
+                    SizedBox(height: 16.0),
+                    AppDivider(),
+                    _quickDate(
+                      showClear: filter.startDate.isSome || filter.endDate.isSome,
+                      filterQuickDate: filter.quickDate,
+                    ),
                     SizedBox(height: 8.0),
                     _dateFilter(),
+                    SizedBox(height: 8.0),
+                    AppDivider(),
                     SizedBox(height: 8.0),
                     _currency(filterState: filterState),
                     SizedBox(height: 8.0),
@@ -123,7 +130,29 @@ class _FilterDialogState extends State<FilterDialog> {
   }
 
   List<Widget> _actions({required FilterState filterState, required EntriesCharts entriesChart}) {
+    String copySelection = entriesChart == EntriesCharts.entries ? 'Chart' : 'Entries';
+    Filter? filter;
+    if (entriesChart == EntriesCharts.entries && Env.store.state.chartState.chartFilter.isSome) {
+      filter = Env.store.state.chartState.chartFilter.value;
+    } else if (entriesChart == EntriesCharts.charts && Env.store.state.entriesState.entriesFilter.isSome) {
+      filter = Env.store.state.entriesState.entriesFilter.value;
+    }
+
     return [
+      TextButton(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text('Copy'),
+            Text('$copySelection Filter'),
+          ],
+        ),
+        onPressed: filter != null
+            ? () {
+                Env.store.dispatch(FilterCopy(filter: filter!));
+              }
+            : null,
+      ),
       TextButton(
         child: Text('Cancel'),
         onPressed: () => Get.back(),
@@ -254,7 +283,7 @@ class _FilterDialogState extends State<FilterDialog> {
           onSave: (dateTime) {
             Env.store.dispatch(FilterSetEndDate(date: dateTime));
           },
-        )
+        ),
       ],
     );
   }
@@ -453,28 +482,80 @@ class _FilterDialogState extends State<FilterDialog> {
     return currencyList;
   }
 
-  Widget _quickDate({required FilterState filterState}) {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+  Widget _quickDate({required QuickDate filterQuickDate, required bool showClear}) {
+    return Column(
       children: [
-        _quickDateRadio(quickDate: QuickDate.custom, title: 'Custom'),
-        _quickDateRadio(quickDate: QuickDate.day, title: 'Day'),
-        _quickDateRadio(quickDate: QuickDate.month, title: 'Month'),
-        _quickDateRadio(quickDate: QuickDate.year, title: 'Year'),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            TextButton(
+                child: Text(
+                  'Clear Dates',
+                  style: TextStyle(color: showClear ? Colors.red : Colors.grey),
+                ),
+                onPressed: showClear
+                    ? () {
+                        Env.store.dispatch(FilterClearDates());
+                      }
+                    : null),
+            _quickDateRadio(
+                filterQuickDate: filterQuickDate,
+                radioQuickDate: QuickDate.thisMonth,
+                title: MONTHS_SHORT[DateTime.now().month - 1]),
+            _quickDateRadio(
+                filterQuickDate: filterQuickDate,
+                radioQuickDate: QuickDate.thisYear,
+                title: DateTime.now().year.toString()),
+          ],
+        ),
+        SizedBox(height: 8.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            _quickDateRadio(filterQuickDate: filterQuickDate, radioQuickDate: QuickDate.hours24, title: '24 hours'),
+            _quickDateRadio(filterQuickDate: filterQuickDate, radioQuickDate: QuickDate.days30, title: '30 days'),
+            _quickDateRadio(filterQuickDate: filterQuickDate, radioQuickDate: QuickDate.months12, title: '12 months'),
+          ],
+        ),
       ],
     );
   }
 
-  Widget _quickDateRadio({required QuickDate quickDate, required String title}) {
+  Widget _quickDateRadio({
+    required QuickDate radioQuickDate,
+    required String title,
+    required QuickDate filterQuickDate,
+  }) {
+    late DateTime startDate;
+    DateTime endDate = DateTime.now();
+    if (radioQuickDate == QuickDate.hours24) {
+      startDate = DateTime(endDate.year, endDate.month, endDate.day - 1);
+    } else if (radioQuickDate == QuickDate.days30) {
+      startDate = DateTime(endDate.year, endDate.month - 1, endDate.day);
+    } else if (radioQuickDate == QuickDate.thisMonth) {
+      startDate = DateTime(endDate.year, endDate.month, 1);
+    } else if (radioQuickDate == QuickDate.thisYear) {
+      startDate = DateTime(endDate.year, 1, 1);
+    } else {
+      startDate = DateTime(endDate.year - 1, endDate.month, endDate.day);
+    }
+
     return InkWell(
       onTap: () {
-        setState(() {});
+        setState(() {
+          Env.store.dispatch(FilterSetDates(
+            startDate: startDate,
+            endDate: endDate,
+            quickDate: radioQuickDate,
+          ));
+        });
       },
       child: Row(
         children: [
-          /*? Icon(Icons.radio_button_checked_outlined)
-            : Icon(Icons.radio_button_off_outlined),*/
-          SizedBox(width: 8),
+          filterQuickDate == radioQuickDate
+              ? Icon(Icons.radio_button_checked_outlined)
+              : Icon(Icons.radio_button_off_outlined),
+          SizedBox(width: 2),
           Text(title)
         ],
       ),

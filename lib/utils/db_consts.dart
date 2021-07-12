@@ -80,7 +80,7 @@ const String EMAIL = 'email';
 const String MEMBER_NAME = 'memberName';
 
 //Filter constants
-enum QuickDate { custom, day, month, year }
+enum QuickDate { custom, hours24, days30, thisMonth, months12 , thisYear }
 
 //Chart constants
 enum ChartDateGrouping { day, month, year }
